@@ -101,3 +101,12 @@ fixture and all 512 generated scenarios now report zero unsafe approvals. The
 64 generated false refusals remain. Scope, complexity, compatibility, and
 falsifiers are documented in
 [STABLE_KEY_SAFETY_KERNEL](STABLE_KEY_SAFETY_KERNEL.md).
+
+## Multi-principal goal availability
+
+Certificate v5 assigns two agreeing goal issuers to distinct declared domains.
+The unchanged 512-scenario oracle now reports zero unsafe approvals and zero
+false refusals. Valid but divergent goal envelopes fail closed, invalid mappings
+are rejected, and hypothesis growth remains explicitly bounded. This does not
+establish organizational independence or availability during disagreement. See
+[MULTI_PRINCIPAL_GOALS](MULTI_PRINCIPAL_GOALS.md).

@@ -35,7 +35,7 @@ fn registered_adversarial_fault_classes_fail_closed_or_refuse() {
     let weakened = run_scenario(&fixture("weakened-viability.json")).unwrap();
     assert_eq!(weakened.decision, Decision::Refused);
     assert_eq!(weakened.metrics.unsafe_approvals, 0);
-    assert_eq!(weakened.metrics.hypothesis_count, 4);
+    assert_eq!(weakened.metrics.hypothesis_count, 5);
     assert!(weakened.hypotheses.iter().any(|hypothesis| {
         hypothesis.suspected == vec![AuthorityKind::Viability]
             && hypothesis.suspected_fault_domains == vec!["lab-domain"]
@@ -76,6 +76,15 @@ fn registered_adversarial_fault_classes_fail_closed_or_refuse() {
         run_scenario(&missing_domain),
         Err(RunError::FaultDeclaration(_))
     ));
+    let mut unknown_domain = fixture("poisoned-goal.json");
+    unknown_domain
+        .fault_declaration
+        .goal_fault_domains
+        .insert("goal-ghost".into(), "goal-ghost-domain".into());
+    assert!(matches!(
+        run_scenario(&unknown_domain),
+        Err(RunError::FaultDeclaration(_))
+    ));
 
     let partitioned = run_scenario(&fixture("partitioned-phenotype.json")).unwrap();
     assert_eq!(partitioned.decision, Decision::Applied);
@@ -91,7 +100,7 @@ fn registered_adversarial_fault_classes_fail_closed_or_refuse() {
 
     let mut correlated = fixture("poisoned-goal.json");
     correlated.fault_declaration.maximum_faults = 2;
-    correlated.fault_declaration.maximum_hypotheses = 11;
+    correlated.fault_declaration.maximum_hypotheses = 16;
     correlated.fault_declaration.suspectable = BTreeSet::from([
         AuthorityKind::Goal,
         AuthorityKind::Phenotype,
@@ -106,4 +115,64 @@ fn registered_adversarial_fault_classes_fail_closed_or_refuse() {
         run_scenario(&correlated).unwrap().decision,
         Decision::Refused
     );
+}
+
+#[test]
+fn goal_domains_preserve_agreement_and_reject_invalid_or_divergent_evidence() {
+    let poisoned = run_scenario(&fixture("poisoned-goal.json")).unwrap();
+    assert_eq!(poisoned.metrics.hypothesis_count, 3);
+    for (domain, issuer) in [
+        ("goal-lab-domain", "goal-lab"),
+        ("goal-review-domain", "goal-review"),
+    ] {
+        assert!(poisoned.hypotheses.iter().any(|hypothesis| {
+            hypothesis.suspected == vec![AuthorityKind::Goal]
+                && hypothesis.suspected_fault_domains == vec![domain]
+                && hypothesis.suspected_issuers == vec![issuer]
+                && hypothesis.proposed_transition.is_some()
+        }));
+    }
+
+    let mut missing_domain = fixture("poisoned-goal.json");
+    missing_domain
+        .fault_declaration
+        .goal_fault_domains
+        .remove("goal-review");
+    assert!(matches!(
+        run_scenario(&missing_domain),
+        Err(RunError::FaultDeclaration(_))
+    ));
+
+    let benign_review = fixture("benign.json")
+        .authorities
+        .into_iter()
+        .find(|authority| authority.issuer == "goal-review")
+        .unwrap();
+    let mut divergent = fixture("poisoned-goal.json");
+    *divergent
+        .authorities
+        .iter_mut()
+        .find(|authority| authority.issuer == "goal-review")
+        .unwrap() = benign_review;
+    assert!(matches!(
+        run_scenario(&divergent),
+        Err(RunError::Protocol(_))
+    ));
+
+    let mut correlated = fixture("benign.json");
+    correlated
+        .fault_declaration
+        .suspectable
+        .insert(AuthorityKind::Goal);
+    correlated.fault_declaration.goal_fault_domains = BTreeMap::from([
+        ("goal-lab".into(), "shared-goal-domain".into()),
+        ("goal-review".into(), "shared-goal-domain".into()),
+    ]);
+    correlated.fault_declaration.maximum_hypotheses = 4;
+    let certificate = run_scenario(&correlated).unwrap();
+    assert_eq!(certificate.decision, Decision::Refused);
+    assert!(certificate.hypotheses.iter().any(|hypothesis| {
+        hypothesis.suspected_fault_domains == vec!["shared-goal-domain"]
+            && hypothesis.proposed_transition.is_none()
+    }));
 }

@@ -32,6 +32,11 @@ This removes the reproduced cross-domain unsafe approvals. It does not cover a
 key omitted by every malicious phenotype replica, combined goal/phenotype
 corruption beyond the declared bound, or an authorized-deletion use case.
 
+Certificate v5 authenticates multiple goal issuers and excludes declared goal
+fault domains. Goal values must agree exactly before planning; disagreement is
+fail-closed. Separate keys and domain labels do not establish independent policy
+authorship, custody, implementation, or deployment.
+
 Authenticated phenotype history rejects chain and anchor rollback within a
 64-record bound. The trusted anchor is configuration in this harness; compromise
 or rollback of that trust root remains outside the demonstrated protection.

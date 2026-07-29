@@ -57,8 +57,12 @@ goals (25%).
 
 Certificate v4 adds stable-key continuity without changing those oracles. The
 same 512 scenarios now record zero unsafe approvals and the same 64 false
-refusals. This resolves every reproduced unsafe approval, but remains bounded
-model evidence rather than a proof or population estimate. The deletion
-restriction and remaining availability cost prevent an automatic reversal of
-the narrow decision. See
+refusals.
+
+Certificate v5 adds two agreeing declared goal domains. The unchanged 512
+scenario oracles now record zero unsafe approvals and zero false refusals.
+Authenticated disagreement still fails closed, and declared domains do not prove
+organizational independence. The evidence remains bounded rather than a proof or
+population estimate, so it does not automatically reverse the narrow decision.
+See
 [GENERATED_STATE_SPACE](GENERATED_STATE_SPACE.md).

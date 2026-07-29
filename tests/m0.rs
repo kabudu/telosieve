@@ -16,6 +16,16 @@ fn load(name: &str) -> Scenario {
     .expect("fixture should be valid")
 }
 
+fn content(scenario: &Scenario, kind: AuthorityKind) -> serde_json::Value {
+    scenario
+        .authorities
+        .iter()
+        .find(|authority| authority.kind == kind)
+        .unwrap()
+        .content
+        .clone()
+}
+
 #[test]
 fn benign_goal_is_applied_and_rollback_restores_snapshot() {
     let scenario = load("benign.json");
@@ -38,7 +48,7 @@ fn benign_goal_is_applied_and_rollback_restores_snapshot() {
     );
     assert_eq!(
         certificate.rollback.as_ref().unwrap().after,
-        serde_json::from_value(scenario.authorities[1].content.clone()).unwrap()
+        serde_json::from_value(content(&scenario, AuthorityKind::Phenotype)).unwrap()
     );
 }
 
@@ -48,11 +58,11 @@ fn poisoned_goal_is_refused_and_state_is_unchanged() {
     let certificate = run_scenario(&scenario).expect("poisoned scenario should run");
 
     assert_eq!(certificate.decision, Decision::Refused);
-    assert_eq!(certificate.hypotheses.len(), 2);
+    assert_eq!(certificate.hypotheses.len(), 3);
     assert!(certificate.transition.is_none());
     assert_eq!(
         certificate.final_state,
-        serde_json::from_value(scenario.authorities[1].content.clone()).unwrap()
+        serde_json::from_value(content(&scenario, AuthorityKind::Phenotype)).unwrap()
     );
     assert!(certificate.hypotheses.iter().any(|hypothesis| {
         hypothesis
@@ -146,7 +156,7 @@ fn configured_hypothesis_bound_is_enforced() {
 fn general_enumeration_is_complete_bounded_and_excludes_every_suspect() {
     let mut scenario = load("poisoned-goal.json");
     scenario.fault_declaration.maximum_faults = 2;
-    scenario.fault_declaration.maximum_hypotheses = 11;
+    scenario.fault_declaration.maximum_hypotheses = 16;
     scenario.fault_declaration.suspectable = [
         AuthorityKind::Goal,
         AuthorityKind::Phenotype,
@@ -162,17 +172,17 @@ fn general_enumeration_is_complete_bounded_and_excludes_every_suspect() {
 
     let certificate = run_scenario(&scenario).unwrap();
 
-    assert_eq!(certificate.hypotheses.len(), 11);
+    assert_eq!(certificate.hypotheses.len(), 16);
     assert!(
         certificate
             .hypotheses
             .iter()
             .all(|hypothesis| hypothesis.suspected == hypothesis.excluded)
     );
-    let no_evidence_plan = certificate.hypotheses.iter().find(|hypothesis| {
-        hypothesis.suspected == vec![AuthorityKind::Goal, AuthorityKind::Phenotype]
-    });
-    assert!(no_evidence_plan.unwrap().proposed_transition.is_none());
+    assert!(certificate.hypotheses.iter().all(|hypothesis| {
+        hypothesis.suspected != vec![AuthorityKind::Goal]
+            || hypothesis.proposed_transition.is_some()
+    }));
 }
 
 #[test]
@@ -258,7 +268,8 @@ fn rust_and_python_checkers_agree_on_safe_and_unsafe_transitions() {
         if let (Some(transition), Some(external)) =
             (hypothesis.proposed_transition, hypothesis.checker)
         {
-            let current = serde_json::from_value(scenario.authorities[1].content.clone()).unwrap();
+            let current =
+                serde_json::from_value(content(&scenario, AuthorityKind::Phenotype)).unwrap();
             let rust_safe = scenario
                 .authorities
                 .iter()
@@ -290,9 +301,13 @@ fn protocol_rejects_stale_unknown_schema_and_duplicate_authorities() {
     ));
 
     let mut duplicate_viability_issuer = load("benign.json");
-    duplicate_viability_issuer
+    let viability = duplicate_viability_issuer
         .authorities
-        .push(duplicate_viability_issuer.authorities[2].clone());
+        .iter()
+        .find(|authority| authority.kind == AuthorityKind::Viability)
+        .unwrap()
+        .clone();
+    duplicate_viability_issuer.authorities.push(viability);
     assert!(matches!(
         run_scenario(&duplicate_viability_issuer),
         Err(RunError::Protocol(_))
@@ -319,6 +334,7 @@ fn protocol_rejects_stale_unknown_schema_and_duplicate_authorities() {
 fn public_replay_reports_all_baselines_and_protocol_evidence() {
     for fixture in ["benign.json", "poisoned-goal.json"] {
         let certificate = run_scenario(&load(fixture)).unwrap();
+        assert_eq!(certificate.certificate_version, "telosieve.certificate/v5");
         let names: Vec<_> = certificate
             .baselines
             .iter()
@@ -332,7 +348,7 @@ fn public_replay_reports_all_baselines_and_protocol_evidence() {
                 "invariant-gated-reconciler/v0"
             ]
         );
-        assert_eq!(certificate.authority_digests.len(), 6);
+        assert_eq!(certificate.authority_digests.len(), 7);
         assert!(certificate.hypotheses.iter().all(|hypothesis| {
             hypothesis.suspected == hypothesis.excluded
                 && hypothesis.checker.as_ref().is_none_or(|verdict| {

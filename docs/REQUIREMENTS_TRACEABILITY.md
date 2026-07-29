@@ -8,6 +8,7 @@
 | SEM-3 | Preserve viability | Independent checker | exhaustive state exploration |
 | SEM-5 | Tolerate one weakened viability principal | Per-issuer hypotheses and surviving-rule intersection | weakened and benign multi-principal fixtures |
 | SEM-6 | Prevent unanimous viability weakening from authorizing key deletion | Stable-key continuity in independent Rust/Python checkers | cross-domain fixture, differential tests, 512-scenario exploration |
+| SEM-7 | Preserve safe-goal availability while goal domains are suspectable | Multiple agreeing goal principals with domain exclusion | mapping/disagreement adversarial tests, 512-scenario exploration |
 | SEC-3 | Detect signed-history rollback and broken chains | Bounded phenotype chain plus trusted tip anchor | predecessor replay, omitted/forked/old-tip tests |
 | SEM-4 | Refuse ambiguity | protocol acceptance rule | contradictory-authority E2E |
 | REL-1 | Reproducible decisions | content addressing | deterministic replay |

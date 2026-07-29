@@ -1,0 +1,7 @@
+[
+  {"scenario":"all-viability-domains-weakened","iterations":20,"latency_micros_p50":14020,"latency_micros_p95":34870,"hypothesis_count":3,"certificate_bytes":5027,"decision":"refused","unsafe_approvals":0,"false_refusals":0,"baseline_unsafe_approvals":2},
+  {"scenario":"benign-update","iterations":20,"latency_micros_p50":14079,"latency_micros_p95":16202,"hypothesis_count":3,"certificate_bytes":5052,"decision":"applied","unsafe_approvals":0,"false_refusals":0,"baseline_unsafe_approvals":0},
+  {"scenario":"partitioned-phenotype","iterations":20,"latency_micros_p50":14199,"latency_micros_p95":17315,"hypothesis_count":2,"certificate_bytes":4369,"decision":"applied","unsafe_approvals":0,"false_refusals":0,"baseline_unsafe_approvals":0},
+  {"scenario":"poisoned-goal","iterations":20,"latency_micros_p50":14390,"latency_micros_p95":14748,"hypothesis_count":3,"certificate_bytes":6093,"decision":"refused","unsafe_approvals":0,"false_refusals":0,"baseline_unsafe_approvals":2},
+  {"scenario":"weakened-viability","iterations":20,"latency_micros_p50":14436,"latency_micros_p95":15072,"hypothesis_count":5,"certificate_bytes":6941,"decision":"refused","unsafe_approvals":0,"false_refusals":0,"baseline_unsafe_approvals":2}
+]

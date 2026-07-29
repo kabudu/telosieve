@@ -2,7 +2,8 @@
 
 ## Components
 
-1. **Authority adapters** normalize goal, phenotype, and viability documents.
+1. **Authority adapters** normalize goal, phenotype, and viability documents,
+   including multiple goal and viability principals.
 2. **Provenance verifier** checks identity, signature, lineage, freshness, and
    schema without deciding truth.
 3. **Hypothesis engine** enumerates allowed fault sets under the configured budget.
@@ -52,6 +53,11 @@ implementations: every key present on every current replica must remain present
 after transition. The bounded O(R × K) check is independent of viability
 authority content; updates and additions remain allowed, while deletion requires
 a future separately authorized protocol.
+
+Certificate v5 requires exact agreement across authenticated goal principals.
+Bounded hypotheses exclude complete declared goal domains; planning fails closed
+if none survives. The harness validates mapping completeness but cannot attest
+that labelled domains are operationally independent.
 
 The signed-history baseline verifies a maximum of 64 predecessor phenotype
 envelopes against an explicit current-tip anchor before planning, then replays the

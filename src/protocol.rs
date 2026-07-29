@@ -79,6 +79,8 @@ pub struct FaultDeclaration {
     pub maximum_faults: usize,
     pub suspectable: BTreeSet<AuthorityKind>,
     #[serde(default)]
+    pub goal_fault_domains: BTreeMap<String, String>,
+    #[serde(default)]
     pub viability_fault_domains: BTreeMap<String, String>,
     pub maximum_hypotheses: usize,
 }
@@ -118,6 +120,7 @@ pub struct Scenario {
 pub struct VerifiedAuthorities {
     pub digests: BTreeMap<String, String>,
     pub goal: Values,
+    pub goal_issuers: BTreeSet<String>,
     pub phenotype: ServiceState,
     pub phenotype_history: Vec<ServiceState>,
     pub viability: Vec<VerifiedViability>,
@@ -162,20 +165,29 @@ pub fn verify(scenario: &Scenario) -> Result<VerifiedAuthorities, ProtocolError>
         validate_envelope(scenario, envelope, false)?;
     }
     let mut by_kind = BTreeMap::new();
+    let mut goal_envelopes = Vec::new();
     let mut viability_envelopes = Vec::new();
     for envelope in &scenario.authorities {
-        if envelope.kind == AuthorityKind::Viability {
-            if viability_envelopes
+        if matches!(
+            envelope.kind,
+            AuthorityKind::Goal | AuthorityKind::Viability
+        ) {
+            let envelopes = if envelope.kind == AuthorityKind::Goal {
+                &mut goal_envelopes
+            } else {
+                &mut viability_envelopes
+            };
+            if envelopes
                 .iter()
                 .any(|existing: &&Envelope| existing.issuer == envelope.issuer)
             {
                 return Err(ProtocolError::Invalid {
-                    kind: AuthorityKind::Viability,
+                    kind: envelope.kind,
                     field: "issuer",
-                    reason: "duplicate viability issuer".into(),
+                    reason: "duplicate authority issuer".into(),
                 });
             }
-            viability_envelopes.push(envelope);
+            envelopes.push(envelope);
             continue;
         }
         if let Some(previous) = by_kind.insert(envelope.kind, envelope) {
@@ -193,7 +205,7 @@ pub fn verify(scenario: &Scenario) -> Result<VerifiedAuthorities, ProtocolError>
         }
     }
 
-    let goal = parse_content::<Values>(&by_kind, AuthorityKind::Goal)?;
+    let (goal, goal_issuers) = verify_goals(&goal_envelopes)?;
     let phenotype = parse_content::<ServiceState>(&by_kind, AuthorityKind::Phenotype)?;
     let current_phenotype = by_kind
         .get(&AuthorityKind::Phenotype)
@@ -232,10 +244,46 @@ pub fn verify(scenario: &Scenario) -> Result<VerifiedAuthorities, ProtocolError>
     Ok(VerifiedAuthorities {
         digests,
         goal,
+        goal_issuers,
         phenotype,
         phenotype_history,
         viability,
     })
+}
+
+fn verify_goals(envelopes: &[&Envelope]) -> Result<(Values, BTreeSet<String>), ProtocolError> {
+    let first = envelopes
+        .first()
+        .ok_or(ProtocolError::Cardinality(AuthorityKind::Goal))?;
+    let goal = serde_json::from_value::<Values>(first.content.clone()).map_err(|error| {
+        ProtocolError::Invalid {
+            kind: AuthorityKind::Goal,
+            field: "content",
+            reason: error.to_string(),
+        }
+    })?;
+    for envelope in &envelopes[1..] {
+        let candidate =
+            serde_json::from_value::<Values>(envelope.content.clone()).map_err(|error| {
+                ProtocolError::Invalid {
+                    kind: AuthorityKind::Goal,
+                    field: "content",
+                    reason: error.to_string(),
+                }
+            })?;
+        if candidate != goal {
+            return Err(ProtocolError::Invalid {
+                kind: AuthorityKind::Goal,
+                field: "content",
+                reason: "authenticated goal principals disagree".into(),
+            });
+        }
+    }
+    let issuers = envelopes
+        .iter()
+        .map(|envelope| envelope.issuer.clone())
+        .collect();
+    Ok((goal, issuers))
 }
 
 fn authority_digests(scenario: &Scenario) -> BTreeMap<String, String> {

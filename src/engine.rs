@@ -196,7 +196,7 @@ fn evaluate_preflighted_scenario(
     let hypothesis_count = hypotheses.len();
 
     Ok(Certificate {
-        certificate_version: "telosieve.certificate/v4".into(),
+        certificate_version: "telosieve.certificate/v5".into(),
         scenario_id: scenario.scenario_id.clone(),
         seed: scenario.seed,
         authority_digests: authorities.digests,
@@ -302,11 +302,42 @@ fn fault_targets(
     authorities: &VerifiedAuthorities,
 ) -> Result<Vec<FaultTarget>, RunError> {
     let declaration = &scenario.fault_declaration;
+    let goal_issuers: BTreeSet<_> = authorities
+        .goal_issuers
+        .iter()
+        .map(String::as_str)
+        .collect();
     let viability_issuers: BTreeSet<_> = authorities
         .viability
         .iter()
         .map(|authority| authority.issuer.as_str())
         .collect();
+    if declaration.suspectable.contains(&AuthorityKind::Goal) {
+        for issuer in &goal_issuers {
+            if declaration
+                .goal_fault_domains
+                .get(*issuer)
+                .is_none_or(String::is_empty)
+            {
+                return Err(RunError::FaultDeclaration(format!(
+                    "goal issuer {issuer} has no non-empty fault domain"
+                )));
+            }
+        }
+        if declaration
+            .goal_fault_domains
+            .keys()
+            .any(|issuer| !goal_issuers.contains(issuer.as_str()))
+        {
+            return Err(RunError::FaultDeclaration(
+                "fault-domain mapping contains an unknown goal issuer".into(),
+            ));
+        }
+    } else if !declaration.goal_fault_domains.is_empty() {
+        return Err(RunError::FaultDeclaration(
+            "goal fault domains require goal to be suspectable".into(),
+        ));
+    }
     if declaration.suspectable.contains(&AuthorityKind::Viability) {
         for issuer in &viability_issuers {
             if declaration
@@ -335,8 +366,17 @@ fn fault_targets(
     }
     let mut targets = Vec::new();
     for kind in &declaration.suspectable {
-        if *kind == AuthorityKind::Viability {
-            targets.extend(
+        match kind {
+            AuthorityKind::Goal => targets.extend(
+                declaration
+                    .goal_fault_domains
+                    .values()
+                    .cloned()
+                    .collect::<BTreeSet<_>>()
+                    .into_iter()
+                    .map(FaultTarget::GoalDomain),
+            ),
+            AuthorityKind::Viability => targets.extend(
                 declaration
                     .viability_fault_domains
                     .values()
@@ -344,9 +384,10 @@ fn fault_targets(
                     .collect::<BTreeSet<_>>()
                     .into_iter()
                     .map(FaultTarget::ViabilityDomain),
-            );
-        } else {
-            targets.push(FaultTarget::Authority(*kind));
+            ),
+            AuthorityKind::Phenotype => {
+                targets.push(FaultTarget::Authority(AuthorityKind::Phenotype));
+            }
         }
     }
     Ok(targets)
@@ -410,14 +451,23 @@ fn evaluate_hypothesis(
     suspected: &BTreeSet<FaultTarget>,
     checker_session: &mut crate::external_checker::CheckerSession,
 ) -> Result<HypothesisRecord, RunError> {
-    let suspects = |kind| suspected.contains(&FaultTarget::Authority(kind));
-    let desired = if suspects(AuthorityKind::Goal) && suspects(AuthorityKind::Phenotype) {
-        None
-    } else if suspects(AuthorityKind::Goal) {
-        authorities.phenotype.consensus().cloned()
-    } else {
-        Some(authorities.goal.clone())
-    };
+    let excluded_goal_issuers: BTreeSet<_> = suspected
+        .iter()
+        .flat_map(|target| match target {
+            FaultTarget::GoalDomain(domain) => scenario
+                .fault_declaration
+                .goal_fault_domains
+                .iter()
+                .filter_map(|(issuer, candidate)| (candidate == domain).then_some(issuer.as_str()))
+                .collect(),
+            _ => Vec::new(),
+        })
+        .collect();
+    let desired = authorities
+        .goal_issuers
+        .iter()
+        .any(|issuer| !excluded_goal_issuers.contains(issuer.as_str()))
+        .then(|| authorities.goal.clone());
     let proposed_transition = desired.map(|values| authorities.phenotype.transition_to(&values));
     let checker = proposed_transition
         .as_ref()
@@ -433,7 +483,7 @@ fn evaluate_hypothesis(
                             (candidate == domain).then_some(issuer.as_str())
                         })
                         .collect(),
-                    FaultTarget::Authority(_) => Vec::new(),
+                    FaultTarget::GoalDomain(_) | FaultTarget::Authority(_) => Vec::new(),
                 })
                 .collect();
             check_surviving_viability(authorities, transition, &excluded, checker_session)
@@ -443,24 +493,35 @@ fn evaluate_hypothesis(
         .iter()
         .map(|target| match target {
             FaultTarget::Authority(kind) => *kind,
+            FaultTarget::GoalDomain(_) => AuthorityKind::Goal,
             FaultTarget::ViabilityDomain(_) => AuthorityKind::Viability,
         })
         .collect();
     let suspected_fault_domains: Vec<_> = suspected
         .iter()
         .filter_map(|target| match target {
-            FaultTarget::ViabilityDomain(domain) => Some(domain.clone()),
+            FaultTarget::GoalDomain(domain) | FaultTarget::ViabilityDomain(domain) => {
+                Some(domain.clone())
+            }
             FaultTarget::Authority(_) => None,
         })
         .collect();
-    let suspected_issuers: Vec<_> = scenario
-        .fault_declaration
-        .viability_fault_domains
+    let suspected_issuers: Vec<_> = suspected
         .iter()
-        .filter_map(|(issuer, domain)| {
-            suspected_fault_domains
-                .contains(domain)
-                .then_some(issuer.clone())
+        .flat_map(|target| {
+            let (domains, selected) = match target {
+                FaultTarget::GoalDomain(domain) => {
+                    (&scenario.fault_declaration.goal_fault_domains, domain)
+                }
+                FaultTarget::ViabilityDomain(domain) => {
+                    (&scenario.fault_declaration.viability_fault_domains, domain)
+                }
+                FaultTarget::Authority(_) => return Vec::new(),
+            };
+            domains
+                .iter()
+                .filter_map(|(issuer, domain)| (domain == selected).then_some(issuer.clone()))
+                .collect()
         })
         .collect();
     Ok(HypothesisRecord {
@@ -478,6 +539,7 @@ fn evaluate_hypothesis(
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 enum FaultTarget {
     Authority(AuthorityKind),
+    GoalDomain(String),
     ViabilityDomain(String),
 }
 

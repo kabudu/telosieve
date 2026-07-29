@@ -43,20 +43,19 @@ machine-readable cells are retained in
 | safe goals | 256 | 512 |
 | poisoned goals | 256 | 512 |
 | unsafe approvals | 0 | 256 poisoned goals (0%) |
-| false refusals | 64 | 256 safe goals (25%) |
-| applied decisions | 192 | 512 |
-| refused decisions | 320 | 512 |
+| false refusals | 0 | 256 safe goals (0%) |
+| applied decisions | 256 | 512 |
+| refused decisions | 256 | 512 |
 
 Certificate v4's stable-key safety kernel removes the 48 previously retained
 unsafe approvals without changing the oracle. When every viability domain is
 weakened, deletion of `cluster/epoch` is rejected by the non-bypassable
 continuity rule.
 
-The false refusals occur with goal-and-viability suspicion at fault budget one.
-The goal-suspected hypothesis proposes the observed consensus (or no transition
-under partition), while the no-fault hypothesis proposes the new safe goal.
-Telosieve therefore cannot identify one common transition. This is a real
-availability cost of broadening the fault model, not a checker error.
+Certificate v5 adds two agreeing declared goal domains. Excluding either domain
+retains the same authenticated desired transition, removing the 64 certificate-v4
+false refusals. Authenticated disagreement fails closed and is not represented in
+this agreeing-goal state space.
 
 ## Decision impact
 
@@ -64,8 +63,9 @@ The expanded evidence resolves the reproduced unsafe approvals but does not
 reverse the existing **narrow / no-productisation** decision:
 
 - no unsafe approval remains in the declared 512-scenario state space;
-- covering goal faults introduces a measured 25% false-refusal rate over the
-  registered safe slice; and
+- no false refusal remains in the agreeing-goal safe slice;
+- organizational goal-domain independence and disagreement availability remain
+  unmeasured; and
 - the result remains a bounded model, not a production reliability estimate.
 
 The experiment supports continued private protocol research only. It does not

@@ -6,6 +6,7 @@
   "expected_decision": "apply",
   "public_keys": {
     "goal-lab": "66be7e332c7a453332bd9d0a7f7db055f5c5ef1a06ada66d98b39fb6810c473a",
+    "goal-review": "2152f8d19b791d24453242e15f2eab6cb7cffa7b6a5ed30097960e069881db12",
     "phenotype-lab": "511c34a1a2cb521df16bb246b8de8e7997ce235c7e76b22a3d7503a24819dd8a",
     "viability-lab": "884b8857f4eaa1613c61504db34d4beaf346517a0e31de3cddd4d9b4201d9d0b",
     "viability-peer": "2c848ad8664ee651e4896c13a84a89a2964aca5eb77a8b881e60ded5c81b4e9d",
@@ -16,12 +17,13 @@
     "suspectable": [
       "viability"
     ],
+    "goal_fault_domains": {},
     "viability_fault_domains": {
       "viability-lab": "lab-domain",
       "viability-peer": "lab-domain",
       "viability-review": "review-domain"
     },
-    "maximum_hypotheses": 4
+    "maximum_hypotheses": 3
   },
   "phenotype_history_anchor": {
     "issuer": "phenotype-lab",
@@ -74,6 +76,22 @@
         "user/message": "new"
       },
       "signature": "a2b0c0998766d607212dfc6d30b0c60a68495d9e2882e79935589bfde7f4ae0e90fe1f23b7119ccd19f3bc256f20e41cd7e46a2f8e1d505ea1529fb30a8b3706"
+    },
+    {
+      "kind": "goal",
+      "subject": "kv/research",
+      "schema_version": "telosieve.authority/v0",
+      "issued_at": 1700000000,
+      "expires_at": 1800000000,
+      "issuer": "goal-review",
+      "sequence": 1,
+      "content_digest": "fe738338d53f190a21004319c46de8c95146c916657293933f60210e4829ce45",
+      "parent_digests": [],
+      "content": {
+        "cluster/epoch": "7",
+        "user/message": "new"
+      },
+      "signature": "f31c2c7c1415a7fa361b2d59bba3e6cc1bc05e50922ede21fe503a310ea7d27e1689333580b536c8485fbdae61569729c27060b5c02d073369aa483e5e160404"
     },
     {
       "kind": "phenotype",

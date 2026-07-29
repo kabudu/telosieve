@@ -59,3 +59,7 @@ Raw evidence is retained in `results/generated-state-space.json` and
 Zero observed unsafe approvals is evidence only for the retained finite state
 space and fixtures. It is not a proof of general safety or authorization for
 productisation.
+
+Certificate v5 subsequently removes the 64 measured safe-case refusals using
+multiple agreeing goal domains; see
+[MULTI_PRINCIPAL_GOALS](MULTI_PRINCIPAL_GOALS.md).

@@ -81,6 +81,7 @@ fn write_scenario(name: &str, scenario: &Scenario) {
 #[allow(clippy::too_many_lines)]
 fn main() {
     let goal_key = SigningKey::from_bytes(&[11; 32]);
+    let goal_review_key = SigningKey::from_bytes(&[66; 32]);
     let phenotype_key = SigningKey::from_bytes(&[22; 32]);
     let viability_key = SigningKey::from_bytes(&[33; 32]);
     let viability_peer_key = SigningKey::from_bytes(&[55; 32]);
@@ -89,6 +90,10 @@ fn main() {
         (
             "goal-lab".into(),
             hex::encode(goal_key.verifying_key().to_bytes()),
+        ),
+        (
+            "goal-review".into(),
+            hex::encode(goal_review_key.verifying_key().to_bytes()),
         ),
         (
             "phenotype-lab".into(),
@@ -162,6 +167,18 @@ fn main() {
         } else {
             BTreeMap::new()
         };
+        let goal_fault_domains = if suspectable.contains(&AuthorityKind::Goal) {
+            BTreeMap::from([
+                ("goal-lab".into(), "goal-lab-domain".into()),
+                ("goal-review".into(), "goal-review-domain".into()),
+            ])
+        } else {
+            BTreeMap::new()
+        };
+        let maximum_hypotheses = 1
+            + usize::from(suspectable.contains(&AuthorityKind::Goal)) * 2
+            + usize::from(suspectable.contains(&AuthorityKind::Viability)) * 2
+            + usize::from(suspectable.contains(&AuthorityKind::Phenotype));
         Scenario {
             scenario_id: scenario_id.into(),
             seed: 7,
@@ -172,13 +189,15 @@ fn main() {
             fault_declaration: FaultDeclaration {
                 maximum_faults,
                 suspectable,
+                goal_fault_domains,
                 viability_fault_domains,
-                maximum_hypotheses: 4,
+                maximum_hypotheses,
             },
             phenotype_history_anchor,
             phenotype_history: vec![history],
             authorities: vec![
-                envelope(&goal_key, AuthorityKind::Goal, "goal-lab", goal),
+                envelope(&goal_key, AuthorityKind::Goal, "goal-lab", goal.clone()),
+                envelope(&goal_review_key, AuthorityKind::Goal, "goal-review", goal),
                 current_phenotype,
                 envelope(
                     &viability_peer_key,

@@ -1,11 +1,15 @@
 {
-  "schema_version": "telosieve.state-space/v1",
+  "schema_version": "telosieve.state-space/v2",
   "generator": "exhaustive Cartesian product over declared finite dimensions",
   "seeds": 8,
   "dimensions": {
     "goal": [
       "safe",
       "poisoned"
+    ],
+    "goal_domains": [
+      "goal-lab-domain",
+      "goal-review-domain"
     ],
     "lab_domain": [
       "strict",
@@ -32,10 +36,10 @@
     "scenarios": 512,
     "expected_apply": 256,
     "expected_refuse": 256,
-    "applied": 192,
-    "refused": 320,
+    "applied": 256,
+    "refused": 256,
     "unsafe_approvals": 0,
-    "false_refusals": 64
+    "false_refusals": 0
   },
   "cells": [
     {
@@ -432,10 +436,10 @@
         "scenarios": 16,
         "expected_apply": 8,
         "expected_refuse": 8,
-        "applied": 0,
-        "refused": 16,
+        "applied": 8,
+        "refused": 8,
         "unsafe_approvals": 0,
-        "false_refusals": 8
+        "false_refusals": 0
       }
     },
     {
@@ -448,10 +452,10 @@
         "scenarios": 16,
         "expected_apply": 8,
         "expected_refuse": 8,
-        "applied": 0,
-        "refused": 16,
+        "applied": 8,
+        "refused": 8,
         "unsafe_approvals": 0,
-        "false_refusals": 8
+        "false_refusals": 0
       }
     },
     {
@@ -464,10 +468,10 @@
         "scenarios": 16,
         "expected_apply": 8,
         "expected_refuse": 8,
-        "applied": 0,
-        "refused": 16,
+        "applied": 8,
+        "refused": 8,
         "unsafe_approvals": 0,
-        "false_refusals": 8
+        "false_refusals": 0
       }
     },
     {
@@ -480,10 +484,10 @@
         "scenarios": 16,
         "expected_apply": 8,
         "expected_refuse": 8,
-        "applied": 0,
-        "refused": 16,
+        "applied": 8,
+        "refused": 8,
         "unsafe_approvals": 0,
-        "false_refusals": 8
+        "false_refusals": 0
       }
     },
     {
@@ -496,10 +500,10 @@
         "scenarios": 16,
         "expected_apply": 8,
         "expected_refuse": 8,
-        "applied": 0,
-        "refused": 16,
+        "applied": 8,
+        "refused": 8,
         "unsafe_approvals": 0,
-        "false_refusals": 8
+        "false_refusals": 0
       }
     },
     {
@@ -512,10 +516,10 @@
         "scenarios": 16,
         "expected_apply": 8,
         "expected_refuse": 8,
-        "applied": 0,
-        "refused": 16,
+        "applied": 8,
+        "refused": 8,
         "unsafe_approvals": 0,
-        "false_refusals": 8
+        "false_refusals": 0
       }
     },
     {
@@ -528,10 +532,10 @@
         "scenarios": 16,
         "expected_apply": 8,
         "expected_refuse": 8,
-        "applied": 0,
-        "refused": 16,
+        "applied": 8,
+        "refused": 8,
         "unsafe_approvals": 0,
-        "false_refusals": 8
+        "false_refusals": 0
       }
     },
     {
@@ -544,16 +548,16 @@
         "scenarios": 16,
         "expected_apply": 8,
         "expected_refuse": 8,
-        "applied": 0,
-        "refused": 16,
+        "applied": 8,
+        "refused": 8,
         "unsafe_approvals": 0,
-        "false_refusals": 8
+        "false_refusals": 0
       }
     }
   ],
   "conclusions": [
-    "weakening every viability domain remains an unsafe-approval boundary",
-    "goal suspicion at budget one converts safe partitioned observations into false refusals",
-    "generated evidence does not support productisation"
+    "stable-key continuity retains zero unsafe approvals",
+    "distinct agreeing goal domains remove the measured safe-goal false refusals",
+    "organizational independence and divergent-goal availability remain unproven"
   ]
 }

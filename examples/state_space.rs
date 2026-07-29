@@ -143,6 +143,7 @@ fn scenario(
     profile: SuspicionProfile,
 ) -> Scenario {
     let goal_key = SigningKey::from_bytes(&[11; 32]);
+    let goal_review_key = SigningKey::from_bytes(&[66; 32]);
     let phenotype_key = SigningKey::from_bytes(&[22; 32]);
     let lab_key = SigningKey::from_bytes(&[33; 32]);
     let peer_key = SigningKey::from_bytes(&[55; 32]);
@@ -151,6 +152,10 @@ fn scenario(
         (
             "goal-lab".into(),
             hex::encode(goal_key.verifying_key().to_bytes()),
+        ),
+        (
+            "goal-review".into(),
+            hex::encode(goal_review_key.verifying_key().to_bytes()),
         ),
         (
             "phenotype-lab".into(),
@@ -210,6 +215,14 @@ fn scenario(
             &goal_key,
             AuthorityKind::Goal,
             "goal-lab",
+            goal.clone(),
+            1,
+            Vec::new(),
+        ),
+        envelope(
+            &goal_review_key,
+            AuthorityKind::Goal,
+            "goal-review",
             goal,
             1,
             Vec::new(),
@@ -273,12 +286,19 @@ fn scenario(
         fault_declaration: FaultDeclaration {
             maximum_faults,
             suspectable: profile.suspectable(),
+            goal_fault_domains: match profile {
+                SuspicionProfile::ViabilityOnly => BTreeMap::new(),
+                SuspicionProfile::GoalAndViability => BTreeMap::from([
+                    ("goal-lab".into(), "goal-lab-domain".into()),
+                    ("goal-review".into(), "goal-review-domain".into()),
+                ]),
+            },
             viability_fault_domains: BTreeMap::from([
                 ("viability-lab".into(), "lab-domain".into()),
                 ("viability-peer".into(), "lab-domain".into()),
                 ("viability-review".into(), "review-domain".into()),
             ]),
-            maximum_hypotheses: 4,
+            maximum_hypotheses: 5,
         },
         phenotype_history_anchor: HistoryAnchor {
             issuer: current.issuer.clone(),
@@ -348,11 +368,15 @@ fn generate() -> Report {
         }
     }
     Report {
-        schema_version: "telosieve.state-space/v1",
+        schema_version: "telosieve.state-space/v2",
         generator: "exhaustive Cartesian product over declared finite dimensions",
         seeds: SEEDS.count(),
         dimensions: BTreeMap::from([
             ("goal", vec!["safe", "poisoned"]),
+            (
+                "goal_domains",
+                vec!["goal-lab-domain", "goal-review-domain"],
+            ),
             ("phenotype", vec!["consensus", "partition"]),
             ("lab_domain", vec!["strict", "weakened"]),
             ("review_domain", vec!["strict", "weakened"]),
@@ -365,9 +389,9 @@ fn generate() -> Report {
         total,
         cells,
         conclusions: vec![
-            "weakening every viability domain remains an unsafe-approval boundary",
-            "goal suspicion at budget one converts safe partitioned observations into false refusals",
-            "generated evidence does not support productisation",
+            "stable-key continuity retains zero unsafe approvals",
+            "distinct agreeing goal domains remove the measured safe-goal false refusals",
+            "organizational independence and divergent-goal availability remain unproven",
         ],
     }
 }
@@ -389,12 +413,12 @@ mod tests {
     use super::generate;
 
     #[test]
-    fn generated_frontier_has_no_unsafe_approval_and_retains_availability_cost() {
+    fn generated_frontier_has_no_unsafe_approval_or_false_refusal() {
         let report = generate();
         assert_eq!(report.total.scenarios, 512);
         assert_eq!(report.total.expected_apply, 256);
         assert_eq!(report.total.expected_refuse, 256);
         assert_eq!(report.total.unsafe_approvals, 0);
-        assert_eq!(report.total.false_refusals, 64);
+        assert_eq!(report.total.false_refusals, 0);
     }
 }

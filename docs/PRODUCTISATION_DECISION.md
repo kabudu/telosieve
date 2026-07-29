@@ -62,12 +62,13 @@ Certificate v3 still approved an unsafe transition when every viability domain
 was weakened.
 
 Certificate v4's stable-key safety kernel removes that reproduced boundary
-without changing the oracle: the cross-domain fixture and all 512 generated
-scenarios now report zero unsafe approvals. The 64 false refusals among 256 safe
-goals remain, and zero finite-model failures is not a general proof. Independent
-organizational reproduction, security review, operational fault-domain
-independence, authorized deletion semantics, and a new explicit opening decision
-also remain unresolved. The binding decision remains **narrow**.
+without changing the oracle. Certificate v5 then replaces the single goal
+principal with two agreeing declared goal domains: all 512 generated scenarios
+now report zero unsafe approvals and zero false refusals. Zero finite-model
+failures is not a general proof. Authenticated goal disagreement remains
+fail-closed, and organizational reproduction, security review, operational
+fault-domain independence, authorized deletion semantics, and a new explicit
+opening decision remain unresolved. The binding decision remains **narrow**.
 
 ## Evidence basis
 
@@ -77,3 +78,4 @@ also remain unresolved. The binding decision remains **narrow**.
 - [Validation and falsification plan](VALIDATION.md)
 - [Generated safety/availability state space](GENERATED_STATE_SPACE.md)
 - [Stable-key safety kernel](STABLE_KEY_SAFETY_KERNEL.md)
+- [Multi-principal goal evidence](MULTI_PRINCIPAL_GOALS.md)

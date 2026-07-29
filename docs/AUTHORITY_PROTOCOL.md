@@ -21,11 +21,13 @@ safe under every non-eliminated hypothesis; disagreement or underdetermination
 requires refusal.
 
 The harness implements the fields above, Ed25519 authentication, subject and
-validity checks, SHA-256 content binding, exact-one cardinality for goal and
-phenotype, and one-or-more viability envelopes with unique issuers. When viability
-is suspectable, hypotheses exclude complete declared viability fault domains and
-bind their domains and issuer exclusions into certificate v3. All surviving
-viability rules must approve the common transition.
+validity checks, SHA-256 content binding, exact-one cardinality for phenotype,
+and one-or-more goal and viability envelopes with unique issuers. Goal principals
+must agree exactly. When goal or viability is suspectable, hypotheses exclude
+complete declared fault domains and bind their domains and issuer exclusions
+into the certificate. At least one agreeing goal issuer and one viability issuer
+must survive their respective exclusions; all surviving viability rules must
+approve the common transition.
 
 Signed bytes use deterministic serialization of typed fields and ordered maps.
 The harness does not yet maintain issuer history, detect equivocation across runs,
@@ -40,3 +42,7 @@ remains research configuration rather than a durable production checkpoint.
 Certificate v3 binds viability fault-domain exclusions as well as issuer
 exclusions. Domain mappings are trusted scenario configuration and are validated
 before bounded enumeration. See [CORRELATED_FAULTS](CORRELATED_FAULTS.md).
+
+Certificate v5 adds goal fault-domain exclusions. Missing, empty, unknown, or
+inapplicable goal mappings and authenticated goal disagreement fail closed before
+checker work. See [MULTI_PRINCIPAL_GOALS](MULTI_PRINCIPAL_GOALS.md).

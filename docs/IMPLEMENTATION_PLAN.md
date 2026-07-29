@@ -73,5 +73,20 @@ Evidence: 512 authenticated generated scenarios and per-cell results in
   cost, versioned certificates/checkers, and explicit residual bounds.
 
 Evidence: [STABLE_KEY_SAFETY_KERNEL](STABLE_KEY_SAFETY_KERNEL.md). Productisation
-remains blocked by finite-model limits, false refusals, deletion semantics, and
-independent-review gates.
+remained blocked at that milestone by finite-model limits, false refusals,
+deletion semantics, and independent-review gates.
+
+## Post-M6 — goal-domain availability
+
+- [x] Authenticate multiple agreeing goal principals and declare their fault
+  domains when goal faults are in scope.
+- [x] Exclude complete goal domains per bounded hypothesis and require a
+  surviving goal principal.
+- [x] Reject authenticated disagreement and invalid domain mappings before
+  planning.
+- [x] Exit: unchanged 512-scenario oracle, zero unsafe approvals, zero false
+  refusals, quantified hypothesis/latency costs, and explicit independence limits.
+
+Evidence: [MULTI_PRINCIPAL_GOALS](MULTI_PRINCIPAL_GOALS.md). Third-party
+organizational reproduction/security review remains unchecked and cannot be
+self-certified by this repository.
