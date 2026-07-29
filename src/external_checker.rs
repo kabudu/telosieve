@@ -1,8 +1,9 @@
 use std::{
-    io::Write,
-    process::{Command, Stdio},
+    io::{BufRead, BufReader, Write},
+    process::{Child, ChildStdin, Command, Stdio},
+    sync::mpsc::{self, Receiver},
     thread,
-    time::{Duration, Instant},
+    time::Duration,
 };
 
 use serde::Serialize;
@@ -28,65 +29,161 @@ pub enum ExternalCheckerError {
     Io(#[from] std::io::Error),
     #[error("checker response was invalid: {0}")]
     Json(#[from] serde_json::Error),
-    #[error("checker exited unsuccessfully: {0}")]
-    Exit(String),
-    #[error("checker process did not expose piped stdin")]
-    MissingStdin,
-    #[error("checker exceeded the two-second execution bound")]
+    #[error("checker exited before returning a response")]
+    Exit,
+    #[error("checker process did not expose piped {0}")]
+    MissingPipe(&'static str),
+    #[error("checker exceeded the two-second response bound")]
     Timeout,
 }
 
-/// Evaluates a transition through the independently implemented Python checker.
-///
-/// # Errors
-///
-/// Returns an error when the checker cannot start, exchange valid JSON, or exits
-/// unsuccessfully.
-pub fn check(
-    current: &ServiceState,
-    transition: &Transition,
-    rules: &ViabilityRules,
-) -> Result<CheckerVerdict, ExternalCheckerError> {
-    let mut child = Command::new("python3")
-        .arg(concat!(env!("CARGO_MANIFEST_DIR"), "/scripts/checker.py"))
-        .stdin(Stdio::piped())
-        .stdout(Stdio::piped())
-        .stderr(Stdio::piped())
-        .spawn()?;
-    serde_json::to_writer(
-        child
-            .stdin
-            .as_mut()
-            .ok_or(ExternalCheckerError::MissingStdin)?,
-        &Request {
-            current,
-            current_digest: digest(current),
-            transition,
-            rules,
-        },
-    )?;
-    child
-        .stdin
-        .take()
-        .ok_or(ExternalCheckerError::MissingStdin)?
-        .flush()?;
-    let deadline = Instant::now() + Duration::from_secs(2);
-    loop {
-        if child.try_wait()?.is_some() {
-            break;
-        }
-        if Instant::now() >= deadline {
-            child.kill()?;
-            let _ = child.wait();
-            return Err(ExternalCheckerError::Timeout);
-        }
-        thread::sleep(Duration::from_millis(5));
+pub struct CheckerSession {
+    child: Child,
+    stdin: ChildStdin,
+    responses: Receiver<Result<String, std::io::Error>>,
+    response_timeout: Duration,
+}
+
+impl CheckerSession {
+    /// Starts one independently implemented checker process for a bounded run.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error when Python cannot start or required pipes are absent.
+    pub fn start() -> Result<Self, ExternalCheckerError> {
+        let mut command = Command::new("python3");
+        command.arg(concat!(env!("CARGO_MANIFEST_DIR"), "/scripts/checker.py"));
+        Self::start_command(&mut command, Duration::from_secs(2))
     }
-    let output = child.wait_with_output()?;
-    if !output.status.success() {
-        return Err(ExternalCheckerError::Exit(
-            String::from_utf8_lossy(&output.stderr).into_owned(),
+
+    fn start_command(
+        command: &mut Command,
+        response_timeout: Duration,
+    ) -> Result<Self, ExternalCheckerError> {
+        let mut child = command
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::null())
+            .spawn()?;
+        let stdin = child
+            .stdin
+            .take()
+            .ok_or(ExternalCheckerError::MissingPipe("stdin"))?;
+        let stdout = child
+            .stdout
+            .take()
+            .ok_or(ExternalCheckerError::MissingPipe("stdout"))?;
+        let (sender, responses) = mpsc::channel();
+        thread::spawn(move || {
+            for line in BufReader::new(stdout).lines() {
+                if sender.send(line).is_err() {
+                    break;
+                }
+            }
+        });
+        Ok(Self {
+            child,
+            stdin,
+            responses,
+            response_timeout,
+        })
+    }
+
+    /// Checks one bounded request using the scenario-owned process.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error on write, timeout, process exit, or malformed output.
+    pub fn check(
+        &mut self,
+        current: &ServiceState,
+        transition: &Transition,
+        rules: &ViabilityRules,
+    ) -> Result<CheckerVerdict, ExternalCheckerError> {
+        serde_json::to_writer(
+            &mut self.stdin,
+            &Request {
+                current,
+                current_digest: digest(current),
+                transition,
+                rules,
+            },
+        )?;
+        self.stdin.write_all(b"\n")?;
+        self.stdin.flush()?;
+        match self.responses.recv_timeout(self.response_timeout) {
+            Ok(Ok(line)) => Ok(serde_json::from_str(&line)?),
+            Ok(Err(error)) => Err(error.into()),
+            Err(mpsc::RecvTimeoutError::Timeout) => {
+                let _ = self.child.kill();
+                let _ = self.child.wait();
+                Err(ExternalCheckerError::Timeout)
+            }
+            Err(mpsc::RecvTimeoutError::Disconnected) => Err(ExternalCheckerError::Exit),
+        }
+    }
+}
+
+impl Drop for CheckerSession {
+    fn drop(&mut self) {
+        let _ = self.child.kill();
+        let _ = self.child.wait();
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::model::{ServiceState, Transition};
+    use std::collections::BTreeMap;
+
+    fn request() -> (ServiceState, Transition, ViabilityRules) {
+        let current = ServiceState {
+            replicas: BTreeMap::from([("replica-a".into(), BTreeMap::new())]),
+        };
+        let transition = Transition {
+            before_digest: digest(&current),
+            after: current.clone(),
+        };
+        let rules = ViabilityRules {
+            replica_count: 1,
+            require_consensus: true,
+            required_keys: BTreeMap::new(),
+        };
+        (current, transition, rules)
+    }
+
+    #[test]
+    fn malformed_response_fails_closed() {
+        let mut command = Command::new("python3");
+        command.args([
+            "-u",
+            "-c",
+            "import sys\nfor line in sys.stdin:\n print('bad')",
+        ]);
+        let mut session =
+            CheckerSession::start_command(&mut command, Duration::from_millis(200)).unwrap();
+        let (current, transition, rules) = request();
+        assert!(matches!(
+            session.check(&current, &transition, &rules),
+            Err(ExternalCheckerError::Json(_))
         ));
     }
-    Ok(serde_json::from_slice(&output.stdout)?)
+
+    #[test]
+    fn response_timeout_fails_closed() {
+        let mut command = Command::new("python3");
+        command.args([
+            "-u",
+            "-c",
+            "import sys,time\nfor line in sys.stdin:\n time.sleep(1)",
+        ]);
+        let mut session =
+            CheckerSession::start_command(&mut command, Duration::from_millis(20)).unwrap();
+        let (current, transition, rules) = request();
+        assert!(matches!(
+            session.check(&current, &transition, &rules),
+            Err(ExternalCheckerError::Timeout)
+        ));
+    }
 }

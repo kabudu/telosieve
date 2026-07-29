@@ -65,7 +65,8 @@ pub fn run_scenario_file(
 pub fn run_scenario(scenario: &Scenario) -> Result<Certificate, RunError> {
     let authorities = verify(scenario)?;
     validate_declaration(scenario, &authorities)?;
-    let hypotheses = enumerate_hypotheses(scenario, &authorities)?;
+    let mut checker_session = crate::external_checker::CheckerSession::start()?;
+    let hypotheses = enumerate_hypotheses(scenario, &authorities, &mut checker_session)?;
     let safe_transitions: Vec<&Transition> = hypotheses
         .iter()
         .filter_map(
@@ -105,7 +106,11 @@ pub fn run_scenario(scenario: &Scenario) -> Result<Certificate, RunError> {
             "at least one surviving hypothesis has no certified safe transition".into()
         }
     });
-    let baselines = build_baselines(&authorities, scenario.expected_decision)?;
+    let baselines = build_baselines(
+        &authorities,
+        scenario.expected_decision,
+        &mut checker_session,
+    )?;
     let false_refusal =
         decision == Decision::Refused && scenario.expected_decision == ExpectedDecision::Apply;
     let unsafe_approval =
@@ -135,6 +140,7 @@ pub fn run_scenario(scenario: &Scenario) -> Result<Certificate, RunError> {
 fn build_baselines(
     authorities: &VerifiedAuthorities,
     expected: ExpectedDecision,
+    checker_session: &mut crate::external_checker::CheckerSession,
 ) -> Result<Vec<BaselineRecord>, RunError> {
     let conventional_transition = authorities.phenotype.transition_to(&authorities.goal);
     let conventional_checker =
@@ -145,7 +151,7 @@ fn build_baselines(
         .map(|values| authorities.phenotype.transition_to(values));
     let signed_history_checker = signed_history_transition
         .as_ref()
-        .map(|plan| check_all_viability(authorities, plan))
+        .map(|plan| check_all_viability(authorities, plan, checker_session))
         .transpose()?;
     let invariant_decision = if conventional_checker.safe {
         Decision::Applied
@@ -246,6 +252,7 @@ fn bounded_hypothesis_count(n: usize, budget: usize, limit: usize) -> Result<usi
 fn enumerate_hypotheses(
     scenario: &Scenario,
     authorities: &VerifiedAuthorities,
+    checker_session: &mut crate::external_checker::CheckerSession,
 ) -> Result<Vec<HypothesisRecord>, RunError> {
     let targets: Vec<_> = scenario
         .fault_declaration
@@ -269,7 +276,7 @@ fn enumerate_hypotheses(
     }
     fault_sets
         .iter()
-        .map(|suspected| evaluate_hypothesis(authorities, suspected))
+        .map(|suspected| evaluate_hypothesis(authorities, suspected, checker_session))
         .collect()
 }
 
@@ -294,6 +301,7 @@ fn combinations(
 fn evaluate_hypothesis(
     authorities: &VerifiedAuthorities,
     suspected: &BTreeSet<FaultTarget>,
+    checker_session: &mut crate::external_checker::CheckerSession,
 ) -> Result<HypothesisRecord, RunError> {
     let suspects = |kind| suspected.contains(&FaultTarget::Authority(kind));
     let desired = if suspects(AuthorityKind::Goal) && suspects(AuthorityKind::Phenotype) {
@@ -314,7 +322,7 @@ fn evaluate_hypothesis(
                     FaultTarget::Authority(_) => None,
                 })
                 .collect();
-            check_surviving_viability(authorities, transition, &excluded)
+            check_surviving_viability(authorities, transition, &excluded, checker_session)
         })
         .transpose()?;
     let suspected_kinds: Vec<_> = suspected
@@ -350,8 +358,9 @@ enum FaultTarget {
 fn check_all_viability(
     authorities: &VerifiedAuthorities,
     transition: &Transition,
+    checker_session: &mut crate::external_checker::CheckerSession,
 ) -> Result<crate::checker::CheckerVerdict, RunError> {
-    check_surviving_viability(authorities, transition, &BTreeSet::new())
+    check_surviving_viability(authorities, transition, &BTreeSet::new(), checker_session)
 }
 
 fn check_all_viability_in_process(
@@ -379,6 +388,7 @@ fn check_surviving_viability(
     authorities: &VerifiedAuthorities,
     transition: &Transition,
     excluded: &BTreeSet<&str>,
+    checker_session: &mut crate::external_checker::CheckerSession,
 ) -> Result<crate::checker::CheckerVerdict, RunError> {
     let surviving: Vec<_> = authorities
         .viability
@@ -395,7 +405,7 @@ fn check_surviving_viability(
     let mut reasons = Vec::new();
     for authority in surviving {
         let verdict =
-            crate::external_checker::check(&authorities.phenotype, transition, &authority.rules)?;
+            checker_session.check(&authorities.phenotype, transition, &authority.rules)?;
         reasons.extend(
             verdict
                 .reasons

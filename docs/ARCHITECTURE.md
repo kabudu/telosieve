@@ -40,5 +40,8 @@ deterministic state values rather than production side effects. Hypothesis work 
 bounded by `maximum_hypotheses`; every authority subset up to the declared budget
 is enumerated deterministically and rejected before evaluation when the configured
 bound is insufficient. M1 invokes a separately implemented Python checker over a
-JSON process boundary. It independently parses and evaluates the service and
-viability models; differential tests compare it with the Rust reference checker.
+JSON process boundary. Post-M3 batching owns one checker process per scenario and
+exchanges bounded NDJSON requests, avoiding per-hypothesis startup without sharing
+planner code. Each response has a two-second timeout; failure aborts the run. The
+checker independently parses and evaluates the service and viability models, and
+differential tests compare it with the Rust reference checker.

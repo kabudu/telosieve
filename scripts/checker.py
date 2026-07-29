@@ -5,8 +5,7 @@ import json
 import sys
 
 
-def main() -> int:
-    request = json.load(sys.stdin)
+def check(request: dict) -> dict:
     current = request["current"]
     transition = request["transition"]
     rules = request["rules"]
@@ -32,16 +31,19 @@ def main() -> int:
     if not current["replicas"]:
         reasons.append("current state has no replicas")
 
-    json.dump(
-        {
-            "implementation": "telosieve-python-checker/v1",
-            "safe": not reasons,
-            "reasons": reasons,
-        },
-        sys.stdout,
-        sort_keys=True,
-        separators=(",", ":"),
-    )
+    return {
+        "implementation": "telosieve-python-checker/v2",
+        "safe": not reasons,
+        "reasons": reasons,
+    }
+
+
+def main() -> int:
+    for line in sys.stdin:
+        request = json.loads(line)
+        json.dump(check(request), sys.stdout, sort_keys=True, separators=(",", ":"))
+        sys.stdout.write("\n")
+        sys.stdout.flush()
     return 0
 
 

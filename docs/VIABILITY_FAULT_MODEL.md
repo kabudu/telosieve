@@ -29,10 +29,17 @@ strict principal still cannot produce unanimous approval across all hypotheses.
 
 For `n` suspectable targets and fault budget `f`, hypothesis count is
 `sum(C(n, i), i=0..f)` and is rejected before checking when it exceeds
-`maximum_hypotheses`. Each hypothesis invokes at most one bounded checker process
-per surviving viability principal; each process retains its two-second timeout.
-The current implementation is serial, so worst-case checker latency is bounded by
-the product of hypotheses, surviving principals, and the per-process timeout.
+`maximum_hypotheses`. One independently implemented Python checker process is
+owned by each scenario run. Requests are serialized through an NDJSON boundary
+and each response retains its two-second timeout. The number of requests remains
+bounded by hypotheses times surviving viability principals plus baseline checks;
+a timeout, process exit, malformed response, or pipe failure aborts the run.
+
+The retained batching benchmark is
+`results/post-m3-batched-checker-benchmark.json`. On the same development machine,
+scenario p50 latency fell from 75.8–151.7 ms to 16.4–16.6 ms while decisions,
+hypothesis counts, certificate sizes, and safety metrics remained unchanged.
+Timings are observations, not guarantees.
 
 Duplicate viability issuers, missing viability authorities, invalid signatures,
 and insufficient hypothesis bounds fail closed.
