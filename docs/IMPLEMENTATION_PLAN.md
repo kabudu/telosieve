@@ -14,18 +14,24 @@ configuration whose finite hypothesis count exceeds `maximum_hypotheses`.
 
 ## M1 — hypothesis protocol
 
-Implement bounded hypothesis enumeration, provenance exclusion, and three
-baselines: conventional reconciler, signed-history rollback, and invariant-gated
-reconciler. Replace M0's shared Rust/Serde representation with genuinely diverse
-planner/checker parsing and semantics before making an independence claim.
+- [ ] Implement bounded general hypothesis enumeration and provenance exclusion.
+- [ ] Add signed-history rollback and invariant-gated reconciler baselines.
+- [ ] Replace shared Rust/Serde planner-checker semantics with a diverse checker
+  boundary and demonstrate parser/model differential tests.
+- [ ] Exit: every protocol requirement has behavioural evidence and all three
+  baselines replay through the public harness.
 
 ## M2 — adversarial evaluation
 
-Run malicious/stale goals, omitted/forged observations, weakened invariants,
-partitions, equivocation, parser differential, and correlated-fault probes. Publish
-all negative results.
+- [ ] Run malicious/stale goals, omitted/forged observations, weakened invariants,
+  partitions, equivocation, parser differential, and correlated-fault probes.
+- [ ] Measure hypothesis growth, compute cost, recovery latency, unsafe approvals,
+  and false refusals against every baseline.
+- [ ] Exit: retain reproducible raw results and report all negative results.
 
 ## M3 — productisation decision
 
-Proceed only if the candidate improves poisoned-goal safety with quantified,
-acceptable availability and complexity costs. Otherwise narrow or archive it.
+- [ ] Compare the registered safety claim with quantified availability and
+  complexity costs.
+- [ ] Refresh novelty, name, security, soundness, and release diligence.
+- [ ] Exit: explicitly proceed, narrow, or archive the project based on evidence.

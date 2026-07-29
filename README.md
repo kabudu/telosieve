@@ -36,6 +36,15 @@ cargo run -- run scenarios/benign.json out/benign-certificate.json out/ledger.js
 cargo run -- run scenarios/poisoned-goal.json out/refusal-certificate.json out/ledger.jsonl
 ```
 
+For the complete private-repository quality gate, run:
+
+```sh
+./scripts/ci-local.sh
+```
+
+Hosted CI is intentionally disabled until an explicitly approved public-opening
+or research-release gate.
+
 Each run authenticates all authority envelopes before evaluation. The certificate
 is deterministic for identical inputs; the JSONL ledger is append-only. The
 fixture generator uses deterministic research-only signing keys:

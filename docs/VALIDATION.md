@@ -32,3 +32,12 @@ consensus, and `cluster/epoch = 7` on every replica. Certificates report hypothe
 count, unsafe approvals, false refusals, and the conventional-reconciler baseline
 verdict. Wall-clock latency and compute-cost benchmarking begin in M1 because
 including nondeterministic timing in M0 certificates would break byte replay.
+
+## Authoritative local CI
+
+While the repository remains private, all milestone validation runs through
+`./scripts/ci-local.sh`. It checks formatting, strict static analysis, the complete
+test suite, warning-free documentation, locked offline dependency resolution,
+Cargo metadata, repository-owned documentation validation, diff hygiene,
+placeholder markers, and the absence of hosted CI workflow files. Pull requests
+record the command and result; no hosted check is expected or implied.
