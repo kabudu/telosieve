@@ -27,9 +27,10 @@ review were missing, domain independence was unverified, and no new explicit
 release decision had been made.
 
 Certificate v6 subsequently adds exact context-bound deletion authorization.
-The release block remains because durable one-shot consumption, production
-actuation, independent review/reproduction, and verified domain separation are
-still absent.
+Certificate v7 adds bounded, atomic one-shot consumption to the single-host
+anchored path. The release block remains because production actuation,
+independent review/reproduction, platform-qualified durable storage, and
+verified organizational domain separation are still absent.
 
 ## CI and delivery policy
 

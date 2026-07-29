@@ -27,9 +27,10 @@ stable-key continuity kernel removes every unsafe approval reproduced by the
 registered fixtures and 512-scenario generated state space without changing
 their oracles. Certificate v5's two agreeing declared goal domains also remove
 the 64 measured safe-case refusals. Domain labels do not prove organizational
-independence. Certificate v6 additionally permits only separately authorized,
-goal/tip-bound exact key deletion; ordinary omission still refuses. The bounded
-result is not a general safety proof. The harness
+independence. Certificate v6 permits only separately authorized, goal/tip-bound
+exact key deletion; certificate v7 atomically consumes an applied authorization
+once in the single-host anchored path. Ordinary omission still refuses. The
+bounded result is not a general safety proof. The harness
 authenticates a bounded scenario,
 evaluates its declared hypotheses, applies only one common independently checked
 transition, and otherwise emits a refusal certificate. See
@@ -48,7 +49,8 @@ cargo run -- run scenarios/poisoned-goal.json out/refusal-certificate.json out/l
 ```
 
 For durable history rollback detection, explicitly initialize and use the
-anchored path:
+anchored path. This is also the only path that provides one-shot deletion
+consumption:
 
 ```sh
 cargo run -- anchor-init scenarios/benign.json out/phenotype-anchor.json

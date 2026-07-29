@@ -104,4 +104,21 @@ self-certified by this repository.
   are retained.
 
 Evidence: [AUTHORIZED_DELETION](AUTHORIZED_DELETION.md). Durable one-shot
-consumption and third-party organizational review remain unresolved.
+consumption and third-party organizational review remained unresolved.
+
+## Post-M8 — durable deletion consumption
+
+- [x] Derive an auditable identifier from the exact authenticated deletion
+  envelope set and expose it in certificate v7.
+- [x] Atomically commit history-anchor advancement and applied deletion
+  consumption in one versioned durable state.
+- [x] Fail closed on replay, corruption, legacy state, stale locks, history
+  conflicts, and the bounded ledger's capacity limit.
+- [x] Preserve deterministic stateless research replay and document safe
+  authorization burn when later evidence persistence fails.
+- [x] Exit: the anchored authorized fixture applies once, its identical replay
+  fails before new evidence is emitted, and existing local validation passes.
+
+Evidence: [DURABLE_DELETION_CONSUMPTION](DURABLE_DELETION_CONSUMPTION.md).
+Third-party organizational reproduction/security review remains an external
+unchecked gate.

@@ -65,10 +65,15 @@ domains, and passed to both checker implementations. Each checker requires exact
 equality with stable keys actually removed; no surviving deletion principal means
 an empty authorization and refusal.
 
+Certificate v7 derives a domain-separated identifier from the exact signed
+deletion-envelope set. The anchored execution path evaluates first, then commits
+the applied identifier and phenotype anchor together in the existing locked,
+fsync-and-rename durable state. The stateless research path does not consume it.
+
 The signed-history baseline verifies a maximum of 64 predecessor phenotype
 envelopes against an explicit current-tip anchor before planning, then replays the
-authenticated predecessor. The harness anchor is trusted configuration; durable
-monotonic storage remains outside the implementation boundary.
+authenticated predecessor. The stateless harness anchor remains trusted
+configuration; durable monotonic storage is provided only by the anchored path.
 
 The anchored CLI path moves the current tip into a crash-synchronized local file
 with explicit initialization, monotonic compare-and-advance, atomic replacement,

@@ -261,6 +261,66 @@ fn durable_anchor_initialization_and_public_run_are_fail_closed() {
 }
 
 #[test]
+fn anchored_authorized_deletion_is_consumed_once() {
+    let test_dir = Path::new("target")
+        .join("deletion-consumption-tests")
+        .join(std::process::id().to_string());
+    let _ = fs::remove_dir_all(&test_dir);
+    fs::create_dir_all(&test_dir).unwrap();
+    let scenario = Path::new("scenarios/authorized-deletion.json");
+    let anchor = test_dir.join("anchor.json");
+    let certificate = test_dir.join("certificate.json");
+    let ledger = test_dir.join("ledger.jsonl");
+
+    initialize_anchor_file(scenario, &anchor).unwrap();
+    let first = run_scenario_file_anchored(scenario, &certificate, &ledger, &anchor).unwrap();
+    assert_eq!(first.decision, Decision::Applied);
+    assert!(first.deletion_authorization_id.is_some());
+    assert!(matches!(
+        run_scenario_file_anchored(scenario, &certificate, &ledger, &anchor),
+        Err(RunError::Anchor(
+            telosieve::anchor_store::AnchorError::AuthorizationConsumed(_)
+        ))
+    ));
+    assert_eq!(fs::read_to_string(&ledger).unwrap().lines().count(), 1);
+
+    let replayable = run_scenario(&load("authorized-deletion.json")).unwrap();
+    assert_eq!(
+        replayable.deletion_authorization_id,
+        first.deletion_authorization_id
+    );
+    fs::remove_dir_all(test_dir).unwrap();
+}
+
+#[test]
+fn evidence_failure_burns_applied_deletion_authorization_safely() {
+    let test_dir = Path::new("target")
+        .join("deletion-evidence-failure-tests")
+        .join(std::process::id().to_string());
+    let _ = fs::remove_dir_all(&test_dir);
+    fs::create_dir_all(&test_dir).unwrap();
+    let scenario = Path::new("scenarios/authorized-deletion.json");
+    let anchor = test_dir.join("anchor.json");
+    let certificate = test_dir.join("certificate.json");
+    let invalid_ledger = test_dir.join("ledger-directory");
+    fs::create_dir(&invalid_ledger).unwrap();
+
+    initialize_anchor_file(scenario, &anchor).unwrap();
+    assert!(matches!(
+        run_scenario_file_anchored(scenario, &certificate, &invalid_ledger, &anchor),
+        Err(RunError::Io(_))
+    ));
+    assert!(!certificate.exists());
+    assert!(matches!(
+        run_scenario_file_anchored(scenario, &certificate, &invalid_ledger, &anchor),
+        Err(RunError::Anchor(
+            telosieve::anchor_store::AnchorError::AuthorizationConsumed(_)
+        ))
+    ));
+    fs::remove_dir_all(test_dir).unwrap();
+}
+
+#[test]
 fn rust_and_python_checkers_agree_on_safe_and_unsafe_transitions() {
     let scenario = load("poisoned-goal.json");
     let certificate = run_scenario(&scenario).unwrap();
@@ -340,7 +400,7 @@ fn protocol_rejects_stale_unknown_schema_and_duplicate_authorities() {
 fn public_replay_reports_all_baselines_and_protocol_evidence() {
     for fixture in ["benign.json", "poisoned-goal.json"] {
         let certificate = run_scenario(&load(fixture)).unwrap();
-        assert_eq!(certificate.certificate_version, "telosieve.certificate/v6");
+        assert_eq!(certificate.certificate_version, "telosieve.certificate/v7");
         let names: Vec<_> = certificate
             .baselines
             .iter()

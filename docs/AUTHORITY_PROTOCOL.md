@@ -51,3 +51,8 @@ Certificate v6 adds exact, goal- and phenotype-tip-bound deletion authorization.
 Deletion domains are excluded like goal and viability domains; every hypothesis
 records the surviving authorized key set. See
 [AUTHORIZED_DELETION](AUTHORIZED_DELETION.md).
+
+Certificate v7 additionally exposes a domain-separated digest of the exact
+agreeing signed deletion-envelope set. The anchored runner uses that identifier
+for durable one-shot consumption; it is not part of stateless verification
+semantics.

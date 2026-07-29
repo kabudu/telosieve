@@ -123,9 +123,13 @@ pub fn run_scenario_anchored(
     let authorities = verify(scenario)?;
     let fault_targets = fault_targets(scenario, &authorities)?;
     validate_declaration(scenario, fault_targets.len())?;
+    let certificate = evaluate_preflighted_scenario(scenario, authorities, &fault_targets)?;
+    let consumed_identifier = (certificate.decision == Decision::Applied)
+        .then_some(certificate.deletion_authorization_id.as_deref())
+        .flatten();
     crate::anchor_store::AnchorStore::new(anchor_path)
-        .compare_and_advance(&scenario.phenotype_history_anchor)?;
-    evaluate_preflighted_scenario(scenario, authorities, &fault_targets)
+        .compare_advance_and_consume(&scenario.phenotype_history_anchor, consumed_identifier)?;
+    Ok(certificate)
 }
 
 fn run_verified_scenario(
@@ -196,10 +200,11 @@ fn evaluate_preflighted_scenario(
     let hypothesis_count = hypotheses.len();
 
     Ok(Certificate {
-        certificate_version: "telosieve.certificate/v6".into(),
+        certificate_version: "telosieve.certificate/v7".into(),
         scenario_id: scenario.scenario_id.clone(),
         seed: scenario.seed,
         authority_digests: authorities.digests,
+        deletion_authorization_id: authorities.deletion_authorization_id,
         phenotype_history_anchor: scenario.phenotype_history_anchor.clone(),
         hypotheses,
         decision,

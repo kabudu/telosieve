@@ -10,6 +10,7 @@
 | SEM-6 | Prevent unanimous viability weakening from authorizing key deletion | Stable-key continuity in independent Rust/Python checkers | cross-domain fixture, differential tests, 512-scenario exploration |
 | SEM-7 | Preserve safe-goal availability while goal domains are suspectable | Multiple agreeing goal principals with domain exclusion | mapping/disagreement adversarial tests, 512-scenario exploration |
 | SEM-8 | Permit only explicitly authorized stable-key deletion | Goal/tip-bound deletion principals, domain exclusion, exact checker enforcement | authorized/unauthorized fixtures, replay/overbreadth/shared-domain tests |
+| SEM-9 | Consume an applied anchored deletion authorization at most once | Exact signed-envelope identity plus atomic anchor-state consumption ledger | one-shot public-boundary, evidence-failure burn, ledger-bound, legacy-state tests |
 | SEC-3 | Detect signed-history rollback and broken chains | Bounded phenotype chain plus trusted tip anchor | predecessor replay, omitted/forked/old-tip tests |
 | SEM-4 | Refuse ambiguity | protocol acceptance rule | contradictory-authority E2E |
 | REL-1 | Reproducible decisions | content addressing | deterministic replay |

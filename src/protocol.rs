@@ -133,6 +133,7 @@ pub struct VerifiedAuthorities {
     pub goal: Values,
     pub goal_issuers: BTreeSet<String>,
     pub deletion: Option<DeletionAuthorization>,
+    pub deletion_authorization_id: Option<String>,
     pub deletion_issuers: BTreeSet<String>,
     pub phenotype: ServiceState,
     pub phenotype_history: Vec<ServiceState>,
@@ -273,12 +274,20 @@ pub fn verify(scenario: &Scenario) -> Result<VerifiedAuthorities, ProtocolError>
         });
     }
     let digests = authority_digests(scenario);
+    let deletion_authorization_id = deletion.as_ref().map(|_| {
+        let envelope_digests: BTreeSet<_> = deletion_envelopes
+            .iter()
+            .map(|envelope| digest(*envelope))
+            .collect();
+        digest(&("telosieve.deletion-authorization/v1", envelope_digests))
+    });
 
     Ok(VerifiedAuthorities {
         digests,
         goal,
         goal_issuers,
         deletion,
+        deletion_authorization_id,
         deletion_issuers,
         phenotype,
         phenotype_history,

@@ -43,3 +43,9 @@ Certificate-v6 coverage adds signed authorized and unauthorized deletion
 fixtures. It verifies exact key removal through the public engine, unchanged
 state on refusal, goal-binding replay rejection, mapping failures, and refusal
 when one correlated domain contains every deletion issuer.
+
+Certificate-v7 coverage runs authorized deletion through the public anchored
+file boundary twice. The first run applies and persists one record; the second
+fails on durable consumption without emitting another. A separate failure-path
+test makes ledger persistence fail after durable commit and verifies the
+authorization remains burned.

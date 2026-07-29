@@ -68,9 +68,11 @@ now report zero unsafe approvals and zero false refusals. Zero finite-model
 failures is not a general proof. Authenticated goal disagreement remains
 fail-closed. Certificate v6 adds exact separately authorized deletion bound to
 the goal and phenotype tip; ordinary omission and cross-context replay refuse.
-Durable one-shot consumption, organizational reproduction, security review,
-operational fault-domain independence, and a new explicit opening decision
-remain unresolved. The binding decision remains **narrow**.
+Certificate v7 adds bounded single-host one-shot consumption on the anchored
+path. Production actuation, organizational reproduction, security review,
+operational fault-domain independence, platform-qualified durability, and a new
+explicit opening decision remain unresolved. The binding decision remains
+**narrow**.
 
 ## Evidence basis
 

@@ -20,7 +20,7 @@ but it does not claim durable rollback protection.
 
 ## Invariants
 
-The store accepts only:
+The versioned anchor state accepts only:
 
 - an idempotent replay of the exact stored issuer, sequence, and digest; or
 - the same issuer at exactly the next sequence.
@@ -28,6 +28,11 @@ The store accepts only:
 Lower sequences, same-sequence digest conflicts, issuer changes, sequence gaps,
 missing/corrupt stores, and concurrent or crash-stale locks fail closed.
 Initialization refuses to replace an existing store.
+
+Certificate v7 stores a bounded set of consumed deletion-authorization
+identifiers beside the anchor. An applied anchored deletion inserts its
+identifier in the same locked atomic replacement as any anchor advancement.
+See [DURABLE_DELETION_CONSUMPTION](DURABLE_DELETION_CONSUMPTION.md).
 
 ## Persistence protocol
 
@@ -41,10 +46,11 @@ such a lock is stale or automatically breaks it. An operator must verify no writ
 is live, preserve the store and temporary file for incident analysis, and remove
 only the lock directory before retrying.
 
-Protocol verification and fault-declaration bounds complete before the durable
-anchor advances. Checker or evidence-output failure after that point may leave the
-valid observed tip anchored without a completed decision artifact. The anchor
-tracks authenticated observed history, not decision commit.
+Protocol verification, fault-declaration bounds, and checking complete before
+the durable state commits. Evidence-output failure after commit may leave the
+valid observed tip anchored and an applied deletion authorization consumed
+without a completed decision artifact. This fail-closed availability loss
+prevents uncertain retry from authorizing a second side effect.
 
 ## Evidence and limits
 
@@ -53,9 +59,13 @@ conflict, gaps, missing/corrupt state, and lock contention. The public anchored
 file-boundary test proves uninitialized refusal occurs before certificate or
 ledger output, followed by successful explicit initialization and evaluation.
 
+Anchor files written before the versioned consumption ledger are rejected rather
+than silently upgraded because prior deletion consumption cannot be inferred.
+Operators must preserve the legacy file for audit and explicitly initialize a
+new store from verified current state.
+
 This is a Unix-filesystem research prototype. Filesystem and directory-fsync
 semantics, local storage integrity, operator lock recovery, and the initialization
 ceremony remain trusted. Production deployment would still require platform
 qualification, access control, backup/restore drills, multi-host consensus or
 hardware rollback resistance, and incident procedures.
-

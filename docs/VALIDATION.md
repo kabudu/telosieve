@@ -119,3 +119,9 @@ the same omission without evidence refuses. Replay into another goal, overbroad
 authorization, invalid mappings, and loss of every deletion domain fail closed.
 The existing 512-scenario oracle remains zero unsafe approvals and zero false
 refusals. See [AUTHORIZED_DELETION](AUTHORIZED_DELETION.md).
+
+Certificate v7 adds anchored one-shot evidence: the first exact authorization
+applies and is atomically recorded with the history anchor; identical replay
+fails without another ledger record. Capacity, legacy-state, lock, corruption,
+and post-commit evidence-failure tests exercise the bounded failure paths. See
+[DURABLE_DELETION_CONSUMPTION](DURABLE_DELETION_CONSUMPTION.md).

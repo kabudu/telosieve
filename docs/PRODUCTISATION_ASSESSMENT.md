@@ -70,6 +70,7 @@ See
 Certificate v6 adds a separately authenticated deletion path without weakening
 default continuity. The authorized fixture applies one exact deletion; the same
 goal without authorization refuses. This resolves the missing deletion semantics
-for the harness, but not durable one-shot consumption, production actuation, or
+for the harness. Certificate v7 adds bounded single-host one-shot consumption,
+but not production actuation, platform-qualified/multi-host durability, or
 organizational independence. See
 [AUTHORIZED_DELETION](AUTHORIZED_DELETION.md).

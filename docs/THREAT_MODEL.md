@@ -40,8 +40,10 @@ authorship, custody, implementation, or deployment.
 Certificate v6 authenticates separate deletion issuers and binds their exact key
 set to the goal digest and phenotype tip. Cross-context replay, divergent
 authorization, missing domains, and authorization overbreadth fail closed.
-Identical-context reuse remains idempotent; durable one-shot consumption,
-organizational independence, and production side effects remain outside scope.
+Certificate v7 derives an identifier from the exact signed deletion-envelope set
+and consumes it atomically with the history anchor in the anchored path.
+Stateless replay, organizational independence, and production side effects
+remain outside scope.
 
 Authenticated phenotype history rejects chain and anchor rollback within a
 64-record bound. The trusted anchor is configuration in this harness; compromise
@@ -50,3 +52,7 @@ or rollback of that trust root remains outside the demonstrated protection.
 The durable-anchor prototype detects store-level sequence rollback and conflict
 under a trusted local filesystem. Filesystem compromise, malicious lock recovery,
 disk firmware rollback, and multi-host split brain remain outside its protection.
+The consumption ledger is bounded at 4,096 validated identifiers and its state
+file at 512 KiB; either limit fails closed. Evidence failure after durable
+consumption can burn an authorization; this is a deliberate availability loss
+rather than permitting an uncertain replay.
