@@ -33,6 +33,14 @@ is outside the registered bound and remains a productisation stop.
 
 Raw observations are retained in `results/correlated-fault-benchmark.json`.
 
+## Subsequent remediation
+
+Certificate v4 adds the independently checked stable-key continuity kernel.
+Without changing this fixture's oracle, the all-domains-weakened transition now
+refuses because it deletes `cluster/epoch`. The earlier v3 result remains
+historical evidence of the root cause; current evidence is documented in
+[STABLE_KEY_SAFETY_KERNEL](STABLE_KEY_SAFETY_KERNEL.md).
+
 ## Fault-domain requirements
 
 An operator cannot satisfy independence by assigning different labels. A future
@@ -43,4 +51,3 @@ rules, or shared key custody collapse those principals into one fault domain.
 
 The research harness authenticates the mapping as trusted scenario configuration;
 it does not discover or attest organizational independence.
-

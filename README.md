@@ -22,8 +22,10 @@ and refuse repair when surviving evidence cannot distinguish safe outcomes.
 M3 is complete with an explicit decision to **narrow** the project. Telosieve
 remains private research. A post-M3 multi-principal experiment removes the
 registered weakened-viability unsafe approval under a one-domain fault bound,
-but productisation and public release remain blocked. Cross-domain correlated
-weakening supplies a retained unsafe approval outside that bound. The harness
+but productisation and public release remain blocked. Certificate v4's
+stable-key continuity kernel removes every unsafe approval reproduced by the
+registered fixtures and 512-scenario generated state space without changing
+their oracles. The bounded result is not a general safety proof. The harness
 authenticates a bounded scenario,
 evaluates its declared hypotheses, applies only one common independently checked
 transition, and otherwise emits a refusal certificate. See

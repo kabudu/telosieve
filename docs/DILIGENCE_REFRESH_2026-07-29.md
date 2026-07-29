@@ -44,3 +44,7 @@ and reported no vulnerability. This does not change the soundness result:
 The repository remains private and local CI remains authoritative. Hosted CI,
 publication, a research tag, and production deployment remain unauthorized. The
 unsafe approval prevents a release claiming the protocol is qualified.
+
+These bullets record the original certificate-v1 diligence snapshot. Certificate
+v4 later removes every reproduced unsafe approval through stable-key continuity;
+the other diligence and release gates remain.

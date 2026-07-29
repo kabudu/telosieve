@@ -389,12 +389,12 @@ mod tests {
     use super::generate;
 
     #[test]
-    fn generated_frontier_is_stable_and_retains_both_negative_boundaries() {
+    fn generated_frontier_has_no_unsafe_approval_and_retains_availability_cost() {
         let report = generate();
         assert_eq!(report.total.scenarios, 512);
         assert_eq!(report.total.expected_apply, 256);
         assert_eq!(report.total.expected_refuse, 256);
-        assert_eq!(report.total.unsafe_approvals, 48);
+        assert_eq!(report.total.unsafe_approvals, 0);
         assert_eq!(report.total.false_refusals, 64);
     }
 }

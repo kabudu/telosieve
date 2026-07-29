@@ -186,4 +186,33 @@ mod tests {
             Err(ExternalCheckerError::Timeout)
         ));
     }
+
+    #[test]
+    fn stable_key_continuity_matches_the_reference_checker() {
+        let current = ServiceState {
+            replicas: BTreeMap::from([(
+                "replica-a".into(),
+                BTreeMap::from([("cluster/epoch".into(), "7".into())]),
+            )]),
+        };
+        let transition = Transition {
+            before_digest: digest(&current),
+            after: ServiceState {
+                replicas: BTreeMap::from([("replica-a".into(), BTreeMap::new())]),
+            },
+        };
+        let rules = ViabilityRules {
+            replica_count: 1,
+            require_consensus: true,
+            required_keys: BTreeMap::new(),
+        };
+        let reference = crate::checker::check(&current, &transition, &rules);
+        let external = CheckerSession::start()
+            .unwrap()
+            .check(&current, &transition, &rules)
+            .unwrap();
+        assert_eq!(external.safe, reference.safe);
+        assert_eq!(external.reasons, reference.reasons);
+        assert!(!external.safe);
+    }
 }

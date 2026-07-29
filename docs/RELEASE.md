@@ -18,9 +18,12 @@ and productisation. A tag or release requires a new explicit decision after the
 reopening conditions in
 [PRODUCTISATION_DECISION](PRODUCTISATION_DECISION.md) are satisfied.
 
-Post-M3 remediation removes that original result inside a one-domain bound, but
-the retained cross-domain correlated fixture produces another unsafe approval.
-The release block therefore remains in force.
+Certificate v4's stable-key safety kernel removes the original and cross-domain
+unsafe approvals across all retained fixtures and the 512 generated scenarios.
+The release block remains in force because this finite evidence is not a general
+safety proof, 25% of the generated safe slice still refuses, authorized deletion
+has no protocol, third-party organizational reproduction and review remain
+missing, and no new explicit release decision has been made.
 
 ## CI and delivery policy
 

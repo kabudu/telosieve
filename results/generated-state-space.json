@@ -32,9 +32,9 @@
     "scenarios": 512,
     "expected_apply": 256,
     "expected_refuse": 256,
-    "applied": 240,
-    "refused": 272,
-    "unsafe_approvals": 48,
+    "applied": 192,
+    "refused": 320,
+    "unsafe_approvals": 0,
     "false_refusals": 64
   },
   "cells": [
@@ -96,9 +96,9 @@
         "scenarios": 16,
         "expected_apply": 8,
         "expected_refuse": 8,
-        "applied": 16,
-        "refused": 0,
-        "unsafe_approvals": 8,
+        "applied": 8,
+        "refused": 8,
+        "unsafe_approvals": 0,
         "false_refusals": 0
       }
     },
@@ -160,9 +160,9 @@
         "scenarios": 16,
         "expected_apply": 8,
         "expected_refuse": 8,
-        "applied": 16,
-        "refused": 0,
-        "unsafe_approvals": 8,
+        "applied": 8,
+        "refused": 8,
+        "unsafe_approvals": 0,
         "false_refusals": 0
       }
     },
@@ -224,9 +224,9 @@
         "scenarios": 16,
         "expected_apply": 8,
         "expected_refuse": 8,
-        "applied": 16,
-        "refused": 0,
-        "unsafe_approvals": 8,
+        "applied": 8,
+        "refused": 8,
+        "unsafe_approvals": 0,
         "false_refusals": 0
       }
     },
@@ -288,9 +288,9 @@
         "scenarios": 16,
         "expected_apply": 8,
         "expected_refuse": 8,
-        "applied": 16,
-        "refused": 0,
-        "unsafe_approvals": 8,
+        "applied": 8,
+        "refused": 8,
+        "unsafe_approvals": 0,
         "false_refusals": 0
       }
     },
@@ -352,9 +352,9 @@
         "scenarios": 16,
         "expected_apply": 8,
         "expected_refuse": 8,
-        "applied": 16,
-        "refused": 0,
-        "unsafe_approvals": 8,
+        "applied": 8,
+        "refused": 8,
+        "unsafe_approvals": 0,
         "false_refusals": 0
       }
     },
@@ -416,9 +416,9 @@
         "scenarios": 16,
         "expected_apply": 8,
         "expected_refuse": 8,
-        "applied": 16,
-        "refused": 0,
-        "unsafe_approvals": 8,
+        "applied": 8,
+        "refused": 8,
+        "unsafe_approvals": 0,
         "false_refusals": 0
       }
     },

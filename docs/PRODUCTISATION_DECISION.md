@@ -57,17 +57,17 @@ A subsequent network-disabled Linux container reproduced all deterministic
 outputs with a distinct Rust/Python toolchain. This removes a host-environment
 concern, but independent third-party reproduction and review remain unresolved.
 
-Correlated-fault testing now models two weakened signers in one domain
-successfully, but weakening every viability domain produces an unsafe approval.
-Productisation therefore remains blocked regardless of the remaining persistence
-and availability milestones.
+Correlated-fault testing models two weakened signers in one domain successfully.
+Certificate v3 still approved an unsafe transition when every viability domain
+was weakened.
 
-The generated-state-space follow-up evaluates 512 authenticated scenarios. It
-finds 48 unsafe approvals among poisoned goals and 64 false refusals among safe
-goals. The former retain the all-domains-weakened stop-ship boundary; the latter
-quantify the availability price of adding goal suspicion. The durable
-single-host anchor closes the prototype persistence task but does not mitigate
-either protocol result. The binding decision remains **narrow**.
+Certificate v4's stable-key safety kernel removes that reproduced boundary
+without changing the oracle: the cross-domain fixture and all 512 generated
+scenarios now report zero unsafe approvals. The 64 false refusals among 256 safe
+goals remain, and zero finite-model failures is not a general proof. Independent
+organizational reproduction, security review, operational fault-domain
+independence, authorized deletion semantics, and a new explicit opening decision
+also remain unresolved. The binding decision remains **narrow**.
 
 ## Evidence basis
 
@@ -76,3 +76,4 @@ either protocol result. The binding decision remains **narrow**.
 - [Diligence Refresh](DILIGENCE_REFRESH_2026-07-29.md)
 - [Validation and falsification plan](VALIDATION.md)
 - [Generated safety/availability state space](GENERATED_STATE_SPACE.md)
+- [Stable-key safety kernel](STABLE_KEY_SAFETY_KERNEL.md)

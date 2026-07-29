@@ -90,5 +90,14 @@ productisation gate.
 The correlated experiment is documented in
 [CORRELATED_FAULTS](CORRELATED_FAULTS.md). Two weakened principals sharing one
 domain are tolerated when a strict independent domain survives. Weakening every
-domain produces one unsafe approval and remains a stop-ship result outside the
-one-domain bound.
+domain produced one certificate-v3 unsafe approval outside the one-domain bound.
+
+## Stable-key safety kernel
+
+Certificate v4 adds a non-bypassable rule that transitions retain every key
+present on every current replica. The independent Rust and Python checkers agree
+on this boundary. The original oracles remain unchanged; the cross-domain
+fixture and all 512 generated scenarios now report zero unsafe approvals. The
+64 generated false refusals remain. Scope, complexity, compatibility, and
+falsifiers are documented in
+[STABLE_KEY_SAFETY_KERNEL](STABLE_KEY_SAFETY_KERNEL.md).

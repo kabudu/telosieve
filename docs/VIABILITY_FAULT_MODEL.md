@@ -57,7 +57,7 @@ This strategy is falsified for the registered scope by:
 
 The result does not cover simultaneous failure across all viability domains,
 prove organizational independence, or establish general safety. The correlated
-experiment in [CORRELATED_FAULTS](CORRELATED_FAULTS.md) retains an unsafe approval
+certificate-v3 experiment in [CORRELATED_FAULTS](CORRELATED_FAULTS.md) retained an unsafe approval
 when every domain is weakened. Productisation remains blocked.
 
 Reproduce the follow-up run from the current reviewed revision with:

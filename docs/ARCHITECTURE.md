@@ -8,8 +8,9 @@
 3. **Hypothesis engine** enumerates allowed fault sets under the configured budget.
 4. **Planner** derives candidate transitions without consuming authorities marked
    suspect in that hypothesis.
-5. **Independent checker** validates preconditions, invariants, blast radius, and
-   rollbackability from a separately implemented model.
+5. **Independent checker** validates preconditions, stable-key continuity,
+   viability invariants, blast radius, and rollbackability from a separately
+   implemented model.
 6. **Transactional actuator** applies only certified plans to the test service.
 7. **Evidence ledger** records immutable inputs, hypotheses, decisions, and results.
 
@@ -45,6 +46,12 @@ exchanges bounded NDJSON requests, avoiding per-hypothesis startup without shari
 planner code. Each response has a two-second timeout; failure aborts the run. The
 checker independently parses and evaluates the service and viability models, and
 differential tests compare it with the Rust reference checker.
+
+Certificate v4 makes stable-key continuity intrinsic to both checker
+implementations: every key present on every current replica must remain present
+after transition. The bounded O(R × K) check is independent of viability
+authority content; updates and additions remain allowed, while deletion requires
+a future separately authorized protocol.
 
 The signed-history baseline verifies a maximum of 64 predecessor phenotype
 envelopes against an explicit current-tip anchor before planning, then replays the

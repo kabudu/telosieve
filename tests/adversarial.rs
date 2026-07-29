@@ -55,8 +55,17 @@ fn registered_adversarial_fault_classes_fail_closed_or_refuse() {
     }));
 
     let cross_domain = run_scenario(&fixture("all-viability-domains-weakened.json")).unwrap();
-    assert_eq!(cross_domain.decision, Decision::Applied);
-    assert_eq!(cross_domain.metrics.unsafe_approvals, 1);
+    assert_eq!(cross_domain.decision, Decision::Refused);
+    assert_eq!(cross_domain.metrics.unsafe_approvals, 0);
+    assert!(cross_domain.hypotheses.iter().all(|hypothesis| {
+        hypothesis.checker.as_ref().is_some_and(|checker| {
+            !checker.safe
+                && checker
+                    .reasons
+                    .iter()
+                    .any(|reason| reason.contains("stable key continuity failed: cluster/epoch"))
+        })
+    }));
 
     let mut missing_domain = fixture("benign.json");
     missing_domain

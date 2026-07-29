@@ -196,7 +196,7 @@ fn evaluate_preflighted_scenario(
     let hypothesis_count = hypotheses.len();
 
     Ok(Certificate {
-        certificate_version: "telosieve.certificate/v3".into(),
+        certificate_version: "telosieve.certificate/v4".into(),
         scenario_id: scenario.scenario_id.clone(),
         seed: scenario.seed,
         authority_digests: authorities.digests,

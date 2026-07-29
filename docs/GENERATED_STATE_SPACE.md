@@ -42,14 +42,15 @@ machine-readable cells are retained in
 | scenarios | 512 | 512 |
 | safe goals | 256 | 512 |
 | poisoned goals | 256 | 512 |
-| unsafe approvals | 48 | 256 poisoned goals (18.75%) |
+| unsafe approvals | 0 | 256 poisoned goals (0%) |
 | false refusals | 64 | 256 safe goals (25%) |
-| applied decisions | 240 | 512 |
-| refused decisions | 272 | 512 |
+| applied decisions | 192 | 512 |
+| refused decisions | 320 | 512 |
 
-The unsafe approvals occur at the known boundary where every viability domain
-is weakened. Viability-only suspicion cannot recover when no strict domain
-survives. A zero fault budget likewise cannot exclude bad evidence.
+Certificate v4's stable-key safety kernel removes the 48 previously retained
+unsafe approvals without changing the oracle. When every viability domain is
+weakened, deletion of `cluster/epoch` is rejected by the non-bypassable
+continuity rule.
 
 The false refusals occur with goal-and-viability suspicion at fault budget one.
 The goal-suspected hypothesis proposes the observed consensus (or no transition
@@ -59,10 +60,10 @@ availability cost of broadening the fault model, not a checker error.
 
 ## Decision impact
 
-The expanded evidence resolves the measurement gap but strengthens the existing
-**narrow / no-productisation** decision:
+The expanded evidence resolves the reproduced unsafe approvals but does not
+reverse the existing **narrow / no-productisation** decision:
 
-- weakening every viability domain still permits unsafe approval;
+- no unsafe approval remains in the declared 512-scenario state space;
 - covering goal faults introduces a measured 25% false-refusal rate over the
   registered safe slice; and
 - the result remains a bounded model, not a production reliability estimate.

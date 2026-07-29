@@ -32,3 +32,9 @@ phenotypes, equivocation, parser differential coverage, and correlated faults
 against the declared budget. Mutations without valid signatures are expected to
 fail at provenance verification; authenticated poisoned intent proceeds to
 hypothesis evaluation and refusal.
+
+Certificate-v4 coverage additionally exercises implicit deletion with every
+viability domain weakened. The Rust and Python checkers must independently reject
+loss of a key present on every current replica, while focused tests preserve
+ordinary value updates and key additions. The 512-scenario aggregate assertion
+requires zero unsafe approvals without relabelling expected decisions.

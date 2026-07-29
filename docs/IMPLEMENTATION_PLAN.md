@@ -60,5 +60,18 @@ Decision: **narrow**. Productisation and public release are blocked. See
   space.
 
 Evidence: 512 authenticated generated scenarios and per-cell results in
-[GENERATED_STATE_SPACE](GENERATED_STATE_SPACE.md). The retained unsafe-approval
-and false-refusal boundaries keep productisation blocked.
+[GENERATED_STATE_SPACE](GENERATED_STATE_SPACE.md).
+
+## Post-M5 — reproduced unsafe-approval remediation
+
+- [x] Add a viability-independent stable-key continuity invariant to both
+  checker implementations.
+- [x] Preserve value updates and additions while refusing implicit key deletion.
+- [x] Re-run retained fixtures and the generated state space without changing
+  their safety oracles.
+- [x] Exit: zero unsafe approvals across retained evidence, quantified refusal
+  cost, versioned certificates/checkers, and explicit residual bounds.
+
+Evidence: [STABLE_KEY_SAFETY_KERNEL](STABLE_KEY_SAFETY_KERNEL.md). Productisation
+remains blocked by finite-model limits, false refusals, deletion semantics, and
+independent-review gates.

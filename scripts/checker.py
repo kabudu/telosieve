@@ -28,11 +28,19 @@ def check(request: dict) -> dict:
         if any(replica.get(key) != expected for replica in values):
             reasons.append(f"required key invariant failed: {key}")
 
-    if not current["replicas"]:
+    current_values = list(current["replicas"].values())
+    if not current_values:
         reasons.append("current state has no replicas")
+    else:
+        stable_keys = set(current_values[0])
+        for replica in current_values[1:]:
+            stable_keys.intersection_update(replica)
+        for key in sorted(stable_keys):
+            if any(key not in replica for replica in values):
+                reasons.append(f"stable key continuity failed: {key}")
 
     return {
-        "implementation": "telosieve-python-checker/v2",
+        "implementation": "telosieve-python-checker/v3",
         "safe": not reasons,
         "reasons": reasons,
     }

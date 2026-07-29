@@ -24,7 +24,13 @@ organizational or implementation independence.
 
 Certificate v3 groups viability issuers by declared fault domain. Correlated
 failure inside one domain is covered; shared failure across every surviving
-domain remains outside the bound and produces a retained unsafe approval.
+domain produced a retained unsafe approval in the v3 experiment.
+
+Certificate v4 adds a viability-independent stable-key continuity kernel:
+transitions cannot delete keys present on every authenticated current replica.
+This removes the reproduced cross-domain unsafe approvals. It does not cover a
+key omitted by every malicious phenotype replica, combined goal/phenotype
+corruption beyond the declared bound, or an authorized-deletion use case.
 
 Authenticated phenotype history rejects chain and anchor rollback within a
 64-record bound. The trusted anchor is configuration in this harness; compromise

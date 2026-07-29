@@ -47,14 +47,18 @@ monotonic storage. It improves the harness boundary but does not supply
 multi-host, hardware-backed, or independently operated rollback resistance.
 
 Certificate v3 subsequently tolerates two correlated weakened signers inside one
-declared domain, but the cross-domain weakened fixture produces one unsafe
-approval. That retained result independently keeps the productisation gate closed.
+declared domain, but its cross-domain weakened fixture produced one unsafe
+approval. That historical result motivated the certificate-v4 remediation below.
 
 The later generated-state-space experiment expands this from fixtures to 512
-authenticated scenarios over 32 finite cells. It records 48 unsafe approvals
-among 256 poisoned goals (18.75%) and 64 false refusals among 256 safe goals
-(25%). Unsafe approvals remain concentrated at the all-domains-weakened
-boundary; adding goal suspicion exposes the availability cost. These are bounded
-model measurements, not population estimates, and they strengthen rather than
-reverse the narrow decision. See
+authenticated scenarios over 32 finite cells. Certificate v3 recorded 48 unsafe
+approvals among 256 poisoned goals (18.75%) and 64 false refusals among 256 safe
+goals (25%).
+
+Certificate v4 adds stable-key continuity without changing those oracles. The
+same 512 scenarios now record zero unsafe approvals and the same 64 false
+refusals. This resolves every reproduced unsafe approval, but remains bounded
+model evidence rather than a proof or population estimate. The deletion
+restriction and remaining availability cost prevent an automatic reversal of
+the narrow decision. See
 [GENERATED_STATE_SPACE](GENERATED_STATE_SPACE.md).
