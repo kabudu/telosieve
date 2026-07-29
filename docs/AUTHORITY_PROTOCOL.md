@@ -20,9 +20,14 @@ missing independence metadata are invalid. Acceptance requires at least one plan
 safe under every non-eliminated hypothesis; disagreement or underdetermination
 requires refusal.
 
-M0 implements the fields above, Ed25519 authentication, subject and validity
-checks, SHA-256 content binding, and exact-one envelope cardinality for each
-authority kind. Its signed bytes are deterministic serialization of typed fields
-and ordered maps. M0 does not yet maintain issuer history, detect equivocation
-across runs, validate non-empty lineage, rotate keys, or use a standardized
-cross-language canonical JSON format; those remain M1 protocol obligations.
+The harness implements the fields above, Ed25519 authentication, subject and
+validity checks, SHA-256 content binding, exact-one cardinality for goal and
+phenotype, and one-or-more viability envelopes with unique issuers. When viability
+is suspectable, hypotheses exclude individual viability issuers and bind those
+issuer exclusions into certificate v1. All surviving viability rules must approve
+the common transition.
+
+Signed bytes use deterministic serialization of typed fields and ordered maps.
+The harness does not yet maintain issuer history, detect equivocation across runs,
+validate organizational independence, rotate keys, or use a standardized
+cross-language canonical JSON format.

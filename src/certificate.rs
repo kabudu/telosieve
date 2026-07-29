@@ -19,6 +19,8 @@ pub enum Decision {
 pub struct HypothesisRecord {
     pub suspected: Vec<AuthorityKind>,
     pub excluded: Vec<AuthorityKind>,
+    pub suspected_issuers: Vec<String>,
+    pub excluded_issuers: Vec<String>,
     pub proposed_transition: Option<Transition>,
     pub checker: Option<CheckerVerdict>,
 }
@@ -44,7 +46,7 @@ pub struct Certificate {
     pub certificate_version: String,
     pub scenario_id: String,
     pub seed: u64,
-    pub authority_digests: BTreeMap<AuthorityKind, String>,
+    pub authority_digests: BTreeMap<String, String>,
     pub hypotheses: Vec<HypothesisRecord>,
     pub decision: Decision,
     pub refusal_reason: Option<String>,

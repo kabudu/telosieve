@@ -44,10 +44,18 @@ Failure to remove the unsafe approval, or evidence that the resulting availabili
 or complexity cost is impractical, should archive the project rather than expand
 its scope.
 
+## Post-decision evidence
+
+The multi-principal viability experiment documented in
+[VIABILITY_FAULT_MODEL](VIABILITY_FAULT_MODEL.md) removes the registered unsafe
+approval under a one-principal fault bound without refusing the registered benign
+update. This satisfies one reopening condition, but does not reverse the decision:
+correlated faults, operational independence, the expanded latency cost, broader
+availability evidence, and independent reproduction remain unresolved.
+
 ## Evidence basis
 
 - [M2 Adversarial Results](M2_RESULTS.md)
 - [Productisation Assessment](PRODUCTISATION_ASSESSMENT.md)
 - [Diligence Refresh](DILIGENCE_REFRESH_2026-07-29.md)
 - [Validation and falsification plan](VALIDATION.md)
-

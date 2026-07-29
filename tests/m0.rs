@@ -19,7 +19,16 @@ fn benign_goal_is_applied_and_rollback_restores_snapshot() {
     let certificate = run_scenario(&scenario).expect("benign scenario should run");
 
     assert_eq!(certificate.decision, Decision::Applied);
-    assert_eq!(certificate.hypotheses.len(), 1);
+    assert_eq!(certificate.hypotheses.len(), 3);
+    assert_eq!(certificate.metrics.false_refusals, 0);
+    assert_eq!(
+        certificate
+            .hypotheses
+            .iter()
+            .filter(|hypothesis| !hypothesis.suspected_issuers.is_empty())
+            .count(),
+        2
+    );
     assert_eq!(
         certificate.final_state.consensus().unwrap()["user/message"],
         "new"
@@ -87,7 +96,7 @@ fn configured_hypothesis_bound_is_enforced() {
 fn general_enumeration_is_complete_bounded_and_excludes_every_suspect() {
     let mut scenario = load("poisoned-goal.json");
     scenario.fault_declaration.maximum_faults = 2;
-    scenario.fault_declaration.maximum_hypotheses = 7;
+    scenario.fault_declaration.maximum_hypotheses = 11;
     scenario.fault_declaration.suspectable = [
         AuthorityKind::Goal,
         AuthorityKind::Phenotype,
@@ -98,7 +107,7 @@ fn general_enumeration_is_complete_bounded_and_excludes_every_suspect() {
 
     let certificate = run_scenario(&scenario).unwrap();
 
-    assert_eq!(certificate.hypotheses.len(), 7);
+    assert_eq!(certificate.hypotheses.len(), 11);
     assert!(
         certificate
             .hypotheses
@@ -167,10 +176,15 @@ fn rust_and_python_checkers_agree_on_safe_and_unsafe_transitions() {
             (hypothesis.proposed_transition, hypothesis.checker)
         {
             let current = serde_json::from_value(scenario.authorities[1].content.clone()).unwrap();
-            let rules = serde_json::from_value(scenario.authorities[2].content.clone()).unwrap();
-            let rust = telosieve::checker::check(&current, &transition, &rules);
-            assert_eq!(rust.safe, external.safe);
-            assert_eq!(rust.reasons, external.reasons);
+            let rust_safe = scenario
+                .authorities
+                .iter()
+                .filter(|authority| authority.kind == AuthorityKind::Viability)
+                .all(|authority| {
+                    let rules = serde_json::from_value(authority.content.clone()).unwrap();
+                    telosieve::checker::check(&current, &transition, &rules).safe
+                });
+            assert_eq!(rust_safe, external.safe);
         }
     }
 }
@@ -189,6 +203,24 @@ fn protocol_rejects_stale_unknown_schema_and_duplicate_authorities() {
     duplicate.authorities.push(duplicate.authorities[0].clone());
     assert!(matches!(
         run_scenario(&duplicate),
+        Err(RunError::Protocol(_))
+    ));
+
+    let mut duplicate_viability_issuer = load("benign.json");
+    duplicate_viability_issuer
+        .authorities
+        .push(duplicate_viability_issuer.authorities[2].clone());
+    assert!(matches!(
+        run_scenario(&duplicate_viability_issuer),
+        Err(RunError::Protocol(_))
+    ));
+
+    let mut missing_viability = load("benign.json");
+    missing_viability
+        .authorities
+        .retain(|authority| authority.kind != AuthorityKind::Viability);
+    assert!(matches!(
+        run_scenario(&missing_viability),
         Err(RunError::Protocol(_))
     ));
 
@@ -217,11 +249,12 @@ fn public_replay_reports_all_baselines_and_protocol_evidence() {
                 "invariant-gated-reconciler/v0"
             ]
         );
-        assert_eq!(certificate.authority_digests.len(), 3);
+        assert_eq!(certificate.authority_digests.len(), 4);
         assert!(certificate.hypotheses.iter().all(|hypothesis| {
             hypothesis.suspected == hypothesis.excluded
                 && hypothesis.checker.as_ref().is_none_or(|verdict| {
-                    verdict.implementation == "telosieve-python-checker/v1" || !verdict.safe
+                    verdict.implementation == "telosieve-multi-principal-checker/v1"
+                        || !verdict.safe
                 })
         }));
     }

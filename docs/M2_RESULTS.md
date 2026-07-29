@@ -2,6 +2,10 @@
 
 ## Reproduction
 
+The original registered run is pinned to merge
+`a0bf340daf752faeb2621b2580cc31939277c3b1`. Check out that revision in a
+separate worktree, then run:
+
 ```sh
 cargo run --release --example benchmark -- scenarios/*.json
 ./scripts/ci-local.sh
@@ -10,6 +14,8 @@ cargo run --release --example benchmark -- scenarios/*.json
 The retained raw run is `results/m2-benchmark.json`. It contains 20 iterations
 per signed scenario. Timing is machine-specific; decisions, hypothesis counts,
 certificate sizes, and safety-oracle outcomes are deterministic for the fixtures.
+The live fixtures evolved after M3; their current output is retained separately in
+`results/post-m3-viability-benchmark.json`.
 
 ## Results
 

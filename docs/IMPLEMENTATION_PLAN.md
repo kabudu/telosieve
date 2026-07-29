@@ -41,7 +41,7 @@ Decision: **narrow**. Productisation and public release are blocked. See
 
 ## Post-M3 — narrowed research (not productisation)
 
-- [ ] Define multi-principal or explicitly suspectable viability semantics,
+- [x] Define multi-principal or explicitly suspectable viability semantics,
   preregistering the fault model and falsifiers.
 - [ ] Replace per-hypothesis process spawning with a bounded checker service or
   batch boundary without reducing semantic diversity.

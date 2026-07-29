@@ -30,8 +30,18 @@ fn registered_adversarial_fault_classes_fail_closed_or_refuse() {
     assert!(matches!(run_scenario(&forged), Err(RunError::Protocol(_))));
 
     let weakened = run_scenario(&fixture("weakened-viability.json")).unwrap();
-    assert_eq!(weakened.decision, Decision::Applied);
-    assert_eq!(weakened.metrics.unsafe_approvals, 1);
+    assert_eq!(weakened.decision, Decision::Refused);
+    assert_eq!(weakened.metrics.unsafe_approvals, 0);
+    assert_eq!(weakened.metrics.hypothesis_count, 4);
+    assert!(weakened.hypotheses.iter().any(|hypothesis| {
+        hypothesis.suspected == vec![AuthorityKind::Viability]
+            && hypothesis.suspected_issuers == vec!["viability-lab"]
+            && hypothesis.proposed_transition.is_some()
+            && hypothesis
+                .checker
+                .as_ref()
+                .is_some_and(|checker| !checker.safe)
+    }));
 
     let partitioned = run_scenario(&fixture("partitioned-phenotype.json")).unwrap();
     assert_eq!(partitioned.decision, Decision::Applied);
@@ -47,7 +57,7 @@ fn registered_adversarial_fault_classes_fail_closed_or_refuse() {
 
     let mut correlated = fixture("poisoned-goal.json");
     correlated.fault_declaration.maximum_faults = 2;
-    correlated.fault_declaration.maximum_hypotheses = 7;
+    correlated.fault_declaration.maximum_hypotheses = 11;
     correlated.fault_declaration.suspectable = BTreeSet::from([
         AuthorityKind::Goal,
         AuthorityKind::Phenotype,

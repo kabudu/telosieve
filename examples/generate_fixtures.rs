@@ -71,6 +71,7 @@ fn main() {
     let goal_key = SigningKey::from_bytes(&[11; 32]);
     let phenotype_key = SigningKey::from_bytes(&[22; 32]);
     let viability_key = SigningKey::from_bytes(&[33; 32]);
+    let viability_backup_key = SigningKey::from_bytes(&[44; 32]);
     let public_keys = BTreeMap::from([
         (
             "goal-lab".into(),
@@ -83,6 +84,10 @@ fn main() {
         (
             "viability-lab".into(),
             hex::encode(viability_key.verifying_key().to_bytes()),
+        ),
+        (
+            "viability-review".into(),
+            hex::encode(viability_backup_key.verifying_key().to_bytes()),
         ),
     ]);
     let current = json!({
@@ -131,6 +136,12 @@ fn main() {
                     "viability-lab",
                     rules,
                 ),
+                envelope(
+                    &viability_backup_key,
+                    AuthorityKind::Viability,
+                    "viability-review",
+                    viability.clone(),
+                ),
             ],
         }
     };
@@ -140,8 +151,8 @@ fn main() {
         current.clone(),
         viability.clone(),
         ExpectedDecision::Apply,
-        0,
-        BTreeSet::new(),
+        1,
+        BTreeSet::from([AuthorityKind::Viability]),
     );
     let poisoned = make(
         "poisoned-goal",
@@ -158,8 +169,8 @@ fn main() {
         current.clone(),
         json!({"replica_count": 3, "require_consensus": true, "required_keys": {}}),
         ExpectedDecision::Refuse,
-        0,
-        BTreeSet::new(),
+        1,
+        BTreeSet::from([AuthorityKind::Goal, AuthorityKind::Viability]),
     );
     let mut partition = current.clone();
     partition["replicas"]["replica-c"]["user/message"] = "partition".into();

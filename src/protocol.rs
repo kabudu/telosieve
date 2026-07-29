@@ -103,10 +103,16 @@ pub struct Scenario {
 
 #[derive(Clone, Debug)]
 pub struct VerifiedAuthorities {
-    pub digests: BTreeMap<AuthorityKind, String>,
+    pub digests: BTreeMap<String, String>,
     pub goal: Values,
     pub phenotype: ServiceState,
-    pub viability: ViabilityRules,
+    pub viability: Vec<VerifiedViability>,
+}
+
+#[derive(Clone, Debug)]
+pub struct VerifiedViability {
+    pub issuer: String,
+    pub rules: ViabilityRules,
 }
 
 #[derive(Debug, Error)]
@@ -132,7 +138,22 @@ pub fn verify(scenario: &Scenario) -> Result<VerifiedAuthorities, ProtocolError>
         validate_envelope(scenario, envelope)?;
     }
     let mut by_kind = BTreeMap::new();
+    let mut viability_envelopes = Vec::new();
     for envelope in &scenario.authorities {
+        if envelope.kind == AuthorityKind::Viability {
+            if viability_envelopes
+                .iter()
+                .any(|existing: &&Envelope| existing.issuer == envelope.issuer)
+            {
+                return Err(ProtocolError::Invalid {
+                    kind: AuthorityKind::Viability,
+                    field: "issuer",
+                    reason: "duplicate viability issuer".into(),
+                });
+            }
+            viability_envelopes.push(envelope);
+            continue;
+        }
         if let Some(previous) = by_kind.insert(envelope.kind, envelope) {
             if previous.issuer == envelope.issuer
                 && previous.sequence == envelope.sequence
@@ -150,10 +171,33 @@ pub fn verify(scenario: &Scenario) -> Result<VerifiedAuthorities, ProtocolError>
 
     let goal = parse_content::<Values>(&by_kind, AuthorityKind::Goal)?;
     let phenotype = parse_content::<ServiceState>(&by_kind, AuthorityKind::Phenotype)?;
-    let viability = parse_content::<ViabilityRules>(&by_kind, AuthorityKind::Viability)?;
-    let digests = by_kind
-        .into_iter()
-        .map(|(kind, envelope)| (kind, digest(envelope)))
+    if viability_envelopes.is_empty() {
+        return Err(ProtocolError::Cardinality(AuthorityKind::Viability));
+    }
+    let viability = viability_envelopes
+        .iter()
+        .map(|envelope| {
+            serde_json::from_value(envelope.content.clone())
+                .map(|rules| VerifiedViability {
+                    issuer: envelope.issuer.clone(),
+                    rules,
+                })
+                .map_err(|error| ProtocolError::Invalid {
+                    kind: AuthorityKind::Viability,
+                    field: "content",
+                    reason: error.to_string(),
+                })
+        })
+        .collect::<Result<Vec<_>, _>>()?;
+    let digests = scenario
+        .authorities
+        .iter()
+        .map(|envelope| {
+            (
+                format!("{:?}:{}", envelope.kind, envelope.issuer).to_lowercase(),
+                digest(envelope),
+            )
+        })
         .collect();
 
     Ok(VerifiedAuthorities {

@@ -60,3 +60,17 @@ The registered run exposes one stop-ship negative result: with authenticated
 weakened viability rules outside the declared fault model, Telosieve applies the
 poisoned goal (`unsafe_approvals = 1`). This confirms the documented viability
 authority dependency and blocks productisation; it is not treated as an M2 pass.
+
+## Post-M3 viability remediation
+
+The original M2 result remains retained above. The follow-up fault model registers
+two independently signed viability principals and permits one listed principal to
+be semantically faulty. Every surviving principal must independently approve the
+common transition. The exact bound, failure behavior, and falsifiers are in
+[VIABILITY_FAULT_MODEL](VIABILITY_FAULT_MODEL.md).
+
+The retained follow-up run is `results/post-m3-viability-benchmark.json`. It
+refuses the weakened-viability transition with zero unsafe approvals while the
+benign multi-principal fixture still applies with zero false refusals. This
+removes the registered unsafe approval inside the new one-principal fault model;
+it does not cover correlated faults or qualify the project for productisation.

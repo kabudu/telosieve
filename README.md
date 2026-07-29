@@ -20,10 +20,12 @@ and refuse repair when surviving evidence cannot distinguish safe outcomes.
 ## Status
 
 M3 is complete with an explicit decision to **narrow** the project. Telosieve
-remains private research; productisation and public release are blocked by an
-unsafe approval under weakened viability constraints. The harness authenticates a
-bounded scenario, evaluates its declared hypotheses, applies only one common
-independently checked transition, and otherwise emits a refusal certificate. See
+remains private research. A post-M3 multi-principal experiment removes the
+registered weakened-viability unsafe approval under a one-principal fault bound,
+but productisation and public release remain blocked pending broader adversarial
+and independent validation. The harness authenticates a bounded scenario,
+evaluates its declared hypotheses, applies only one common independently checked
+transition, and otherwise emits a refusal certificate. See
 [VALIDATION](docs/VALIDATION.md) for the falsification plan, [NOVELTY](docs/NOVELTY.md)
 for claim limits, and [IMPLEMENTATION_PLAN](docs/IMPLEMENTATION_PLAN.md) for scope.
 
