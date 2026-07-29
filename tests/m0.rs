@@ -711,6 +711,35 @@ fn protocol_rejects_stale_unknown_schema_and_duplicate_authorities() {
 }
 
 #[test]
+fn rotated_key_fixture_applies_and_binds_lifecycle_evidence() {
+    let scenario = load("rotated-goal-key.json");
+    let certificate = run_scenario(&scenario).unwrap();
+    assert_eq!(
+        certificate.decision,
+        telosieve::certificate::Decision::Applied
+    );
+    assert!(
+        certificate
+            .authority_digests
+            .contains_key("lifecycle:goal-lab:1")
+    );
+    assert!(
+        certificate
+            .authority_digests
+            .contains_key("lifecycle-anchor:goal-lab")
+    );
+    assert!(
+        certificate
+            .authority_digests
+            .contains_key("lifecycle-root:goal-lab")
+    );
+    assert_eq!(
+        serde_json::to_vec(&certificate).unwrap(),
+        serde_json::to_vec(&run_scenario(&scenario).unwrap()).unwrap()
+    );
+}
+
+#[test]
 fn public_replay_reports_all_baselines_and_protocol_evidence() {
     for fixture in ["benign.json", "poisoned-goal.json"] {
         let certificate = run_scenario(&load(fixture)).unwrap();

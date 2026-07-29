@@ -176,11 +176,26 @@ and independent review remain open.
 
 ## Post-M12 — key and identity lifecycle
 
-- [ ] Define authority-key rotation, revocation, expiry, and compromised-key
+- [x] Define authority-key rotation, revocation, expiry, and compromised-key
   recovery without invalidating historical certificates.
-- [ ] Bind lifecycle statements to authority kind, subject, sequence, and
+- [x] Bind lifecycle statements to authority kind, subject, sequence, and
   predecessor state.
-- [ ] Reject revoked or superseded keys for new transitions while retaining
+- [x] Reject revoked or superseded keys for new transitions while retaining
   deterministic historical verification.
-- [ ] Exercise stale rotation, rollback, equivocation, partial availability,
+- [x] Exercise stale rotation, rollback, equivocation, partial availability,
   emergency revocation, and bounded state growth.
+
+Evidence: [KEY_LIFECYCLE](KEY_LIFECYCLE.md). Lifecycle state is bounded and
+authenticated but its roots and tips remain trusted scenario configuration, not
+a durable organizational identity service.
+
+## Post-M13 — shadow-mode external adapter
+
+- [ ] Name one external target and define a read-only phenotype/goal mapping
+  without mutation credentials.
+- [ ] Bind observations to resource versions and reject schema or concurrency
+  ambiguity.
+- [ ] Exercise drift, partial reads, stale watches, identity mismatch, and
+  bounded observation size.
+- [ ] Retain shadow decisions and operator-facing refusal reasons without adding
+  production actuation.

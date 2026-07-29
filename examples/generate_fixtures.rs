@@ -10,7 +10,8 @@ use telosieve::{
     model::digest,
     protocol::{
         AuthorityKind, DeletionAuthorization, Envelope, ExpectedDecision, FaultDeclaration,
-        HistoryAnchor, SCHEMA_VERSION, Scenario,
+        HistoryAnchor, KEY_LIFECYCLE_SCHEMA_VERSION, KeyLifecycleAction, KeyLifecycleAnchor,
+        KeyLifecycleStatement, SCHEMA_VERSION, Scenario,
     },
 };
 
@@ -26,6 +27,18 @@ struct UnsignedEnvelope<'a> {
     content_digest: &'a str,
     parent_digests: &'a [String],
     content: &'a Value,
+}
+
+#[derive(Serialize)]
+struct UnsignedKeyLifecycleStatement<'a> {
+    schema_version: &'a str,
+    subject: &'a str,
+    issuer: &'a str,
+    authority_kind: AuthorityKind,
+    sequence: u64,
+    effective_at: u64,
+    parent_digest: &'a Option<String>,
+    action: &'a KeyLifecycleAction,
 }
 
 fn envelope(key: &SigningKey, kind: AuthorityKind, issuer: &str, content: Value) -> Envelope {
@@ -68,6 +81,38 @@ fn envelope_with_lineage(
     .unwrap();
     envelope.signature = hex::encode(key.sign(&bytes).to_bytes());
     envelope
+}
+
+fn resign_envelope(envelope: &mut Envelope, key: &SigningKey) {
+    let bytes = serde_json::to_vec(&UnsignedEnvelope {
+        kind: envelope.kind,
+        subject: &envelope.subject,
+        schema_version: &envelope.schema_version,
+        issued_at: envelope.issued_at,
+        expires_at: envelope.expires_at,
+        issuer: &envelope.issuer,
+        sequence: envelope.sequence,
+        content_digest: &envelope.content_digest,
+        parent_digests: &envelope.parent_digests,
+        content: &envelope.content,
+    })
+    .unwrap();
+    envelope.signature = hex::encode(key.sign(&bytes).to_bytes());
+}
+
+fn sign_lifecycle(statement: &mut KeyLifecycleStatement, root: &SigningKey) {
+    let bytes = serde_json::to_vec(&UnsignedKeyLifecycleStatement {
+        schema_version: &statement.schema_version,
+        subject: &statement.subject,
+        issuer: &statement.issuer,
+        authority_kind: statement.authority_kind,
+        sequence: statement.sequence,
+        effective_at: statement.effective_at,
+        parent_digest: &statement.parent_digest,
+        action: &statement.action,
+    })
+    .unwrap();
+    statement.signature = hex::encode(root.sign(&bytes).to_bytes());
 }
 
 fn write_scenario(name: &str, scenario: &Scenario) {
@@ -196,6 +241,9 @@ fn main() {
             subject: "kv/research".into(),
             expected_decision,
             public_keys: public_keys.clone(),
+            key_lifecycle_roots: BTreeMap::new(),
+            key_lifecycle: Vec::new(),
+            key_lifecycle_anchors: BTreeMap::new(),
             fault_declaration: FaultDeclaration {
                 maximum_faults,
                 suspectable,
@@ -241,6 +289,44 @@ fn main() {
         1,
         BTreeSet::from([AuthorityKind::Viability]),
     );
+    let lifecycle_root = SigningKey::from_bytes(&[90; 32]);
+    let rotated_goal_key = SigningKey::from_bytes(&[91; 32]);
+    let mut rotated_key = benign.clone();
+    rotated_key.scenario_id = "rotated-goal-key".into();
+    let mut activation = KeyLifecycleStatement {
+        schema_version: KEY_LIFECYCLE_SCHEMA_VERSION.into(),
+        subject: rotated_key.subject.clone(),
+        issuer: "goal-lab".into(),
+        authority_kind: AuthorityKind::Goal,
+        sequence: 1,
+        effective_at: 1_720_000_000,
+        parent_digest: None,
+        action: KeyLifecycleAction::Activate {
+            public_key: hex::encode(rotated_goal_key.verifying_key().to_bytes()),
+            expires_at: 1_790_000_000,
+        },
+        signature: String::new(),
+    };
+    sign_lifecycle(&mut activation, &lifecycle_root);
+    rotated_key.key_lifecycle_roots.insert(
+        "goal-lab".into(),
+        hex::encode(lifecycle_root.verifying_key().to_bytes()),
+    );
+    rotated_key.key_lifecycle_anchors.insert(
+        "goal-lab".into(),
+        KeyLifecycleAnchor {
+            sequence: 1,
+            tip_digest: digest(&activation),
+        },
+    );
+    rotated_key.key_lifecycle.push(activation);
+    let rotated_goal = rotated_key
+        .authorities
+        .iter_mut()
+        .find(|envelope| envelope.issuer == "goal-lab")
+        .unwrap();
+    rotated_goal.issued_at = 1_730_000_000;
+    resign_envelope(rotated_goal, &rotated_goal_key);
     let poisoned = make(
         "poisoned-goal",
         json!({"user/message": "attacker-controlled"}),
@@ -277,6 +363,7 @@ fn main() {
     );
     fs::create_dir_all("scenarios").unwrap();
     write_scenario("benign", &benign);
+    write_scenario("rotated-goal-key", &rotated_key);
     write_scenario("poisoned-goal", &poisoned);
     write_scenario("weakened-viability", &weakened);
     write_scenario("partitioned-phenotype", &partitioned);

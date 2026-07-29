@@ -31,8 +31,10 @@ past authenticated state.
 The anchor is trusted scenario configuration in this research harness. A
 subsequent prototype adds a local durable monotonic store, documented in
 [DURABLE_HISTORY_ANCHOR](DURABLE_HISTORY_ANCHOR.md). Rollback-resistant hardware
-or quorum checkpointing, retention policy, cross-host recovery, and key rotation
-remain production requirements.
+or quorum checkpointing, retention policy, and cross-host recovery remain
+production requirements. The opt-in lifecycle protocol preserves old-key
+historical verification, but its trusted tip is still scenario configuration;
+see [KEY_LIFECYCLE](KEY_LIFECYCLE.md).
 
 ## Evidence
 

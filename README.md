@@ -38,6 +38,11 @@ transition, and otherwise emits a refusal certificate. See
 [VALIDATION](docs/VALIDATION.md) for the falsification plan, [NOVELTY](docs/NOVELTY.md)
 for claim limits, and [IMPLEMENTATION_PLAN](docs/IMPLEMENTATION_PLAN.md) for scope.
 
+Opt-in recovery-root-signed authority lifecycle chains now rotate, expire, and
+revoke operational keys without invalidating historical phenotype signatures.
+This is a bounded research protocol, not a production identity service. See
+[Authority Key Lifecycle](docs/KEY_LIFECYCLE.md).
+
 ## Run the registered scenarios
 
 Requires stable Rust 1.97 or newer.

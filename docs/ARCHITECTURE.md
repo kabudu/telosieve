@@ -28,6 +28,12 @@ Authorities → verification → hypotheses → candidate plans → independent 
 → apply or refuse → outcome evidence. Every transition is content-addressed and
 bound to the exact authority versions considered.
 
+Verification optionally resolves an enrolled issuer through a bounded
+recovery-root-signed key lifecycle before accepting its envelope. Historical
+phenotype records use issuance-time keys; current evidence must still use the
+evaluation-time active key. Lifecycle roots, statements, and trusted tips are
+included in the certificate evidence digest map.
+
 ## Failure behavior
 
 Malformed, stale, equivocal, over-budget, or unverifiable evidence yields refusal.

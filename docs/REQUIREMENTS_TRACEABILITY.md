@@ -18,6 +18,7 @@
 | REC-3 | Preserve v1 deletion consumption during recovery upgrade | Explicit witnessed in-place schema upgrade | completed/interrupted upgrade tests |
 | REC-4 | Preserve exact-generation recovery across qualified OS/architecture boundaries | Pinned offline Linux arm64/amd64 harness on Docker-managed volumes | nine recovery tests, 16 forced terminations, retained per-platform measurements |
 | SEC-3 | Detect signed-history rollback and broken chains | Bounded phenotype chain plus trusted tip anchor | predecessor replay, omitted/forked/old-tip tests |
+| SEC-4 | Rotate, expire, revoke, and recover issuer keys without authorizing stale current evidence | Recovery-root-signed bounded lifecycle with trusted tip and issuance/evaluation key checks | rotated fixture; historical, superseded, expiry, revocation, recovery, rollback, equivocation, separation, and bound tests |
 | SEM-4 | Refuse ambiguity | protocol acceptance rule | contradictory-authority E2E |
 | REL-1 | Reproducible decisions | content addressing | deterministic replay |
 | SEC-2 | Fail closed | resource/error policy | timeout and ledger-failure E2E |

@@ -37,3 +37,14 @@ Never break an actuator lock until the writer is proven absent.
 Never restore an older backup, replace the witness, infer a generation, or retry
 an applied stale scenario. Loss or rollback of both state and witness is a stop
 condition outside this protocol.
+
+## Key lifecycle handling
+
+Keep each lifecycle recovery private key offline and separate from its
+operational issuer key. Review the exact subject, issuer, authority kind,
+sequence, parent digest, effective time, and activated/revoked key before
+signing. Distribute the complete chain, its public recovery root, and an
+independently obtained trusted tip together. Never repair a missing statement by
+editing sequence or parent fields, reuse an old operational key, or fall back to
+a revoked bootstrap key. Missing or conflicting lifecycle state is a refusal and
+incident condition.

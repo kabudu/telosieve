@@ -8,6 +8,7 @@ use thiserror::Error;
 use crate::model::{ServiceState, Values, digest};
 
 pub const SCHEMA_VERSION: &str = "telosieve.authority/v0";
+pub const KEY_LIFECYCLE_SCHEMA_VERSION: &str = "telosieve.key-lifecycle/v1";
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -104,6 +105,62 @@ pub struct HistoryAnchor {
     pub tip_digest: String,
 }
 
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct KeyLifecycleAnchor {
+    pub sequence: u64,
+    pub tip_digest: String,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(tag = "action", rename_all = "snake_case", deny_unknown_fields)]
+pub enum KeyLifecycleAction {
+    Activate { public_key: String, expires_at: u64 },
+    Revoke { public_key_digest: String },
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct KeyLifecycleStatement {
+    pub schema_version: String,
+    pub subject: String,
+    pub issuer: String,
+    pub authority_kind: AuthorityKind,
+    pub sequence: u64,
+    pub effective_at: u64,
+    pub parent_digest: Option<String>,
+    pub action: KeyLifecycleAction,
+    pub signature: String,
+}
+
+#[derive(Serialize)]
+struct UnsignedKeyLifecycleStatement<'a> {
+    schema_version: &'a str,
+    subject: &'a str,
+    issuer: &'a str,
+    authority_kind: AuthorityKind,
+    sequence: u64,
+    effective_at: u64,
+    parent_digest: &'a Option<String>,
+    action: &'a KeyLifecycleAction,
+}
+
+impl KeyLifecycleStatement {
+    fn signed_bytes(&self) -> Vec<u8> {
+        serde_json::to_vec(&UnsignedKeyLifecycleStatement {
+            schema_version: &self.schema_version,
+            subject: &self.subject,
+            issuer: &self.issuer,
+            authority_kind: self.authority_kind,
+            sequence: self.sequence,
+            effective_at: self.effective_at,
+            parent_digest: &self.parent_digest,
+            action: &self.action,
+        })
+        .expect("typed key lifecycle serialization cannot fail")
+    }
+}
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum ExpectedDecision {
@@ -120,6 +177,12 @@ pub struct Scenario {
     pub subject: String,
     pub expected_decision: ExpectedDecision,
     pub public_keys: BTreeMap<String, String>,
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub key_lifecycle_roots: BTreeMap<String, String>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub key_lifecycle: Vec<KeyLifecycleStatement>,
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub key_lifecycle_anchors: BTreeMap<String, KeyLifecycleAnchor>,
     pub fault_declaration: FaultDeclaration,
     pub phenotype_history_anchor: HistoryAnchor,
     #[serde(default)]
@@ -156,6 +219,8 @@ pub enum ProtocolError {
         field: &'static str,
         reason: String,
     },
+    #[error("invalid key lifecycle: {0}")]
+    KeyLifecycle(String),
 }
 
 /// Authenticates, freshness-checks, and decodes the scenario authority set.
@@ -173,11 +238,12 @@ pub fn verify(scenario: &Scenario) -> Result<VerifiedAuthorities, ProtocolError>
             reason: "history exceeds the 64-record bound".into(),
         });
     }
+    let key_lifecycle = verify_key_lifecycle(scenario)?;
     for envelope in &scenario.authorities {
-        validate_envelope(scenario, envelope, true)?;
+        validate_envelope(scenario, envelope, true, &key_lifecycle)?;
     }
     for envelope in &scenario.phenotype_history {
-        validate_envelope(scenario, envelope, false)?;
+        validate_envelope(scenario, envelope, false, &key_lifecycle)?;
     }
     let mut by_kind = BTreeMap::new();
     let mut goal_envelopes = Vec::new();
@@ -372,7 +438,7 @@ fn verify_goals(envelopes: &[&Envelope]) -> Result<(Values, BTreeSet<String>), P
 }
 
 fn authority_digests(scenario: &Scenario) -> BTreeMap<String, String> {
-    scenario
+    let mut digests: BTreeMap<_, _> = scenario
         .authorities
         .iter()
         .map(|envelope| ("current", envelope))
@@ -392,7 +458,20 @@ fn authority_digests(scenario: &Scenario) -> BTreeMap<String, String> {
                 digest(envelope),
             )
         })
-        .collect()
+        .collect();
+    for statement in &scenario.key_lifecycle {
+        digests.insert(
+            format!("lifecycle:{}:{}", statement.issuer, statement.sequence),
+            digest(statement),
+        );
+    }
+    for (issuer, anchor) in &scenario.key_lifecycle_anchors {
+        digests.insert(format!("lifecycle-anchor:{issuer}"), digest(anchor));
+    }
+    for (issuer, root) in &scenario.key_lifecycle_roots {
+        digests.insert(format!("lifecycle-root:{issuer}"), digest(root));
+    }
+    digests
 }
 
 fn verify_history(
@@ -463,10 +542,235 @@ fn parse_content<T: for<'de> Deserialize<'de>>(
     })
 }
 
+#[allow(clippy::too_many_lines)]
+fn verify_key_lifecycle(
+    scenario: &Scenario,
+) -> Result<BTreeMap<String, Vec<&KeyLifecycleStatement>>, ProtocolError> {
+    if scenario.key_lifecycle.len() > 64 {
+        return Err(ProtocolError::KeyLifecycle(
+            "statements exceed the 64-record bound".into(),
+        ));
+    }
+    let mut by_issuer: BTreeMap<String, Vec<&KeyLifecycleStatement>> = BTreeMap::new();
+    for statement in &scenario.key_lifecycle {
+        by_issuer
+            .entry(statement.issuer.clone())
+            .or_default()
+            .push(statement);
+    }
+    let enrolled: BTreeSet<_> = by_issuer.keys().cloned().collect();
+    if scenario
+        .key_lifecycle_roots
+        .keys()
+        .cloned()
+        .collect::<BTreeSet<_>>()
+        != enrolled
+        || scenario
+            .key_lifecycle_anchors
+            .keys()
+            .cloned()
+            .collect::<BTreeSet<_>>()
+            != enrolled
+    {
+        return Err(ProtocolError::KeyLifecycle(
+            "statement, recovery-root, and anchor issuer sets must match exactly".into(),
+        ));
+    }
+    let recovery_roots: BTreeSet<_> = scenario.key_lifecycle_roots.values().collect();
+    if recovery_roots.len() != scenario.key_lifecycle_roots.len() {
+        return Err(ProtocolError::KeyLifecycle(
+            "recovery roots must be unique across enrolled issuers".into(),
+        ));
+    }
+    for root in &recovery_roots {
+        decode_verifying_key(root).map_err(|reason| {
+            ProtocolError::KeyLifecycle(format!("invalid recovery root: {reason}"))
+        })?;
+        if scenario.public_keys.values().any(|key| key == *root) {
+            return Err(ProtocolError::KeyLifecycle(
+                "a recovery root is also configured as an operational key".into(),
+            ));
+        }
+    }
+
+    for (issuer, statements) in &mut by_issuer {
+        let bootstrap = scenario.public_keys.get(issuer).ok_or_else(|| {
+            ProtocolError::KeyLifecycle(format!("enrolled issuer {issuer} has no bootstrap key"))
+        })?;
+        decode_verifying_key(bootstrap).map_err(|reason| {
+            ProtocolError::KeyLifecycle(format!("invalid bootstrap key for {issuer}: {reason}"))
+        })?;
+        statements.sort_by_key(|statement| statement.sequence);
+        let encoded_root = scenario
+            .key_lifecycle_roots
+            .get(issuer)
+            .expect("enrolled issuer sets match");
+        let root = decode_verifying_key(encoded_root).map_err(|reason| {
+            ProtocolError::KeyLifecycle(format!("invalid recovery root for {issuer}: {reason}"))
+        })?;
+        let mut previous_digest = None;
+        let mut previous_effective_at = None;
+        let mut authority_kind = None;
+        let mut active_key = bootstrap.clone();
+        let mut is_active = true;
+        let mut seen_key_digests = BTreeSet::from([digest(&active_key)]);
+
+        for (index, statement) in statements.iter().enumerate() {
+            let expected_sequence = u64::try_from(index + 1).expect("lifecycle bound fits u64");
+            if statement.schema_version != KEY_LIFECYCLE_SCHEMA_VERSION
+                || statement.subject != scenario.subject
+                || statement.issuer != *issuer
+                || statement.sequence != expected_sequence
+                || statement.parent_digest.as_ref() != previous_digest.as_ref()
+                || statement.effective_at > scenario.evaluation_time
+                || previous_effective_at.is_some_and(|time| statement.effective_at <= time)
+            {
+                return Err(ProtocolError::KeyLifecycle(format!(
+                    "invalid schema, subject, issuer, sequence, parent, or effective time for {issuer}"
+                )));
+            }
+            if authority_kind
+                .replace(statement.authority_kind)
+                .is_some_and(|kind| kind != statement.authority_kind)
+            {
+                return Err(ProtocolError::KeyLifecycle(format!(
+                    "authority kind changed for {issuer}"
+                )));
+            }
+            verify_signature(&root, &statement.signed_bytes(), &statement.signature).map_err(
+                |reason| {
+                    ProtocolError::KeyLifecycle(format!(
+                        "invalid recovery-root signature for {issuer}: {reason}"
+                    ))
+                },
+            )?;
+            match &statement.action {
+                KeyLifecycleAction::Activate {
+                    public_key,
+                    expires_at,
+                } => {
+                    decode_verifying_key(public_key).map_err(|reason| {
+                        ProtocolError::KeyLifecycle(format!(
+                            "invalid activated key for {issuer}: {reason}"
+                        ))
+                    })?;
+                    if recovery_roots.contains(public_key) {
+                        return Err(ProtocolError::KeyLifecycle(format!(
+                            "recovery root cannot be activated operationally for {issuer}"
+                        )));
+                    }
+                    if *expires_at <= statement.effective_at {
+                        return Err(ProtocolError::KeyLifecycle(format!(
+                            "activated key for {issuer} has an empty validity interval"
+                        )));
+                    }
+                    if !seen_key_digests.insert(digest(public_key)) {
+                        return Err(ProtocolError::KeyLifecycle(format!(
+                            "key reuse or rollback detected for {issuer}"
+                        )));
+                    }
+                    active_key.clone_from(public_key);
+                    is_active = true;
+                }
+                KeyLifecycleAction::Revoke { public_key_digest } => {
+                    if !is_active || public_key_digest != &digest(&active_key) {
+                        return Err(ProtocolError::KeyLifecycle(format!(
+                            "revocation does not name the active key for {issuer}"
+                        )));
+                    }
+                    is_active = false;
+                }
+            }
+            previous_effective_at = Some(statement.effective_at);
+            previous_digest = Some(digest(*statement));
+        }
+        let anchor = scenario
+            .key_lifecycle_anchors
+            .get(issuer)
+            .expect("enrolled issuer sets match");
+        if anchor.sequence != u64::try_from(statements.len()).expect("lifecycle bound fits u64")
+            || Some(&anchor.tip_digest) != previous_digest.as_ref()
+        {
+            return Err(ProtocolError::KeyLifecycle(format!(
+                "trusted lifecycle anchor mismatch for {issuer}"
+            )));
+        }
+    }
+    Ok(by_issuer)
+}
+
+fn key_for_envelope<'a>(
+    scenario: &'a Scenario,
+    envelope: &Envelope,
+    require_current: bool,
+    lifecycle: &'a BTreeMap<String, Vec<&KeyLifecycleStatement>>,
+) -> Result<&'a str, String> {
+    let bootstrap = scenario
+        .public_keys
+        .get(&envelope.issuer)
+        .ok_or_else(|| "unknown issuer".to_string())?;
+    let Some(statements) = lifecycle.get(&envelope.issuer) else {
+        return Ok(bootstrap);
+    };
+    if statements[0].authority_kind != envelope.kind {
+        return Err("issuer lifecycle is bound to another authority kind".into());
+    }
+    let issued = active_key_at(bootstrap, statements, envelope.issued_at)
+        .ok_or_else(|| "no active issuer key at envelope issuance".to_string())?;
+    if require_current {
+        let current = active_key_at(bootstrap, statements, scenario.evaluation_time)
+            .ok_or_else(|| "issuer key is revoked or expired".to_string())?;
+        if current != issued {
+            return Err("envelope was signed by a superseded issuer key".into());
+        }
+    }
+    Ok(issued)
+}
+
+fn active_key_at<'a>(
+    bootstrap: &'a str,
+    statements: &'a [&KeyLifecycleStatement],
+    at: u64,
+) -> Option<&'a str> {
+    let mut active = Some((bootstrap, u64::MAX));
+    for statement in statements {
+        if statement.effective_at > at {
+            break;
+        }
+        match &statement.action {
+            KeyLifecycleAction::Activate {
+                public_key,
+                expires_at,
+            } => active = Some((public_key, *expires_at)),
+            KeyLifecycleAction::Revoke { .. } => active = None,
+        }
+    }
+    active.and_then(|(key, expires_at)| (at < expires_at).then_some(key))
+}
+
+fn decode_verifying_key(encoded: &str) -> Result<VerifyingKey, String> {
+    let bytes = hex::decode(encoded).map_err(|error| error.to_string())?;
+    if hex::encode(&bytes) != encoded {
+        return Err("public key must use canonical lowercase hex".into());
+    }
+    let array: [u8; 32] = bytes
+        .try_into()
+        .map_err(|_| "expected 32 bytes".to_string())?;
+    VerifyingKey::from_bytes(&array).map_err(|error| error.to_string())
+}
+
+fn verify_signature(key: &VerifyingKey, message: &[u8], encoded: &str) -> Result<(), String> {
+    let bytes = hex::decode(encoded).map_err(|error| error.to_string())?;
+    let signature = Signature::from_slice(&bytes).map_err(|error| error.to_string())?;
+    key.verify(message, &signature)
+        .map_err(|_| "verification failed".into())
+}
+
 fn validate_envelope(
     scenario: &Scenario,
     envelope: &Envelope,
     require_current: bool,
+    lifecycle: &BTreeMap<String, Vec<&KeyLifecycleStatement>>,
 ) -> Result<(), ProtocolError> {
     let invalid = |field, reason: String| ProtocolError::Invalid {
         kind: envelope.kind,
@@ -491,13 +795,10 @@ fn validate_envelope(
     if digest(&envelope.content) != envelope.content_digest {
         return Err(invalid("content_digest", "digest mismatch".into()));
     }
-    let key_bytes = scenario
-        .public_keys
-        .get(&envelope.issuer)
-        .ok_or_else(|| invalid("issuer", "unknown issuer".into()))
-        .and_then(|encoded| {
-            hex::decode(encoded).map_err(|error| invalid("public_key", error.to_string()))
-        })?;
+    let encoded_key = key_for_envelope(scenario, envelope, require_current, lifecycle)
+        .map_err(|reason| invalid("public_key", reason))?;
+    let key_bytes =
+        hex::decode(encoded_key).map_err(|error| invalid("public_key", error.to_string()))?;
     let key_array: [u8; 32] = key_bytes
         .try_into()
         .map_err(|_| invalid("public_key", "expected 32 bytes".into()))?;
@@ -509,4 +810,388 @@ fn validate_envelope(
         .map_err(|error| invalid("signature", error.to_string()))?;
     key.verify(&envelope.signed_bytes(), &signature)
         .map_err(|_| invalid("signature", "verification failed".into()))
+}
+
+#[cfg(test)]
+mod key_lifecycle_tests {
+    use ed25519_dalek::{Signer, SigningKey};
+
+    use super::*;
+
+    fn scenario() -> Scenario {
+        serde_json::from_slice(include_bytes!("../scenarios/benign.json")).unwrap()
+    }
+
+    fn encoded_key(key: &SigningKey) -> String {
+        hex::encode(key.verifying_key().to_bytes())
+    }
+
+    fn sign_envelope(envelope: &mut Envelope, key: &SigningKey) {
+        envelope.signature = hex::encode(key.sign(&envelope.signed_bytes()).to_bytes());
+    }
+
+    fn enroll(
+        scenario: &mut Scenario,
+        issuer: &str,
+        kind: AuthorityKind,
+        root: &SigningKey,
+        actions: Vec<(u64, KeyLifecycleAction)>,
+    ) {
+        let mut parent_digest = None;
+        for (index, (effective_at, action)) in actions.into_iter().enumerate() {
+            let mut statement = KeyLifecycleStatement {
+                schema_version: KEY_LIFECYCLE_SCHEMA_VERSION.into(),
+                subject: scenario.subject.clone(),
+                issuer: issuer.into(),
+                authority_kind: kind,
+                sequence: u64::try_from(index + 1).unwrap(),
+                effective_at,
+                parent_digest,
+                action,
+                signature: String::new(),
+            };
+            statement.signature = hex::encode(root.sign(&statement.signed_bytes()).to_bytes());
+            parent_digest = Some(digest(&statement));
+            scenario.key_lifecycle.push(statement);
+        }
+        scenario
+            .key_lifecycle_roots
+            .insert(issuer.into(), encoded_key(root));
+        scenario.key_lifecycle_anchors.insert(
+            issuer.into(),
+            KeyLifecycleAnchor {
+                sequence: u64::try_from(
+                    scenario
+                        .key_lifecycle
+                        .iter()
+                        .filter(|statement| statement.issuer == issuer)
+                        .count(),
+                )
+                .unwrap(),
+                tip_digest: parent_digest.unwrap(),
+            },
+        );
+    }
+
+    #[test]
+    fn rotation_accepts_new_current_key_and_preserves_old_history() {
+        let mut scenario = scenario();
+        let root = SigningKey::from_bytes(&[90; 32]);
+        let rotated = SigningKey::from_bytes(&[91; 32]);
+        enroll(
+            &mut scenario,
+            "phenotype-lab",
+            AuthorityKind::Phenotype,
+            &root,
+            vec![(
+                1_720_000_000,
+                KeyLifecycleAction::Activate {
+                    public_key: encoded_key(&rotated),
+                    expires_at: 1_790_000_000,
+                },
+            )],
+        );
+        let current = scenario
+            .authorities
+            .iter_mut()
+            .find(|envelope| envelope.kind == AuthorityKind::Phenotype)
+            .unwrap();
+        current.issued_at = 1_730_000_000;
+        sign_envelope(current, &rotated);
+        scenario.phenotype_history_anchor.tip_digest = digest(current);
+
+        let verified = verify(&scenario).unwrap();
+        assert_eq!(verified.phenotype_history.len(), 1);
+    }
+
+    #[test]
+    fn superseded_expired_and_revoked_keys_cannot_authorize_current_evidence() {
+        let original = scenario();
+        let root = SigningKey::from_bytes(&[90; 32]);
+        let rotated = SigningKey::from_bytes(&[91; 32]);
+
+        let mut superseded = original.clone();
+        enroll(
+            &mut superseded,
+            "goal-lab",
+            AuthorityKind::Goal,
+            &root,
+            vec![(
+                1_720_000_000,
+                KeyLifecycleAction::Activate {
+                    public_key: encoded_key(&rotated),
+                    expires_at: 1_790_000_000,
+                },
+            )],
+        );
+        assert!(matches!(
+            verify(&superseded),
+            Err(ProtocolError::Invalid {
+                field: "public_key",
+                ..
+            })
+        ));
+
+        let mut expired = original.clone();
+        enroll(
+            &mut expired,
+            "goal-lab",
+            AuthorityKind::Goal,
+            &root,
+            vec![(
+                1_690_000_000,
+                KeyLifecycleAction::Activate {
+                    public_key: encoded_key(&rotated),
+                    expires_at: 1_740_000_000,
+                },
+            )],
+        );
+        let goal = expired
+            .authorities
+            .iter_mut()
+            .find(|envelope| envelope.issuer == "goal-lab")
+            .unwrap();
+        sign_envelope(goal, &rotated);
+        assert!(matches!(
+            verify(&expired),
+            Err(ProtocolError::Invalid {
+                field: "public_key",
+                ..
+            })
+        ));
+
+        let mut revoked = original;
+        enroll(
+            &mut revoked,
+            "goal-lab",
+            AuthorityKind::Goal,
+            &root,
+            vec![
+                (
+                    1_690_000_000,
+                    KeyLifecycleAction::Activate {
+                        public_key: encoded_key(&rotated),
+                        expires_at: 1_790_000_000,
+                    },
+                ),
+                (
+                    1_740_000_000,
+                    KeyLifecycleAction::Revoke {
+                        public_key_digest: digest(&encoded_key(&rotated)),
+                    },
+                ),
+            ],
+        );
+        let goal = revoked
+            .authorities
+            .iter_mut()
+            .find(|envelope| envelope.issuer == "goal-lab")
+            .unwrap();
+        sign_envelope(goal, &rotated);
+        assert!(matches!(
+            verify(&revoked),
+            Err(ProtocolError::Invalid {
+                field: "public_key",
+                ..
+            })
+        ));
+        revoked
+            .authorities
+            .retain(|envelope| envelope.issuer != "goal-lab");
+        verify(&revoked).unwrap();
+    }
+
+    #[test]
+    fn recovery_root_can_activate_a_fresh_key_after_revocation() {
+        let mut scenario = scenario();
+        let root = SigningKey::from_bytes(&[90; 32]);
+        let compromised = SigningKey::from_bytes(&[91; 32]);
+        let recovered = SigningKey::from_bytes(&[92; 32]);
+        enroll(
+            &mut scenario,
+            "goal-lab",
+            AuthorityKind::Goal,
+            &root,
+            vec![
+                (
+                    1_690_000_000,
+                    KeyLifecycleAction::Activate {
+                        public_key: encoded_key(&compromised),
+                        expires_at: 1_790_000_000,
+                    },
+                ),
+                (
+                    1_720_000_000,
+                    KeyLifecycleAction::Revoke {
+                        public_key_digest: digest(&encoded_key(&compromised)),
+                    },
+                ),
+                (
+                    1_730_000_000,
+                    KeyLifecycleAction::Activate {
+                        public_key: encoded_key(&recovered),
+                        expires_at: 1_790_000_000,
+                    },
+                ),
+            ],
+        );
+        let goal = scenario
+            .authorities
+            .iter_mut()
+            .find(|envelope| envelope.issuer == "goal-lab")
+            .unwrap();
+        goal.issued_at = 1_735_000_000;
+        sign_envelope(goal, &recovered);
+        verify(&scenario).unwrap();
+    }
+
+    #[test]
+    #[allow(clippy::too_many_lines)]
+    fn lifecycle_rollback_equivocation_kind_mismatch_and_bounds_fail_closed() {
+        let root = SigningKey::from_bytes(&[90; 32]);
+        let rotated = SigningKey::from_bytes(&[91; 32]);
+        let activation = KeyLifecycleAction::Activate {
+            public_key: encoded_key(&rotated),
+            expires_at: 1_790_000_000,
+        };
+        let mut anchored_rollback = scenario();
+        enroll(
+            &mut anchored_rollback,
+            "goal-lab",
+            AuthorityKind::Goal,
+            &root,
+            vec![(1_720_000_000, activation.clone())],
+        );
+        anchored_rollback
+            .key_lifecycle_anchors
+            .get_mut("goal-lab")
+            .unwrap()
+            .tip_digest = "00".repeat(32);
+        assert!(matches!(
+            verify(&anchored_rollback),
+            Err(ProtocolError::KeyLifecycle(_))
+        ));
+
+        let mut kind_mismatch = scenario();
+        enroll(
+            &mut kind_mismatch,
+            "goal-lab",
+            AuthorityKind::Viability,
+            &root,
+            vec![(1_720_000_000, activation.clone())],
+        );
+        assert!(matches!(
+            verify(&kind_mismatch),
+            Err(ProtocolError::Invalid {
+                field: "public_key",
+                ..
+            })
+        ));
+
+        let mut tampered = scenario();
+        enroll(
+            &mut tampered,
+            "goal-lab",
+            AuthorityKind::Goal,
+            &root,
+            vec![(1_720_000_000, activation)],
+        );
+        tampered.key_lifecycle[0].effective_at += 1;
+        assert!(matches!(
+            verify(&tampered),
+            Err(ProtocolError::KeyLifecycle(_))
+        ));
+
+        let mut equivocation = scenario();
+        let bootstrap_digest = digest(equivocation.public_keys.get("goal-lab").unwrap());
+        enroll(
+            &mut equivocation,
+            "goal-lab",
+            AuthorityKind::Goal,
+            &root,
+            vec![(
+                1_720_000_000,
+                KeyLifecycleAction::Revoke {
+                    public_key_digest: bootstrap_digest,
+                },
+            )],
+        );
+        equivocation
+            .key_lifecycle
+            .push(equivocation.key_lifecycle[0].clone());
+        assert!(matches!(
+            verify(&equivocation),
+            Err(ProtocolError::KeyLifecycle(_))
+        ));
+
+        let mut partial = scenario();
+        partial
+            .key_lifecycle_roots
+            .insert("goal-lab".into(), encoded_key(&root));
+        assert!(matches!(
+            verify(&partial),
+            Err(ProtocolError::KeyLifecycle(_))
+        ));
+
+        let mut oversized = scenario();
+        oversized.key_lifecycle = vec![
+            KeyLifecycleStatement {
+                schema_version: KEY_LIFECYCLE_SCHEMA_VERSION.into(),
+                subject: oversized.subject.clone(),
+                issuer: "goal-lab".into(),
+                authority_kind: AuthorityKind::Goal,
+                sequence: 1,
+                effective_at: 1,
+                parent_digest: None,
+                action: KeyLifecycleAction::Revoke {
+                    public_key_digest: "00".repeat(32),
+                },
+                signature: "00".repeat(64),
+            };
+            65
+        ];
+        assert!(matches!(
+            verify(&oversized),
+            Err(ProtocolError::KeyLifecycle(_))
+        ));
+
+        let mut self_recovery = scenario();
+        let operational = SigningKey::from_bytes(&[11; 32]);
+        enroll(
+            &mut self_recovery,
+            "goal-lab",
+            AuthorityKind::Goal,
+            &operational,
+            vec![(
+                1_720_000_000,
+                KeyLifecycleAction::Activate {
+                    public_key: encoded_key(&rotated),
+                    expires_at: 1_790_000_000,
+                },
+            )],
+        );
+        assert!(matches!(
+            verify(&self_recovery),
+            Err(ProtocolError::KeyLifecycle(_))
+        ));
+
+        let mut noncanonical = scenario();
+        enroll(
+            &mut noncanonical,
+            "goal-lab",
+            AuthorityKind::Goal,
+            &root,
+            vec![(
+                1_720_000_000,
+                KeyLifecycleAction::Activate {
+                    public_key: encoded_key(&rotated).to_uppercase(),
+                    expires_at: 1_790_000_000,
+                },
+            )],
+        );
+        assert!(matches!(
+            verify(&noncanonical),
+            Err(ProtocolError::KeyLifecycle(_))
+        ));
+    }
 }

@@ -90,6 +90,11 @@ boundary, not bare-metal power-loss durability, external actuation,
 organizational independence, or third-party review. The decision remains
 **narrow**.
 
+Recovery-root-signed key lifecycle chains later remove the timeless-operational-
+key assumption for enrolled issuers. Root custody, durable lifecycle tips,
+trusted time, organizational process, and independent review remain unresolved,
+so the binding decision remains **narrow**.
+
 ## Evidence basis
 
 - [M2 Adversarial Results](M2_RESULTS.md)

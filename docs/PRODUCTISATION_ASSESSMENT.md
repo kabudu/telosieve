@@ -92,3 +92,9 @@ and emulated amd64 Docker environments using disposable managed volumes. It
 expands OS/architecture evidence but is not bare-metal power-loss, independent,
 or production-storage qualification; emulated timings are not performance
 evidence.
+
+The opt-in authority lifecycle protocol subsequently rejects superseded,
+expired, and revoked operational keys while preserving historical phenotype
+verification. Recovery roots and lifecycle tips remain trusted scenario
+configuration, so this is not a production identity or organizational custody
+system.

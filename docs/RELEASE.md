@@ -48,6 +48,12 @@ This removes the macOS-only software-path limitation for that VM boundary, but
 does not qualify bare-metal power loss, device caches, hostile storage,
 multi-host operation, or external actuation. The release block remains.
 
+The bounded authority lifecycle protocol adds recovery-root-authorized rotation,
+expiry, revocation, and compromised-operational-key recovery. Its roots and tips
+remain trusted scenario configuration without durable organizational custody or
+ceremony. It narrows static-key risk but does not satisfy independent review,
+production identity, or release gates.
+
 ## CI and delivery policy
 
 Telosieve is private, so local CI is the sole authoritative quality gate:

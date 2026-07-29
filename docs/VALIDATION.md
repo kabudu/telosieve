@@ -156,3 +156,13 @@ The same nine recovery-state tests, 16-process termination stress test, and
 native arm64 and emulated amd64. Actuator state resides on a Docker-managed
 `ext2/ext3`-reported volume. This is cross-architecture VM/filesystem evidence,
 not bare-metal, power-loss, or hardware-performance qualification.
+
+## Authority key lifecycle
+
+The rotated-goal fixture applies using a recovery-root-authorized fresh key and
+binds the lifecycle chain, root, and trusted tip into the certificate. Unit and
+public-boundary tests reject superseded, expired, revoked, reused,
+non-canonical, wrong-kind, tampered, partially configured, equivocating,
+rolled-back, and oversized lifecycle evidence. An old phenotype record remains
+verifiable after rotation while current evidence cannot use its superseded key.
+See [KEY_LIFECYCLE](KEY_LIFECYCLE.md).

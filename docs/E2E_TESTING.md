@@ -61,3 +61,9 @@ The executable lifecycle now creates a verified backup, removes the primary
 state, restores it against the surviving witness, and runs explicit recovery.
 A separate 16-process forced-termination test verifies that stale-lock cleanup
 plus `local-recover` never exposes a torn generation.
+
+Key-lifecycle coverage runs a retained rotated-goal fixture through the public
+engine and binds its chain, recovery root, and trusted tip into the certificate.
+Focused protocol tests preserve historical old-key verification while rejecting
+superseded, expired, revoked, reused, wrong-kind, tampered, partial, rolled-back,
+equivocating, and oversized lifecycle evidence before planning.

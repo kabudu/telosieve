@@ -30,9 +30,8 @@ must survive their respective exclusions; all surviving viability rules must
 approve the common transition.
 
 Signed bytes use deterministic serialization of typed fields and ordered maps.
-The harness does not yet maintain issuer history, detect equivocation across runs,
-validate organizational independence, rotate keys, or use a standardized
-cross-language canonical JSON format.
+The harness does not validate organizational independence, persist lifecycle
+state across runs, or use a standardized cross-language canonical JSON format.
 
 Phenotype history is the first exception: certificate v2 verifies a bounded
 single-issuer chain against a trusted monotonic tip anchor and exposes every
@@ -56,3 +55,9 @@ Certificate v7 additionally exposes a domain-separated digest of the exact
 agreeing signed deletion-envelope set. The anchored runner uses that identifier
 for durable one-shot consumption; it is not part of stateless verification
 semantics.
+
+An opt-in recovery-root-signed lifecycle chain now rotates, expires, and revokes
+issuer operational keys. Historical phenotype evidence uses the key active at
+issuance; current evidence must still use the key active at evaluation. Every
+chain, root, and trusted tip is bound into the certificate authority-digest map.
+See [KEY_LIFECYCLE](KEY_LIFECYCLE.md).

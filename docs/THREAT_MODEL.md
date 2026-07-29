@@ -69,3 +69,10 @@ resolves process termination before or after atomic replacement. It does not
 resist rollback of both state and witness, witness deletion, forged local files,
 or violated filesystem `fsync`/rename semantics. Exact-latest restore fails
 closed if the co-located witness is lost.
+
+Operational issuer keys may be rotated, expired, or revoked through bounded
+recovery-root-signed chains. A compromised operational key cannot sign its own
+recovery because roots must be distinct and are never operational. Recovery-root
+compromise remains critical: it can authorize arbitrary future keys. Lifecycle
+roots and trusted tips are scenario configuration, so coordinated rollback of
+that configuration remains outside the detected boundary.

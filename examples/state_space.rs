@@ -283,6 +283,9 @@ fn scenario(
             ExpectedDecision::Refuse
         },
         public_keys,
+        key_lifecycle_roots: BTreeMap::new(),
+        key_lifecycle: Vec::new(),
+        key_lifecycle_anchors: BTreeMap::new(),
         fault_declaration: FaultDeclaration {
             maximum_faults,
             suspectable: profile.suspectable(),
