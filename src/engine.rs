@@ -103,18 +103,7 @@ pub fn run_scenario(scenario: &Scenario) -> Result<Certificate, RunError> {
             "at least one surviving hypothesis has no certified safe transition".into()
         }
     });
-    let baseline_transition = authorities.phenotype.transition_to(&authorities.goal);
-    let baseline_checker = checker::check(
-        &authorities.phenotype,
-        &baseline_transition,
-        &authorities.viability,
-    );
-    let baseline = BaselineRecord {
-        name: "conventional-reconciler/v0".into(),
-        unsafe_approval: !baseline_checker.safe,
-        transition: baseline_transition,
-        checker: baseline_checker,
-    };
+    let baselines = build_baselines(&authorities);
     let false_refusal =
         decision == Decision::Refused && scenario.expected_decision == ExpectedDecision::Apply;
     let hypothesis_count = hypotheses.len();
@@ -130,13 +119,68 @@ pub fn run_scenario(scenario: &Scenario) -> Result<Certificate, RunError> {
         transition,
         rollback,
         final_state,
-        baseline,
+        baselines,
         metrics: Metrics {
             hypothesis_count,
             unsafe_approvals: 0,
             false_refusals: usize::from(false_refusal),
         },
     })
+}
+
+fn build_baselines(authorities: &VerifiedAuthorities) -> Vec<BaselineRecord> {
+    let conventional_transition = authorities.phenotype.transition_to(&authorities.goal);
+    let conventional_checker = checker::check(
+        &authorities.phenotype,
+        &conventional_transition,
+        &authorities.viability,
+    );
+    let signed_history_transition = authorities
+        .phenotype
+        .consensus()
+        .map(|values| authorities.phenotype.transition_to(values));
+    let signed_history_checker = signed_history_transition
+        .as_ref()
+        .map(|plan| checker::check(&authorities.phenotype, plan, &authorities.viability));
+    let invariant_decision = if conventional_checker.safe {
+        Decision::Applied
+    } else {
+        Decision::Refused
+    };
+    let baselines = vec![
+        BaselineRecord {
+            name: "conventional-reconciler/v0".into(),
+            decision: Decision::Applied,
+            unsafe_approval: !conventional_checker.safe,
+            transition: Some(conventional_transition.clone()),
+            checker: Some(conventional_checker.clone()),
+        },
+        BaselineRecord {
+            name: "signed-history-rollback/v0".into(),
+            decision: if signed_history_checker
+                .as_ref()
+                .is_some_and(|verdict| verdict.safe)
+            {
+                Decision::Applied
+            } else {
+                Decision::Refused
+            },
+            unsafe_approval: signed_history_checker
+                .as_ref()
+                .is_some_and(|verdict| !verdict.safe),
+            transition: signed_history_transition,
+            checker: signed_history_checker,
+        },
+        BaselineRecord {
+            name: "invariant-gated-reconciler/v0".into(),
+            decision: invariant_decision.clone(),
+            unsafe_approval: false,
+            transition: (invariant_decision == Decision::Applied)
+                .then_some(conventional_transition),
+            checker: Some(conventional_checker),
+        },
+    ];
+    baselines
 }
 
 fn validate_declaration(scenario: &Scenario) -> Result<(), RunError> {

@@ -41,3 +41,8 @@ test suite, warning-free documentation, locked offline dependency resolution,
 Cargo metadata, repository-owned documentation validation, diff hygiene,
 placeholder markers, and the absence of hosted CI workflow files. Pull requests
 record the command and result; no hosted check is expected or implied.
+
+M1 certificates include conventional convergence, signed-history rollback to the
+authenticated observed consensus, and invariant-gated convergence baselines. Each
+records its decision, proposed transition, checker verdict, and unsafe-approval
+status under the same scenario.

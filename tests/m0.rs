@@ -48,7 +48,10 @@ fn poisoned_goal_is_refused_and_state_is_unchanged() {
             .as_ref()
             .is_some_and(|verdict| !verdict.safe)
     }));
-    assert!(certificate.baseline.unsafe_approval);
+    assert_eq!(certificate.baselines.len(), 3);
+    assert!(certificate.baselines[0].unsafe_approval);
+    assert_eq!(certificate.baselines[1].decision, Decision::Applied);
+    assert_eq!(certificate.baselines[2].decision, Decision::Refused);
     assert_eq!(certificate.metrics.unsafe_approvals, 0);
 }
 

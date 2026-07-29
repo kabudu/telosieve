@@ -33,8 +33,9 @@ pub struct Metrics {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct BaselineRecord {
     pub name: String,
-    pub transition: Transition,
-    pub checker: CheckerVerdict,
+    pub decision: Decision,
+    pub transition: Option<Transition>,
+    pub checker: Option<CheckerVerdict>,
     pub unsafe_approval: bool,
 }
 
@@ -50,6 +51,6 @@ pub struct Certificate {
     pub transition: Option<Transition>,
     pub rollback: Option<Transition>,
     pub final_state: ServiceState,
-    pub baseline: BaselineRecord,
+    pub baselines: Vec<BaselineRecord>,
     pub metrics: Metrics,
 }
