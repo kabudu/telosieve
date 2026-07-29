@@ -31,3 +31,14 @@ bound to the exact authority versions considered.
 Malformed, stale, equivocal, over-budget, or unverifiable evidence yields refusal.
 Timeouts never degrade to “best effort.” Side effects are restricted to a
 simulator until the safety case is supported.
+
+## M0 implementation boundary
+
+M0 is a single-process Rust harness. The service transition is a pure,
+content-bound replacement of every named replica, so commit and rollback are
+deterministic state values rather than production side effects. Hypothesis work is
+bounded by `maximum_hypotheses`; the implementation supports only budgets zero and
+one. The checker owns invariant evaluation, but planner and checker still share
+Rust/Serde parsing and the service representation. This is not sufficient evidence
+of implementation independence and must be replaced by a diverse checker boundary
+before M1 can satisfy the soundness case.

@@ -22,3 +22,13 @@ productisation. Results outside the model cannot support the core claim.
 - the checker cannot remain meaningfully independent;
 - state-space growth prevents useful bounded decisions;
 - safe behavior depends on undeclared operator knowledge.
+
+## M0 registration
+
+The executable scenarios fix seed `7`, evaluation time, three-replica starting
+state, authority keys, fault declaration, expected decision, and viability rules.
+The registered viability invariants require exactly three replicas, replica
+consensus, and `cluster/epoch = 7` on every replica. Certificates report hypothesis
+count, unsafe approvals, false refusals, and the conventional-reconciler baseline
+verdict. Wall-clock latency and compute-cost benchmarking begin in M1 because
+including nondeterministic timing in M0 certificates would break byte replay.

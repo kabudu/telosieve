@@ -19,11 +19,32 @@ and refuse repair when surviving evidence cannot distinguish safe outcomes.
 
 ## Status
 
-Research bootstrap complete; implementation is gated by the falsification plan in
-[VALIDATION](docs/VALIDATION.md). See [NOVELTY](docs/NOVELTY.md) for claim limits
-and [IMPLEMENTATION_PLAN](docs/IMPLEMENTATION_PLAN.md) for the first milestone.
+The M0 executable research contract is implemented. It authenticates a bounded
+scenario, evaluates its declared hypotheses, applies only one common independently
+checked transition, and otherwise emits a refusal certificate. See
+[VALIDATION](docs/VALIDATION.md) for the falsification plan, [NOVELTY](docs/NOVELTY.md)
+for claim limits, and [IMPLEMENTATION_PLAN](docs/IMPLEMENTATION_PLAN.md) for scope.
+
+## Run the registered scenarios
+
+Requires stable Rust 1.97 or newer.
+
+```sh
+cargo test
+mkdir -p out
+cargo run -- run scenarios/benign.json out/benign-certificate.json out/ledger.jsonl
+cargo run -- run scenarios/poisoned-goal.json out/refusal-certificate.json out/ledger.jsonl
+```
+
+Each run authenticates all authority envelopes before evaluation. The certificate
+is deterministic for identical inputs; the JSONL ledger is append-only. The
+fixture generator uses deterministic research-only signing keys:
+
+```sh
+cargo run --example generate_fixtures
+```
 
 ## Repository policy
 
-This is a private local repository. No remote is configured. The default branch is
-`master`.
+This is a private repository with `origin` configured for `kabudu/telosieve`. The
+default branch is `master`.

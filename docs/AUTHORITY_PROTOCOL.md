@@ -19,3 +19,10 @@ are equivocation evidence. Unknown schemas, broken lineage, expired evidence, an
 missing independence metadata are invalid. Acceptance requires at least one plan
 safe under every non-eliminated hypothesis; disagreement or underdetermination
 requires refusal.
+
+M0 implements the fields above, Ed25519 authentication, subject and validity
+checks, SHA-256 content binding, and exact-one envelope cardinality for each
+authority kind. Its signed bytes are deterministic serialization of typed fields
+and ordered maps. M0 does not yet maintain issuer history, detect equivocation
+across runs, validate non-empty lineage, rotate keys, or use a standardized
+cross-language canonical JSON format; those remain M1 protocol obligations.
