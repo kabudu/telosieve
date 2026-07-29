@@ -56,6 +56,12 @@ For the complete private-repository quality gate, run:
 ./scripts/ci-local.sh
 ```
 
+Generate the bounded 512-scenario safety/availability report:
+
+```sh
+cargo run --locked --offline --example state_space -- results/generated-state-space.json
+```
+
 Hosted CI is intentionally disabled until an explicitly approved public-opening
 or research-release gate.
 

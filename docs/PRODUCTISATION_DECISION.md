@@ -62,9 +62,17 @@ successfully, but weakening every viability domain produces an unsafe approval.
 Productisation therefore remains blocked regardless of the remaining persistence
 and availability milestones.
 
+The generated-state-space follow-up evaluates 512 authenticated scenarios. It
+finds 48 unsafe approvals among poisoned goals and 64 false refusals among safe
+goals. The former retain the all-domains-weakened stop-ship boundary; the latter
+quantify the availability price of adding goal suspicion. The durable
+single-host anchor closes the prototype persistence task but does not mitigate
+either protocol result. The binding decision remains **narrow**.
+
 ## Evidence basis
 
 - [M2 Adversarial Results](M2_RESULTS.md)
 - [Productisation Assessment](PRODUCTISATION_ASSESSMENT.md)
 - [Diligence Refresh](DILIGENCE_REFRESH_2026-07-29.md)
 - [Validation and falsification plan](VALIDATION.md)
+- [Generated safety/availability state space](GENERATED_STATE_SPACE.md)

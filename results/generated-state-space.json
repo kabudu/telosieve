@@ -1,0 +1,559 @@
+{
+  "schema_version": "telosieve.state-space/v1",
+  "generator": "exhaustive Cartesian product over declared finite dimensions",
+  "seeds": 8,
+  "dimensions": {
+    "goal": [
+      "safe",
+      "poisoned"
+    ],
+    "lab_domain": [
+      "strict",
+      "weakened"
+    ],
+    "maximum_faults": [
+      "0",
+      "1"
+    ],
+    "phenotype": [
+      "consensus",
+      "partition"
+    ],
+    "review_domain": [
+      "strict",
+      "weakened"
+    ],
+    "suspicion_profile": [
+      "viability_only",
+      "goal_and_viability"
+    ]
+  },
+  "total": {
+    "scenarios": 512,
+    "expected_apply": 256,
+    "expected_refuse": 256,
+    "applied": 240,
+    "refused": 272,
+    "unsafe_approvals": 48,
+    "false_refusals": 64
+  },
+  "cells": [
+    {
+      "suspicion_profile": "viability_only",
+      "maximum_faults": 0,
+      "phenotype": "consensus",
+      "lab_domain": "strict",
+      "review_domain": "strict",
+      "counts": {
+        "scenarios": 16,
+        "expected_apply": 8,
+        "expected_refuse": 8,
+        "applied": 8,
+        "refused": 8,
+        "unsafe_approvals": 0,
+        "false_refusals": 0
+      }
+    },
+    {
+      "suspicion_profile": "viability_only",
+      "maximum_faults": 0,
+      "phenotype": "consensus",
+      "lab_domain": "strict",
+      "review_domain": "weakened",
+      "counts": {
+        "scenarios": 16,
+        "expected_apply": 8,
+        "expected_refuse": 8,
+        "applied": 8,
+        "refused": 8,
+        "unsafe_approvals": 0,
+        "false_refusals": 0
+      }
+    },
+    {
+      "suspicion_profile": "viability_only",
+      "maximum_faults": 0,
+      "phenotype": "consensus",
+      "lab_domain": "weakened",
+      "review_domain": "strict",
+      "counts": {
+        "scenarios": 16,
+        "expected_apply": 8,
+        "expected_refuse": 8,
+        "applied": 8,
+        "refused": 8,
+        "unsafe_approvals": 0,
+        "false_refusals": 0
+      }
+    },
+    {
+      "suspicion_profile": "viability_only",
+      "maximum_faults": 0,
+      "phenotype": "consensus",
+      "lab_domain": "weakened",
+      "review_domain": "weakened",
+      "counts": {
+        "scenarios": 16,
+        "expected_apply": 8,
+        "expected_refuse": 8,
+        "applied": 16,
+        "refused": 0,
+        "unsafe_approvals": 8,
+        "false_refusals": 0
+      }
+    },
+    {
+      "suspicion_profile": "viability_only",
+      "maximum_faults": 0,
+      "phenotype": "partition",
+      "lab_domain": "strict",
+      "review_domain": "strict",
+      "counts": {
+        "scenarios": 16,
+        "expected_apply": 8,
+        "expected_refuse": 8,
+        "applied": 8,
+        "refused": 8,
+        "unsafe_approvals": 0,
+        "false_refusals": 0
+      }
+    },
+    {
+      "suspicion_profile": "viability_only",
+      "maximum_faults": 0,
+      "phenotype": "partition",
+      "lab_domain": "strict",
+      "review_domain": "weakened",
+      "counts": {
+        "scenarios": 16,
+        "expected_apply": 8,
+        "expected_refuse": 8,
+        "applied": 8,
+        "refused": 8,
+        "unsafe_approvals": 0,
+        "false_refusals": 0
+      }
+    },
+    {
+      "suspicion_profile": "viability_only",
+      "maximum_faults": 0,
+      "phenotype": "partition",
+      "lab_domain": "weakened",
+      "review_domain": "strict",
+      "counts": {
+        "scenarios": 16,
+        "expected_apply": 8,
+        "expected_refuse": 8,
+        "applied": 8,
+        "refused": 8,
+        "unsafe_approvals": 0,
+        "false_refusals": 0
+      }
+    },
+    {
+      "suspicion_profile": "viability_only",
+      "maximum_faults": 0,
+      "phenotype": "partition",
+      "lab_domain": "weakened",
+      "review_domain": "weakened",
+      "counts": {
+        "scenarios": 16,
+        "expected_apply": 8,
+        "expected_refuse": 8,
+        "applied": 16,
+        "refused": 0,
+        "unsafe_approvals": 8,
+        "false_refusals": 0
+      }
+    },
+    {
+      "suspicion_profile": "viability_only",
+      "maximum_faults": 1,
+      "phenotype": "consensus",
+      "lab_domain": "strict",
+      "review_domain": "strict",
+      "counts": {
+        "scenarios": 16,
+        "expected_apply": 8,
+        "expected_refuse": 8,
+        "applied": 8,
+        "refused": 8,
+        "unsafe_approvals": 0,
+        "false_refusals": 0
+      }
+    },
+    {
+      "suspicion_profile": "viability_only",
+      "maximum_faults": 1,
+      "phenotype": "consensus",
+      "lab_domain": "strict",
+      "review_domain": "weakened",
+      "counts": {
+        "scenarios": 16,
+        "expected_apply": 8,
+        "expected_refuse": 8,
+        "applied": 8,
+        "refused": 8,
+        "unsafe_approvals": 0,
+        "false_refusals": 0
+      }
+    },
+    {
+      "suspicion_profile": "viability_only",
+      "maximum_faults": 1,
+      "phenotype": "consensus",
+      "lab_domain": "weakened",
+      "review_domain": "strict",
+      "counts": {
+        "scenarios": 16,
+        "expected_apply": 8,
+        "expected_refuse": 8,
+        "applied": 8,
+        "refused": 8,
+        "unsafe_approvals": 0,
+        "false_refusals": 0
+      }
+    },
+    {
+      "suspicion_profile": "viability_only",
+      "maximum_faults": 1,
+      "phenotype": "consensus",
+      "lab_domain": "weakened",
+      "review_domain": "weakened",
+      "counts": {
+        "scenarios": 16,
+        "expected_apply": 8,
+        "expected_refuse": 8,
+        "applied": 16,
+        "refused": 0,
+        "unsafe_approvals": 8,
+        "false_refusals": 0
+      }
+    },
+    {
+      "suspicion_profile": "viability_only",
+      "maximum_faults": 1,
+      "phenotype": "partition",
+      "lab_domain": "strict",
+      "review_domain": "strict",
+      "counts": {
+        "scenarios": 16,
+        "expected_apply": 8,
+        "expected_refuse": 8,
+        "applied": 8,
+        "refused": 8,
+        "unsafe_approvals": 0,
+        "false_refusals": 0
+      }
+    },
+    {
+      "suspicion_profile": "viability_only",
+      "maximum_faults": 1,
+      "phenotype": "partition",
+      "lab_domain": "strict",
+      "review_domain": "weakened",
+      "counts": {
+        "scenarios": 16,
+        "expected_apply": 8,
+        "expected_refuse": 8,
+        "applied": 8,
+        "refused": 8,
+        "unsafe_approvals": 0,
+        "false_refusals": 0
+      }
+    },
+    {
+      "suspicion_profile": "viability_only",
+      "maximum_faults": 1,
+      "phenotype": "partition",
+      "lab_domain": "weakened",
+      "review_domain": "strict",
+      "counts": {
+        "scenarios": 16,
+        "expected_apply": 8,
+        "expected_refuse": 8,
+        "applied": 8,
+        "refused": 8,
+        "unsafe_approvals": 0,
+        "false_refusals": 0
+      }
+    },
+    {
+      "suspicion_profile": "viability_only",
+      "maximum_faults": 1,
+      "phenotype": "partition",
+      "lab_domain": "weakened",
+      "review_domain": "weakened",
+      "counts": {
+        "scenarios": 16,
+        "expected_apply": 8,
+        "expected_refuse": 8,
+        "applied": 16,
+        "refused": 0,
+        "unsafe_approvals": 8,
+        "false_refusals": 0
+      }
+    },
+    {
+      "suspicion_profile": "goal_and_viability",
+      "maximum_faults": 0,
+      "phenotype": "consensus",
+      "lab_domain": "strict",
+      "review_domain": "strict",
+      "counts": {
+        "scenarios": 16,
+        "expected_apply": 8,
+        "expected_refuse": 8,
+        "applied": 8,
+        "refused": 8,
+        "unsafe_approvals": 0,
+        "false_refusals": 0
+      }
+    },
+    {
+      "suspicion_profile": "goal_and_viability",
+      "maximum_faults": 0,
+      "phenotype": "consensus",
+      "lab_domain": "strict",
+      "review_domain": "weakened",
+      "counts": {
+        "scenarios": 16,
+        "expected_apply": 8,
+        "expected_refuse": 8,
+        "applied": 8,
+        "refused": 8,
+        "unsafe_approvals": 0,
+        "false_refusals": 0
+      }
+    },
+    {
+      "suspicion_profile": "goal_and_viability",
+      "maximum_faults": 0,
+      "phenotype": "consensus",
+      "lab_domain": "weakened",
+      "review_domain": "strict",
+      "counts": {
+        "scenarios": 16,
+        "expected_apply": 8,
+        "expected_refuse": 8,
+        "applied": 8,
+        "refused": 8,
+        "unsafe_approvals": 0,
+        "false_refusals": 0
+      }
+    },
+    {
+      "suspicion_profile": "goal_and_viability",
+      "maximum_faults": 0,
+      "phenotype": "consensus",
+      "lab_domain": "weakened",
+      "review_domain": "weakened",
+      "counts": {
+        "scenarios": 16,
+        "expected_apply": 8,
+        "expected_refuse": 8,
+        "applied": 16,
+        "refused": 0,
+        "unsafe_approvals": 8,
+        "false_refusals": 0
+      }
+    },
+    {
+      "suspicion_profile": "goal_and_viability",
+      "maximum_faults": 0,
+      "phenotype": "partition",
+      "lab_domain": "strict",
+      "review_domain": "strict",
+      "counts": {
+        "scenarios": 16,
+        "expected_apply": 8,
+        "expected_refuse": 8,
+        "applied": 8,
+        "refused": 8,
+        "unsafe_approvals": 0,
+        "false_refusals": 0
+      }
+    },
+    {
+      "suspicion_profile": "goal_and_viability",
+      "maximum_faults": 0,
+      "phenotype": "partition",
+      "lab_domain": "strict",
+      "review_domain": "weakened",
+      "counts": {
+        "scenarios": 16,
+        "expected_apply": 8,
+        "expected_refuse": 8,
+        "applied": 8,
+        "refused": 8,
+        "unsafe_approvals": 0,
+        "false_refusals": 0
+      }
+    },
+    {
+      "suspicion_profile": "goal_and_viability",
+      "maximum_faults": 0,
+      "phenotype": "partition",
+      "lab_domain": "weakened",
+      "review_domain": "strict",
+      "counts": {
+        "scenarios": 16,
+        "expected_apply": 8,
+        "expected_refuse": 8,
+        "applied": 8,
+        "refused": 8,
+        "unsafe_approvals": 0,
+        "false_refusals": 0
+      }
+    },
+    {
+      "suspicion_profile": "goal_and_viability",
+      "maximum_faults": 0,
+      "phenotype": "partition",
+      "lab_domain": "weakened",
+      "review_domain": "weakened",
+      "counts": {
+        "scenarios": 16,
+        "expected_apply": 8,
+        "expected_refuse": 8,
+        "applied": 16,
+        "refused": 0,
+        "unsafe_approvals": 8,
+        "false_refusals": 0
+      }
+    },
+    {
+      "suspicion_profile": "goal_and_viability",
+      "maximum_faults": 1,
+      "phenotype": "consensus",
+      "lab_domain": "strict",
+      "review_domain": "strict",
+      "counts": {
+        "scenarios": 16,
+        "expected_apply": 8,
+        "expected_refuse": 8,
+        "applied": 0,
+        "refused": 16,
+        "unsafe_approvals": 0,
+        "false_refusals": 8
+      }
+    },
+    {
+      "suspicion_profile": "goal_and_viability",
+      "maximum_faults": 1,
+      "phenotype": "consensus",
+      "lab_domain": "strict",
+      "review_domain": "weakened",
+      "counts": {
+        "scenarios": 16,
+        "expected_apply": 8,
+        "expected_refuse": 8,
+        "applied": 0,
+        "refused": 16,
+        "unsafe_approvals": 0,
+        "false_refusals": 8
+      }
+    },
+    {
+      "suspicion_profile": "goal_and_viability",
+      "maximum_faults": 1,
+      "phenotype": "consensus",
+      "lab_domain": "weakened",
+      "review_domain": "strict",
+      "counts": {
+        "scenarios": 16,
+        "expected_apply": 8,
+        "expected_refuse": 8,
+        "applied": 0,
+        "refused": 16,
+        "unsafe_approvals": 0,
+        "false_refusals": 8
+      }
+    },
+    {
+      "suspicion_profile": "goal_and_viability",
+      "maximum_faults": 1,
+      "phenotype": "consensus",
+      "lab_domain": "weakened",
+      "review_domain": "weakened",
+      "counts": {
+        "scenarios": 16,
+        "expected_apply": 8,
+        "expected_refuse": 8,
+        "applied": 0,
+        "refused": 16,
+        "unsafe_approvals": 0,
+        "false_refusals": 8
+      }
+    },
+    {
+      "suspicion_profile": "goal_and_viability",
+      "maximum_faults": 1,
+      "phenotype": "partition",
+      "lab_domain": "strict",
+      "review_domain": "strict",
+      "counts": {
+        "scenarios": 16,
+        "expected_apply": 8,
+        "expected_refuse": 8,
+        "applied": 0,
+        "refused": 16,
+        "unsafe_approvals": 0,
+        "false_refusals": 8
+      }
+    },
+    {
+      "suspicion_profile": "goal_and_viability",
+      "maximum_faults": 1,
+      "phenotype": "partition",
+      "lab_domain": "strict",
+      "review_domain": "weakened",
+      "counts": {
+        "scenarios": 16,
+        "expected_apply": 8,
+        "expected_refuse": 8,
+        "applied": 0,
+        "refused": 16,
+        "unsafe_approvals": 0,
+        "false_refusals": 8
+      }
+    },
+    {
+      "suspicion_profile": "goal_and_viability",
+      "maximum_faults": 1,
+      "phenotype": "partition",
+      "lab_domain": "weakened",
+      "review_domain": "strict",
+      "counts": {
+        "scenarios": 16,
+        "expected_apply": 8,
+        "expected_refuse": 8,
+        "applied": 0,
+        "refused": 16,
+        "unsafe_approvals": 0,
+        "false_refusals": 8
+      }
+    },
+    {
+      "suspicion_profile": "goal_and_viability",
+      "maximum_faults": 1,
+      "phenotype": "partition",
+      "lab_domain": "weakened",
+      "review_domain": "weakened",
+      "counts": {
+        "scenarios": 16,
+        "expected_apply": 8,
+        "expected_refuse": 8,
+        "applied": 0,
+        "refused": 16,
+        "unsafe_approvals": 0,
+        "false_refusals": 8
+      }
+    }
+  ],
+  "conclusions": [
+    "weakening every viability domain remains an unsafe-approval boundary",
+    "goal suspicion at budget one converts safe partitioned observations into false refusals",
+    "generated evidence does not support productisation"
+  ]
+}

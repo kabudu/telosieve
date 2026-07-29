@@ -56,5 +56,9 @@ Decision: **narrow**. Productisation and public release are blocked. See
 - [x] Test correlated viability-principal faults and document fault-domain
   independence requirements.
 - [x] Prototype a durable rollback-resistant history anchor.
-- [ ] Measure the safety/availability frontier over a larger generated state
+- [x] Measure the safety/availability frontier over a larger generated state
   space.
+
+Evidence: 512 authenticated generated scenarios and per-cell results in
+[GENERATED_STATE_SPACE](GENERATED_STATE_SPACE.md). The retained unsafe-approval
+and false-refusal boundaries keep productisation blocked.
