@@ -27,7 +27,7 @@ configuration whose finite hypothesis count exceeds `maximum_hypotheses`.
   partitions, equivocation, parser differential, and correlated-fault probes.
 - [x] Measure hypothesis growth, compute cost, recovery latency, unsafe approvals,
   and false refusals against every baseline.
-- [ ] Exit: retain reproducible raw results and report all negative results.
+- [x] Exit: retain reproducible raw results and report all negative results.
 
 ## M3 — productisation decision
 

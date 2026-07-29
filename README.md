@@ -45,6 +45,9 @@ For the complete private-repository quality gate, run:
 Hosted CI is intentionally disabled until an explicitly approved public-opening
 or research-release gate.
 
+M2 results and negative findings are reported in
+[M2 Adversarial Results](docs/M2_RESULTS.md).
+
 Each run authenticates all authority envelopes before evaluation. The certificate
 is deterministic for identical inputs; the JSONL ledger is append-only. The
 fixture generator uses deterministic research-only signing keys:
