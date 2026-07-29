@@ -86,3 +86,8 @@ cluster truth.
 
 Incident drills validate deterministic software responses, not operator timing,
 hardware failure, hostile administrators, or multi-host disaster recovery.
+
+Deterministic parser corpora bound test-case count and input bytes while
+exercising malformed structures across four trust boundaries. They do not
+replace coverage-guided fuzzing, sanitizers, arbitrary-input proofs, dependency
+audits, or independent parser implementations.

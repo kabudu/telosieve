@@ -180,3 +180,12 @@ and unchanged inputs. See [KUBERNETES_SHADOW](KUBERNETES_SHADOW.md).
 Seven offline drills execute corruption, witness-loss, capacity, lock, upgrade,
 key-compromise, and lifecycle-rollback failure paths and retain exact commands
 and expected outcomes. See [INCIDENT_DRILLS](INCIDENT_DRILLS.md).
+
+## Bounded parser corpora
+
+Four deterministic corpora exercise valid round trips, truncations, field-type
+confusion, missing or unknown fields, enum errors, and applicable resource
+bounds. Each corpus is limited to 16 cases and 2 MiB total input. The retained
+`telosieve.parser-corpora/v1` result reports four passing corpora, four minimized
+rejection fixtures, and zero newly discovered discrepancies. See
+[PARSER_CORPORA](PARSER_CORPORA.md).

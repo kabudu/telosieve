@@ -19,6 +19,7 @@
 | REC-4 | Preserve exact-generation recovery across qualified OS/architecture boundaries | Pinned offline Linux arm64/amd64 harness on Docker-managed volumes | nine recovery tests, 16 forced terminations, retained per-platform measurements |
 | SEC-3 | Detect signed-history rollback and broken chains | Bounded phenotype chain plus trusted tip anchor | predecessor replay, omitted/forked/old-tip tests |
 | SEC-4 | Rotate, expire, revoke, and recover issuer keys without authorizing stale current evidence | Recovery-root-signed bounded lifecycle with trusted tip and issuance/evaluation key checks | rotated fixture; historical, superseded, expiry, revocation, recovery, rollback, equivocation, separation, and bound tests |
+| SEC-5 | Reject malformed protocol, integration, and recovery artifacts within bounded work | Deterministic parser corpora with explicit case/byte ceilings and minimized regressions | retained `telosieve.parser-corpora/v1` aggregate and four rejection fixtures |
 | INT-1 | Evaluate Kubernetes desired/observed state without mutation authority | Bounded exported ConfigMap/StatefulSet snapshot mapped exactly to authenticated authorities | mapping, drift, partial/stale, identity, size, collision, and CLI no-mutation tests |
 | OPS-1 | Rehearse registered incident classes without production credentials | Offline seven-drill runner with exact expected outcomes | retained `telosieve.incident-drills/v1` aggregate |
 | SEM-4 | Refuse ambiguity | protocol acceptance rule | contradictory-authority E2E |

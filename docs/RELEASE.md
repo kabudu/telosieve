@@ -63,6 +63,11 @@ Seven offline incident drills now pass and are retained. They do not substitute
 for independent, infrastructure, or organizational incident exercises, so the
 release block remains.
 
+Four bounded parser corpora now pass with retained minimized rejection fixtures.
+They are deterministic mutation evidence, not coverage-guided fuzzing,
+sanitizer-backed assessment, arbitrary-input proof, or independent review. The
+release block remains.
+
 ## CI and delivery policy
 
 Telosieve is private, so local CI is the sole authoritative quality gate:

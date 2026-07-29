@@ -1,0 +1,15 @@
+{
+  "schema_version":"telosieve.parser-corpora/v1",
+  "generator":"deterministic-truncation-and-type-mutation",
+  "bounds":{"maximum_cases_per_corpus":16,"maximum_total_bytes_per_corpus":2097152},
+  "corpora":[
+    {"corpus":"authority","command":"cargo test --locked --offline --test parser_corpora authority_parser_corpus_is_bounded_and_fail_closed -- --exact","status":"passed"},
+    {"corpus":"lifecycle","command":"cargo test --locked --offline --test parser_corpora lifecycle_parser_corpus_is_bounded_and_fail_closed -- --exact","status":"passed"},
+    {"corpus":"kubernetes-shadow","command":"cargo test --locked --offline --test parser_corpora shadow_parser_corpus_is_bounded_and_structurally_bounded -- --exact","status":"passed"},
+    {"corpus":"recovery","command":"cargo test --locked --offline --test parser_corpora recovery_parser_corpus_is_bounded_and_fail_closed -- --exact","status":"passed"}
+  ],
+  "retained_regressions":4,
+  "discrepancies_discovered":0,
+  "passed":4,
+  "failed":0
+}

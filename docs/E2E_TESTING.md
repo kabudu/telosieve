@@ -74,3 +74,8 @@ It rejects oversized snapshots and any evidence path that aliases an input.
 
 The incident runner selects seven exact failure-path tests and emits a
 machine-readable pass aggregate only after all seven exit successfully.
+
+`tests/parser_corpora.rs` runs deterministic bounded mutation corpora across
+authority, lifecycle, Kubernetes shadow, and actuator recovery parsers. It
+requires valid round trips, fail-closed malformed inputs, structural bounds, and
+continued rejection of four minimized fixtures.

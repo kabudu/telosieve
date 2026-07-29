@@ -217,6 +217,17 @@ outside this evidence.
 
 ## Post-M15 — property and parser robustness
 
-- [ ] Add bounded property/fuzz corpora for authority, lifecycle, shadow, and
+- [x] Add bounded property/fuzz corpora for authority, lifecycle, shadow, and
   recovery parsing.
-- [ ] Retain minimized regressions for every discovered discrepancy.
+- [x] Retain minimized regressions for every discovered discrepancy.
+
+Evidence: [PARSER_CORPORA](PARSER_CORPORA.md). Four deterministic corpora pass
+within explicit case and byte bounds; four minimized rejection regressions are
+retained and the run discovered no additional discrepancy.
+
+## Post-M16 — independent-assessment handoff
+
+- [ ] Assemble a self-contained assessor manifest with commit, commands,
+  expected digests, claim boundaries, and unresolved release blockers.
+- [ ] Verify the handoff from a clean local checkout without production
+  credentials or hosted CI.

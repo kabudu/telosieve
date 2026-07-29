@@ -1,0 +1,1 @@
+{"schema_version":"telosieve.key-lifecycle/v1","subject":"s","issuer":"i","authority_kind":"goal","sequence":1,"effective_at":1,"parent_digest":null,"action":{"action":"revoke","public_key_digest":"d","unexpected":true},"signature":"s"}
