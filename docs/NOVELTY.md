@@ -28,3 +28,7 @@ invariant checking already constrain adaptive repair.
 Do not say Telosieve “knows true intent,” solves Byzantine repair generally, or is
 the first self-healing system. A publishable claim requires a systematic search,
 working implementation, baseline results, ablations, and independent review.
+
+The 2026-07-29 post-M2 refresh is recorded in
+[DILIGENCE_REFRESH_2026-07-29](DILIGENCE_REFRESH_2026-07-29.md). It does not
+upgrade the candidate claim.
