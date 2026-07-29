@@ -79,3 +79,8 @@ The authenticated-history follow-up is retained in
 `results/post-m3-history-benchmark.json`. It replaces the snapshot proxy with a
 bounded signed predecessor chain and trusted tip anchor without changing any
 registered safety decision.
+
+The separate Linux reproduction is documented in
+[INDEPENDENT_REPRODUCTION](INDEPENDENT_REPRODUCTION.md). Its deterministic outputs
+match the macOS run; third-party organizational reproduction remains a
+productisation gate.

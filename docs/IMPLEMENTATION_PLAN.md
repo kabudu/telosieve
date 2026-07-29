@@ -47,4 +47,14 @@ Decision: **narrow**. Productisation and public release are blocked. See
   batch boundary without reducing semantic diversity.
 - [x] Implement an authenticated, replayable history baseline rather than the
   current fixture-level proxy.
-- [ ] Obtain independent reproduction of the registered experiments.
+- [x] Obtain independent environment/toolchain reproduction of the registered
+  experiments.
+
+## Post-M4 — evidence expansion
+
+- [ ] Obtain third-party organizational reproduction and security review.
+- [ ] Test correlated viability-principal faults and document fault-domain
+  independence requirements.
+- [ ] Prototype a durable rollback-resistant history anchor.
+- [ ] Measure the safety/availability frontier over a larger generated state
+  space.

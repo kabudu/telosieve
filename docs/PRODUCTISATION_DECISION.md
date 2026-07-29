@@ -53,6 +53,10 @@ update. This satisfies one reopening condition, but does not reverse the decisio
 correlated faults, operational independence, the expanded latency cost, broader
 availability evidence, and independent reproduction remain unresolved.
 
+A subsequent network-disabled Linux container reproduced all deterministic
+outputs with a distinct Rust/Python toolchain. This removes a host-environment
+concern, but independent third-party reproduction and review remain unresolved.
+
 ## Evidence basis
 
 - [M2 Adversarial Results](M2_RESULTS.md)

@@ -1,0 +1,29 @@
+{
+  "revision": "70fdbe6af0c078f09e10a3904f4daff702cc3866",
+  "environment": {
+    "os": "linux",
+    "architecture": "arm64",
+    "image": "rust:1.97-bookworm",
+    "image_id": "sha256:77fac8b98f9f46062bb680b6d25d5bcaabfc400143952ebc572e924bcbedc3fa",
+    "rustc": "1.97.1",
+    "cargo": "1.97.1",
+    "python": "3.11.2",
+    "network": "disabled",
+    "repository_mount": "read_only"
+  },
+  "validation": {
+    "tests_passed": 16,
+    "tests_failed": 0,
+    "rustdoc_warnings_denied": "passed",
+    "cargo_metadata_locked_offline": "passed",
+    "project_validation": "passed",
+    "rustfmt": "unavailable_in_stock_image",
+    "clippy": "unavailable_in_stock_image"
+  },
+  "scenarios": [
+    {"scenario":"benign-update","hypothesis_count":3,"certificate_bytes":4593,"decision":"applied","unsafe_approvals":0,"false_refusals":0,"baseline_unsafe_approvals":0},
+    {"scenario":"partitioned-phenotype","hypothesis_count":2,"certificate_bytes":4055,"decision":"applied","unsafe_approvals":0,"false_refusals":0,"baseline_unsafe_approvals":0},
+    {"scenario":"poisoned-goal","hypothesis_count":2,"certificate_bytes":3646,"decision":"refused","unsafe_approvals":0,"false_refusals":0,"baseline_unsafe_approvals":2},
+    {"scenario":"weakened-viability","hypothesis_count":4,"certificate_bytes":4544,"decision":"refused","unsafe_approvals":0,"false_refusals":0,"baseline_unsafe_approvals":2}
+  ]
+}
