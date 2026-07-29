@@ -21,3 +21,7 @@ timeouts.
 The post-M3 fault model authenticates distinct viability issuers and excludes one
 issuer per bounded hypothesis. Distinct keys establish principal identity, not
 organizational or implementation independence.
+
+Authenticated phenotype history rejects chain and anchor rollback within a
+64-record bound. The trusted anchor is configuration in this harness; compromise
+or rollback of that trust root remains outside the demonstrated protection.

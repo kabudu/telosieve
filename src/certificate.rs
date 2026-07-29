@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 use crate::{
     checker::CheckerVerdict,
     model::{ServiceState, Transition},
-    protocol::AuthorityKind,
+    protocol::{AuthorityKind, HistoryAnchor},
 };
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -47,6 +47,7 @@ pub struct Certificate {
     pub scenario_id: String,
     pub seed: u64,
     pub authority_digests: BTreeMap<String, String>,
+    pub phenotype_history_anchor: HistoryAnchor,
     pub hypotheses: Vec<HypothesisRecord>,
     pub decision: Decision,
     pub refusal_reason: Option<String>,

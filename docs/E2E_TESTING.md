@@ -21,8 +21,9 @@ successful outcome when evidence is underdetermined.
 The M0 integration suite (`tests/m0.rs`) exercises the public file boundary,
 signature tampering, hypothesis-budget exhaustion, benign apply and rollback,
 poisoned-goal refusal, deterministic byte replay, certificate persistence, and
-append-only ledger records. The broader fault suites listed above remain M1/M2
-work.
+append-only ledger records. It also replays a signed predecessor distinct from the
+current snapshot and rejects missing history, forked records, and an older trusted
+tip.
 
 `tests/adversarial.rs` registers the M2 hostile-input matrix: poisoned and stale
 goals, omitted and forged phenotype evidence, invariant weakening, partitioned

@@ -81,6 +81,14 @@ pub struct FaultDeclaration {
     pub maximum_hypotheses: usize,
 }
 
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct HistoryAnchor {
+    pub issuer: String,
+    pub sequence: u64,
+    pub tip_digest: String,
+}
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum ExpectedDecision {
@@ -98,6 +106,9 @@ pub struct Scenario {
     pub expected_decision: ExpectedDecision,
     pub public_keys: BTreeMap<String, String>,
     pub fault_declaration: FaultDeclaration,
+    pub phenotype_history_anchor: HistoryAnchor,
+    #[serde(default)]
+    pub phenotype_history: Vec<Envelope>,
     pub authorities: Vec<Envelope>,
 }
 
@@ -106,6 +117,7 @@ pub struct VerifiedAuthorities {
     pub digests: BTreeMap<String, String>,
     pub goal: Values,
     pub phenotype: ServiceState,
+    pub phenotype_history: Vec<ServiceState>,
     pub viability: Vec<VerifiedViability>,
 }
 
@@ -134,8 +146,18 @@ pub enum ProtocolError {
 /// Returns [`ProtocolError`] when an authority is missing, duplicated, stale,
 /// malformed, digest-mismatched, or has an invalid signature.
 pub fn verify(scenario: &Scenario) -> Result<VerifiedAuthorities, ProtocolError> {
+    if scenario.phenotype_history.len() > 64 {
+        return Err(ProtocolError::Invalid {
+            kind: AuthorityKind::Phenotype,
+            field: "phenotype_history",
+            reason: "history exceeds the 64-record bound".into(),
+        });
+    }
     for envelope in &scenario.authorities {
-        validate_envelope(scenario, envelope)?;
+        validate_envelope(scenario, envelope, true)?;
+    }
+    for envelope in &scenario.phenotype_history {
+        validate_envelope(scenario, envelope, false)?;
     }
     let mut by_kind = BTreeMap::new();
     let mut viability_envelopes = Vec::new();
@@ -171,6 +193,20 @@ pub fn verify(scenario: &Scenario) -> Result<VerifiedAuthorities, ProtocolError>
 
     let goal = parse_content::<Values>(&by_kind, AuthorityKind::Goal)?;
     let phenotype = parse_content::<ServiceState>(&by_kind, AuthorityKind::Phenotype)?;
+    let current_phenotype = by_kind
+        .get(&AuthorityKind::Phenotype)
+        .ok_or(ProtocolError::Cardinality(AuthorityKind::Phenotype))?;
+    if scenario.phenotype_history_anchor.issuer != current_phenotype.issuer
+        || scenario.phenotype_history_anchor.sequence != current_phenotype.sequence
+        || scenario.phenotype_history_anchor.tip_digest != digest(*current_phenotype)
+    {
+        return Err(ProtocolError::Invalid {
+            kind: AuthorityKind::Phenotype,
+            field: "phenotype_history_anchor",
+            reason: "current phenotype does not match the trusted history anchor".into(),
+        });
+    }
+    let phenotype_history = verify_history(scenario, current_phenotype)?;
     if viability_envelopes.is_empty() {
         return Err(ProtocolError::Cardinality(AuthorityKind::Viability));
     }
@@ -189,23 +225,93 @@ pub fn verify(scenario: &Scenario) -> Result<VerifiedAuthorities, ProtocolError>
                 })
         })
         .collect::<Result<Vec<_>, _>>()?;
-    let digests = scenario
-        .authorities
-        .iter()
-        .map(|envelope| {
-            (
-                format!("{:?}:{}", envelope.kind, envelope.issuer).to_lowercase(),
-                digest(envelope),
-            )
-        })
-        .collect();
+    let digests = authority_digests(scenario);
 
     Ok(VerifiedAuthorities {
         digests,
         goal,
         phenotype,
+        phenotype_history,
         viability,
     })
+}
+
+fn authority_digests(scenario: &Scenario) -> BTreeMap<String, String> {
+    scenario
+        .authorities
+        .iter()
+        .map(|envelope| ("current", envelope))
+        .chain(
+            scenario
+                .phenotype_history
+                .iter()
+                .map(|envelope| ("history", envelope)),
+        )
+        .map(|(scope, envelope)| {
+            (
+                format!(
+                    "{scope}:{:?}:{}:{}",
+                    envelope.kind, envelope.issuer, envelope.sequence
+                )
+                .to_lowercase(),
+                digest(envelope),
+            )
+        })
+        .collect()
+}
+
+fn verify_history(
+    scenario: &Scenario,
+    current: &Envelope,
+) -> Result<Vec<ServiceState>, ProtocolError> {
+    if scenario.phenotype_history.is_empty() {
+        if current.sequence != 1 || !current.parent_digests.is_empty() {
+            return Err(ProtocolError::Invalid {
+                kind: AuthorityKind::Phenotype,
+                field: "parent_digests",
+                reason: "current phenotype does not have a retained history chain".into(),
+            });
+        }
+        return Ok(Vec::new());
+    }
+    let mut expected_parent = None;
+    let mut states = Vec::with_capacity(scenario.phenotype_history.len());
+    for (index, envelope) in scenario.phenotype_history.iter().enumerate() {
+        let expected_sequence = u64::try_from(index + 1).expect("history bound fits u64");
+        if envelope.kind != AuthorityKind::Phenotype
+            || envelope.issuer != current.issuer
+            || envelope.sequence != expected_sequence
+            || envelope.parent_digests != expected_parent.iter().cloned().collect::<Vec<_>>()
+        {
+            return Err(ProtocolError::Invalid {
+                kind: AuthorityKind::Phenotype,
+                field: "phenotype_history",
+                reason: "history kind, issuer, sequence, or parent link is invalid".into(),
+            });
+        }
+        states.push(
+            serde_json::from_value(envelope.content.clone()).map_err(|error| {
+                ProtocolError::Invalid {
+                    kind: AuthorityKind::Phenotype,
+                    field: "content",
+                    reason: error.to_string(),
+                }
+            })?,
+        );
+        expected_parent = Some(digest(envelope));
+    }
+    let expected_sequence =
+        u64::try_from(scenario.phenotype_history.len() + 1).expect("history bound fits u64");
+    if current.sequence != expected_sequence
+        || current.parent_digests != expected_parent.into_iter().collect::<Vec<_>>()
+    {
+        return Err(ProtocolError::Invalid {
+            kind: AuthorityKind::Phenotype,
+            field: "parent_digests",
+            reason: "current phenotype does not extend the retained history tip".into(),
+        });
+    }
+    Ok(states)
 }
 
 fn parse_content<T: for<'de> Deserialize<'de>>(
@@ -222,7 +328,11 @@ fn parse_content<T: for<'de> Deserialize<'de>>(
     })
 }
 
-fn validate_envelope(scenario: &Scenario, envelope: &Envelope) -> Result<(), ProtocolError> {
+fn validate_envelope(
+    scenario: &Scenario,
+    envelope: &Envelope,
+    require_current: bool,
+) -> Result<(), ProtocolError> {
     let invalid = |field, reason: String| ProtocolError::Invalid {
         kind: envelope.kind,
         field,
@@ -237,8 +347,9 @@ fn validate_envelope(scenario: &Scenario, envelope: &Envelope) -> Result<(), Pro
     if envelope.subject != scenario.subject {
         return Err(invalid("subject", "subject mismatch".into()));
     }
-    if !(envelope.issued_at <= scenario.evaluation_time
-        && scenario.evaluation_time < envelope.expires_at)
+    if envelope.issued_at >= envelope.expires_at
+        || envelope.issued_at > scenario.evaluation_time
+        || (require_current && scenario.evaluation_time >= envelope.expires_at)
     {
         return Err(invalid("validity", "envelope is not current".into()));
     }

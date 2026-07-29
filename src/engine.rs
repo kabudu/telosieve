@@ -118,10 +118,11 @@ pub fn run_scenario(scenario: &Scenario) -> Result<Certificate, RunError> {
     let hypothesis_count = hypotheses.len();
 
     Ok(Certificate {
-        certificate_version: "telosieve.certificate/v1".into(),
+        certificate_version: "telosieve.certificate/v2".into(),
         scenario_id: scenario.scenario_id.clone(),
         seed: scenario.seed,
         authority_digests: authorities.digests,
+        phenotype_history_anchor: scenario.phenotype_history_anchor.clone(),
         hypotheses,
         decision,
         refusal_reason,
@@ -146,8 +147,9 @@ fn build_baselines(
     let conventional_checker =
         check_all_viability_in_process(authorities, &conventional_transition);
     let signed_history_transition = authorities
-        .phenotype
-        .consensus()
+        .phenotype_history
+        .last()
+        .and_then(|state| state.consensus())
         .map(|values| authorities.phenotype.transition_to(values));
     let signed_history_checker = signed_history_transition
         .as_ref()
@@ -167,7 +169,7 @@ fn build_baselines(
             checker: Some(conventional_checker.clone()),
         },
         BaselineRecord {
-            name: "signed-history-rollback/v0".into(),
+            name: "signed-history-replay/v1".into(),
             decision: if signed_history_checker
                 .as_ref()
                 .is_some_and(|verdict| verdict.safe)

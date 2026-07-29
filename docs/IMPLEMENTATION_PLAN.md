@@ -45,6 +45,6 @@ Decision: **narrow**. Productisation and public release are blocked. See
   preregistering the fault model and falsifiers.
 - [x] Replace per-hypothesis process spawning with a bounded checker service or
   batch boundary without reducing semantic diversity.
-- [ ] Implement an authenticated, replayable history baseline rather than the
+- [x] Implement an authenticated, replayable history baseline rather than the
   current fixture-level proxy.
 - [ ] Obtain independent reproduction of the registered experiments.

@@ -17,6 +17,41 @@
     ],
     "maximum_hypotheses": 4
   },
+  "phenotype_history_anchor": {
+    "issuer": "phenotype-lab",
+    "sequence": 2,
+    "tip_digest": "4efc53dbd135f1ed9d28edac26ed32b9dfc90da0d65c92fa84bc77421297b43a"
+  },
+  "phenotype_history": [
+    {
+      "kind": "phenotype",
+      "subject": "kv/research",
+      "schema_version": "telosieve.authority/v0",
+      "issued_at": 1700000000,
+      "expires_at": 1800000000,
+      "issuer": "phenotype-lab",
+      "sequence": 1,
+      "content_digest": "5273bec3696cac86f083190a569719c0694a00713be4b1c52789e12b83a30995",
+      "parent_digests": [],
+      "content": {
+        "replicas": {
+          "replica-a": {
+            "cluster/epoch": "7",
+            "user/message": "stable"
+          },
+          "replica-b": {
+            "cluster/epoch": "7",
+            "user/message": "stable"
+          },
+          "replica-c": {
+            "cluster/epoch": "7",
+            "user/message": "stable"
+          }
+        }
+      },
+      "signature": "327c3fba5dfc1bf6c38a7f6f7b75639384e88c48fd2e4be2c629798fe2179e2329b69143d7cd6003091b70f1765f9291181067e5d16dc3d147f9fa0b5d1ebb01"
+    }
+  ],
   "authorities": [
     {
       "kind": "goal",
@@ -41,9 +76,11 @@
       "issued_at": 1700000000,
       "expires_at": 1800000000,
       "issuer": "phenotype-lab",
-      "sequence": 1,
+      "sequence": 2,
       "content_digest": "1317b1951480ca93bdf470fe433ba7f97731bfa0906046dfcf7edcb591d46d64",
-      "parent_digests": [],
+      "parent_digests": [
+        "7eb85be26a07901d191e880195405adb6f2740ce3b11b718969f7b41c5952004"
+      ],
       "content": {
         "replicas": {
           "replica-a": {
@@ -60,7 +97,7 @@
           }
         }
       },
-      "signature": "2d674ca8b78b90996ead76a2bc85cab6446b7782e20fae55d3465238b40611807161815dd8e8e40ec19d5c0514bcc84c4c224ee58808f5ffbbb21d41a431a90d"
+      "signature": "d1fce6f2240f9ecd6178d87890da3c510a6cc57f8414db23c708c12812c0dd43889a1255261c99b57da5cca823c5a3c4c23087d961cce342fb04d2ad74079d08"
     },
     {
       "kind": "viability",

@@ -9,7 +9,8 @@ use serde_json::{Value, json};
 use telosieve::{
     model::digest,
     protocol::{
-        AuthorityKind, Envelope, ExpectedDecision, FaultDeclaration, SCHEMA_VERSION, Scenario,
+        AuthorityKind, Envelope, ExpectedDecision, FaultDeclaration, HistoryAnchor, SCHEMA_VERSION,
+        Scenario,
     },
 };
 
@@ -28,6 +29,17 @@ struct UnsignedEnvelope<'a> {
 }
 
 fn envelope(key: &SigningKey, kind: AuthorityKind, issuer: &str, content: Value) -> Envelope {
+    envelope_with_lineage(key, kind, issuer, content, 1, Vec::new())
+}
+
+fn envelope_with_lineage(
+    key: &SigningKey,
+    kind: AuthorityKind,
+    issuer: &str,
+    content: Value,
+    sequence: u64,
+    parent_digests: Vec<String>,
+) -> Envelope {
     let mut envelope = Envelope {
         kind,
         subject: "kv/research".into(),
@@ -35,9 +47,9 @@ fn envelope(key: &SigningKey, kind: AuthorityKind, issuer: &str, content: Value)
         issued_at: 1_700_000_000,
         expires_at: 1_800_000_000,
         issuer: issuer.into(),
-        sequence: 1,
+        sequence,
         content_digest: digest(&content),
-        parent_digests: Vec::new(),
+        parent_digests,
         content,
         signature: String::new(),
     };
@@ -110,6 +122,31 @@ fn main() {
                 maximum_faults,
                 suspectable|
      -> Scenario {
+        let history = envelope(
+            &phenotype_key,
+            AuthorityKind::Phenotype,
+            "phenotype-lab",
+            json!({
+                "replicas": {
+                    "replica-a": {"cluster/epoch": "7", "user/message": "stable"},
+                    "replica-b": {"cluster/epoch": "7", "user/message": "stable"},
+                    "replica-c": {"cluster/epoch": "7", "user/message": "stable"}
+                }
+            }),
+        );
+        let current_phenotype = envelope_with_lineage(
+            &phenotype_key,
+            AuthorityKind::Phenotype,
+            "phenotype-lab",
+            phenotype,
+            2,
+            vec![digest(&history)],
+        );
+        let phenotype_history_anchor = HistoryAnchor {
+            issuer: current_phenotype.issuer.clone(),
+            sequence: current_phenotype.sequence,
+            tip_digest: digest(&current_phenotype),
+        };
         Scenario {
             scenario_id: scenario_id.into(),
             seed: 7,
@@ -122,14 +159,11 @@ fn main() {
                 suspectable,
                 maximum_hypotheses: 4,
             },
+            phenotype_history_anchor,
+            phenotype_history: vec![history],
             authorities: vec![
                 envelope(&goal_key, AuthorityKind::Goal, "goal-lab", goal),
-                envelope(
-                    &phenotype_key,
-                    AuthorityKind::Phenotype,
-                    "phenotype-lab",
-                    phenotype,
-                ),
+                current_phenotype,
                 envelope(
                     &viability_key,
                     AuthorityKind::Viability,

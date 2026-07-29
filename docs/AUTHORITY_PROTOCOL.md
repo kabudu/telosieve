@@ -31,3 +31,8 @@ Signed bytes use deterministic serialization of typed fields and ordered maps.
 The harness does not yet maintain issuer history, detect equivocation across runs,
 validate organizational independence, rotate keys, or use a standardized
 cross-language canonical JSON format.
+
+Phenotype history is the first exception: certificate v2 verifies a bounded
+single-issuer chain against a trusted monotonic tip anchor and exposes every
+retained digest. See [AUTHENTICATED_HISTORY](AUTHENTICATED_HISTORY.md). The anchor
+remains research configuration rather than a durable production checkpoint.

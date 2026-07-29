@@ -74,3 +74,8 @@ refuses the weakened-viability transition with zero unsafe approvals while the
 benign multi-principal fixture still applies with zero false refusals. This
 removes the registered unsafe approval inside the new one-principal fault model;
 it does not cover correlated faults or qualify the project for productisation.
+
+The authenticated-history follow-up is retained in
+`results/post-m3-history-benchmark.json`. It replaces the snapshot proxy with a
+bounded signed predecessor chain and trusted tip anchor without changing any
+registered safety decision.

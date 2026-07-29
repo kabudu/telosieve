@@ -18,6 +18,41 @@
     ],
     "maximum_hypotheses": 4
   },
+  "phenotype_history_anchor": {
+    "issuer": "phenotype-lab",
+    "sequence": 2,
+    "tip_digest": "11f857b1ee6f693bc7d87cda9bead6baf8ad941ac2e333e2a347a5defa6b477a"
+  },
+  "phenotype_history": [
+    {
+      "kind": "phenotype",
+      "subject": "kv/research",
+      "schema_version": "telosieve.authority/v0",
+      "issued_at": 1700000000,
+      "expires_at": 1800000000,
+      "issuer": "phenotype-lab",
+      "sequence": 1,
+      "content_digest": "5273bec3696cac86f083190a569719c0694a00713be4b1c52789e12b83a30995",
+      "parent_digests": [],
+      "content": {
+        "replicas": {
+          "replica-a": {
+            "cluster/epoch": "7",
+            "user/message": "stable"
+          },
+          "replica-b": {
+            "cluster/epoch": "7",
+            "user/message": "stable"
+          },
+          "replica-c": {
+            "cluster/epoch": "7",
+            "user/message": "stable"
+          }
+        }
+      },
+      "signature": "327c3fba5dfc1bf6c38a7f6f7b75639384e88c48fd2e4be2c629798fe2179e2329b69143d7cd6003091b70f1765f9291181067e5d16dc3d147f9fa0b5d1ebb01"
+    }
+  ],
   "authorities": [
     {
       "kind": "goal",
@@ -41,9 +76,11 @@
       "issued_at": 1700000000,
       "expires_at": 1800000000,
       "issuer": "phenotype-lab",
-      "sequence": 1,
+      "sequence": 2,
       "content_digest": "949517d197c6e3f2fcf57eeaa614e16426269cf886d7f534573b729a4d1950cd",
-      "parent_digests": [],
+      "parent_digests": [
+        "7eb85be26a07901d191e880195405adb6f2740ce3b11b718969f7b41c5952004"
+      ],
       "content": {
         "replicas": {
           "replica-a": {
@@ -60,7 +97,7 @@
           }
         }
       },
-      "signature": "c3eaeabcdb1c2f90ded2b9f1d6ec137dc627ebc24eb1da3092560f35377a16f7ef007a92ab53fd147980bd0cba68071c1bd5093b5b4c653380545dd5b41e8e07"
+      "signature": "57b7a223243338245e55bc471f50f16fe103f1030ea4d7d7f12ac7ae17de9d2d54f016a552e321314b2317d624504ffa24b7889569590da2911a336a34c36903"
     },
     {
       "kind": "viability",

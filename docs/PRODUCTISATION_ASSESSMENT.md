@@ -33,3 +33,8 @@ plane, production adapter, or safety claim.
 
 The resulting binding decision is documented in
 [PRODUCTISATION_DECISION](PRODUCTISATION_DECISION.md).
+
+Post-M3 work now includes authenticated predecessor replay, but the anchor remains
+trusted harness configuration rather than a durable rollback-resistant service.
+This removes the fixture-level snapshot proxy without satisfying the production
+history requirement.

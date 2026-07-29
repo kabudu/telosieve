@@ -73,6 +73,53 @@ fn replay_is_byte_deterministic() {
 }
 
 #[test]
+fn authenticated_history_replays_predecessor_and_rejects_rollback() {
+    let scenario = load("poisoned-goal.json");
+    let certificate = run_scenario(&scenario).unwrap();
+    let history = certificate
+        .baselines
+        .iter()
+        .find(|baseline| baseline.name == "signed-history-replay/v1")
+        .unwrap();
+    assert_eq!(
+        history
+            .transition
+            .as_ref()
+            .unwrap()
+            .after
+            .consensus()
+            .unwrap()["user/message"],
+        "stable"
+    );
+
+    let mut omitted = scenario.clone();
+    omitted.phenotype_history.clear();
+    assert!(matches!(run_scenario(&omitted), Err(RunError::Protocol(_))));
+
+    let mut replayed_tip = scenario.clone();
+    replayed_tip.phenotype_history_anchor.sequence = 1;
+    replayed_tip.phenotype_history_anchor.tip_digest =
+        telosieve::model::digest(&replayed_tip.phenotype_history[0]);
+    assert!(matches!(
+        run_scenario(&replayed_tip),
+        Err(RunError::Protocol(_))
+    ));
+
+    let mut forked = scenario;
+    forked
+        .phenotype_history
+        .push(forked.phenotype_history[0].clone());
+    assert!(matches!(run_scenario(&forked), Err(RunError::Protocol(_))));
+
+    let mut over_bound = load("poisoned-goal.json");
+    over_bound.phenotype_history = vec![over_bound.phenotype_history[0].clone(); 65];
+    assert!(matches!(
+        run_scenario(&over_bound),
+        Err(RunError::Protocol(_))
+    ));
+}
+
+#[test]
 fn tampering_fails_closed() {
     let mut scenario = load("benign.json");
     scenario.authorities[0].content["user/message"] = "tampered".into();
@@ -245,11 +292,11 @@ fn public_replay_reports_all_baselines_and_protocol_evidence() {
             names,
             [
                 "conventional-reconciler/v0",
-                "signed-history-rollback/v0",
+                "signed-history-replay/v1",
                 "invariant-gated-reconciler/v0"
             ]
         );
-        assert_eq!(certificate.authority_digests.len(), 4);
+        assert_eq!(certificate.authority_digests.len(), 5);
         assert!(certificate.hypotheses.iter().all(|hypothesis| {
             hypothesis.suspected == hypothesis.excluded
                 && hypothesis.checker.as_ref().is_none_or(|verdict| {
