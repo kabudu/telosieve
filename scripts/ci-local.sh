@@ -22,6 +22,7 @@ printf 'local-ci: cargo metadata --locked --offline --no-deps --format-version 1
 cargo metadata --locked --offline --no-deps --format-version 1 >/dev/null
 run python3 scripts/validate-project.py
 run python3 scripts/validate-assessor-manifest.py
+run python3 scripts/validate-supply-chain.py
 run git diff --check
 
 if rg -n '\b(TODO|FIXME|REPLACE_WITH)\b' \

@@ -198,3 +198,12 @@ release blockers. A fresh local clone at that commit passes authoritative local
 CI and reproduces the incident and parser-corpus aggregates byte-for-byte. The
 retained verifier result records that no hosted CI or production credential was
 required. See [ASSESSOR_HANDOFF](ASSESSOR_HANDOFF.md).
+
+## Dependency provenance and advisory audit
+
+The deterministic dependency inventory contains 44 exact locked packages, 43
+third-party checksums, declared license expressions, sources, and directness.
+The retained cargo-audit result binds that lockfile to a named RustSec commit and
+reports zero known vulnerabilities, warnings, or accepted findings. Local CI
+regenerates the inventory offline and rejects an advisory result older than 30
+days. See [SUPPLY_CHAIN](SUPPLY_CHAIN.md).

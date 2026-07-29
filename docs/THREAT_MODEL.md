@@ -97,3 +97,9 @@ digest changes, hosted workflow presence, dirty clean-checkout state, local-CI
 failure, and operational-result divergence. It does not establish independence:
 the repository, machine, dependency cache, and verifier are still controlled by
 the project.
+
+Locked dependency inventory detects package, source, checksum, and declared
+license drift. RustSec matching detects only published advisories in the retained
+database snapshot; it cannot detect unknown vulnerabilities, compromised
+upstream releases or registries, malicious build scripts, license-text mismatch,
+or toolchain compromise.

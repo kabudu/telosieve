@@ -19,6 +19,7 @@ REQUIRED = (
     "docs/IMPLEMENTATION_PLAN.md",
     "docs/RELEASE.md",
     "docs/REQUIREMENTS_TRACEABILITY.md",
+    "docs/SUPPLY_CHAIN.md",
     "docs/THREAT_MODEL.md",
     "docs/VALIDATION.md",
     "assessment/manifest.json",

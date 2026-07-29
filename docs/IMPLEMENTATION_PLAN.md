@@ -238,7 +238,18 @@ fresh local clone; this is a handoff package, not independent assessment.
 
 ## Post-M17 — dependency provenance and advisory inventory
 
-- [ ] Generate a locked dependency and license inventory with exact package
+- [x] Generate a locked dependency and license inventory with exact package
   versions and source/checksum provenance.
-- [ ] Run a local advisory audit and document unresolved, unavailable, or
+- [x] Run a local advisory audit and document unresolved, unavailable, or
   accepted findings without enabling hosted CI.
+
+Evidence: [SUPPLY_CHAIN](SUPPLY_CHAIN.md). The deterministic inventory binds 44
+packages to the lockfile; the current RustSec snapshot reports no known
+vulnerability or warning and no finding is accepted.
+
+## Post-M18 — trusted-time and recovery-root ceremony
+
+- [ ] Model trusted-time rollback/forward failure paths for lifecycle expiry and
+  emergency revocation.
+- [ ] Define and rehearse a credential-free multi-party recovery-root ceremony
+  with explicit quorum, evidence, abort, and compromise handling.

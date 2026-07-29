@@ -73,6 +73,12 @@ incident/parser aggregates from a fresh local clone. This makes independent
 assessment easier but is not third-party reproduction or review; it does not
 change the release decision.
 
+The locked supply-chain inventory records all resolved package versions,
+registry checksums, sources, and declared licenses. A current named RustSec
+snapshot reports no known finding for the lockfile. This is time-bounded advisory
+matching, not dependency or build-system assurance, so the release block
+remains.
+
 ## CI and delivery policy
 
 Telosieve is private, so local CI is the sole authoritative quality gate:
