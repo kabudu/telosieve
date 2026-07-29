@@ -80,3 +80,9 @@ actuator. It proves commit-time state comparison and atomic local side effects,
 but it is not evidence for any named external service, credential boundary,
 distributed transaction, or production recovery procedure. See
 [LOCAL_REFERENCE_ACTUATOR](LOCAL_REFERENCE_ACTUATOR.md).
+
+Schema-v2 recovery testing removes one narrower uncertainty: on the measured
+macOS/aarch64 filesystem, killed local actuator processes recover to an exact
+witnessed generation and stale primary backups refuse. The co-located witness
+does not protect whole-disk rollback or establish other-platform, multi-host, or
+external-service reliability. See [ACTUATOR_RECOVERY](ACTUATOR_RECOVERY.md).

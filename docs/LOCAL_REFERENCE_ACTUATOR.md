@@ -50,10 +50,11 @@ and byte-deterministic.
 
 ## Transaction and failures
 
-The actuator uses an atomic same-directory lock, create-new temporary file,
-file `sync_all`, rename, and parent-directory `sync_all`. The stored JSON is
-limited to 1 MiB and deletion history to 4,096 validated SHA-256 identifiers.
-The lock is never automatically broken.
+Actuator schema v2 uses an atomic same-directory lock, a separate recovery
+witness, create-new temporary files, file `sync_all`, rename, and
+parent-directory `sync_all`. The stored JSON is limited to 1 MiB and deletion
+history to 4,096 validated SHA-256 identifiers. The lock is never automatically
+broken. See [ACTUATOR_RECOVERY](ACTUATOR_RECOVERY.md).
 
 Verification and checking occur before the lock is acquired. At commit time the
 store repeats the critical state and transition-precondition checks, preventing
@@ -76,6 +77,6 @@ failure, and the real
 
 This is a single-host reference backend, not a production actuator. It does not
 provide external service transactions, authentication or authorization for local
-operators, hostile-storage rollback protection, multi-host consensus, backup and
-restore qualification, or incident-tested integration with Kubernetes, GitOps,
-or a database.
+operators, hostile-storage rollback protection, multi-host consensus, whole-disk
+disaster recovery, or incident-tested integration with Kubernetes, GitOps, or a
+database. Recovery is qualified only on the measured macOS/aarch64 filesystem.

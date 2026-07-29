@@ -174,6 +174,52 @@ pub fn read_actuator_snapshot_file(
     Ok(crate::actuator_store::LocalActuatorStore::new(actuator_path).current_snapshot()?)
 }
 
+/// Creates a verified backup of the latest committed local actuator state.
+///
+/// # Errors
+///
+/// Returns [`RunError`] on recovery inconsistency, an existing backup target,
+/// bounds, or persistence failure.
+pub fn backup_actuator_file(actuator_path: &Path, backup_path: &Path) -> Result<(), RunError> {
+    crate::actuator_store::LocalActuatorStore::new(actuator_path).backup(backup_path)?;
+    Ok(())
+}
+
+/// Restores a backup only when it exactly matches the latest durable witness.
+///
+/// # Errors
+///
+/// Returns [`RunError`] on stale/tampered backup, unresolved pending state,
+/// contention, bounds, or persistence failure.
+pub fn restore_actuator_file(actuator_path: &Path, backup_path: &Path) -> Result<(), RunError> {
+    crate::actuator_store::LocalActuatorStore::new(actuator_path).restore(backup_path)?;
+    Ok(())
+}
+
+/// Resolves an interrupted local actuator transaction.
+///
+/// # Errors
+///
+/// Returns [`RunError`] on contention or any state/witness combination outside
+/// the exact previous/next recovery states.
+pub fn recover_actuator_file(
+    actuator_path: &Path,
+) -> Result<crate::actuator_store::RecoveryOutcome, RunError> {
+    Ok(crate::actuator_store::LocalActuatorStore::new(actuator_path).recover()?)
+}
+
+/// Explicitly upgrades a witness-less v1 local actuator without discarding its
+/// deletion-consumption history.
+///
+/// # Errors
+///
+/// Returns [`RunError`] unless the source is a valid v1 state with no witness,
+/// or when durable persistence fails.
+pub fn upgrade_actuator_file(actuator_path: &Path) -> Result<(), RunError> {
+    crate::actuator_store::LocalActuatorStore::new(actuator_path).upgrade_legacy()?;
+    Ok(())
+}
+
 fn persist_evidence(
     certificate: &Certificate,
     certificate_path: &Path,

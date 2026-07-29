@@ -71,6 +71,18 @@ cargo run -- local-show out/local-actuator.json
 This reference backend proves atomic adapter semantics; it is not a production
 service integration.
 
+Back up, restore, and recover its current single-host generation:
+
+```sh
+cargo run -- local-backup out/local-actuator.json out/actuator-backup.json
+cargo run -- local-restore out/local-actuator.json out/actuator-backup.json
+cargo run -- local-recover out/local-actuator.json
+```
+
+Actuator schema-v1 files must be upgraded with `local-upgrade`; do not
+reinitialize them and discard deletion-consumption history. See
+[Actuator Recovery](docs/ACTUATOR_RECOVERY.md).
+
 For the complete private-repository quality gate, run:
 
 ```sh

@@ -140,3 +140,20 @@ unchecked gate.
 Evidence: [LOCAL_REFERENCE_ACTUATOR](LOCAL_REFERENCE_ACTUATOR.md). Real production
 service integration, platform qualification, and external organizational review
 remain unresolved.
+
+## Post-M10 — local actuator recovery qualification
+
+- [x] Add monotonic generations and a separate pending/committed recovery
+  witness around every actuator mutation.
+- [x] Add bounded create-new backup, exact-latest restore, and stale/tampered
+  backup rejection.
+- [x] Preserve deletion history through an explicit crash-safe schema-v1 upgrade.
+- [x] Resolve commit, initialization, and upgrade interruption without guessing.
+- [x] Stress concurrent writers and 16 forced terminations, and retain
+  50-iteration backup/restore/recovery measurements.
+- [x] Exit: each tested interruption recovers to one exact committed generation
+  or fails closed; stale restore cannot roll the witness back.
+
+Evidence: [ACTUATOR_RECOVERY](ACTUATOR_RECOVERY.md). Qualification is limited to
+the tested macOS/aarch64 single-host filesystem. Whole-disk rollback, other
+platforms, external service integration, and independent review remain open.

@@ -78,6 +78,11 @@ Certificate v8's transactional local reference actuator does not change that
 decision. It establishes an adapter contract but does not qualify external
 service actuation, credentials, recovery, or multi-host durability.
 
+The schema-v2 recovery witness and macOS/aarch64 stress evidence narrow local
+recovery risk but do not reverse the decision. Whole-disk rollback, other
+platforms, external actuation, organizational independence, and third-party
+review remain reopening conditions.
+
 ## Evidence basis
 
 - [M2 Adversarial Results](M2_RESULTS.md)

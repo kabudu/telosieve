@@ -85,3 +85,9 @@ reference actuator repeats observed-state and transition-precondition checks at
 commit time, then atomically replaces service state, history anchor, and deletion
 consumption under one lock. Refusal can advance history but cannot change service
 values. This validates an adapter transaction contract, not an external service.
+
+Actuator schema v2 wraps each state replacement with a separate
+pending/committed witness containing the exact previous and next generation and
+state digest. Recovery accepts only one of those states. Backups carry the typed
+state and digest, while restore requires equality with the latest witness; the
+witness itself is deliberately not restored from backup.

@@ -136,3 +136,17 @@ closed. A retained failure-path test demonstrates applied-but-unreported state
 when evidence persistence fails, and the CLI lifecycle exercises initialization,
 application, and readback through the executable boundary. See
 [LOCAL_REFERENCE_ACTUATOR](LOCAL_REFERENCE_ACTUATOR.md).
+
+## Local actuator recovery qualification
+
+Schema-v2 tests inject interruption after pending-witness persistence and after
+primary-state replacement; recovery retains or commits exactly the witnessed
+generation. Additional tests cover interrupted initialization and v1 upgrade,
+temporary cleanup, stale/tampered backup, exact restore after primary loss,
+full-ledger refusal, and concurrent writers.
+
+The executable stress test kills 16 `apply-local` processes at 0–60 ms delays.
+After process death and explicit stale-lock removal, each case must recover to
+generation zero/old values/no receipt or generation one/new values/a receipt.
+Backup, restore, and consistent recovery latency are measured over 50 iterations.
+See [ACTUATOR_RECOVERY](ACTUATOR_RECOVERY.md).

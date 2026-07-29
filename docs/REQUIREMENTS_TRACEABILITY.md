@@ -13,6 +13,9 @@
 | SEM-9 | Consume an applied anchored deletion authorization at most once | Exact signed-envelope identity plus atomic anchor-state consumption ledger | one-shot public-boundary, evidence-failure burn, ledger-bound, legacy-state tests |
 | ACT-1 | Apply only a certified transition to current service state | Commit-time observed-state and transition-precondition checks | applied/refused/stale public-boundary and CLI lifecycle tests |
 | ACT-2 | Keep service mutation, history, and deletion consumption atomic | Single bounded local actuator state replacement | combined-consumption unit test, post-commit evidence-failure test |
+| REC-1 | Recover an interrupted local actuator commit without guessing | Pending/committed witness with exact previous/next generations | deterministic crash-point and forced-termination tests |
+| REC-2 | Reject stale or tampered primary-state restore | Content-addressed backup must equal latest surviving witness | stale/tampered/missing-primary restore tests |
+| REC-3 | Preserve v1 deletion consumption during recovery upgrade | Explicit witnessed in-place schema upgrade | completed/interrupted upgrade tests |
 | SEC-3 | Detect signed-history rollback and broken chains | Bounded phenotype chain plus trusted tip anchor | predecessor replay, omitted/forked/old-tip tests |
 | SEM-4 | Refuse ambiguity | protocol acceptance rule | contradictory-authority E2E |
 | REL-1 | Reproducible decisions | content addressing | deterministic replay |

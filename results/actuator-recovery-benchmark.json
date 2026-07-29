@@ -1,0 +1,21 @@
+{
+  "platform": "macos",
+  "architecture": "aarch64",
+  "state_bytes": 457,
+  "backup_bytes": 603,
+  "recover_consistent": {
+    "iterations": 50,
+    "latency_micros_p50": 191,
+    "latency_micros_p95": 3966
+  },
+  "backup_create": {
+    "iterations": 50,
+    "latency_micros_p50": 11347,
+    "latency_micros_p95": 16794
+  },
+  "restore_latest": {
+    "iterations": 50,
+    "latency_micros_p50": 16242,
+    "latency_micros_p95": 25548
+  }
+}

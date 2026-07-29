@@ -63,3 +63,9 @@ precondition under its lock. Its service state, history anchor, and deletion
 ledger are one atomic file replacement. Local operator compromise, filesystem or
 firmware rollback, unauthorized file access, and non-transactional external
 adapters remain outside the demonstrated protection.
+
+The schema-v2 recovery witness detects accidental stale primary-state restore and
+resolves process termination before or after atomic replacement. It does not
+resist rollback of both state and witness, witness deletion, forged local files,
+or violated filesystem `fsync`/rename semantics. Exact-latest restore fails
+closed if the co-located witness is lost.

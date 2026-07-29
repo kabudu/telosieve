@@ -37,6 +37,11 @@ before/after state digests. It removes the pure-simulation limitation only for
 that bounded local backend; external production actuation and its operational
 qualification remain blocked.
 
+Actuator schema v2 adds measured macOS/aarch64 recovery, exact-latest backup
+restore, and rollback detection against a co-located witness. This does not
+qualify whole-disk recovery, other platforms, hostile storage, multiple hosts,
+or an external production service, so the release block remains.
+
 ## CI and delivery policy
 
 Telosieve is private, so local CI is the sole authoritative quality gate:

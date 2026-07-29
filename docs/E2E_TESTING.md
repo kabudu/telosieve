@@ -56,3 +56,8 @@ commits it, and `local-show` reads the result through the operator boundary.
 Additional public-boundary tests prove refusal is non-mutating, stale replay
 emits no second evidence record, and evidence failure cannot roll back or repeat
 an already committed transition.
+
+The executable lifecycle now creates a verified backup, removes the primary
+state, restores it against the surviving witness, and runs explicit recovery.
+A separate 16-process forced-termination test verifies that stale-lock cleanup
+plus `local-recover` never exposes a torn generation.

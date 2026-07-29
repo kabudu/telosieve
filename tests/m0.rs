@@ -1,4 +1,11 @@
-use std::{collections::BTreeMap, fs, path::Path, process::Command};
+use std::{
+    collections::BTreeMap,
+    fs,
+    path::Path,
+    process::{Command, Stdio},
+    thread,
+    time::Duration,
+};
 
 use telosieve::{
     certificate::Decision,
@@ -432,6 +439,7 @@ fn local_actuator_cli_exercises_initialize_apply_and_read_lifecycle() {
     let actuator = test_dir.join("actuator.json");
     let certificate = test_dir.join("certificate.json");
     let ledger = test_dir.join("ledger.jsonl");
+    let backup = test_dir.join("backup.json");
 
     assert!(
         Command::new(binary)
@@ -468,7 +476,162 @@ fn local_actuator_cli_exercises_initialize_apply_and_read_lifecycle() {
         "new"
     );
     assert!(snapshot.last_actuation.is_some());
+
+    assert!(
+        Command::new(binary)
+            .args(["local-backup"])
+            .arg(&actuator)
+            .arg(&backup)
+            .output()
+            .unwrap()
+            .status
+            .success()
+    );
+    fs::remove_file(&actuator).unwrap();
+    assert!(
+        Command::new(binary)
+            .args(["local-restore"])
+            .arg(&actuator)
+            .arg(&backup)
+            .output()
+            .unwrap()
+            .status
+            .success()
+    );
+    assert!(
+        Command::new(binary)
+            .args(["local-recover"])
+            .arg(&actuator)
+            .output()
+            .unwrap()
+            .status
+            .success()
+    );
+    assert_eq!(
+        read_actuator_state_file(&actuator)
+            .unwrap()
+            .consensus()
+            .unwrap()["user/message"],
+        "new"
+    );
     fs::remove_dir_all(test_dir).unwrap();
+}
+
+#[test]
+fn local_upgrade_cli_preserves_legacy_service_state() {
+    let test_dir = Path::new("target")
+        .join("local-actuator-upgrade-cli-tests")
+        .join(std::process::id().to_string());
+    let _ = fs::remove_dir_all(&test_dir);
+    fs::create_dir_all(&test_dir).unwrap();
+    let binary = env!("CARGO_BIN_EXE_telosieve");
+    let scenario = load("benign.json");
+    let actuator = test_dir.join("actuator.json");
+    let phenotype: telosieve::model::ServiceState =
+        serde_json::from_value(content(&scenario, AuthorityKind::Phenotype)).unwrap();
+    let legacy = serde_json::json!({
+        "schema_version": "telosieve.local-actuator/v1",
+        "service_state": phenotype,
+        "history_anchor": scenario.phenotype_history_anchor,
+        "consumed_deletion_authorizations": [],
+        "last_actuation": null
+    });
+    fs::write(&actuator, serde_json::to_vec(&legacy).unwrap()).unwrap();
+
+    let upgrade = Command::new(binary)
+        .args(["local-upgrade"])
+        .arg(&actuator)
+        .output()
+        .unwrap();
+    assert!(
+        upgrade.status.success(),
+        "{}",
+        String::from_utf8_lossy(&upgrade.stderr)
+    );
+    let snapshot = telosieve::engine::read_actuator_snapshot_file(&actuator).unwrap();
+    assert_eq!(snapshot.generation, 0);
+    assert_eq!(
+        snapshot.service_state.consensus().unwrap()["user/message"],
+        "old"
+    );
+    fs::remove_dir_all(test_dir).unwrap();
+}
+
+#[test]
+fn forced_termination_stress_never_exposes_torn_actuator_state() {
+    let root = Path::new("target")
+        .join("local-actuator-termination-tests")
+        .join(std::process::id().to_string());
+    let _ = fs::remove_dir_all(&root);
+    fs::create_dir_all(&root).unwrap();
+    let binary = env!("CARGO_BIN_EXE_telosieve");
+    let scenario = Path::new("scenarios/benign.json");
+
+    for (iteration, delay_ms) in (0_u64..64).step_by(4).enumerate() {
+        let test_dir = root.join(iteration.to_string());
+        fs::create_dir_all(&test_dir).unwrap();
+        let actuator = test_dir.join("actuator.json");
+        let certificate = test_dir.join("certificate.json");
+        let ledger = test_dir.join("ledger.jsonl");
+        assert!(
+            Command::new(binary)
+                .args(["local-init"])
+                .arg(scenario)
+                .arg(&actuator)
+                .stdout(Stdio::null())
+                .stderr(Stdio::null())
+                .status()
+                .unwrap()
+                .success()
+        );
+
+        let mut child = Command::new(binary)
+            .args(["apply-local"])
+            .arg(scenario)
+            .arg(&certificate)
+            .arg(&ledger)
+            .arg(&actuator)
+            .stdout(Stdio::null())
+            .stderr(Stdio::null())
+            .spawn()
+            .unwrap();
+        thread::sleep(Duration::from_millis(delay_ms));
+        if child.try_wait().unwrap().is_none() {
+            child.kill().unwrap();
+            child.wait().unwrap();
+        }
+        let lock = actuator.with_extension("actuator.lock");
+        if lock.exists() {
+            fs::remove_dir(&lock).unwrap();
+        }
+
+        let recovery = Command::new(binary)
+            .args(["local-recover"])
+            .arg(&actuator)
+            .output()
+            .unwrap();
+        assert!(
+            recovery.status.success(),
+            "iteration {iteration}, delay {delay_ms}ms: {}",
+            String::from_utf8_lossy(&recovery.stderr)
+        );
+        let snapshot = telosieve::engine::read_actuator_snapshot_file(&actuator).unwrap();
+        assert!(matches!(snapshot.generation, 0 | 1));
+        if snapshot.generation == 0 {
+            assert_eq!(
+                snapshot.service_state.consensus().unwrap()["user/message"],
+                "old"
+            );
+            assert!(snapshot.last_actuation.is_none());
+        } else {
+            assert_eq!(
+                snapshot.service_state.consensus().unwrap()["user/message"],
+                "new"
+            );
+            assert!(snapshot.last_actuation.is_some());
+        }
+    }
+    fs::remove_dir_all(root).unwrap();
 }
 
 #[test]
