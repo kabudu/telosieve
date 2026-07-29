@@ -31,7 +31,7 @@ configuration whose finite hypothesis count exceeds `maximum_hypotheses`.
 
 ## M3 — productisation decision
 
-- [ ] Compare the registered safety claim with quantified availability and
+- [x] Compare the registered safety claim with quantified availability and
   complexity costs.
 - [ ] Refresh novelty, name, security, soundness, and release diligence.
 - [ ] Exit: explicitly proceed, narrow, or archive the project based on evidence.
