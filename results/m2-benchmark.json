@@ -1,0 +1,50 @@
+[
+  {
+    "scenario": "benign-update",
+    "iterations": 20,
+    "latency_micros_p50": 22956,
+    "latency_micros_p95": 27414,
+    "hypothesis_count": 1,
+    "certificate_bytes": 3039,
+    "decision": "applied",
+    "unsafe_approvals": 0,
+    "false_refusals": 0,
+    "baseline_unsafe_approvals": 0
+  },
+  {
+    "scenario": "poisoned-goal",
+    "iterations": 20,
+    "latency_micros_p50": 45783,
+    "latency_micros_p95": 49269,
+    "hypothesis_count": 2,
+    "certificate_bytes": 2836,
+    "decision": "refused",
+    "unsafe_approvals": 0,
+    "false_refusals": 0,
+    "baseline_unsafe_approvals": 2
+  },
+  {
+    "scenario": "partitioned-phenotype",
+    "iterations": 20,
+    "latency_micros_p50": 45130,
+    "latency_micros_p95": 62766,
+    "hypothesis_count": 2,
+    "certificate_bytes": 3143,
+    "decision": "applied",
+    "unsafe_approvals": 0,
+    "false_refusals": 0,
+    "baseline_unsafe_approvals": 0
+  },
+  {
+    "scenario": "weakened-viability",
+    "iterations": 20,
+    "latency_micros_p50": 21960,
+    "latency_micros_p95": 26690,
+    "hypothesis_count": 1,
+    "certificate_bytes": 2981,
+    "decision": "applied",
+    "unsafe_approvals": 1,
+    "false_refusals": 0,
+    "baseline_unsafe_approvals": 3
+  }
+]

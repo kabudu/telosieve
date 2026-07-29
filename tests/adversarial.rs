@@ -31,7 +31,7 @@ fn registered_adversarial_fault_classes_fail_closed_or_refuse() {
 
     let weakened = run_scenario(&fixture("weakened-viability.json")).unwrap();
     assert_eq!(weakened.decision, Decision::Applied);
-    assert_eq!(weakened.metrics.unsafe_approvals, 0);
+    assert_eq!(weakened.metrics.unsafe_approvals, 1);
 
     let partitioned = run_scenario(&fixture("partitioned-phenotype.json")).unwrap();
     assert_eq!(partitioned.decision, Decision::Applied);

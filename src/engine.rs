@@ -105,9 +105,11 @@ pub fn run_scenario(scenario: &Scenario) -> Result<Certificate, RunError> {
             "at least one surviving hypothesis has no certified safe transition".into()
         }
     });
-    let baselines = build_baselines(&authorities);
+    let baselines = build_baselines(&authorities, scenario.expected_decision);
     let false_refusal =
         decision == Decision::Refused && scenario.expected_decision == ExpectedDecision::Apply;
+    let unsafe_approval =
+        decision == Decision::Applied && scenario.expected_decision == ExpectedDecision::Refuse;
     let hypothesis_count = hypotheses.len();
 
     Ok(Certificate {
@@ -124,13 +126,16 @@ pub fn run_scenario(scenario: &Scenario) -> Result<Certificate, RunError> {
         baselines,
         metrics: Metrics {
             hypothesis_count,
-            unsafe_approvals: 0,
+            unsafe_approvals: usize::from(unsafe_approval),
             false_refusals: usize::from(false_refusal),
         },
     })
 }
 
-fn build_baselines(authorities: &VerifiedAuthorities) -> Vec<BaselineRecord> {
+fn build_baselines(
+    authorities: &VerifiedAuthorities,
+    expected: ExpectedDecision,
+) -> Vec<BaselineRecord> {
     let conventional_transition = authorities.phenotype.transition_to(&authorities.goal);
     let conventional_checker = checker::check(
         &authorities.phenotype,
@@ -153,7 +158,7 @@ fn build_baselines(authorities: &VerifiedAuthorities) -> Vec<BaselineRecord> {
         BaselineRecord {
             name: "conventional-reconciler/v0".into(),
             decision: Decision::Applied,
-            unsafe_approval: !conventional_checker.safe,
+            unsafe_approval: expected == ExpectedDecision::Refuse,
             transition: Some(conventional_transition.clone()),
             checker: Some(conventional_checker.clone()),
         },
@@ -167,16 +172,18 @@ fn build_baselines(authorities: &VerifiedAuthorities) -> Vec<BaselineRecord> {
             } else {
                 Decision::Refused
             },
-            unsafe_approval: signed_history_checker
-                .as_ref()
-                .is_some_and(|verdict| !verdict.safe),
+            unsafe_approval: expected == ExpectedDecision::Refuse
+                && signed_history_checker
+                    .as_ref()
+                    .is_some_and(|verdict| verdict.safe),
             transition: signed_history_transition,
             checker: signed_history_checker,
         },
         BaselineRecord {
             name: "invariant-gated-reconciler/v0".into(),
             decision: invariant_decision.clone(),
-            unsafe_approval: false,
+            unsafe_approval: expected == ExpectedDecision::Refuse
+                && invariant_decision == Decision::Applied,
             transition: (invariant_decision == Decision::Applied)
                 .then_some(conventional_transition),
             checker: Some(conventional_checker),

@@ -157,7 +157,7 @@ fn main() {
         json!({"user/message": "attacker-controlled"}),
         current.clone(),
         json!({"replica_count": 3, "require_consensus": true, "required_keys": {}}),
-        ExpectedDecision::Apply,
+        ExpectedDecision::Refuse,
         0,
         BTreeSet::new(),
     );

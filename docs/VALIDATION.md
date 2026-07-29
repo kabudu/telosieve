@@ -46,3 +46,17 @@ M1 certificates include conventional convergence, signed-history rollback to the
 authenticated observed consensus, and invariant-gated convergence baselines. Each
 records its decision, proposed transition, checker verdict, and unsafe-approval
 status under the same scenario.
+
+## M2 benchmark
+
+`cargo run --release --example benchmark -- scenarios/*.json` measures 20
+iterations per authenticated scenario. It reports p50/p95 end-to-end decision
+latency, hypothesis count, certificate bytes as a deterministic work/space proxy,
+Telosieve unsafe approvals and false refusals, and unsafe approvals for every
+baseline. Raw results are retained in `results/m2-benchmark.json`; timings are
+machine-specific observations rather than protocol guarantees.
+
+The registered run exposes one stop-ship negative result: with authenticated
+weakened viability rules outside the declared fault model, Telosieve applies the
+poisoned goal (`unsafe_approvals = 1`). This confirms the documented viability
+authority dependency and blocks productisation; it is not treated as an M2 pass.

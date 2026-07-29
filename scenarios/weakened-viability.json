@@ -3,7 +3,7 @@
   "seed": 7,
   "evaluation_time": 1750000000,
   "subject": "kv/research",
-  "expected_decision": "apply",
+  "expected_decision": "refuse",
   "public_keys": {
     "goal-lab": "66be7e332c7a453332bd9d0a7f7db055f5c5ef1a06ada66d98b39fb6810c473a",
     "phenotype-lab": "511c34a1a2cb521df16bb246b8de8e7997ce235c7e76b22a3d7503a24819dd8a",
