@@ -30,6 +30,8 @@ pub enum RunError {
     Checker(#[from] crate::external_checker::ExternalCheckerError),
     #[error("durable history anchor failed: {0}")]
     Anchor(#[from] crate::anchor_store::AnchorError),
+    #[error("transactional local actuator failed: {0}")]
+    Actuator(#[from] crate::actuator_store::ActuatorError),
 }
 
 /// Runs a scenario through the public file boundary and persists its evidence.
@@ -78,6 +80,98 @@ pub fn initialize_anchor_file(scenario_path: &Path, anchor_path: &Path) -> Resul
     crate::anchor_store::AnchorStore::new(anchor_path)
         .initialize(&scenario.phenotype_history_anchor)?;
     Ok(())
+}
+
+/// Explicitly initializes the transactional local actuator from a verified
+/// scenario.
+///
+/// # Errors
+///
+/// Returns [`RunError`] when verification, initialization, or persistence
+/// fails.
+pub fn initialize_actuator_file(
+    scenario_path: &Path,
+    actuator_path: &Path,
+) -> Result<(), RunError> {
+    let scenario: Scenario = serde_json::from_slice(&fs::read(scenario_path)?)?;
+    let authorities = verify(&scenario)?;
+    crate::actuator_store::LocalActuatorStore::new(actuator_path)
+        .initialize(&authorities.phenotype, &scenario.phenotype_history_anchor)?;
+    Ok(())
+}
+
+/// Evaluates and transactionally applies one scenario to the local reference
+/// actuator.
+///
+/// # Errors
+///
+/// Returns [`RunError`] on verification, checking, stale service state, replay,
+/// contention, or persistence failure.
+pub fn run_scenario_actuated(
+    scenario: &Scenario,
+    actuator_path: &Path,
+) -> Result<Certificate, RunError> {
+    let authorities = verify(scenario)?;
+    let observed = authorities.phenotype.clone();
+    let fault_targets = fault_targets(scenario, &authorities)?;
+    validate_declaration(scenario, fault_targets.len())?;
+    let mut certificate = evaluate_preflighted_scenario(scenario, authorities, &fault_targets)?;
+    let consumed_identifier = (certificate.decision == Decision::Applied)
+        .then_some(certificate.deletion_authorization_id.as_deref())
+        .flatten();
+    let actuation = crate::actuator_store::LocalActuatorStore::new(actuator_path)
+        .compare_and_apply(
+            &observed,
+            &scenario.phenotype_history_anchor,
+            certificate.transition.as_ref(),
+            consumed_identifier,
+        )?;
+    certificate.certificate_version = "telosieve.certificate/v8".into();
+    certificate.actuation = Some(actuation);
+    Ok(certificate)
+}
+
+/// Runs the transactional local actuator through the public file boundary and
+/// persists its evidence.
+///
+/// # Errors
+///
+/// Returns [`RunError`] on input, evaluation, actuation, or evidence failures.
+pub fn run_scenario_file_actuated(
+    scenario_path: &Path,
+    certificate_path: &Path,
+    ledger_path: &Path,
+    actuator_path: &Path,
+) -> Result<Certificate, RunError> {
+    let scenario: Scenario = serde_json::from_slice(&fs::read(scenario_path)?)?;
+    let certificate = run_scenario_actuated(&scenario, actuator_path)?;
+    persist_evidence(&certificate, certificate_path, ledger_path)?;
+    Ok(certificate)
+}
+
+/// Reads the current state from the transactional local actuator.
+///
+/// # Errors
+///
+/// Returns [`RunError`] when the store is missing, corrupt, oversized, or
+/// incompatible.
+pub fn read_actuator_state_file(
+    actuator_path: &Path,
+) -> Result<crate::model::ServiceState, RunError> {
+    Ok(crate::actuator_store::LocalActuatorStore::new(actuator_path).current_service_state()?)
+}
+
+/// Reads the current state and durable last-actuation receipt from the local
+/// actuator.
+///
+/// # Errors
+///
+/// Returns [`RunError`] when the store is missing, corrupt, oversized, or
+/// incompatible.
+pub fn read_actuator_snapshot_file(
+    actuator_path: &Path,
+) -> Result<crate::actuator_store::ActuatorSnapshot, RunError> {
+    Ok(crate::actuator_store::LocalActuatorStore::new(actuator_path).current_snapshot()?)
 }
 
 fn persist_evidence(
@@ -205,6 +299,7 @@ fn evaluate_preflighted_scenario(
         seed: scenario.seed,
         authority_digests: authorities.digests,
         deletion_authorization_id: authorities.deletion_authorization_id,
+        actuation: None,
         phenotype_history_anchor: scenario.phenotype_history_anchor.clone(),
         hypotheses,
         decision,

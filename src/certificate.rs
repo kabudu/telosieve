@@ -44,6 +44,14 @@ pub struct BaselineRecord {
     pub unsafe_approval: bool,
 }
 
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ActuationRecord {
+    pub adapter: String,
+    pub operation_digest: String,
+    pub before_digest: String,
+    pub after_digest: String,
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Certificate {
     pub certificate_version: String,
@@ -51,6 +59,8 @@ pub struct Certificate {
     pub seed: u64,
     pub authority_digests: BTreeMap<String, String>,
     pub deletion_authorization_id: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub actuation: Option<ActuationRecord>,
     pub phenotype_history_anchor: HistoryAnchor,
     pub hypotheses: Vec<HypothesisRecord>,
     pub decision: Decision,

@@ -79,3 +79,9 @@ The anchored CLI path moves the current tip into a crash-synchronized local file
 with explicit initialization, monotonic compare-and-advance, atomic replacement,
 and fail-closed lock recovery. It remains a single-host prototype rather than a
 distributed or hardware-backed trust root.
+
+Certificate v8 adds an actuation receipt only to `apply-local` results. The local
+reference actuator repeats observed-state and transition-precondition checks at
+commit time, then atomically replaces service state, history anchor, and deletion
+consumption under one lock. Refusal can advance history but cannot change service
+values. This validates an adapter transaction contract, not an external service.

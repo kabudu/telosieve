@@ -32,6 +32,11 @@ anchored path. The release block remains because production actuation,
 independent review/reproduction, platform-qualified durable storage, and
 verified organizational domain separation are still absent.
 
+Certificate v8 adds a transactional file-backed reference actuator and auditable
+before/after state digests. It removes the pure-simulation limitation only for
+that bounded local backend; external production actuation and its operational
+qualification remain blocked.
+
 ## CI and delivery policy
 
 Telosieve is private, so local CI is the sole authoritative quality gate:

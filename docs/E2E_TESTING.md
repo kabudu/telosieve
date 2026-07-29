@@ -49,3 +49,10 @@ file boundary twice. The first run applies and persists one record; the second
 fails on durable consumption without emitting another. A separate failure-path
 test makes ledger persistence fail after durable commit and verifies the
 authorization remains burned.
+
+Certificate-v8 coverage adds a real executable lifecycle:
+`local-init` initializes authenticated service state, `apply-local` evaluates and
+commits it, and `local-show` reads the result through the operator boundary.
+Additional public-boundary tests prove refusal is non-mutating, stale replay
+emits no second evidence record, and evidence failure cannot roll back or repeat
+an already committed transition.

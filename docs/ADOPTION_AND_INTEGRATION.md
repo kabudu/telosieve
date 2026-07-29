@@ -10,5 +10,12 @@ pre-registered adversarial suite, reproducible refusal behavior, and an operator
 escape hatch. Existing GitOps/reconciler systems remain the execution plane;
 Telosieve is an evidence gate, not a replacement.
 
+The certificate-v8 local reference actuator now exercises actual durable state
+change behind the gate. It is deliberately file-backed so service mutation,
+history advancement, and deletion consumption can share one atomic replacement.
+An external adapter must offer equivalent compare-and-commit semantics or a
+recovery protocol that preserves at-most-once effects; a blind API call after
+certificate generation is insufficient.
+
 Compatibility risks include schema drift, clock assumptions, identity/key
 rotation, and semantic mismatch between declared invariants and platform behavior.

@@ -56,3 +56,10 @@ The consumption ledger is bounded at 4,096 validated identifiers and its state
 file at 512 KiB; either limit fails closed. Evidence failure after durable
 consumption can burn an authorization; this is a deliberate availability loss
 rather than permitting an uncertain replay.
+
+The certificate-v8 local actuator prevents stale or concurrent evaluation from
+committing by rechecking authenticated observed state and the transition
+precondition under its lock. Its service state, history anchor, and deletion
+ledger are one atomic file replacement. Local operator compromise, filesystem or
+firmware rollback, unauthorized file access, and non-transactional external
+adapters remain outside the demonstrated protection.

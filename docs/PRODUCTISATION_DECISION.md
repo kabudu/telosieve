@@ -74,6 +74,10 @@ operational fault-domain independence, platform-qualified durability, and a new
 explicit opening decision remain unresolved. The binding decision remains
 **narrow**.
 
+Certificate v8's transactional local reference actuator does not change that
+decision. It establishes an adapter contract but does not qualify external
+service actuation, credentials, recovery, or multi-host durability.
+
 ## Evidence basis
 
 - [M2 Adversarial Results](M2_RESULTS.md)

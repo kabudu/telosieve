@@ -12,6 +12,27 @@ fn main() -> ExitCode {
                 Err(error) => fail(&error),
             }
         }
+        Some("local-init") if args.len() == 4 => {
+            match telosieve::engine::initialize_actuator_file(
+                Path::new(&args[2]),
+                Path::new(&args[3]),
+            ) {
+                Ok(()) => ExitCode::SUCCESS,
+                Err(error) => fail(&error),
+            }
+        }
+        Some("local-show") if args.len() == 3 => {
+            match telosieve::engine::read_actuator_snapshot_file(Path::new(&args[2])) {
+                Ok(snapshot) => {
+                    println!(
+                        "{}",
+                        serde_json::to_string(&snapshot).expect("actuator snapshot serializes")
+                    );
+                    ExitCode::SUCCESS
+                }
+                Err(error) => fail(&error),
+            }
+        }
         Some("run") if args.len() == 5 => emit(telosieve::engine::run_scenario_file(
             Path::new(&args[2]),
             Path::new(&args[3]),
@@ -25,12 +46,24 @@ fn main() -> ExitCode {
                 Path::new(&args[5]),
             ))
         }
+        Some("apply-local") if args.len() == 6 => {
+            emit(telosieve::engine::run_scenario_file_actuated(
+                Path::new(&args[2]),
+                Path::new(&args[3]),
+                Path::new(&args[4]),
+                Path::new(&args[5]),
+            ))
+        }
         _ => {
             eprintln!(
                 "usage:\n  telosieve anchor-init <scenario.json> <anchor.json>\n  \
+                 telosieve local-init <scenario.json> <actuator.json>\n  \
+                 telosieve local-show <actuator.json>\n  \
                  telosieve run <scenario.json> <certificate.json> <ledger.jsonl>\n  \
                  telosieve run-anchored <scenario.json> <certificate.json> \
-                 <ledger.jsonl> <anchor.json>"
+                 <ledger.jsonl> <anchor.json>\n  \
+                 telosieve apply-local <scenario.json> <certificate.json> \
+                 <ledger.jsonl> <actuator.json>"
             );
             ExitCode::from(2)
         }

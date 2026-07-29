@@ -42,3 +42,8 @@ the declared model.
 No operator UI, hosted control plane, or production actuator is justified until
 the experiment beats a signed-history reconciler and runtime-invariant baseline on
 pre-registered scenarios.
+
+The transactional local reference actuator is evidence for the required adapter
+contract, not satisfaction of this production gate. Promotion still requires a
+named target service, its native concurrency/transaction model, credentials and
+least-privilege design, recovery testing, and independent security review.

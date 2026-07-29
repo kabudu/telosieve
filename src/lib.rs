@@ -1,3 +1,4 @@
+pub mod actuator_store;
 pub mod anchor_store;
 pub mod certificate;
 pub mod checker;

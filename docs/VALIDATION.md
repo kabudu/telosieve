@@ -125,3 +125,14 @@ applies and is atomically recorded with the history anchor; identical replay
 fails without another ledger record. Capacity, legacy-state, lock, corruption,
 and post-commit evidence-failure tests exercise the bounded failure paths. See
 [DURABLE_DELETION_CONSUMPTION](DURABLE_DELETION_CONSUMPTION.md).
+
+## Transactional local reference actuator
+
+Certificate v8 is emitted only after the local reference store commits. Tests
+verify an applied benign plan changes the operator-visible state once, a refusal
+does not change it, stale replay fails before another ledger record, and deletion
+plus consumption commit together. Corrupt, oversized, and locked stores fail
+closed. A retained failure-path test demonstrates applied-but-unreported state
+when evidence persistence fails, and the CLI lifecycle exercises initialization,
+application, and readback through the executable boundary. See
+[LOCAL_REFERENCE_ACTUATOR](LOCAL_REFERENCE_ACTUATOR.md).

@@ -122,3 +122,21 @@ consumption and third-party organizational review remained unresolved.
 Evidence: [DURABLE_DELETION_CONSUMPTION](DURABLE_DELETION_CONSUMPTION.md).
 Third-party organizational reproduction/security review remains an external
 unchecked gate.
+
+## Post-M9 — transactional local reference actuator
+
+- [x] Add explicit initialization from a verified authenticated phenotype.
+- [x] Require commit-time equality with observed service state and the certified
+  transition precondition.
+- [x] Atomically commit service state, authenticated history, and deletion
+  consumption in one bounded local store.
+- [x] Emit certificate-v8 actuation receipts while preserving certificate-v7
+  deterministic research runs.
+- [x] Exercise apply, refusal, replay, contention, corrupt/oversized state,
+  post-commit evidence failure, and the real CLI lifecycle.
+- [x] Exit: the local reference service changes only after an applied certified
+  plan and stale retry cannot duplicate the change.
+
+Evidence: [LOCAL_REFERENCE_ACTUATOR](LOCAL_REFERENCE_ACTUATOR.md). Real production
+service integration, platform qualification, and external organizational review
+remain unresolved.

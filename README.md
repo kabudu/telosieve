@@ -29,8 +29,9 @@ their oracles. Certificate v5's two agreeing declared goal domains also remove
 the 64 measured safe-case refusals. Domain labels do not prove organizational
 independence. Certificate v6 permits only separately authorized, goal/tip-bound
 exact key deletion; certificate v7 atomically consumes an applied authorization
-once in the single-host anchored path. Ordinary omission still refuses. The
-bounded result is not a general safety proof. The harness
+once in the single-host anchored path. Certificate v8 adds a transactional local
+reference actuator with committed-state receipts. Ordinary omission still
+refuses. The bounded result is not a general safety proof. The harness
 authenticates a bounded scenario,
 evaluates its declared hypotheses, applies only one common independently checked
 transition, and otherwise emits a refusal certificate. See
@@ -57,6 +58,18 @@ cargo run -- anchor-init scenarios/benign.json out/phenotype-anchor.json
 cargo run -- run-anchored scenarios/benign.json \
   out/benign-certificate.json out/ledger.jsonl out/phenotype-anchor.json
 ```
+
+Exercise the transactional single-host reference actuator:
+
+```sh
+cargo run -- local-init scenarios/benign.json out/local-actuator.json
+cargo run -- apply-local scenarios/benign.json \
+  out/benign-certificate.json out/ledger.jsonl out/local-actuator.json
+cargo run -- local-show out/local-actuator.json
+```
+
+This reference backend proves atomic adapter semantics; it is not a production
+service integration.
 
 For the complete private-repository quality gate, run:
 

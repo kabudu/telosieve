@@ -1,10 +1,10 @@
-use std::{collections::BTreeMap, fs, path::Path};
+use std::{collections::BTreeMap, fs, path::Path, process::Command};
 
 use telosieve::{
     certificate::Decision,
     engine::{
-        RunError, initialize_anchor_file, run_scenario, run_scenario_file,
-        run_scenario_file_anchored,
+        RunError, initialize_actuator_file, initialize_anchor_file, read_actuator_state_file,
+        run_scenario, run_scenario_file, run_scenario_file_actuated, run_scenario_file_anchored,
     },
     protocol::{AuthorityKind, Scenario},
 };
@@ -317,6 +317,157 @@ fn evidence_failure_burns_applied_deletion_authorization_safely() {
             telosieve::anchor_store::AnchorError::AuthorizationConsumed(_)
         ))
     ));
+    fs::remove_dir_all(test_dir).unwrap();
+}
+
+#[test]
+fn transactional_local_actuator_applies_once_and_exposes_committed_state() {
+    let test_dir = Path::new("target")
+        .join("local-actuator-tests")
+        .join(std::process::id().to_string());
+    let _ = fs::remove_dir_all(&test_dir);
+    fs::create_dir_all(&test_dir).unwrap();
+    let scenario = Path::new("scenarios/benign.json");
+    let actuator = test_dir.join("actuator.json");
+    let certificate = test_dir.join("certificate.json");
+    let ledger = test_dir.join("ledger.jsonl");
+
+    initialize_actuator_file(scenario, &actuator).unwrap();
+    let result = run_scenario_file_actuated(scenario, &certificate, &ledger, &actuator).unwrap();
+    assert_eq!(result.certificate_version, "telosieve.certificate/v8");
+    assert_eq!(result.decision, Decision::Applied);
+    let receipt = result.actuation.unwrap();
+    assert_ne!(receipt.before_digest, receipt.after_digest);
+    assert_eq!(
+        read_actuator_state_file(&actuator)
+            .unwrap()
+            .consensus()
+            .unwrap()["user/message"],
+        "new"
+    );
+    assert_eq!(fs::read_to_string(&ledger).unwrap().lines().count(), 1);
+
+    assert!(matches!(
+        run_scenario_file_actuated(scenario, &certificate, &ledger, &actuator),
+        Err(RunError::Actuator(
+            telosieve::actuator_store::ActuatorError::ObservedStateMismatch
+        ))
+    ));
+    assert_eq!(fs::read_to_string(&ledger).unwrap().lines().count(), 1);
+    fs::remove_dir_all(test_dir).unwrap();
+}
+
+#[test]
+fn transactional_local_actuator_refusal_preserves_service_state() {
+    let test_dir = Path::new("target")
+        .join("local-actuator-refusal-tests")
+        .join(std::process::id().to_string());
+    let _ = fs::remove_dir_all(&test_dir);
+    fs::create_dir_all(&test_dir).unwrap();
+    let scenario = Path::new("scenarios/poisoned-goal.json");
+    let actuator = test_dir.join("actuator.json");
+    let certificate = test_dir.join("certificate.json");
+    let ledger = test_dir.join("ledger.jsonl");
+
+    initialize_actuator_file(scenario, &actuator).unwrap();
+    let before = read_actuator_state_file(&actuator).unwrap();
+    let result = run_scenario_file_actuated(scenario, &certificate, &ledger, &actuator).unwrap();
+    assert_eq!(result.decision, Decision::Refused);
+    let receipt = result.actuation.unwrap();
+    assert_eq!(receipt.before_digest, receipt.after_digest);
+    assert_eq!(read_actuator_state_file(&actuator).unwrap(), before);
+    fs::remove_dir_all(test_dir).unwrap();
+}
+
+#[test]
+fn local_actuation_survives_post_commit_evidence_failure_without_retrying() {
+    let test_dir = Path::new("target")
+        .join("local-actuator-evidence-failure-tests")
+        .join(std::process::id().to_string());
+    let _ = fs::remove_dir_all(&test_dir);
+    fs::create_dir_all(&test_dir).unwrap();
+    let scenario = Path::new("scenarios/authorized-deletion.json");
+    let actuator = test_dir.join("actuator.json");
+    let certificate = test_dir.join("certificate.json");
+    let invalid_ledger = test_dir.join("ledger-directory");
+    fs::create_dir(&invalid_ledger).unwrap();
+
+    initialize_actuator_file(scenario, &actuator).unwrap();
+    assert!(matches!(
+        run_scenario_file_actuated(scenario, &certificate, &invalid_ledger, &actuator),
+        Err(RunError::Io(_))
+    ));
+    assert!(!certificate.exists());
+    assert!(
+        read_actuator_state_file(&actuator)
+            .unwrap()
+            .replicas
+            .values()
+            .all(|values| !values.contains_key("user/message"))
+    );
+    assert!(
+        telosieve::engine::read_actuator_snapshot_file(&actuator)
+            .unwrap()
+            .last_actuation
+            .is_some()
+    );
+    assert!(matches!(
+        run_scenario_file_actuated(scenario, &certificate, &invalid_ledger, &actuator),
+        Err(RunError::Actuator(
+            telosieve::actuator_store::ActuatorError::ObservedStateMismatch
+        ))
+    ));
+    fs::remove_dir_all(test_dir).unwrap();
+}
+
+#[test]
+fn local_actuator_cli_exercises_initialize_apply_and_read_lifecycle() {
+    let test_dir = Path::new("target")
+        .join("local-actuator-cli-tests")
+        .join(std::process::id().to_string());
+    let _ = fs::remove_dir_all(&test_dir);
+    fs::create_dir_all(&test_dir).unwrap();
+    let binary = env!("CARGO_BIN_EXE_telosieve");
+    let scenario = Path::new("scenarios/benign.json");
+    let actuator = test_dir.join("actuator.json");
+    let certificate = test_dir.join("certificate.json");
+    let ledger = test_dir.join("ledger.jsonl");
+
+    assert!(
+        Command::new(binary)
+            .args(["local-init"])
+            .arg(scenario)
+            .arg(&actuator)
+            .output()
+            .unwrap()
+            .status
+            .success()
+    );
+    assert!(
+        Command::new(binary)
+            .args(["apply-local"])
+            .arg(scenario)
+            .arg(&certificate)
+            .arg(&ledger)
+            .arg(&actuator)
+            .output()
+            .unwrap()
+            .status
+            .success()
+    );
+    let output = Command::new(binary)
+        .args(["local-show"])
+        .arg(&actuator)
+        .output()
+        .unwrap();
+    assert!(output.status.success());
+    let snapshot: telosieve::actuator_store::ActuatorSnapshot =
+        serde_json::from_slice(&output.stdout).unwrap();
+    assert_eq!(
+        snapshot.service_state.consensus().unwrap()["user/message"],
+        "new"
+    );
+    assert!(snapshot.last_actuation.is_some());
     fs::remove_dir_all(test_dir).unwrap();
 }
 

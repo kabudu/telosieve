@@ -183,6 +183,13 @@ impl AnchorStore {
     }
 
     fn persist(&self, state: &AnchorState) -> Result<(), AnchorError> {
+        let mut bytes = serde_json::to_vec(state)?;
+        bytes.push(b'\n');
+        if bytes.len() > usize::try_from(MAX_STATE_BYTES).expect("bound fits in usize") {
+            return Err(AnchorError::InvalidState(format!(
+                "state exceeds the {MAX_STATE_BYTES}-byte bound"
+            )));
+        }
         let parent = self.path.parent().unwrap_or_else(|| Path::new("."));
         fs::create_dir_all(parent)?;
         let temporary = self.path.with_extension("anchor.tmp");
@@ -191,8 +198,7 @@ impl AnchorStore {
             .create_new(true)
             .open(&temporary)?;
         let result = (|| -> Result<(), AnchorError> {
-            file.write_all(&serde_json::to_vec(state)?)?;
-            file.write_all(b"\n")?;
+            file.write_all(&bytes)?;
             file.sync_all()?;
             fs::rename(&temporary, &self.path)?;
             File::open(parent)?.sync_all()?;

@@ -74,3 +74,9 @@ for the harness. Certificate v7 adds bounded single-host one-shot consumption,
 but not production actuation, platform-qualified/multi-host durability, or
 organizational independence. See
 [AUTHORIZED_DELETION](AUTHORIZED_DELETION.md).
+
+Certificate v8 subsequently supplies a transactional file-backed reference
+actuator. It proves commit-time state comparison and atomic local side effects,
+but it is not evidence for any named external service, credential boundary,
+distributed transaction, or production recovery procedure. See
+[LOCAL_REFERENCE_ACTUATOR](LOCAL_REFERENCE_ACTUATOR.md).
