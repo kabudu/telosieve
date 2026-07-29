@@ -1,0 +1,64 @@
+{
+  "schema_version": "telosieve.assessor-handoff/v1",
+  "source_commit": "17ec5e04bc05ca16b322ec6e436b9979972a0ba5",
+  "repository_visibility": "private",
+  "authoritative_ci": "./scripts/ci-local.sh",
+  "commands": [
+    "./scripts/ci-local.sh",
+    "./scripts/run-incident-drills.sh",
+    "./scripts/run-parser-corpora.sh"
+  ],
+  "artifacts": [
+    {
+      "path": "Cargo.lock",
+      "sha256": "d81169275d8493b91800580d6354946b9a812e8ddb89be244968bfb436a1442a"
+    },
+    {
+      "path": "results/actuator-recovery-linux-amd64.json",
+      "sha256": "b3761ef21dfad419bf3f8b85ae5e84cebbe7af67e608cf79f6bf37118896a61c"
+    },
+    {
+      "path": "results/actuator-recovery-linux-arm64.json",
+      "sha256": "f574a80a83640f78082eb72e48fff515a9be3817be847872593685ac799cf483"
+    },
+    {
+      "path": "results/generated-state-space.json",
+      "sha256": "c07d7b04483c0aa616f47dc43cd69e87b182c9dbe9dd268415e20d1765dc2145"
+    },
+    {
+      "path": "results/incident-drills.json",
+      "sha256": "a9babae1140149e3c6234e4f303693cac61a2754160e6798f426d069f994fe21"
+    },
+    {
+      "path": "results/kubernetes-shadow-certificate.json",
+      "sha256": "faacf4e594b69f7b1c416fcabb881cf779b0912c846f5c08350c944f8aaef0bf"
+    },
+    {
+      "path": "results/parser-corpora.json",
+      "sha256": "5f9fa3d1fbb7a6945cbed1eaec27278574e30ca79bd32c05ab237d01f5c50371"
+    },
+    {
+      "path": "scenarios/benign.json",
+      "sha256": "c14f464d65b93ed22b985e206ecedc88561d1379aba0c4f34147fc6fe6a13b96"
+    },
+    {
+      "path": "scenarios/poisoned-goal.json",
+      "sha256": "555a9a39f149171dc80c2437b4a345c59902581c477a1132ec249cbcafb0ad18"
+    }
+  ],
+  "claim_boundaries": [
+    "bounded private research artifact, not a safety proof",
+    "local file actuator and credential-free Kubernetes shadow only",
+    "deterministic local and container evidence, not production qualification",
+    "declared fault domains are not verified organizational independence",
+    "local CI is authoritative; no hosted CI result exists"
+  ],
+  "release_blockers": [
+    "independent third-party reproduction and security assessment",
+    "verified organizational fault-domain independence",
+    "bare-metal and hostile-storage durability qualification",
+    "live external-service authorization, consistency, and actuation qualification",
+    "coverage-guided fuzzing and sanitizer-backed dependency assessment",
+    "explicit decision authorizing a research or public release"
+  ]
+}

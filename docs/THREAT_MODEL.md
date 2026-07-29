@@ -91,3 +91,9 @@ Deterministic parser corpora bound test-case count and input bytes while
 exercising malformed structures across four trust boundaries. They do not
 replace coverage-guided fuzzing, sanitizers, arbitrary-input proofs, dependency
 audits, or independent parser implementations.
+
+The assessor handoff detects manifest drift, missing Git objects, artifact
+digest changes, hosted workflow presence, dirty clean-checkout state, local-CI
+failure, and operational-result divergence. It does not establish independence:
+the repository, machine, dependency cache, and verifier are still controlled by
+the project.

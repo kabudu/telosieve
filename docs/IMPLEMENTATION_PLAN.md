@@ -227,7 +227,18 @@ retained and the run discovered no additional discrepancy.
 
 ## Post-M16 — independent-assessment handoff
 
-- [ ] Assemble a self-contained assessor manifest with commit, commands,
+- [x] Assemble a self-contained assessor manifest with commit, commands,
   expected digests, claim boundaries, and unresolved release blockers.
-- [ ] Verify the handoff from a clean local checkout without production
+- [x] Verify the handoff from a clean local checkout without production
   credentials or hosted CI.
+
+Evidence: [ASSESSOR_HANDOFF](ASSESSOR_HANDOFF.md). The frozen Post-M15 source
+commit passes local CI and reproduces the two operational aggregates from a
+fresh local clone; this is a handoff package, not independent assessment.
+
+## Post-M17 — dependency provenance and advisory inventory
+
+- [ ] Generate a locked dependency and license inventory with exact package
+  versions and source/checksum provenance.
+- [ ] Run a local advisory audit and document unresolved, unavailable, or
+  accepted findings without enabling hosted CI.

@@ -68,6 +68,11 @@ They are deterministic mutation evidence, not coverage-guided fuzzing,
 sanitizer-backed assessment, arbitrary-input proof, or independent review. The
 release block remains.
 
+The commit- and digest-bound assessor handoff reproduces local CI plus retained
+incident/parser aggregates from a fresh local clone. This makes independent
+assessment easier but is not third-party reproduction or review; it does not
+change the release decision.
+
 ## CI and delivery policy
 
 Telosieve is private, so local CI is the sole authoritative quality gate:

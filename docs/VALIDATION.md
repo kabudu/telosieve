@@ -189,3 +189,12 @@ bounds. Each corpus is limited to 16 cases and 2 MiB total input. The retained
 `telosieve.parser-corpora/v1` result reports four passing corpora, four minimized
 rejection fixtures, and zero newly discovered discrepancies. See
 [PARSER_CORPORA](PARSER_CORPORA.md).
+
+## Independent-assessment handoff
+
+The assessor manifest freezes the Post-M15 source commit, nine SHA-256-bound
+artifacts, three exact commands, explicit claim boundaries, and unresolved
+release blockers. A fresh local clone at that commit passes authoritative local
+CI and reproduces the incident and parser-corpus aggregates byte-for-byte. The
+retained verifier result records that no hosted CI or production credential was
+required. See [ASSESSOR_HANDOFF](ASSESSOR_HANDOFF.md).
