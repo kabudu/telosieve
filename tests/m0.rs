@@ -1,4 +1,4 @@
-use std::{fs, path::Path};
+use std::{collections::BTreeMap, fs, path::Path};
 
 use telosieve::{
     certificate::Decision,
@@ -151,6 +151,11 @@ fn general_enumeration_is_complete_bounded_and_excludes_every_suspect() {
     ]
     .into_iter()
     .collect();
+    scenario.fault_declaration.viability_fault_domains = BTreeMap::from([
+        ("viability-lab".into(), "lab-domain".into()),
+        ("viability-peer".into(), "lab-domain".into()),
+        ("viability-review".into(), "review-domain".into()),
+    ]);
 
     let certificate = run_scenario(&scenario).unwrap();
 
@@ -296,7 +301,7 @@ fn public_replay_reports_all_baselines_and_protocol_evidence() {
                 "invariant-gated-reconciler/v0"
             ]
         );
-        assert_eq!(certificate.authority_digests.len(), 5);
+        assert_eq!(certificate.authority_digests.len(), 6);
         assert!(certificate.hypotheses.iter().all(|hypothesis| {
             hypothesis.suspected == hypothesis.excluded
                 && hypothesis.checker.as_ref().is_none_or(|verdict| {

@@ -78,6 +78,8 @@ pub struct ViabilityRules {
 pub struct FaultDeclaration {
     pub maximum_faults: usize,
     pub suspectable: BTreeSet<AuthorityKind>,
+    #[serde(default)]
+    pub viability_fault_domains: BTreeMap<String, String>,
     pub maximum_hypotheses: usize,
 }
 

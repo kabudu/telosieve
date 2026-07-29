@@ -1,5 +1,8 @@
 # Productisation Assessment
 
+This table records the M3 evidence at the time of the original decision. Later
+remediation does not rewrite those observations.
+
 ## Registered claim comparison
 
 | Dimension | Telosieve evidence | Baseline comparison | Gate |
@@ -38,3 +41,7 @@ Post-M3 work now includes authenticated predecessor replay, but the anchor remai
 trusted harness configuration rather than a durable rollback-resistant service.
 This removes the fixture-level snapshot proxy without satisfying the production
 history requirement.
+
+Certificate v3 subsequently tolerates two correlated weakened signers inside one
+declared domain, but the cross-domain weakened fixture produces one unsafe
+approval. That retained result independently keeps the productisation gate closed.

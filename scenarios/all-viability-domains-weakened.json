@@ -1,5 +1,5 @@
 {
-  "scenario_id": "poisoned-goal",
+  "scenario_id": "all-viability-domains-weakened",
   "seed": 7,
   "evaluation_time": 1750000000,
   "subject": "kv/research",
@@ -14,9 +14,13 @@
   "fault_declaration": {
     "maximum_faults": 1,
     "suspectable": [
-      "goal"
+      "viability"
     ],
-    "viability_fault_domains": {},
+    "viability_fault_domains": {
+      "viability-lab": "lab-domain",
+      "viability-peer": "lab-domain",
+      "viability-review": "review-domain"
+    },
     "maximum_hypotheses": 4
   },
   "phenotype_history_anchor": {
@@ -108,16 +112,14 @@
       "expires_at": 1800000000,
       "issuer": "viability-peer",
       "sequence": 1,
-      "content_digest": "e986b557bdc1b57ba5689ce50f8ad64313b3bebcaba2dc79e358c2941faa1af8",
+      "content_digest": "1006d08734917ba7dec2987433eedea47893e18c564217a4c4196845651b0dc5",
       "parent_digests": [],
       "content": {
         "replica_count": 3,
         "require_consensus": true,
-        "required_keys": {
-          "cluster/epoch": "7"
-        }
+        "required_keys": {}
       },
-      "signature": "e802ccf6c503b25336f2b30cbb3c8d09c3540b3c6f5989551856e8a531cfa3fcf06adbea9f1467c7c1b14fabb7e7b746c3fa2ba9237f84986730a7fce6fb4808"
+      "signature": "d630a6bf6110aa9402ac78cc68444f936feacf0afd63b29afd8ef3a44d743dae1323f4a4145eb8ba6ffe07784a3ac70471f79b7b38feecf3b0ea1bf15a139a0c"
     },
     {
       "kind": "viability",
@@ -127,16 +129,14 @@
       "expires_at": 1800000000,
       "issuer": "viability-lab",
       "sequence": 1,
-      "content_digest": "e986b557bdc1b57ba5689ce50f8ad64313b3bebcaba2dc79e358c2941faa1af8",
+      "content_digest": "1006d08734917ba7dec2987433eedea47893e18c564217a4c4196845651b0dc5",
       "parent_digests": [],
       "content": {
         "replica_count": 3,
         "require_consensus": true,
-        "required_keys": {
-          "cluster/epoch": "7"
-        }
+        "required_keys": {}
       },
-      "signature": "3f24c8d9e330c154587b96b99dc4fa56d9e11e17cb0e97fa882e74f37edfba4c916fe089fa678f025271400691cd9fbb5c33af6c979238a06a179fb82da6d304"
+      "signature": "59700587d300abf6c05e7d7eaef031ddbc02e498d165fff8cc00edc7189ddcb008a2b7326ea5c1346366b7cd7d5714ec0c752ad1c5a2369b140071484f9ecd0e"
     },
     {
       "kind": "viability",
@@ -146,16 +146,14 @@
       "expires_at": 1800000000,
       "issuer": "viability-review",
       "sequence": 1,
-      "content_digest": "e986b557bdc1b57ba5689ce50f8ad64313b3bebcaba2dc79e358c2941faa1af8",
+      "content_digest": "1006d08734917ba7dec2987433eedea47893e18c564217a4c4196845651b0dc5",
       "parent_digests": [],
       "content": {
         "replica_count": 3,
         "require_consensus": true,
-        "required_keys": {
-          "cluster/epoch": "7"
-        }
+        "required_keys": {}
       },
-      "signature": "6640fb0af95eae31b04bdda1134407c76e6e780a75a09c4e26df610f0221044c487faa204967dc836e6e7f972bcb24a63773c90286936f2f88c3b500c537130a"
+      "signature": "6df352c4a6608ede9e29a374f888163982a6e3155a1d06fcc8a0b3f0904bd979bf8208f57ea0e65a6af78575bf1de39273e0e3b25928c072aa0543087afa3300"
     }
   ]
 }

@@ -23,9 +23,9 @@ requires refusal.
 The harness implements the fields above, Ed25519 authentication, subject and
 validity checks, SHA-256 content binding, exact-one cardinality for goal and
 phenotype, and one-or-more viability envelopes with unique issuers. When viability
-is suspectable, hypotheses exclude individual viability issuers and bind those
-issuer exclusions into certificate v1. All surviving viability rules must approve
-the common transition.
+is suspectable, hypotheses exclude complete declared viability fault domains and
+bind their domains and issuer exclusions into certificate v3. All surviving
+viability rules must approve the common transition.
 
 Signed bytes use deterministic serialization of typed fields and ordered maps.
 The harness does not yet maintain issuer history, detect equivocation across runs,
@@ -36,3 +36,7 @@ Phenotype history is the first exception: certificate v2 verifies a bounded
 single-issuer chain against a trusted monotonic tip anchor and exposes every
 retained digest. See [AUTHENTICATED_HISTORY](AUTHENTICATED_HISTORY.md). The anchor
 remains research configuration rather than a durable production checkpoint.
+
+Certificate v3 binds viability fault-domain exclusions as well as issuer
+exclusions. Domain mappings are trusted scenario configuration and are validated
+before bounded enumeration. See [CORRELATED_FAULTS](CORRELATED_FAULTS.md).

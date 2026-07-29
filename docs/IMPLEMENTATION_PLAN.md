@@ -53,7 +53,7 @@ Decision: **narrow**. Productisation and public release are blocked. See
 ## Post-M4 — evidence expansion
 
 - [ ] Obtain third-party organizational reproduction and security review.
-- [ ] Test correlated viability-principal faults and document fault-domain
+- [x] Test correlated viability-principal faults and document fault-domain
   independence requirements.
 - [ ] Prototype a durable rollback-resistant history anchor.
 - [ ] Measure the safety/availability frontier over a larger generated state

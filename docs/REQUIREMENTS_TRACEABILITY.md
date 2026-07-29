@@ -19,5 +19,6 @@ public replay covers provenance exclusion, diverse checking, refusal,
 determinism, ledger persistence, rollback, and all three baselines.
 
 Post-M3 evidence in `tests/adversarial.rs` and the benign replay verifies
-per-issuer viability exclusion, fail-closed checking, zero registered unsafe
-approvals, and preservation of benign availability under the one-principal bound.
+fault-domain viability exclusion, fail-closed checking, zero unsafe approvals
+inside the one-domain bound, and preservation of benign availability. The
+cross-domain fixture retains the unsafe approval beyond that bound.

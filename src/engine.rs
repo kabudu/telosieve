@@ -64,9 +64,11 @@ pub fn run_scenario_file(
 /// when any authority fails verification.
 pub fn run_scenario(scenario: &Scenario) -> Result<Certificate, RunError> {
     let authorities = verify(scenario)?;
-    validate_declaration(scenario, &authorities)?;
+    let fault_targets = fault_targets(scenario, &authorities)?;
+    validate_declaration(scenario, fault_targets.len())?;
     let mut checker_session = crate::external_checker::CheckerSession::start()?;
-    let hypotheses = enumerate_hypotheses(scenario, &authorities, &mut checker_session)?;
+    let hypotheses =
+        enumerate_hypotheses(scenario, &authorities, &fault_targets, &mut checker_session)?;
     let safe_transitions: Vec<&Transition> = hypotheses
         .iter()
         .filter_map(
@@ -118,7 +120,7 @@ pub fn run_scenario(scenario: &Scenario) -> Result<Certificate, RunError> {
     let hypothesis_count = hypotheses.len();
 
     Ok(Certificate {
-        certificate_version: "telosieve.certificate/v2".into(),
+        certificate_version: "telosieve.certificate/v3".into(),
         scenario_id: scenario.scenario_id.clone(),
         seed: scenario.seed,
         authority_digests: authorities.digests,
@@ -198,22 +200,8 @@ fn build_baselines(
     Ok(baselines)
 }
 
-fn validate_declaration(
-    scenario: &Scenario,
-    authorities: &VerifiedAuthorities,
-) -> Result<(), RunError> {
+fn validate_declaration(scenario: &Scenario, target_count: usize) -> Result<(), RunError> {
     let declaration = &scenario.fault_declaration;
-    let target_count = declaration
-        .suspectable
-        .iter()
-        .map(|kind| {
-            if *kind == AuthorityKind::Viability {
-                authorities.viability.len()
-            } else {
-                1
-            }
-        })
-        .sum();
     if declaration.maximum_faults > target_count {
         return Err(RunError::FaultDeclaration(
             "maximum_faults exceeds the number of suspectable authorities".into(),
@@ -231,6 +219,61 @@ fn validate_declaration(
         )));
     }
     Ok(())
+}
+
+fn fault_targets(
+    scenario: &Scenario,
+    authorities: &VerifiedAuthorities,
+) -> Result<Vec<FaultTarget>, RunError> {
+    let declaration = &scenario.fault_declaration;
+    let viability_issuers: BTreeSet<_> = authorities
+        .viability
+        .iter()
+        .map(|authority| authority.issuer.as_str())
+        .collect();
+    if declaration.suspectable.contains(&AuthorityKind::Viability) {
+        for issuer in &viability_issuers {
+            if declaration
+                .viability_fault_domains
+                .get(*issuer)
+                .is_none_or(String::is_empty)
+            {
+                return Err(RunError::FaultDeclaration(format!(
+                    "viability issuer {issuer} has no non-empty fault domain"
+                )));
+            }
+        }
+        if declaration
+            .viability_fault_domains
+            .keys()
+            .any(|issuer| !viability_issuers.contains(issuer.as_str()))
+        {
+            return Err(RunError::FaultDeclaration(
+                "fault-domain mapping contains an unknown viability issuer".into(),
+            ));
+        }
+    } else if !declaration.viability_fault_domains.is_empty() {
+        return Err(RunError::FaultDeclaration(
+            "viability fault domains require viability to be suspectable".into(),
+        ));
+    }
+    let mut targets = Vec::new();
+    for kind in &declaration.suspectable {
+        if *kind == AuthorityKind::Viability {
+            targets.extend(
+                declaration
+                    .viability_fault_domains
+                    .values()
+                    .cloned()
+                    .collect::<BTreeSet<_>>()
+                    .into_iter()
+                    .map(FaultTarget::ViabilityDomain),
+            );
+        } else {
+            targets.push(FaultTarget::Authority(*kind));
+        }
+    }
+    Ok(targets)
 }
 
 fn bounded_hypothesis_count(n: usize, budget: usize, limit: usize) -> Result<usize, RunError> {
@@ -254,31 +297,16 @@ fn bounded_hypothesis_count(n: usize, budget: usize, limit: usize) -> Result<usi
 fn enumerate_hypotheses(
     scenario: &Scenario,
     authorities: &VerifiedAuthorities,
+    targets: &[FaultTarget],
     checker_session: &mut crate::external_checker::CheckerSession,
 ) -> Result<Vec<HypothesisRecord>, RunError> {
-    let targets: Vec<_> = scenario
-        .fault_declaration
-        .suspectable
-        .iter()
-        .flat_map(|kind| {
-            if *kind == AuthorityKind::Viability {
-                authorities
-                    .viability
-                    .iter()
-                    .map(|authority| FaultTarget::ViabilityIssuer(authority.issuer.clone()))
-                    .collect()
-            } else {
-                vec![FaultTarget::Authority(*kind)]
-            }
-        })
-        .collect();
     let mut fault_sets = Vec::new();
     for size in 0..=scenario.fault_declaration.maximum_faults {
-        combinations(&targets, size, 0, &mut Vec::new(), &mut fault_sets);
+        combinations(targets, size, 0, &mut Vec::new(), &mut fault_sets);
     }
     fault_sets
         .iter()
-        .map(|suspected| evaluate_hypothesis(authorities, suspected, checker_session))
+        .map(|suspected| evaluate_hypothesis(scenario, authorities, suspected, checker_session))
         .collect()
 }
 
@@ -301,6 +329,7 @@ fn combinations(
 }
 
 fn evaluate_hypothesis(
+    scenario: &Scenario,
     authorities: &VerifiedAuthorities,
     suspected: &BTreeSet<FaultTarget>,
     checker_session: &mut crate::external_checker::CheckerSession,
@@ -319,9 +348,16 @@ fn evaluate_hypothesis(
         .map(|transition| -> Result<_, RunError> {
             let excluded: BTreeSet<_> = suspected
                 .iter()
-                .filter_map(|target| match target {
-                    FaultTarget::ViabilityIssuer(issuer) => Some(issuer.as_str()),
-                    FaultTarget::Authority(_) => None,
+                .flat_map(|target| match target {
+                    FaultTarget::ViabilityDomain(domain) => scenario
+                        .fault_declaration
+                        .viability_fault_domains
+                        .iter()
+                        .filter_map(|(issuer, candidate)| {
+                            (candidate == domain).then_some(issuer.as_str())
+                        })
+                        .collect(),
+                    FaultTarget::Authority(_) => Vec::new(),
                 })
                 .collect();
             check_surviving_viability(authorities, transition, &excluded, checker_session)
@@ -331,14 +367,24 @@ fn evaluate_hypothesis(
         .iter()
         .map(|target| match target {
             FaultTarget::Authority(kind) => *kind,
-            FaultTarget::ViabilityIssuer(_) => AuthorityKind::Viability,
+            FaultTarget::ViabilityDomain(_) => AuthorityKind::Viability,
         })
         .collect();
-    let suspected_issuers: Vec<_> = suspected
+    let suspected_fault_domains: Vec<_> = suspected
         .iter()
         .filter_map(|target| match target {
-            FaultTarget::ViabilityIssuer(issuer) => Some(issuer.clone()),
+            FaultTarget::ViabilityDomain(domain) => Some(domain.clone()),
             FaultTarget::Authority(_) => None,
+        })
+        .collect();
+    let suspected_issuers: Vec<_> = scenario
+        .fault_declaration
+        .viability_fault_domains
+        .iter()
+        .filter_map(|(issuer, domain)| {
+            suspected_fault_domains
+                .contains(domain)
+                .then_some(issuer.clone())
         })
         .collect();
     Ok(HypothesisRecord {
@@ -346,6 +392,8 @@ fn evaluate_hypothesis(
         suspected: suspected_kinds,
         excluded_issuers: suspected_issuers.clone(),
         suspected_issuers,
+        excluded_fault_domains: suspected_fault_domains.clone(),
+        suspected_fault_domains,
         proposed_transition,
         checker,
     })
@@ -354,7 +402,7 @@ fn evaluate_hypothesis(
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 enum FaultTarget {
     Authority(AuthorityKind),
-    ViabilityIssuer(String),
+    ViabilityDomain(String),
 }
 
 fn check_all_viability(

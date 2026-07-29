@@ -18,6 +18,10 @@ and productisation. A tag or release requires a new explicit decision after the
 reopening conditions in
 [PRODUCTISATION_DECISION](PRODUCTISATION_DECISION.md) are satisfied.
 
+Post-M3 remediation removes that original result inside a one-domain bound, but
+the retained cross-domain correlated fixture produces another unsafe approval.
+The release block therefore remains in force.
+
 ## CI and delivery policy
 
 Telosieve is private, so local CI is the sole authoritative quality gate:

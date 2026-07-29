@@ -8,6 +8,7 @@
     "goal-lab": "66be7e332c7a453332bd9d0a7f7db055f5c5ef1a06ada66d98b39fb6810c473a",
     "phenotype-lab": "511c34a1a2cb521df16bb246b8de8e7997ce235c7e76b22a3d7503a24819dd8a",
     "viability-lab": "884b8857f4eaa1613c61504db34d4beaf346517a0e31de3cddd4d9b4201d9d0b",
+    "viability-peer": "2c848ad8664ee651e4896c13a84a89a2964aca5eb77a8b881e60ded5c81b4e9d",
     "viability-review": "9475c6cf0eda34057528d8694781ecc92ad639d7e2bd27761ed3ef74924beb07"
   },
   "fault_declaration": {
@@ -16,6 +17,11 @@
       "goal",
       "viability"
     ],
+    "viability_fault_domains": {
+      "viability-lab": "lab-domain",
+      "viability-peer": "lab-domain",
+      "viability-review": "review-domain"
+    },
     "maximum_hypotheses": 4
   },
   "phenotype_history_anchor": {
@@ -98,6 +104,23 @@
         }
       },
       "signature": "57b7a223243338245e55bc471f50f16fe103f1030ea4d7d7f12ac7ae17de9d2d54f016a552e321314b2317d624504ffa24b7889569590da2911a336a34c36903"
+    },
+    {
+      "kind": "viability",
+      "subject": "kv/research",
+      "schema_version": "telosieve.authority/v0",
+      "issued_at": 1700000000,
+      "expires_at": 1800000000,
+      "issuer": "viability-peer",
+      "sequence": 1,
+      "content_digest": "1006d08734917ba7dec2987433eedea47893e18c564217a4c4196845651b0dc5",
+      "parent_digests": [],
+      "content": {
+        "replica_count": 3,
+        "require_consensus": true,
+        "required_keys": {}
+      },
+      "signature": "d630a6bf6110aa9402ac78cc68444f936feacf0afd63b29afd8ef3a44d743dae1323f4a4145eb8ba6ffe07784a3ac70471f79b7b38feecf3b0ea1bf15a139a0c"
     },
     {
       "kind": "viability",

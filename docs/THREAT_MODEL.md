@@ -22,6 +22,10 @@ The post-M3 fault model authenticates distinct viability issuers and excludes on
 issuer per bounded hypothesis. Distinct keys establish principal identity, not
 organizational or implementation independence.
 
+Certificate v3 groups viability issuers by declared fault domain. Correlated
+failure inside one domain is covered; shared failure across every surviving
+domain remains outside the bound and produces a retained unsafe approval.
+
 Authenticated phenotype history rejects chain and anchor rollback within a
 64-record bound. The trusted anchor is configuration in this harness; compromise
 or rollback of that trust root remains outside the demonstrated protection.

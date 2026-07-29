@@ -83,6 +83,7 @@ fn main() {
     let goal_key = SigningKey::from_bytes(&[11; 32]);
     let phenotype_key = SigningKey::from_bytes(&[22; 32]);
     let viability_key = SigningKey::from_bytes(&[33; 32]);
+    let viability_peer_key = SigningKey::from_bytes(&[55; 32]);
     let viability_backup_key = SigningKey::from_bytes(&[44; 32]);
     let public_keys = BTreeMap::from([
         (
@@ -101,6 +102,10 @@ fn main() {
             "viability-review".into(),
             hex::encode(viability_backup_key.verifying_key().to_bytes()),
         ),
+        (
+            "viability-peer".into(),
+            hex::encode(viability_peer_key.verifying_key().to_bytes()),
+        ),
     ]);
     let current = json!({
         "replicas": {
@@ -118,9 +123,10 @@ fn main() {
                 goal: Value,
                 phenotype: Value,
                 rules: Value,
+                review_rules: Value,
                 expected_decision,
                 maximum_faults,
-                suspectable|
+                suspectable: BTreeSet<AuthorityKind>|
      -> Scenario {
         let history = envelope(
             &phenotype_key,
@@ -147,6 +153,15 @@ fn main() {
             sequence: current_phenotype.sequence,
             tip_digest: digest(&current_phenotype),
         };
+        let viability_fault_domains = if suspectable.contains(&AuthorityKind::Viability) {
+            BTreeMap::from([
+                ("viability-lab".into(), "lab-domain".into()),
+                ("viability-peer".into(), "lab-domain".into()),
+                ("viability-review".into(), "review-domain".into()),
+            ])
+        } else {
+            BTreeMap::new()
+        };
         Scenario {
             scenario_id: scenario_id.into(),
             seed: 7,
@@ -157,6 +172,7 @@ fn main() {
             fault_declaration: FaultDeclaration {
                 maximum_faults,
                 suspectable,
+                viability_fault_domains,
                 maximum_hypotheses: 4,
             },
             phenotype_history_anchor,
@@ -164,6 +180,12 @@ fn main() {
             authorities: vec![
                 envelope(&goal_key, AuthorityKind::Goal, "goal-lab", goal),
                 current_phenotype,
+                envelope(
+                    &viability_peer_key,
+                    AuthorityKind::Viability,
+                    "viability-peer",
+                    rules.clone(),
+                ),
                 envelope(
                     &viability_key,
                     AuthorityKind::Viability,
@@ -174,7 +196,7 @@ fn main() {
                     &viability_backup_key,
                     AuthorityKind::Viability,
                     "viability-review",
-                    viability.clone(),
+                    review_rules,
                 ),
             ],
         }
@@ -183,6 +205,7 @@ fn main() {
         "benign-update",
         json!({"cluster/epoch": "7", "user/message": "new"}),
         current.clone(),
+        viability.clone(),
         viability.clone(),
         ExpectedDecision::Apply,
         1,
@@ -193,15 +216,19 @@ fn main() {
         json!({"user/message": "attacker-controlled"}),
         current.clone(),
         viability.clone(),
+        viability.clone(),
         ExpectedDecision::Refuse,
         1,
         BTreeSet::from([AuthorityKind::Goal]),
     );
+    let weakened_rules =
+        json!({"replica_count": 3, "require_consensus": true, "required_keys": {}});
     let weakened = make(
         "weakened-viability",
         json!({"user/message": "attacker-controlled"}),
         current.clone(),
-        json!({"replica_count": 3, "require_consensus": true, "required_keys": {}}),
+        weakened_rules.clone(),
+        viability.clone(),
         ExpectedDecision::Refuse,
         1,
         BTreeSet::from([AuthorityKind::Goal, AuthorityKind::Viability]),
@@ -213,6 +240,7 @@ fn main() {
         json!({"cluster/epoch": "7", "user/message": "new"}),
         partition,
         viability.clone(),
+        viability.clone(),
         ExpectedDecision::Apply,
         1,
         BTreeSet::from([AuthorityKind::Phenotype]),
@@ -222,4 +250,15 @@ fn main() {
     write_scenario("poisoned-goal", &poisoned);
     write_scenario("weakened-viability", &weakened);
     write_scenario("partitioned-phenotype", &partitioned);
+    let all_domains_weakened = make(
+        "all-viability-domains-weakened",
+        json!({"user/message": "attacker-controlled"}),
+        current,
+        weakened_rules.clone(),
+        weakened_rules,
+        ExpectedDecision::Refuse,
+        1,
+        BTreeSet::from([AuthorityKind::Viability]),
+    );
+    write_scenario("all-viability-domains-weakened", &all_domains_weakened);
 }

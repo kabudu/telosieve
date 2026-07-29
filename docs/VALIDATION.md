@@ -64,7 +64,7 @@ authority dependency and blocks productisation; it is not treated as an M2 pass.
 ## Post-M3 viability remediation
 
 The original M2 result remains retained above. The follow-up fault model registers
-two independently signed viability principals and permits one listed principal to
+independently signed viability principals and permits one listed fault domain to
 be semantically faulty. Every surviving principal must independently approve the
 common transition. The exact bound, failure behavior, and falsifiers are in
 [VIABILITY_FAULT_MODEL](VIABILITY_FAULT_MODEL.md).
@@ -72,8 +72,8 @@ common transition. The exact bound, failure behavior, and falsifiers are in
 The retained follow-up run is `results/post-m3-viability-benchmark.json`. It
 refuses the weakened-viability transition with zero unsafe approvals while the
 benign multi-principal fixture still applies with zero false refusals. This
-removes the registered unsafe approval inside the new one-principal fault model;
-it does not cover correlated faults or qualify the project for productisation.
+removes the registered unsafe approval inside the original one-principal model.
+The subsequent domain model supersedes that bound and is reported below.
 
 The authenticated-history follow-up is retained in
 `results/post-m3-history-benchmark.json`. It replaces the snapshot proxy with a
@@ -84,3 +84,11 @@ The separate Linux reproduction is documented in
 [INDEPENDENT_REPRODUCTION](INDEPENDENT_REPRODUCTION.md). Its deterministic outputs
 match the macOS run; third-party organizational reproduction remains a
 productisation gate.
+
+## Correlated fault domains
+
+The correlated experiment is documented in
+[CORRELATED_FAULTS](CORRELATED_FAULTS.md). Two weakened principals sharing one
+domain are tolerated when a strict independent domain survives. Weakening every
+domain produces one unsafe approval and remains a stop-ship result outside the
+one-domain bound.

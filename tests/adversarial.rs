@@ -1,4 +1,7 @@
-use std::{collections::BTreeSet, fs};
+use std::{
+    collections::{BTreeMap, BTreeSet},
+    fs,
+};
 
 use telosieve::{
     certificate::Decision,
@@ -35,13 +38,35 @@ fn registered_adversarial_fault_classes_fail_closed_or_refuse() {
     assert_eq!(weakened.metrics.hypothesis_count, 4);
     assert!(weakened.hypotheses.iter().any(|hypothesis| {
         hypothesis.suspected == vec![AuthorityKind::Viability]
-            && hypothesis.suspected_issuers == vec!["viability-lab"]
+            && hypothesis.suspected_fault_domains == vec!["lab-domain"]
+            && hypothesis.suspected_issuers == vec!["viability-lab", "viability-peer"]
             && hypothesis.proposed_transition.is_some()
             && hypothesis
                 .checker
                 .as_ref()
                 .is_some_and(|checker| !checker.safe)
     }));
+    let benign_domains = run_scenario(&fixture("benign.json")).unwrap();
+    assert_eq!(benign_domains.decision, Decision::Applied);
+    assert_eq!(benign_domains.metrics.false_refusals, 0);
+    assert!(benign_domains.hypotheses.iter().any(|hypothesis| {
+        hypothesis.suspected_fault_domains == vec!["lab-domain"]
+            && hypothesis.excluded_issuers == vec!["viability-lab", "viability-peer"]
+    }));
+
+    let cross_domain = run_scenario(&fixture("all-viability-domains-weakened.json")).unwrap();
+    assert_eq!(cross_domain.decision, Decision::Applied);
+    assert_eq!(cross_domain.metrics.unsafe_approvals, 1);
+
+    let mut missing_domain = fixture("benign.json");
+    missing_domain
+        .fault_declaration
+        .viability_fault_domains
+        .remove("viability-peer");
+    assert!(matches!(
+        run_scenario(&missing_domain),
+        Err(RunError::FaultDeclaration(_))
+    ));
 
     let partitioned = run_scenario(&fixture("partitioned-phenotype.json")).unwrap();
     assert_eq!(partitioned.decision, Decision::Applied);
@@ -62,6 +87,11 @@ fn registered_adversarial_fault_classes_fail_closed_or_refuse() {
         AuthorityKind::Goal,
         AuthorityKind::Phenotype,
         AuthorityKind::Viability,
+    ]);
+    correlated.fault_declaration.viability_fault_domains = BTreeMap::from([
+        ("viability-lab".into(), "lab-domain".into()),
+        ("viability-peer".into(), "lab-domain".into()),
+        ("viability-review".into(), "review-domain".into()),
     ]);
     assert_eq!(
         run_scenario(&correlated).unwrap().decision,

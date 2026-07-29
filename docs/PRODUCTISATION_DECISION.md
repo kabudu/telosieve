@@ -57,6 +57,11 @@ A subsequent network-disabled Linux container reproduced all deterministic
 outputs with a distinct Rust/Python toolchain. This removes a host-environment
 concern, but independent third-party reproduction and review remain unresolved.
 
+Correlated-fault testing now models two weakened signers in one domain
+successfully, but weakening every viability domain produces an unsafe approval.
+Productisation therefore remains blocked regardless of the remaining persistence
+and availability milestones.
+
 ## Evidence basis
 
 - [M2 Adversarial Results](M2_RESULTS.md)

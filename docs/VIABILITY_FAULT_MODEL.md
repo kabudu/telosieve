@@ -3,14 +3,14 @@
 ## Registered bound
 
 Each viability principal supplies a separately signed viability envelope under a
-distinct issuer key. When `viability` is suspectable, the hypothesis engine treats
-each issuer as a separate fault target. `maximum_faults = 1` therefore means that
-at most one listed authority principal is semantically faulty, not merely that
-one envelope has an invalid signature.
+distinct issuer key. Certificate v3 assigns issuers to explicit fault domains.
+When `viability` is suspectable, the hypothesis engine treats each domain as a
+fault target and excludes all issuers in that domain. `maximum_faults = 1`
+therefore means at most one declared domain is semantically faulty.
 
-The registered fixtures use `viability-lab` and `viability-review`. The weakened
-fixture permits one fault among the goal and either viability issuer, producing
-four hypotheses within `maximum_hypotheses = 4`.
+The registered fixtures use three issuers across two domains. The weakened fixture
+permits one fault among the goal and either viability domain, producing four
+hypotheses within `maximum_hypotheses = 4`.
 
 ## Decision invariant
 
@@ -20,7 +20,7 @@ approves it. A suspected viability issuer is excluded from checking. If no
 viability principal survives, the checker fails closed.
 
 This preserves availability in the registered benign fixture: either viability
-issuer may be suspected and the remaining independently signed rules still
+domain may be suspected and the remaining independently signed rules still
 approve the update. In the weakened fixture, the strict principal rejects the
 unsafe transition when the weakened principal survives, while exclusion of the
 strict principal still cannot produce unanimous approval across all hypotheses.
@@ -48,18 +48,17 @@ and insufficient hypothesis bounds fail closed.
 
 This strategy is falsified for the registered scope by:
 
-- any unsafe approval with at most one faulty listed principal;
+- any unsafe approval with at most one faulty listed domain;
 - a false refusal in the registered benign multi-principal fixture;
 - acceptance when all viability principals are excluded;
 - unbounded hypothesis or checker work; or
-- evidence that the two issuer implementations or operators share a correlated
+- evidence that declared independent domains share a correlated
   semantic failure.
 
-The result does not cover two correlated faulty principals, prove organizational
-independence, or establish general safety. The retained post-M3 benchmark removes
-the registered unsafe approval while increasing latency and certificate size.
-Productisation remains blocked pending broader adversarial evaluation,
-availability measurement, and independent reproduction.
+The result does not cover simultaneous failure across all viability domains,
+prove organizational independence, or establish general safety. The correlated
+experiment in [CORRELATED_FAULTS](CORRELATED_FAULTS.md) retains an unsafe approval
+when every domain is weakened. Productisation remains blocked.
 
 Reproduce the follow-up run from the current reviewed revision with:
 
