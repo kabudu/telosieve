@@ -59,6 +59,10 @@ does not contact or mutate a cluster and therefore does not qualify Kubernetes
 authorization, live-watch consistency, admission behavior, or production
 actuation. The release block remains.
 
+Seven offline incident drills now pass and are retained. They do not substitute
+for independent, infrastructure, or organizational incident exercises, so the
+release block remains.
+
 ## CI and delivery policy
 
 Telosieve is private, so local CI is the sole authoritative quality gate:

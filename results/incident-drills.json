@@ -1,0 +1,15 @@
+{
+  "schema_version":"telosieve.incident-drills/v1",
+  "execution_mode":"local-offline-no-production-credentials",
+  "drills":[
+    {"id":"state-corruption","command":"cargo test --locked --offline actuator_store::tests::stale_corrupt_oversized_and_locked_state_fail_closed -- --exact","expected_state":"corrupt state refuses without mutation","operator_action":"quarantine files and stop actuation","recovery_point":"last independently verified backup","evidence_preservation":"preserve state witness lock and error","status":"passed"},
+    {"id":"witness-loss","command":"cargo test --locked --offline actuator_store::tests::committed_witness_loss_fails_closed -- --exact","expected_state":"missing committed witness is a stop condition","operator_action":"stop and investigate witness loss","recovery_point":"no automatic recovery point","evidence_preservation":"preserve state and missing-witness error","status":"passed"},
+    {"id":"full-ledger","command":"cargo test --locked --offline actuator_store::tests::full_consumption_ledger_does_not_apply_or_advance -- --exact","expected_state":"capacity refusal preserves state and history","operator_action":"stop deletions and retain the ledger","recovery_point":"unchanged pre-request state","evidence_preservation":"preserve ledger state and refusal","status":"passed"},
+    {"id":"stale-lock","command":"cargo test --locked --offline anchor_store::tests::missing_corrupt_and_locked_stores_fail_closed -- --exact","expected_state":"lock contention refuses without guessing ownership","operator_action":"prove owner death before lock removal","recovery_point":"unchanged anchored state","evidence_preservation":"preserve lock metadata state and error","status":"passed"},
+    {"id":"bad-upgrade","command":"cargo test --locked --offline actuator_store::tests::legacy_upgrade_preserves_consumption_and_is_recoverable -- --exact","expected_state":"interrupted upgrade retains exact legacy state","operator_action":"invoke recovery without retrying actuation","recovery_point":"committed legacy state","evidence_preservation":"preserve legacy state witness and recovery result","status":"passed"},
+    {"id":"key-compromise","command":"cargo test --locked --offline protocol::key_lifecycle_tests::recovery_root_can_activate_a_fresh_key_after_revocation -- --exact","expected_state":"offline recovery root revokes and replaces compromised key","operator_action":"revoke key and activate replacement from offline root","recovery_point":"last trusted lifecycle tip","evidence_preservation":"preserve compromise evidence lifecycle chain and signatures","status":"passed"},
+    {"id":"lifecycle-rollback","command":"cargo test --locked --offline protocol::key_lifecycle_tests::lifecycle_rollback_equivocation_kind_mismatch_and_bounds_fail_closed -- --exact","expected_state":"trusted-tip rollback and equivocation fail closed","operator_action":"stop issuance and investigate trust-store integrity","recovery_point":"last trusted lifecycle tip","evidence_preservation":"preserve candidate chain trusted tip and verification error","status":"passed"}
+  ],
+  "passed":7,
+  "failed":0
+}

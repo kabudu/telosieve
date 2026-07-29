@@ -83,3 +83,6 @@ exports, and output/input aliasing. A malicious or incoherent exporter that
 fabricates a self-consistent snapshot remains outside the boundary; exact
 agreement with signed Telosieve authorities is required but does not prove live
 cluster truth.
+
+Incident drills validate deterministic software responses, not operator timing,
+hardware failure, hostile administrators, or multi-host disaster recovery.

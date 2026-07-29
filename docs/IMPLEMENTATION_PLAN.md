@@ -205,8 +205,18 @@ snapshot adapter, not live Kubernetes access or actuation.
 
 ## Post-M14 — incident and recovery exercises
 
-- [ ] Define machine-readable drills for corruption, witness loss, full ledgers,
+- [x] Define machine-readable drills for corruption, witness loss, full ledgers,
   stale locks, bad upgrades, key compromise, and lifecycle rollback.
-- [ ] Require explicit expected state, operator action, recovery point, and
+- [x] Require explicit expected state, operator action, recovery point, and
   evidence preservation for every drill.
-- [ ] Execute the drills without production credentials and retain results.
+- [x] Execute the drills without production credentials and retain results.
+
+Evidence: [INCIDENT_DRILLS](INCIDENT_DRILLS.md). Seven deterministic local
+software drills pass; real infrastructure and organizational response remain
+outside this evidence.
+
+## Post-M15 — property and parser robustness
+
+- [ ] Add bounded property/fuzz corpora for authority, lifecycle, shadow, and
+  recovery parsing.
+- [ ] Retain minimized regressions for every discovered discrepancy.

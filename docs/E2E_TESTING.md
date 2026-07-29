@@ -71,3 +71,6 @@ equivocating, and oversized lifecycle evidence before planning.
 The executable `shadow-kubernetes` lifecycle consumes only local exported JSON,
 emits certificate-v9 evidence, and leaves scenario and snapshot bytes unchanged.
 It rejects oversized snapshots and any evidence path that aliases an input.
+
+The incident runner selects seven exact failure-path tests and emits a
+machine-readable pass aggregate only after all seven exit successfully.

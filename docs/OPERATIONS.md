@@ -54,3 +54,7 @@ separate read-only process, preserve the raw export, and run Telosieve offline.
 Treat drift, incomplete observations, stale generations, identity changes, or
 authority mismatch as an incident/refusal. Never use the shadow certificate as a
 mutation command; it records a research decision only.
+
+Run `./scripts/run-incident-drills.sh` after recovery-protocol changes. A missing
+or failed drill blocks the milestone; never edit the aggregate result to convert
+a failure into a pass. See [INCIDENT_DRILLS](INCIDENT_DRILLS.md).

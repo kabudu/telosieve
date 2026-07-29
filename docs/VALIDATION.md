@@ -174,3 +174,9 @@ versions, and capture time while leaving actuation absent. Mapping and CLI tests
 cover drift, partial/stale observations, replacement identity, schema/context
 and authority mismatch, resource bounds, output aliasing, deterministic evidence,
 and unchanged inputs. See [KUBERNETES_SHADOW](KUBERNETES_SHADOW.md).
+
+## Incident drills
+
+Seven offline drills execute corruption, witness-loss, capacity, lock, upgrade,
+key-compromise, and lifecycle-rollback failure paths and retain exact commands
+and expected outcomes. See [INCIDENT_DRILLS](INCIDENT_DRILLS.md).

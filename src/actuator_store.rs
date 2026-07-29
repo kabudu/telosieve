@@ -1266,4 +1266,25 @@ mod tests {
         ));
         fs::remove_dir_all(directory).unwrap();
     }
+
+    #[test]
+    fn committed_witness_loss_fails_closed() {
+        let directory = test_dir("witness-loss");
+        let _ = fs::remove_dir_all(&directory);
+        let path = directory.join("actuator.json");
+        let store = LocalActuatorStore::new(&path);
+        store
+            .initialize(&service("old"), &anchor(1, "one"))
+            .unwrap();
+        fs::remove_file(store.witness_path()).unwrap();
+        assert!(matches!(
+            store.current_snapshot(),
+            Err(ActuatorError::MissingWitness)
+        ));
+        assert!(matches!(
+            store.recover(),
+            Err(ActuatorError::MissingWitness)
+        ));
+        fs::remove_dir_all(directory).unwrap();
+    }
 }
