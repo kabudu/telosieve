@@ -2,7 +2,10 @@ use std::{collections::BTreeMap, fs, path::Path};
 
 use telosieve::{
     certificate::Decision,
-    engine::{RunError, run_scenario, run_scenario_file},
+    engine::{
+        RunError, initialize_anchor_file, run_scenario, run_scenario_file,
+        run_scenario_file_anchored,
+    },
     protocol::{AuthorityKind, Scenario},
 };
 
@@ -216,6 +219,34 @@ fn ledger_failure_does_not_publish_a_certificate() {
 
     assert!(matches!(result, Err(RunError::Io(_))));
     assert!(!certificate_path.exists());
+    fs::remove_dir_all(test_dir).unwrap();
+}
+
+#[test]
+fn durable_anchor_initialization_and_public_run_are_fail_closed() {
+    let test_dir = Path::new("target")
+        .join("durable-anchor-tests")
+        .join(std::process::id().to_string());
+    let _ = fs::remove_dir_all(&test_dir);
+    fs::create_dir_all(&test_dir).unwrap();
+    let scenario = Path::new("scenarios/benign.json");
+    let anchor = test_dir.join("anchor.json");
+    let certificate = test_dir.join("certificate.json");
+    let ledger = test_dir.join("ledger.jsonl");
+
+    assert!(matches!(
+        run_scenario_file_anchored(scenario, &certificate, &ledger, &anchor),
+        Err(RunError::Anchor(_))
+    ));
+    assert!(!certificate.exists());
+    assert!(!ledger.exists());
+
+    initialize_anchor_file(scenario, &anchor).unwrap();
+    let result = run_scenario_file_anchored(scenario, &certificate, &ledger, &anchor).unwrap();
+    assert_eq!(result.decision, Decision::Applied);
+    assert!(certificate.exists());
+    assert_eq!(fs::read_to_string(ledger).unwrap().lines().count(), 1);
+
     fs::remove_dir_all(test_dir).unwrap();
 }
 

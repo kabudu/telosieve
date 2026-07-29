@@ -55,6 +55,6 @@ Decision: **narrow**. Productisation and public release are blocked. See
 - [ ] Obtain third-party organizational reproduction and security review.
 - [x] Test correlated viability-principal faults and document fault-domain
   independence requirements.
-- [ ] Prototype a durable rollback-resistant history anchor.
+- [x] Prototype a durable rollback-resistant history anchor.
 - [ ] Measure the safety/availability frontier over a larger generated state
   space.

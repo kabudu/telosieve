@@ -29,10 +29,10 @@ Historical records may have expired after issuance; expiry does not invalidate
 past authenticated state.
 
 The anchor is trusted scenario configuration in this research harness. A
-production design would require a durable monotonic store, rollback-resistant
-hardware or quorum checkpoint, retention policy, crash-consistent append, and key
-rotation. This milestone proves chain verification and deterministic replay, not
-durable production storage.
+subsequent prototype adds a local durable monotonic store, documented in
+[DURABLE_HISTORY_ANCHOR](DURABLE_HISTORY_ANCHOR.md). Rollback-resistant hardware
+or quorum checkpointing, retention policy, cross-host recovery, and key rotation
+remain production requirements.
 
 ## Evidence
 

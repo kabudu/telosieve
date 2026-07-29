@@ -41,6 +41,15 @@ cargo run -- run scenarios/benign.json out/benign-certificate.json out/ledger.js
 cargo run -- run scenarios/poisoned-goal.json out/refusal-certificate.json out/ledger.jsonl
 ```
 
+For durable history rollback detection, explicitly initialize and use the
+anchored path:
+
+```sh
+cargo run -- anchor-init scenarios/benign.json out/phenotype-anchor.json
+cargo run -- run-anchored scenarios/benign.json \
+  out/benign-certificate.json out/ledger.jsonl out/phenotype-anchor.json
+```
+
 For the complete private-repository quality gate, run:
 
 ```sh

@@ -29,3 +29,7 @@ domain remains outside the bound and produces a retained unsafe approval.
 Authenticated phenotype history rejects chain and anchor rollback within a
 64-record bound. The trusted anchor is configuration in this harness; compromise
 or rollback of that trust root remains outside the demonstrated protection.
+
+The durable-anchor prototype detects store-level sequence rollback and conflict
+under a trusted local filesystem. Filesystem compromise, malicious lock recovery,
+disk firmware rollback, and multi-host split brain remain outside its protection.

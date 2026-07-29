@@ -83,7 +83,7 @@ pub struct FaultDeclaration {
     pub maximum_hypotheses: usize,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct HistoryAnchor {
     pub issuer: String,

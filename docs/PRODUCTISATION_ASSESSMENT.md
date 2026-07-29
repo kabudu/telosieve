@@ -42,6 +42,10 @@ trusted harness configuration rather than a durable rollback-resistant service.
 This removes the fixture-level snapshot proxy without satisfying the production
 history requirement.
 
+The later durable-anchor prototype provides crash-synchronized single-host
+monotonic storage. It improves the harness boundary but does not supply
+multi-host, hardware-backed, or independently operated rollback resistance.
+
 Certificate v3 subsequently tolerates two correlated weakened signers inside one
 declared domain, but the cross-domain weakened fixture produces one unsafe
 approval. That retained result independently keeps the productisation gate closed.

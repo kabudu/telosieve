@@ -1,3 +1,4 @@
+pub mod anchor_store;
 pub mod certificate;
 pub mod checker;
 pub mod engine;

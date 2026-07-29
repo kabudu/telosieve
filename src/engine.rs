@@ -28,6 +28,8 @@ pub enum RunError {
     FaultDeclaration(String),
     #[error("independent checker failed: {0}")]
     Checker(#[from] crate::external_checker::ExternalCheckerError),
+    #[error("durable history anchor failed: {0}")]
+    Anchor(#[from] crate::anchor_store::AnchorError),
 }
 
 /// Runs a scenario through the public file boundary and persists its evidence.
@@ -42,6 +44,47 @@ pub fn run_scenario_file(
 ) -> Result<Certificate, RunError> {
     let scenario: Scenario = serde_json::from_slice(&fs::read(path)?)?;
     let certificate = run_scenario(&scenario)?;
+    persist_evidence(&certificate, certificate_path, ledger_path)?;
+    Ok(certificate)
+}
+
+/// Runs a scenario through the durable-anchor and public file boundaries.
+///
+/// # Errors
+///
+/// Returns [`RunError`] for input, protocol, durable-anchor, checker, or output
+/// failures.
+pub fn run_scenario_file_anchored(
+    path: &Path,
+    certificate_path: &Path,
+    ledger_path: &Path,
+    anchor_path: &Path,
+) -> Result<Certificate, RunError> {
+    let scenario: Scenario = serde_json::from_slice(&fs::read(path)?)?;
+    let certificate = run_scenario_anchored(&scenario, anchor_path)?;
+    persist_evidence(&certificate, certificate_path, ledger_path)?;
+    Ok(certificate)
+}
+
+/// Explicitly initializes the durable anchor from a verified scenario.
+///
+/// # Errors
+///
+/// Returns [`RunError`] when the scenario is invalid, the store already exists,
+/// or persistence fails.
+pub fn initialize_anchor_file(scenario_path: &Path, anchor_path: &Path) -> Result<(), RunError> {
+    let scenario: Scenario = serde_json::from_slice(&fs::read(scenario_path)?)?;
+    verify(&scenario)?;
+    crate::anchor_store::AnchorStore::new(anchor_path)
+        .initialize(&scenario.phenotype_history_anchor)?;
+    Ok(())
+}
+
+fn persist_evidence(
+    certificate: &Certificate,
+    certificate_path: &Path,
+    ledger_path: &Path,
+) -> Result<(), RunError> {
     let mut ledger = OpenOptions::new()
         .create(true)
         .append(true)
@@ -53,7 +96,7 @@ pub fn run_scenario_file(
     let temporary_path = certificate_path.with_extension("json.tmp");
     fs::write(&temporary_path, &bytes)?;
     fs::rename(temporary_path, certificate_path)?;
-    Ok(certificate)
+    Ok(())
 }
 
 /// Evaluates one deterministic, bounded research scenario.
@@ -64,11 +107,44 @@ pub fn run_scenario_file(
 /// when any authority fails verification.
 pub fn run_scenario(scenario: &Scenario) -> Result<Certificate, RunError> {
     let authorities = verify(scenario)?;
+    run_verified_scenario(scenario, authorities)
+}
+
+/// Evaluates a scenario after monotonically checking its durable history anchor.
+///
+/// # Errors
+///
+/// Returns [`RunError`] when authority verification, durable anchor comparison,
+/// bounded evaluation, or independent checking fails.
+pub fn run_scenario_anchored(
+    scenario: &Scenario,
+    anchor_path: &Path,
+) -> Result<Certificate, RunError> {
+    let authorities = verify(scenario)?;
     let fault_targets = fault_targets(scenario, &authorities)?;
     validate_declaration(scenario, fault_targets.len())?;
+    crate::anchor_store::AnchorStore::new(anchor_path)
+        .compare_and_advance(&scenario.phenotype_history_anchor)?;
+    evaluate_preflighted_scenario(scenario, authorities, &fault_targets)
+}
+
+fn run_verified_scenario(
+    scenario: &Scenario,
+    authorities: VerifiedAuthorities,
+) -> Result<Certificate, RunError> {
+    let fault_targets = fault_targets(scenario, &authorities)?;
+    validate_declaration(scenario, fault_targets.len())?;
+    evaluate_preflighted_scenario(scenario, authorities, &fault_targets)
+}
+
+fn evaluate_preflighted_scenario(
+    scenario: &Scenario,
+    authorities: VerifiedAuthorities,
+    fault_targets: &[FaultTarget],
+) -> Result<Certificate, RunError> {
     let mut checker_session = crate::external_checker::CheckerSession::start()?;
     let hypotheses =
-        enumerate_hypotheses(scenario, &authorities, &fault_targets, &mut checker_session)?;
+        enumerate_hypotheses(scenario, &authorities, fault_targets, &mut checker_session)?;
     let safe_transitions: Vec<&Transition> = hypotheses
         .iter()
         .filter_map(

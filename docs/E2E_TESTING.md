@@ -23,7 +23,8 @@ signature tampering, hypothesis-budget exhaustion, benign apply and rollback,
 poisoned-goal refusal, deterministic byte replay, certificate persistence, and
 append-only ledger records. It also replays a signed predecessor distinct from the
 current snapshot and rejects missing history, forked records, and an older trusted
-tip.
+tip. The anchored public boundary additionally refuses an uninitialized durable
+store before output, then completes after explicit initialization.
 
 `tests/adversarial.rs` registers the M2 hostile-input matrix: poisoned and stale
 goals, omitted and forged phenotype evidence, invariant weakening, partitioned

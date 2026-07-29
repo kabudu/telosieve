@@ -50,3 +50,8 @@ The signed-history baseline verifies a maximum of 64 predecessor phenotype
 envelopes against an explicit current-tip anchor before planning, then replays the
 authenticated predecessor. The harness anchor is trusted configuration; durable
 monotonic storage remains outside the implementation boundary.
+
+The anchored CLI path moves the current tip into a crash-synchronized local file
+with explicit initialization, monotonic compare-and-advance, atomic replacement,
+and fail-closed lock recovery. It remains a single-host prototype rather than a
+distributed or hardware-backed trust root.
