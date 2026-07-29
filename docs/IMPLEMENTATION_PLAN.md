@@ -14,7 +14,7 @@ configuration whose finite hypothesis count exceeds `maximum_hypotheses`.
 
 ## M1 — hypothesis protocol
 
-- [ ] Implement bounded general hypothesis enumeration and provenance exclusion.
+- [x] Implement bounded general hypothesis enumeration and provenance exclusion.
 - [ ] Add signed-history rollback and invariant-gated reconciler baselines.
 - [ ] Replace shared Rust/Serde planner-checker semantics with a diverse checker
   boundary and demonstrate parser/model differential tests.

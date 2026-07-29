@@ -58,7 +58,7 @@ pub fn run_scenario_file(
 ///
 /// # Errors
 ///
-/// Returns [`RunError`] when the fault declaration is outside the M0 bounds or
+/// Returns [`RunError`] when the fault declaration exceeds its configured bound or
 /// when any authority fails verification.
 pub fn run_scenario(scenario: &Scenario) -> Result<Certificate, RunError> {
     validate_declaration(scenario)?;
@@ -141,12 +141,16 @@ pub fn run_scenario(scenario: &Scenario) -> Result<Certificate, RunError> {
 
 fn validate_declaration(scenario: &Scenario) -> Result<(), RunError> {
     let declaration = &scenario.fault_declaration;
-    if declaration.maximum_faults > 1 {
+    if declaration.maximum_faults > declaration.suspectable.len() {
         return Err(RunError::FaultDeclaration(
-            "M0 supports a maximum fault budget of one".into(),
+            "maximum_faults exceeds the number of suspectable authorities".into(),
         ));
     }
-    let required = 1 + usize::from(declaration.maximum_faults == 1) * declaration.suspectable.len();
+    let required = bounded_hypothesis_count(
+        declaration.suspectable.len(),
+        declaration.maximum_faults,
+        declaration.maximum_hypotheses,
+    )?;
     if required > declaration.maximum_hypotheses {
         return Err(RunError::FaultDeclaration(format!(
             "{required} hypotheses exceed the configured bound of {}",
@@ -156,19 +160,37 @@ fn validate_declaration(scenario: &Scenario) -> Result<(), RunError> {
     Ok(())
 }
 
+fn bounded_hypothesis_count(n: usize, budget: usize, limit: usize) -> Result<usize, RunError> {
+    let mut total = 1usize;
+    let mut combinations = 1usize;
+    for size in 1..=budget {
+        combinations = combinations
+            .checked_mul(n - size + 1)
+            .and_then(|value| value.checked_div(size))
+            .ok_or_else(|| RunError::FaultDeclaration("hypothesis count overflow".into()))?;
+        total = total
+            .checked_add(combinations)
+            .ok_or_else(|| RunError::FaultDeclaration("hypothesis count overflow".into()))?;
+        if total > limit {
+            return Ok(total);
+        }
+    }
+    Ok(total)
+}
+
 fn enumerate_hypotheses(
     scenario: &Scenario,
     authorities: &VerifiedAuthorities,
 ) -> Vec<HypothesisRecord> {
-    let mut fault_sets = vec![BTreeSet::new()];
-    if scenario.fault_declaration.maximum_faults == 1 {
-        fault_sets.extend(
-            scenario
-                .fault_declaration
-                .suspectable
-                .iter()
-                .map(|kind| BTreeSet::from([*kind])),
-        );
+    let kinds: Vec<_> = scenario
+        .fault_declaration
+        .suspectable
+        .iter()
+        .copied()
+        .collect();
+    let mut fault_sets = Vec::new();
+    for size in 0..=scenario.fault_declaration.maximum_faults {
+        combinations(&kinds, size, 0, &mut Vec::new(), &mut fault_sets);
     }
     fault_sets
         .into_iter()
@@ -176,11 +198,33 @@ fn enumerate_hypotheses(
         .collect()
 }
 
+fn combinations(
+    kinds: &[AuthorityKind],
+    remaining: usize,
+    start: usize,
+    current: &mut Vec<AuthorityKind>,
+    output: &mut Vec<BTreeSet<AuthorityKind>>,
+) {
+    if remaining == 0 {
+        output.push(current.iter().copied().collect());
+        return;
+    }
+    for index in start..=kinds.len() - remaining {
+        current.push(kinds[index]);
+        combinations(kinds, remaining - 1, index + 1, current, output);
+        current.pop();
+    }
+}
+
 fn evaluate_hypothesis(
     authorities: &VerifiedAuthorities,
     suspected: BTreeSet<AuthorityKind>,
 ) -> HypothesisRecord {
-    let desired = if suspected.contains(&AuthorityKind::Goal) {
+    let desired = if suspected.contains(&AuthorityKind::Goal)
+        && suspected.contains(&AuthorityKind::Phenotype)
+    {
+        None
+    } else if suspected.contains(&AuthorityKind::Goal) {
         authorities.phenotype.consensus().cloned()
     } else {
         Some(authorities.goal.clone())

@@ -3,7 +3,7 @@ use std::{fs, path::Path};
 use telosieve::{
     certificate::Decision,
     engine::{RunError, run_scenario, run_scenario_file},
-    protocol::Scenario,
+    protocol::{AuthorityKind, Scenario},
 };
 
 fn load(name: &str) -> Scenario {
@@ -78,6 +78,34 @@ fn configured_hypothesis_bound_is_enforced() {
         run_scenario(&scenario),
         Err(RunError::FaultDeclaration(_))
     ));
+}
+
+#[test]
+fn general_enumeration_is_complete_bounded_and_excludes_every_suspect() {
+    let mut scenario = load("poisoned-goal.json");
+    scenario.fault_declaration.maximum_faults = 2;
+    scenario.fault_declaration.maximum_hypotheses = 7;
+    scenario.fault_declaration.suspectable = [
+        AuthorityKind::Goal,
+        AuthorityKind::Phenotype,
+        AuthorityKind::Viability,
+    ]
+    .into_iter()
+    .collect();
+
+    let certificate = run_scenario(&scenario).unwrap();
+
+    assert_eq!(certificate.hypotheses.len(), 7);
+    assert!(
+        certificate
+            .hypotheses
+            .iter()
+            .all(|hypothesis| hypothesis.suspected == hypothesis.excluded)
+    );
+    let no_evidence_plan = certificate.hypotheses.iter().find(|hypothesis| {
+        hypothesis.suspected == vec![AuthorityKind::Goal, AuthorityKind::Phenotype]
+    });
+    assert!(no_evidence_plan.unwrap().proposed_transition.is_none());
 }
 
 #[test]
