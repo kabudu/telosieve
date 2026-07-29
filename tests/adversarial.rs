@@ -176,3 +176,67 @@ fn goal_domains_preserve_agreement_and_reject_invalid_or_divergent_evidence() {
             && hypothesis.proposed_transition.is_none()
     }));
 }
+
+#[test]
+fn deletion_requires_exact_bound_authorization_with_a_surviving_domain() {
+    let authorized = run_scenario(&fixture("authorized-deletion.json")).unwrap();
+    assert_eq!(authorized.decision, Decision::Applied);
+    assert_eq!(authorized.metrics.unsafe_approvals, 0);
+    assert!(authorized.final_state.replicas.values().all(|values| {
+        values.contains_key("cluster/epoch") && !values.contains_key("user/message")
+    }));
+    assert!(
+        authorized
+            .hypotheses
+            .iter()
+            .all(|hypothesis| { hypothesis.authorized_deletions == vec!["user/message"] })
+    );
+
+    let unauthorized = run_scenario(&fixture("unauthorized-deletion.json")).unwrap();
+    assert_eq!(unauthorized.decision, Decision::Refused);
+    assert_eq!(unauthorized.metrics.unsafe_approvals, 0);
+
+    let deletion_evidence: Vec<_> = fixture("authorized-deletion.json")
+        .authorities
+        .into_iter()
+        .filter(|authority| authority.kind == AuthorityKind::Deletion)
+        .collect();
+    let mut replayed = fixture("benign.json");
+    replayed
+        .fault_declaration
+        .suspectable
+        .insert(AuthorityKind::Deletion);
+    replayed.fault_declaration.deletion_fault_domains = BTreeMap::from([
+        ("deletion-lab".into(), "deletion-lab-domain".into()),
+        ("deletion-review".into(), "deletion-review-domain".into()),
+    ]);
+    replayed.fault_declaration.maximum_hypotheses = 5;
+    replayed.authorities.extend(deletion_evidence);
+    assert!(matches!(
+        run_scenario(&replayed),
+        Err(RunError::Protocol(_))
+    ));
+
+    let mut missing_domain = fixture("authorized-deletion.json");
+    missing_domain
+        .fault_declaration
+        .deletion_fault_domains
+        .remove("deletion-review");
+    assert!(matches!(
+        run_scenario(&missing_domain),
+        Err(RunError::FaultDeclaration(_))
+    ));
+
+    let mut correlated = fixture("authorized-deletion.json");
+    correlated.fault_declaration.deletion_fault_domains = BTreeMap::from([
+        ("deletion-lab".into(), "shared-deletion-domain".into()),
+        ("deletion-review".into(), "shared-deletion-domain".into()),
+    ]);
+    let certificate = run_scenario(&correlated).unwrap();
+    assert_eq!(certificate.decision, Decision::Refused);
+    assert_eq!(certificate.metrics.false_refusals, 1);
+    assert!(certificate.hypotheses.iter().any(|hypothesis| {
+        hypothesis.suspected_fault_domains == vec!["shared-deletion-domain"]
+            && hypothesis.authorized_deletions.is_empty()
+    }));
+}

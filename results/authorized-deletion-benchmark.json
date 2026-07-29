@@ -1,0 +1,9 @@
+[
+  {"scenario":"authorized-deletion","iterations":20,"latency_micros_p50":14825,"latency_micros_p95":35134,"hypothesis_count":5,"certificate_bytes":6293,"decision":"applied","unsafe_approvals":0,"false_refusals":0,"baseline_unsafe_approvals":0},
+  {"scenario":"unauthorized-deletion","iterations":20,"latency_micros_p50":14002,"latency_micros_p95":14221,"hypothesis_count":3,"certificate_bytes":4880,"decision":"refused","unsafe_approvals":0,"false_refusals":0,"baseline_unsafe_approvals":2},
+  {"scenario":"all-viability-domains-weakened","iterations":20,"latency_micros_p50":13953,"latency_micros_p95":14237,"hypothesis_count":3,"certificate_bytes":5105,"decision":"refused","unsafe_approvals":0,"false_refusals":0,"baseline_unsafe_approvals":2},
+  {"scenario":"benign-update","iterations":20,"latency_micros_p50":14015,"latency_micros_p95":14783,"hypothesis_count":3,"certificate_bytes":5130,"decision":"applied","unsafe_approvals":0,"false_refusals":0,"baseline_unsafe_approvals":0},
+  {"scenario":"partitioned-phenotype","iterations":20,"latency_micros_p50":13967,"latency_micros_p95":14211,"hypothesis_count":2,"certificate_bytes":4421,"decision":"applied","unsafe_approvals":0,"false_refusals":0,"baseline_unsafe_approvals":0},
+  {"scenario":"poisoned-goal","iterations":20,"latency_micros_p50":14260,"latency_micros_p95":14480,"hypothesis_count":3,"certificate_bytes":6171,"decision":"refused","unsafe_approvals":0,"false_refusals":0,"baseline_unsafe_approvals":2},
+  {"scenario":"weakened-viability","iterations":20,"latency_micros_p50":14510,"latency_micros_p95":14976,"hypothesis_count":5,"certificate_bytes":7071,"decision":"refused","unsafe_approvals":0,"false_refusals":0,"baseline_unsafe_approvals":2}
+]

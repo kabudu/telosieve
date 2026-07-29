@@ -1,4 +1,5 @@
 use std::{
+    collections::BTreeSet,
     io::{BufRead, BufReader, Write},
     process::{Child, ChildStdin, Command, Stdio},
     sync::mpsc::{self, Receiver},
@@ -21,6 +22,7 @@ struct Request<'a> {
     current_digest: String,
     transition: &'a Transition,
     rules: &'a ViabilityRules,
+    authorized_deletions: &'a BTreeSet<String>,
 }
 
 #[derive(Debug, Error)]
@@ -99,6 +101,7 @@ impl CheckerSession {
         current: &ServiceState,
         transition: &Transition,
         rules: &ViabilityRules,
+        authorized_deletions: &BTreeSet<String>,
     ) -> Result<CheckerVerdict, ExternalCheckerError> {
         serde_json::to_writer(
             &mut self.stdin,
@@ -107,6 +110,7 @@ impl CheckerSession {
                 current_digest: digest(current),
                 transition,
                 rules,
+                authorized_deletions,
             },
         )?;
         self.stdin.write_all(b"\n")?;
@@ -165,7 +169,7 @@ mod tests {
             CheckerSession::start_command(&mut command, Duration::from_millis(200)).unwrap();
         let (current, transition, rules) = request();
         assert!(matches!(
-            session.check(&current, &transition, &rules),
+            session.check(&current, &transition, &rules, &BTreeSet::new()),
             Err(ExternalCheckerError::Json(_))
         ));
     }
@@ -182,7 +186,7 @@ mod tests {
             CheckerSession::start_command(&mut command, Duration::from_millis(20)).unwrap();
         let (current, transition, rules) = request();
         assert!(matches!(
-            session.check(&current, &transition, &rules),
+            session.check(&current, &transition, &rules, &BTreeSet::new()),
             Err(ExternalCheckerError::Timeout)
         ));
     }
@@ -206,10 +210,10 @@ mod tests {
             require_consensus: true,
             required_keys: BTreeMap::new(),
         };
-        let reference = crate::checker::check(&current, &transition, &rules);
+        let reference = crate::checker::check(&current, &transition, &rules, &BTreeSet::new());
         let external = CheckerSession::start()
             .unwrap()
-            .check(&current, &transition, &rules)
+            .check(&current, &transition, &rules, &BTreeSet::new())
             .unwrap();
         assert_eq!(external.safe, reference.safe);
         assert_eq!(external.reasons, reference.reasons);

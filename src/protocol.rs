@@ -15,6 +15,7 @@ pub enum AuthorityKind {
     Goal,
     Phenotype,
     Viability,
+    Deletion,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -73,6 +74,14 @@ pub struct ViabilityRules {
     pub required_keys: BTreeMap<String, String>,
 }
 
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct DeletionAuthorization {
+    pub keys: BTreeSet<String>,
+    pub goal_digest: String,
+    pub phenotype_tip_digest: String,
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct FaultDeclaration {
@@ -82,6 +91,8 @@ pub struct FaultDeclaration {
     pub goal_fault_domains: BTreeMap<String, String>,
     #[serde(default)]
     pub viability_fault_domains: BTreeMap<String, String>,
+    #[serde(default)]
+    pub deletion_fault_domains: BTreeMap<String, String>,
     pub maximum_hypotheses: usize,
 }
 
@@ -121,6 +132,8 @@ pub struct VerifiedAuthorities {
     pub digests: BTreeMap<String, String>,
     pub goal: Values,
     pub goal_issuers: BTreeSet<String>,
+    pub deletion: Option<DeletionAuthorization>,
+    pub deletion_issuers: BTreeSet<String>,
     pub phenotype: ServiceState,
     pub phenotype_history: Vec<ServiceState>,
     pub viability: Vec<VerifiedViability>,
@@ -150,6 +163,7 @@ pub enum ProtocolError {
 ///
 /// Returns [`ProtocolError`] when an authority is missing, duplicated, stale,
 /// malformed, digest-mismatched, or has an invalid signature.
+#[allow(clippy::too_many_lines)]
 pub fn verify(scenario: &Scenario) -> Result<VerifiedAuthorities, ProtocolError> {
     if scenario.phenotype_history.len() > 64 {
         return Err(ProtocolError::Invalid {
@@ -167,15 +181,17 @@ pub fn verify(scenario: &Scenario) -> Result<VerifiedAuthorities, ProtocolError>
     let mut by_kind = BTreeMap::new();
     let mut goal_envelopes = Vec::new();
     let mut viability_envelopes = Vec::new();
+    let mut deletion_envelopes = Vec::new();
     for envelope in &scenario.authorities {
         if matches!(
             envelope.kind,
-            AuthorityKind::Goal | AuthorityKind::Viability
+            AuthorityKind::Goal | AuthorityKind::Viability | AuthorityKind::Deletion
         ) {
-            let envelopes = if envelope.kind == AuthorityKind::Goal {
-                &mut goal_envelopes
-            } else {
-                &mut viability_envelopes
+            let envelopes = match envelope.kind {
+                AuthorityKind::Goal => &mut goal_envelopes,
+                AuthorityKind::Viability => &mut viability_envelopes,
+                AuthorityKind::Deletion => &mut deletion_envelopes,
+                AuthorityKind::Phenotype => unreachable!(),
             };
             if envelopes
                 .iter()
@@ -221,6 +237,11 @@ pub fn verify(scenario: &Scenario) -> Result<VerifiedAuthorities, ProtocolError>
         });
     }
     let phenotype_history = verify_history(scenario, current_phenotype)?;
+    let (deletion, deletion_issuers) = verify_deletions(
+        &deletion_envelopes,
+        &goal,
+        &scenario.phenotype_history_anchor.tip_digest,
+    )?;
     if viability_envelopes.is_empty() {
         return Err(ProtocolError::Cardinality(AuthorityKind::Viability));
     }
@@ -239,16 +260,71 @@ pub fn verify(scenario: &Scenario) -> Result<VerifiedAuthorities, ProtocolError>
                 })
         })
         .collect::<Result<Vec<_>, _>>()?;
+    if deletion_issuers.iter().any(|issuer| {
+        goal_issuers.contains(issuer)
+            || viability
+                .iter()
+                .any(|authority| authority.issuer == *issuer)
+    }) {
+        return Err(ProtocolError::Invalid {
+            kind: AuthorityKind::Deletion,
+            field: "issuer",
+            reason: "deletion issuers must be distinct from goal and viability issuers".into(),
+        });
+    }
     let digests = authority_digests(scenario);
 
     Ok(VerifiedAuthorities {
         digests,
         goal,
         goal_issuers,
+        deletion,
+        deletion_issuers,
         phenotype,
         phenotype_history,
         viability,
     })
+}
+
+fn verify_deletions(
+    envelopes: &[&Envelope],
+    goal: &Values,
+    phenotype_tip_digest: &str,
+) -> Result<(Option<DeletionAuthorization>, BTreeSet<String>), ProtocolError> {
+    if envelopes.is_empty() {
+        return Ok((None, BTreeSet::new()));
+    }
+    let authorizations = envelopes
+        .iter()
+        .map(|envelope| {
+            serde_json::from_value::<DeletionAuthorization>(envelope.content.clone()).map_err(
+                |error| ProtocolError::Invalid {
+                    kind: AuthorityKind::Deletion,
+                    field: "content",
+                    reason: error.to_string(),
+                },
+            )
+        })
+        .collect::<Result<Vec<_>, _>>()?;
+    let authorization = authorizations[0].clone();
+    if authorization.keys.is_empty()
+        || authorizations
+            .iter()
+            .any(|candidate| candidate != &authorization)
+        || authorization.goal_digest != digest(goal)
+        || authorization.phenotype_tip_digest != phenotype_tip_digest
+    {
+        return Err(ProtocolError::Invalid {
+            kind: AuthorityKind::Deletion,
+            field: "content",
+            reason: "deletion authorization is empty, divergent, or binding-mismatched".into(),
+        });
+    }
+    let issuers = envelopes
+        .iter()
+        .map(|envelope| envelope.issuer.clone())
+        .collect();
+    Ok((Some(authorization), issuers))
 }
 
 fn verify_goals(envelopes: &[&Envelope]) -> Result<(Values, BTreeSet<String>), ProtocolError> {

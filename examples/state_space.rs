@@ -298,6 +298,7 @@ fn scenario(
                 ("viability-peer".into(), "lab-domain".into()),
                 ("viability-review".into(), "review-domain".into()),
             ]),
+            deletion_fault_domains: BTreeMap::new(),
             maximum_hypotheses: 5,
         },
         phenotype_history_anchor: HistoryAnchor {

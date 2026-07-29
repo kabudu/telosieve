@@ -9,6 +9,7 @@ def check(request: dict) -> dict:
     current = request["current"]
     transition = request["transition"]
     rules = request["rules"]
+    authorized_deletions = set(request["authorized_deletions"])
     reasons = []
 
     if transition["before_digest"] != request["current_digest"]:
@@ -35,12 +36,16 @@ def check(request: dict) -> dict:
         stable_keys = set(current_values[0])
         for replica in current_values[1:]:
             stable_keys.intersection_update(replica)
-        for key in sorted(stable_keys):
-            if any(key not in replica for replica in values):
-                reasons.append(f"stable key continuity failed: {key}")
+        deleted_keys = {
+            key for key in stable_keys if any(key not in replica for replica in values)
+        }
+        for key in sorted(deleted_keys - authorized_deletions):
+            reasons.append(f"stable key continuity failed: {key}")
+        for key in sorted(authorized_deletions - deleted_keys):
+            reasons.append(f"deletion authorization is not exact: {key}")
 
     return {
-        "implementation": "telosieve-python-checker/v3",
+        "implementation": "telosieve-python-checker/v4",
         "safe": not reasons,
         "reasons": reasons,
     }

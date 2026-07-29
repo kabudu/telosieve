@@ -37,6 +37,12 @@ fault domains. Goal values must agree exactly before planning; disagreement is
 fail-closed. Separate keys and domain labels do not establish independent policy
 authorship, custody, implementation, or deployment.
 
+Certificate v6 authenticates separate deletion issuers and binds their exact key
+set to the goal digest and phenotype tip. Cross-context replay, divergent
+authorization, missing domains, and authorization overbreadth fail closed.
+Identical-context reuse remains idempotent; durable one-shot consumption,
+organizational independence, and production side effects remain outside scope.
+
 Authenticated phenotype history rejects chain and anchor rollback within a
 64-record bound. The trusted anchor is configuration in this harness; compromise
 or rollback of that trust root remains outside the demonstrated protection.

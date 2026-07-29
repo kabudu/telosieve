@@ -110,3 +110,12 @@ false refusals. Valid but divergent goal envelopes fail closed, invalid mappings
 are rejected, and hypothesis growth remains explicitly bounded. This does not
 establish organizational independence or availability during disagreement. See
 [MULTI_PRINCIPAL_GOALS](MULTI_PRINCIPAL_GOALS.md).
+
+## Authorized deletion
+
+Certificate v6 requires separate, agreeing deletion authorities bound to the
+exact goal and phenotype tip. The authorized fixture applies one exact deletion;
+the same omission without evidence refuses. Replay into another goal, overbroad
+authorization, invalid mappings, and loss of every deletion domain fail closed.
+The existing 512-scenario oracle remains zero unsafe approvals and zero false
+refusals. See [AUTHORIZED_DELETION](AUTHORIZED_DELETION.md).

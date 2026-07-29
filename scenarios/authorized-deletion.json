@@ -1,9 +1,9 @@
 {
-  "scenario_id": "all-viability-domains-weakened",
+  "scenario_id": "authorized-deletion",
   "seed": 7,
   "evaluation_time": 1750000000,
   "subject": "kv/research",
-  "expected_decision": "refuse",
+  "expected_decision": "apply",
   "public_keys": {
     "deletion-lab": "62a611b472d89b0e5fc93c069b9f700b4c552d55bc0e87b56008ef17b6b2bebe",
     "deletion-review": "dac31ebca159d283f8341fd90d7fa1cd95bf5eccab657f7952662e67e56afbe3",
@@ -17,7 +17,8 @@
   "fault_declaration": {
     "maximum_faults": 1,
     "suspectable": [
-      "viability"
+      "viability",
+      "deletion"
     ],
     "goal_fault_domains": {},
     "viability_fault_domains": {
@@ -25,8 +26,11 @@
       "viability-peer": "lab-domain",
       "viability-review": "review-domain"
     },
-    "deletion_fault_domains": {},
-    "maximum_hypotheses": 3
+    "deletion_fault_domains": {
+      "deletion-lab": "deletion-lab-domain",
+      "deletion-review": "deletion-review-domain"
+    },
+    "maximum_hypotheses": 5
   },
   "phenotype_history_anchor": {
     "issuer": "phenotype-lab",
@@ -65,36 +69,6 @@
   ],
   "authorities": [
     {
-      "kind": "goal",
-      "subject": "kv/research",
-      "schema_version": "telosieve.authority/v0",
-      "issued_at": 1700000000,
-      "expires_at": 1800000000,
-      "issuer": "goal-lab",
-      "sequence": 1,
-      "content_digest": "bae6d9decacfdc8d8a03428bac646e83efb316d88693bed0b74efb09ffcd4b4c",
-      "parent_digests": [],
-      "content": {
-        "user/message": "attacker-controlled"
-      },
-      "signature": "2ccf9bc815abef6bdce96166591e9c9719b2588e94e0449574a40ba056afc9217a3d870aafe717e1c255a70355ced95249016441a132ca6209cf3f579c3c0700"
-    },
-    {
-      "kind": "goal",
-      "subject": "kv/research",
-      "schema_version": "telosieve.authority/v0",
-      "issued_at": 1700000000,
-      "expires_at": 1800000000,
-      "issuer": "goal-review",
-      "sequence": 1,
-      "content_digest": "bae6d9decacfdc8d8a03428bac646e83efb316d88693bed0b74efb09ffcd4b4c",
-      "parent_digests": [],
-      "content": {
-        "user/message": "attacker-controlled"
-      },
-      "signature": "5b3b32b39101fe3035b4aece93e2c5b2f651f5c78f801df69da054248b9d7744851f692e7fec30280ce5b62a090c226b55ec12e8ea2a3b5163c93979f6cfe006"
-    },
-    {
       "kind": "phenotype",
       "subject": "kv/research",
       "schema_version": "telosieve.authority/v0",
@@ -132,14 +106,16 @@
       "expires_at": 1800000000,
       "issuer": "viability-peer",
       "sequence": 1,
-      "content_digest": "1006d08734917ba7dec2987433eedea47893e18c564217a4c4196845651b0dc5",
+      "content_digest": "e986b557bdc1b57ba5689ce50f8ad64313b3bebcaba2dc79e358c2941faa1af8",
       "parent_digests": [],
       "content": {
         "replica_count": 3,
         "require_consensus": true,
-        "required_keys": {}
+        "required_keys": {
+          "cluster/epoch": "7"
+        }
       },
-      "signature": "d630a6bf6110aa9402ac78cc68444f936feacf0afd63b29afd8ef3a44d743dae1323f4a4145eb8ba6ffe07784a3ac70471f79b7b38feecf3b0ea1bf15a139a0c"
+      "signature": "e802ccf6c503b25336f2b30cbb3c8d09c3540b3c6f5989551856e8a531cfa3fcf06adbea9f1467c7c1b14fabb7e7b746c3fa2ba9237f84986730a7fce6fb4808"
     },
     {
       "kind": "viability",
@@ -149,14 +125,16 @@
       "expires_at": 1800000000,
       "issuer": "viability-lab",
       "sequence": 1,
-      "content_digest": "1006d08734917ba7dec2987433eedea47893e18c564217a4c4196845651b0dc5",
+      "content_digest": "e986b557bdc1b57ba5689ce50f8ad64313b3bebcaba2dc79e358c2941faa1af8",
       "parent_digests": [],
       "content": {
         "replica_count": 3,
         "require_consensus": true,
-        "required_keys": {}
+        "required_keys": {
+          "cluster/epoch": "7"
+        }
       },
-      "signature": "59700587d300abf6c05e7d7eaef031ddbc02e498d165fff8cc00edc7189ddcb008a2b7326ea5c1346366b7cd7d5714ec0c752ad1c5a2369b140071484f9ecd0e"
+      "signature": "3f24c8d9e330c154587b96b99dc4fa56d9e11e17cb0e97fa882e74f37edfba4c916fe089fa678f025271400691cd9fbb5c33af6c979238a06a179fb82da6d304"
     },
     {
       "kind": "viability",
@@ -166,14 +144,84 @@
       "expires_at": 1800000000,
       "issuer": "viability-review",
       "sequence": 1,
-      "content_digest": "1006d08734917ba7dec2987433eedea47893e18c564217a4c4196845651b0dc5",
+      "content_digest": "e986b557bdc1b57ba5689ce50f8ad64313b3bebcaba2dc79e358c2941faa1af8",
       "parent_digests": [],
       "content": {
         "replica_count": 3,
         "require_consensus": true,
-        "required_keys": {}
+        "required_keys": {
+          "cluster/epoch": "7"
+        }
       },
-      "signature": "6df352c4a6608ede9e29a374f888163982a6e3155a1d06fcc8a0b3f0904bd979bf8208f57ea0e65a6af78575bf1de39273e0e3b25928c072aa0543087afa3300"
+      "signature": "6640fb0af95eae31b04bdda1134407c76e6e780a75a09c4e26df610f0221044c487faa204967dc836e6e7f972bcb24a63773c90286936f2f88c3b500c537130a"
+    },
+    {
+      "kind": "goal",
+      "subject": "kv/research",
+      "schema_version": "telosieve.authority/v0",
+      "issued_at": 1700000000,
+      "expires_at": 1800000000,
+      "issuer": "goal-lab",
+      "sequence": 1,
+      "content_digest": "94d50dc2b36cd4529b785f7ef98669938110dec90a3c87d5e21bcbfc62ae9da3",
+      "parent_digests": [],
+      "content": {
+        "cluster/epoch": "7"
+      },
+      "signature": "bf0ef1a7ab91ae9fc6275985257c0bdabc7e0680f00b238697322c30b4165e51582faaf79243c2c791f84e5acb1723069bfc77cf2315258ae3d99c4c48783801"
+    },
+    {
+      "kind": "goal",
+      "subject": "kv/research",
+      "schema_version": "telosieve.authority/v0",
+      "issued_at": 1700000000,
+      "expires_at": 1800000000,
+      "issuer": "goal-review",
+      "sequence": 1,
+      "content_digest": "94d50dc2b36cd4529b785f7ef98669938110dec90a3c87d5e21bcbfc62ae9da3",
+      "parent_digests": [],
+      "content": {
+        "cluster/epoch": "7"
+      },
+      "signature": "b17885b26cb7bc26c379673b6e2c417bd60a6fbeba9373dfbbfc93520ba01494bbc95e64951955e1e485131d0dd9ae5ec0f3ccc08964444786521eacebd48d05"
+    },
+    {
+      "kind": "deletion",
+      "subject": "kv/research",
+      "schema_version": "telosieve.authority/v0",
+      "issued_at": 1700000000,
+      "expires_at": 1800000000,
+      "issuer": "deletion-lab",
+      "sequence": 1,
+      "content_digest": "ffa2f12e3e67555ebc204034696af9b5a7a8919e08ce924cca0c47a3be5ee70f",
+      "parent_digests": [],
+      "content": {
+        "goal_digest": "94d50dc2b36cd4529b785f7ef98669938110dec90a3c87d5e21bcbfc62ae9da3",
+        "keys": [
+          "user/message"
+        ],
+        "phenotype_tip_digest": "11f857b1ee6f693bc7d87cda9bead6baf8ad941ac2e333e2a347a5defa6b477a"
+      },
+      "signature": "29787bb6d7d7e98be9741cd40cac3bad48244dad4a7afe5b1fae93b60bcd5b665fd6a0e29389f98f76e1e9b50676ef7e432db4ccc775de24b9fa1aa5476bab00"
+    },
+    {
+      "kind": "deletion",
+      "subject": "kv/research",
+      "schema_version": "telosieve.authority/v0",
+      "issued_at": 1700000000,
+      "expires_at": 1800000000,
+      "issuer": "deletion-review",
+      "sequence": 1,
+      "content_digest": "ffa2f12e3e67555ebc204034696af9b5a7a8919e08ce924cca0c47a3be5ee70f",
+      "parent_digests": [],
+      "content": {
+        "goal_digest": "94d50dc2b36cd4529b785f7ef98669938110dec90a3c87d5e21bcbfc62ae9da3",
+        "keys": [
+          "user/message"
+        ],
+        "phenotype_tip_digest": "11f857b1ee6f693bc7d87cda9bead6baf8ad941ac2e333e2a347a5defa6b477a"
+      },
+      "signature": "d5c7f018e5794eb673e21f5a47af1b43e73e6c4b1d0dbfd61e191877fc4cdea82ad34154d723b43970eaf0b9cb3aa4f2608d1c3208cc2362fd52c29e124d8101"
     }
   ]
 }

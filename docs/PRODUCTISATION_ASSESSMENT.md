@@ -66,3 +66,10 @@ organizational independence. The evidence remains bounded rather than a proof or
 population estimate, so it does not automatically reverse the narrow decision.
 See
 [GENERATED_STATE_SPACE](GENERATED_STATE_SPACE.md).
+
+Certificate v6 adds a separately authenticated deletion path without weakening
+default continuity. The authorized fixture applies one exact deletion; the same
+goal without authorization refuses. This resolves the missing deletion semantics
+for the harness, but not durable one-shot consumption, production actuation, or
+organizational independence. See
+[AUTHORIZED_DELETION](AUTHORIZED_DELETION.md).

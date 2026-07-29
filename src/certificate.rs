@@ -23,6 +23,7 @@ pub struct HypothesisRecord {
     pub excluded_issuers: Vec<String>,
     pub suspected_fault_domains: Vec<String>,
     pub excluded_fault_domains: Vec<String>,
+    pub authorized_deletions: Vec<String>,
     pub proposed_transition: Option<Transition>,
     pub checker: Option<CheckerVerdict>,
 }

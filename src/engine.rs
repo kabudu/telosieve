@@ -196,7 +196,7 @@ fn evaluate_preflighted_scenario(
     let hypothesis_count = hypotheses.len();
 
     Ok(Certificate {
-        certificate_version: "telosieve.certificate/v5".into(),
+        certificate_version: "telosieve.certificate/v6".into(),
         scenario_id: scenario.scenario_id.clone(),
         seed: scenario.seed,
         authority_digests: authorities.digests,
@@ -297,6 +297,7 @@ fn validate_declaration(scenario: &Scenario, target_count: usize) -> Result<(), 
     Ok(())
 }
 
+#[allow(clippy::too_many_lines)]
 fn fault_targets(
     scenario: &Scenario,
     authorities: &VerifiedAuthorities,
@@ -311,6 +312,11 @@ fn fault_targets(
         .viability
         .iter()
         .map(|authority| authority.issuer.as_str())
+        .collect();
+    let deletion_issuers: BTreeSet<_> = authorities
+        .deletion_issuers
+        .iter()
+        .map(String::as_str)
         .collect();
     if declaration.suspectable.contains(&AuthorityKind::Goal) {
         for issuer in &goal_issuers {
@@ -336,6 +342,52 @@ fn fault_targets(
     } else if !declaration.goal_fault_domains.is_empty() {
         return Err(RunError::FaultDeclaration(
             "goal fault domains require goal to be suspectable".into(),
+        ));
+    }
+    if authorities.deletion.is_some() != declaration.suspectable.contains(&AuthorityKind::Deletion)
+    {
+        return Err(RunError::FaultDeclaration(
+            "deletion evidence and deletion suspectability must be configured together".into(),
+        ));
+    }
+    if declaration.suspectable.contains(&AuthorityKind::Deletion) {
+        for issuer in &deletion_issuers {
+            if declaration
+                .deletion_fault_domains
+                .get(*issuer)
+                .is_none_or(String::is_empty)
+            {
+                return Err(RunError::FaultDeclaration(format!(
+                    "deletion issuer {issuer} has no non-empty fault domain"
+                )));
+            }
+        }
+        if declaration
+            .deletion_fault_domains
+            .keys()
+            .any(|issuer| !deletion_issuers.contains(issuer.as_str()))
+        {
+            return Err(RunError::FaultDeclaration(
+                "fault-domain mapping contains an unknown deletion issuer".into(),
+            ));
+        }
+        let other_domains: BTreeSet<_> = declaration
+            .goal_fault_domains
+            .values()
+            .chain(declaration.viability_fault_domains.values())
+            .collect();
+        if declaration
+            .deletion_fault_domains
+            .values()
+            .any(|domain| other_domains.contains(domain))
+        {
+            return Err(RunError::FaultDeclaration(
+                "deletion fault domains must be distinct from goal and viability domains".into(),
+            ));
+        }
+    } else if !declaration.deletion_fault_domains.is_empty() {
+        return Err(RunError::FaultDeclaration(
+            "deletion fault domains require deletion to be suspectable".into(),
         ));
     }
     if declaration.suspectable.contains(&AuthorityKind::Viability) {
@@ -388,6 +440,15 @@ fn fault_targets(
             AuthorityKind::Phenotype => {
                 targets.push(FaultTarget::Authority(AuthorityKind::Phenotype));
             }
+            AuthorityKind::Deletion => targets.extend(
+                declaration
+                    .deletion_fault_domains
+                    .values()
+                    .cloned()
+                    .collect::<BTreeSet<_>>()
+                    .into_iter()
+                    .map(FaultTarget::DeletionDomain),
+            ),
         }
     }
     Ok(targets)
@@ -445,6 +506,7 @@ fn combinations(
     }
 }
 
+#[allow(clippy::too_many_lines)]
 fn evaluate_hypothesis(
     scenario: &Scenario,
     authorities: &VerifiedAuthorities,
@@ -469,6 +531,32 @@ fn evaluate_hypothesis(
         .any(|issuer| !excluded_goal_issuers.contains(issuer.as_str()))
         .then(|| authorities.goal.clone());
     let proposed_transition = desired.map(|values| authorities.phenotype.transition_to(&values));
+    let excluded_deletion_issuers: BTreeSet<_> = suspected
+        .iter()
+        .flat_map(|target| match target {
+            FaultTarget::DeletionDomain(domain) => scenario
+                .fault_declaration
+                .deletion_fault_domains
+                .iter()
+                .filter_map(|(issuer, candidate)| (candidate == domain).then_some(issuer.as_str()))
+                .collect(),
+            _ => Vec::new(),
+        })
+        .collect();
+    let authorized_deletions = authorities
+        .deletion
+        .as_ref()
+        .map_or_else(BTreeSet::new, |auth| {
+            if authorities
+                .deletion_issuers
+                .iter()
+                .any(|issuer| !excluded_deletion_issuers.contains(issuer.as_str()))
+            {
+                auth.keys.clone()
+            } else {
+                BTreeSet::new()
+            }
+        });
     let checker = proposed_transition
         .as_ref()
         .map(|transition| -> Result<_, RunError> {
@@ -483,10 +571,18 @@ fn evaluate_hypothesis(
                             (candidate == domain).then_some(issuer.as_str())
                         })
                         .collect(),
-                    FaultTarget::GoalDomain(_) | FaultTarget::Authority(_) => Vec::new(),
+                    FaultTarget::GoalDomain(_)
+                    | FaultTarget::DeletionDomain(_)
+                    | FaultTarget::Authority(_) => Vec::new(),
                 })
                 .collect();
-            check_surviving_viability(authorities, transition, &excluded, checker_session)
+            check_surviving_viability(
+                authorities,
+                transition,
+                &excluded,
+                &authorized_deletions,
+                checker_session,
+            )
         })
         .transpose()?;
     let suspected_kinds: Vec<_> = suspected
@@ -495,14 +591,15 @@ fn evaluate_hypothesis(
             FaultTarget::Authority(kind) => *kind,
             FaultTarget::GoalDomain(_) => AuthorityKind::Goal,
             FaultTarget::ViabilityDomain(_) => AuthorityKind::Viability,
+            FaultTarget::DeletionDomain(_) => AuthorityKind::Deletion,
         })
         .collect();
     let suspected_fault_domains: Vec<_> = suspected
         .iter()
         .filter_map(|target| match target {
-            FaultTarget::GoalDomain(domain) | FaultTarget::ViabilityDomain(domain) => {
-                Some(domain.clone())
-            }
+            FaultTarget::GoalDomain(domain)
+            | FaultTarget::ViabilityDomain(domain)
+            | FaultTarget::DeletionDomain(domain) => Some(domain.clone()),
             FaultTarget::Authority(_) => None,
         })
         .collect();
@@ -515,6 +612,9 @@ fn evaluate_hypothesis(
                 }
                 FaultTarget::ViabilityDomain(domain) => {
                     (&scenario.fault_declaration.viability_fault_domains, domain)
+                }
+                FaultTarget::DeletionDomain(domain) => {
+                    (&scenario.fault_declaration.deletion_fault_domains, domain)
                 }
                 FaultTarget::Authority(_) => return Vec::new(),
             };
@@ -531,6 +631,7 @@ fn evaluate_hypothesis(
         suspected_issuers,
         excluded_fault_domains: suspected_fault_domains.clone(),
         suspected_fault_domains,
+        authorized_deletions: authorized_deletions.into_iter().collect(),
         proposed_transition,
         checker,
     })
@@ -541,6 +642,7 @@ enum FaultTarget {
     Authority(AuthorityKind),
     GoalDomain(String),
     ViabilityDomain(String),
+    DeletionDomain(String),
 }
 
 fn check_all_viability(
@@ -548,7 +650,13 @@ fn check_all_viability(
     transition: &Transition,
     checker_session: &mut crate::external_checker::CheckerSession,
 ) -> Result<crate::checker::CheckerVerdict, RunError> {
-    check_surviving_viability(authorities, transition, &BTreeSet::new(), checker_session)
+    check_surviving_viability(
+        authorities,
+        transition,
+        &BTreeSet::new(),
+        &BTreeSet::new(),
+        checker_session,
+    )
 }
 
 fn check_all_viability_in_process(
@@ -557,7 +665,12 @@ fn check_all_viability_in_process(
 ) -> crate::checker::CheckerVerdict {
     let mut reasons = Vec::new();
     for authority in &authorities.viability {
-        let verdict = checker::check(&authorities.phenotype, transition, &authority.rules);
+        let verdict = checker::check(
+            &authorities.phenotype,
+            transition,
+            &authority.rules,
+            &BTreeSet::new(),
+        );
         reasons.extend(
             verdict
                 .reasons
@@ -566,7 +679,7 @@ fn check_all_viability_in_process(
         );
     }
     crate::checker::CheckerVerdict {
-        implementation: "telosieve-multi-principal-reference-checker/v1".into(),
+        implementation: "telosieve-multi-principal-reference-checker/v2".into(),
         safe: reasons.is_empty(),
         reasons,
     }
@@ -576,6 +689,7 @@ fn check_surviving_viability(
     authorities: &VerifiedAuthorities,
     transition: &Transition,
     excluded: &BTreeSet<&str>,
+    authorized_deletions: &BTreeSet<String>,
     checker_session: &mut crate::external_checker::CheckerSession,
 ) -> Result<crate::checker::CheckerVerdict, RunError> {
     let surviving: Vec<_> = authorities
@@ -585,15 +699,19 @@ fn check_surviving_viability(
         .collect();
     if surviving.is_empty() {
         return Ok(crate::checker::CheckerVerdict {
-            implementation: "telosieve-multi-principal-checker/v1".into(),
+            implementation: "telosieve-multi-principal-checker/v2".into(),
             safe: false,
             reasons: vec!["no independent viability rules survive".into()],
         });
     }
     let mut reasons = Vec::new();
     for authority in surviving {
-        let verdict =
-            checker_session.check(&authorities.phenotype, transition, &authority.rules)?;
+        let verdict = checker_session.check(
+            &authorities.phenotype,
+            transition,
+            &authority.rules,
+            authorized_deletions,
+        )?;
         reasons.extend(
             verdict
                 .reasons
@@ -602,7 +720,7 @@ fn check_surviving_viability(
         );
     }
     Ok(crate::checker::CheckerVerdict {
-        implementation: "telosieve-multi-principal-checker/v1".into(),
+        implementation: "telosieve-multi-principal-checker/v2".into(),
         safe: reasons.is_empty(),
         reasons,
     })

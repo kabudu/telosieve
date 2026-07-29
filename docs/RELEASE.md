@@ -20,12 +20,16 @@ reopening conditions in
 
 Certificate v4's stable-key safety kernel removes the original and cross-domain
 unsafe approvals across all retained fixtures and the 512 generated scenarios.
-The release block remains in force because this finite evidence is not a general
-safety proof. Certificate v5 removes the measured agreeing-goal false refusals,
-but authenticated disagreement still fails closed, authorized deletion has no
-protocol, third-party organizational reproduction and review remain missing,
-domain independence is unverified, and no new explicit release decision has
-been made.
+The release block remained in force at certificate v5 because this finite
+evidence is not a general safety proof, authenticated disagreement fails closed,
+authorized deletion had no protocol, third-party organizational reproduction and
+review were missing, domain independence was unverified, and no new explicit
+release decision had been made.
+
+Certificate v6 subsequently adds exact context-bound deletion authorization.
+The release block remains because durable one-shot consumption, production
+actuation, independent review/reproduction, and verified domain separation are
+still absent.
 
 ## CI and delivery policy
 

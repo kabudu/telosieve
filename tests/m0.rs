@@ -276,7 +276,13 @@ fn rust_and_python_checkers_agree_on_safe_and_unsafe_transitions() {
                 .filter(|authority| authority.kind == AuthorityKind::Viability)
                 .all(|authority| {
                     let rules = serde_json::from_value(authority.content.clone()).unwrap();
-                    telosieve::checker::check(&current, &transition, &rules).safe
+                    telosieve::checker::check(
+                        &current,
+                        &transition,
+                        &rules,
+                        &std::collections::BTreeSet::new(),
+                    )
+                    .safe
                 });
             assert_eq!(rust_safe, external.safe);
         }
@@ -334,7 +340,7 @@ fn protocol_rejects_stale_unknown_schema_and_duplicate_authorities() {
 fn public_replay_reports_all_baselines_and_protocol_evidence() {
     for fixture in ["benign.json", "poisoned-goal.json"] {
         let certificate = run_scenario(&load(fixture)).unwrap();
-        assert_eq!(certificate.certificate_version, "telosieve.certificate/v5");
+        assert_eq!(certificate.certificate_version, "telosieve.certificate/v6");
         let names: Vec<_> = certificate
             .baselines
             .iter()
@@ -352,7 +358,7 @@ fn public_replay_reports_all_baselines_and_protocol_evidence() {
         assert!(certificate.hypotheses.iter().all(|hypothesis| {
             hypothesis.suspected == hypothesis.excluded
                 && hypothesis.checker.as_ref().is_none_or(|verdict| {
-                    verdict.implementation == "telosieve-multi-principal-checker/v1"
+                    verdict.implementation == "telosieve-multi-principal-checker/v2"
                         || !verdict.safe
                 })
         }));

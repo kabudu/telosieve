@@ -63,3 +63,7 @@ productisation.
 Certificate v5 subsequently removes the 64 measured safe-case refusals using
 multiple agreeing goal domains; see
 [MULTI_PRINCIPAL_GOALS](MULTI_PRINCIPAL_GOALS.md).
+
+Certificate v6 retains continuity as the default and permits an exception only
+for an exact, separately signed deletion set bound to the goal and phenotype tip.
+See [AUTHORIZED_DELETION](AUTHORIZED_DELETION.md).

@@ -27,7 +27,9 @@ stable-key continuity kernel removes every unsafe approval reproduced by the
 registered fixtures and 512-scenario generated state space without changing
 their oracles. Certificate v5's two agreeing declared goal domains also remove
 the 64 measured safe-case refusals. Domain labels do not prove organizational
-independence, and the bounded result is not a general safety proof. The harness
+independence. Certificate v6 additionally permits only separately authorized,
+goal/tip-bound exact key deletion; ordinary omission still refuses. The bounded
+result is not a general safety proof. The harness
 authenticates a bounded scenario,
 evaluates its declared hypotheses, applies only one common independently checked
 transition, and otherwise emits a refusal certificate. See

@@ -66,9 +66,11 @@ without changing the oracle. Certificate v5 then replaces the single goal
 principal with two agreeing declared goal domains: all 512 generated scenarios
 now report zero unsafe approvals and zero false refusals. Zero finite-model
 failures is not a general proof. Authenticated goal disagreement remains
-fail-closed, and organizational reproduction, security review, operational
-fault-domain independence, authorized deletion semantics, and a new explicit
-opening decision remain unresolved. The binding decision remains **narrow**.
+fail-closed. Certificate v6 adds exact separately authorized deletion bound to
+the goal and phenotype tip; ordinary omission and cross-context replay refuse.
+Durable one-shot consumption, organizational reproduction, security review,
+operational fault-domain independence, and a new explicit opening decision
+remain unresolved. The binding decision remains **narrow**.
 
 ## Evidence basis
 
@@ -79,3 +81,4 @@ opening decision remain unresolved. The binding decision remains **narrow**.
 - [Generated safety/availability state space](GENERATED_STATE_SPACE.md)
 - [Stable-key safety kernel](STABLE_KEY_SAFETY_KERNEL.md)
 - [Multi-principal goal evidence](MULTI_PRINCIPAL_GOALS.md)
+- [Explicit authorized deletion](AUTHORIZED_DELETION.md)

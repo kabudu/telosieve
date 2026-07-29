@@ -1,3 +1,5 @@
+use std::collections::BTreeSet;
+
 use serde::{Deserialize, Serialize};
 
 use crate::{
@@ -18,6 +20,7 @@ pub fn check(
     current: &ServiceState,
     transition: &Transition,
     rules: &ViabilityRules,
+    authorized_deletions: &BTreeSet<String>,
 ) -> CheckerVerdict {
     let mut reasons = Vec::new();
     if transition.before_digest != crate::model::digest(current) {
@@ -42,25 +45,38 @@ pub fn check(
             reasons.push(format!("required key invariant failed: {key}"));
         }
     }
-    if let Some(first) = current.replicas.values().next() {
-        for key in first.keys().filter(|key| {
-            current
-                .replicas
-                .values()
-                .all(|values| values.contains_key(*key))
-        }) {
-            if transition
+    let deleted_keys: BTreeSet<_> = current
+        .replicas
+        .values()
+        .next()
+        .into_iter()
+        .flat_map(|first| {
+            first.keys().filter(|key| {
+                current
+                    .replicas
+                    .values()
+                    .all(|values| values.contains_key(*key))
+            })
+        })
+        .filter(|key| {
+            transition
                 .after
                 .replicas
                 .values()
-                .any(|values| !values.contains_key(key))
-            {
-                reasons.push(format!("stable key continuity failed: {key}"));
-            }
+                .any(|values| !values.contains_key(*key))
+        })
+        .cloned()
+        .collect();
+    if deleted_keys != *authorized_deletions {
+        for key in deleted_keys.difference(authorized_deletions) {
+            reasons.push(format!("stable key continuity failed: {key}"));
+        }
+        for key in authorized_deletions.difference(&deleted_keys) {
+            reasons.push(format!("deletion authorization is not exact: {key}"));
         }
     }
     CheckerVerdict {
-        implementation: "telosieve-independent-checker/v1".into(),
+        implementation: "telosieve-independent-checker/v2".into(),
         safe: reasons.is_empty(),
         reasons,
     }
@@ -104,6 +120,7 @@ mod tests {
                 after,
             },
             &rules(),
+            &BTreeSet::new(),
         );
         assert!(!verdict.safe);
         assert_eq!(
@@ -126,7 +143,39 @@ mod tests {
                 after,
             },
             &rules(),
+            &BTreeSet::new(),
         );
         assert!(verdict.safe, "{:?}", verdict.reasons);
+    }
+
+    #[test]
+    fn exact_deletion_authorization_allows_only_the_named_removal() {
+        let current = state(BTreeMap::from([
+            ("cluster/epoch".into(), "7".into()),
+            ("message".into(), "old".into()),
+        ]));
+        let after = state(BTreeMap::from([("cluster/epoch".into(), "7".into())]));
+        let transition = Transition {
+            before_digest: digest(&current),
+            after,
+        };
+        assert!(
+            check(
+                &current,
+                &transition,
+                &rules(),
+                &BTreeSet::from(["message".into()])
+            )
+            .safe
+        );
+        assert!(
+            !check(
+                &current,
+                &transition,
+                &rules(),
+                &BTreeSet::from(["cluster/epoch".into(), "message".into()])
+            )
+            .safe
+        );
     }
 }

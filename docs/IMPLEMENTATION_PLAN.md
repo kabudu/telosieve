@@ -90,3 +90,18 @@ deletion semantics, and independent-review gates.
 Evidence: [MULTI_PRINCIPAL_GOALS](MULTI_PRINCIPAL_GOALS.md). Third-party
 organizational reproduction/security review remains unchecked and cannot be
 self-certified by this repository.
+
+## Post-M7 — explicit authorized deletion
+
+- [x] Add separately signed deletion evidence bound to the exact goal and
+  phenotype tip.
+- [x] Require agreeing deletion principals, complete fault-domain mappings, and
+  a surviving authorization domain.
+- [x] Enforce exact deletion sets independently in Rust and Python and expose
+  per-hypothesis authorization in certificate v6.
+- [x] Exit: authorized deletion applies, ordinary omission and replay/overbreadth
+  refuse, existing 512-case safety/availability remains 0/0, and costs/bounds
+  are retained.
+
+Evidence: [AUTHORIZED_DELETION](AUTHORIZED_DELETION.md). Durable one-shot
+consumption and third-party organizational review remain unresolved.

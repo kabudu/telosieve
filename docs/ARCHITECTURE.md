@@ -59,6 +59,12 @@ Bounded hypotheses exclude complete declared goal domains; planning fails closed
 if none survives. The harness validates mapping completeness but cannot attest
 that labelled domains are operationally independent.
 
+Certificate v6 adds deletion principals as a separate trust boundary. Their
+agreed key set is bound to the exact goal and phenotype tip, excluded by declared
+domains, and passed to both checker implementations. Each checker requires exact
+equality with stable keys actually removed; no surviving deletion principal means
+an empty authorization and refusal.
+
 The signed-history baseline verifies a maximum of 64 predecessor phenotype
 envelopes against an explicit current-tip anchor before planning, then replays the
 authenticated predecessor. The harness anchor is trusted configuration; durable

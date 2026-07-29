@@ -2,7 +2,7 @@
 
 An authority envelope contains `kind`, `subject`, `schema_version`, `issued_at`,
 `expires_at`, `issuer`, `sequence`, `content_digest`, `parent_digests`, and
-`signature`. Kinds are `goal`, `phenotype`, and `viability`.
+`signature`. Kinds are `goal`, `phenotype`, `viability`, and `deletion`.
 
 A decision binds:
 
@@ -46,3 +46,8 @@ before bounded enumeration. See [CORRELATED_FAULTS](CORRELATED_FAULTS.md).
 Certificate v5 adds goal fault-domain exclusions. Missing, empty, unknown, or
 inapplicable goal mappings and authenticated goal disagreement fail closed before
 checker work. See [MULTI_PRINCIPAL_GOALS](MULTI_PRINCIPAL_GOALS.md).
+
+Certificate v6 adds exact, goal- and phenotype-tip-bound deletion authorization.
+Deletion domains are excluded like goal and viability domains; every hypothesis
+records the surviving authorized key set. See
+[AUTHORIZED_DELETION](AUTHORIZED_DELETION.md).

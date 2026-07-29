@@ -9,8 +9,8 @@ use serde_json::{Value, json};
 use telosieve::{
     model::digest,
     protocol::{
-        AuthorityKind, Envelope, ExpectedDecision, FaultDeclaration, HistoryAnchor, SCHEMA_VERSION,
-        Scenario,
+        AuthorityKind, DeletionAuthorization, Envelope, ExpectedDecision, FaultDeclaration,
+        HistoryAnchor, SCHEMA_VERSION, Scenario,
     },
 };
 
@@ -82,6 +82,8 @@ fn write_scenario(name: &str, scenario: &Scenario) {
 fn main() {
     let goal_key = SigningKey::from_bytes(&[11; 32]);
     let goal_review_key = SigningKey::from_bytes(&[66; 32]);
+    let deletion_key = SigningKey::from_bytes(&[77; 32]);
+    let deletion_review_key = SigningKey::from_bytes(&[88; 32]);
     let phenotype_key = SigningKey::from_bytes(&[22; 32]);
     let viability_key = SigningKey::from_bytes(&[33; 32]);
     let viability_peer_key = SigningKey::from_bytes(&[55; 32]);
@@ -94,6 +96,14 @@ fn main() {
         (
             "goal-review".into(),
             hex::encode(goal_review_key.verifying_key().to_bytes()),
+        ),
+        (
+            "deletion-lab".into(),
+            hex::encode(deletion_key.verifying_key().to_bytes()),
+        ),
+        (
+            "deletion-review".into(),
+            hex::encode(deletion_review_key.verifying_key().to_bytes()),
         ),
         (
             "phenotype-lab".into(),
@@ -191,6 +201,7 @@ fn main() {
                 suspectable,
                 goal_fault_domains,
                 viability_fault_domains,
+                deletion_fault_domains: BTreeMap::new(),
                 maximum_hypotheses,
             },
             phenotype_history_anchor,
@@ -269,6 +280,62 @@ fn main() {
     write_scenario("poisoned-goal", &poisoned);
     write_scenario("weakened-viability", &weakened);
     write_scenario("partitioned-phenotype", &partitioned);
+    let deletion_goal = json!({"cluster/epoch": "7"});
+    let mut unauthorized_deletion = benign.clone();
+    unauthorized_deletion.scenario_id = "unauthorized-deletion".into();
+    unauthorized_deletion.expected_decision = ExpectedDecision::Refuse;
+    unauthorized_deletion
+        .authorities
+        .retain(|authority| authority.kind != AuthorityKind::Goal);
+    unauthorized_deletion.authorities.extend([
+        envelope(
+            &goal_key,
+            AuthorityKind::Goal,
+            "goal-lab",
+            deletion_goal.clone(),
+        ),
+        envelope(
+            &goal_review_key,
+            AuthorityKind::Goal,
+            "goal-review",
+            deletion_goal.clone(),
+        ),
+    ]);
+    write_scenario("unauthorized-deletion", &unauthorized_deletion);
+
+    let authorization = serde_json::to_value(DeletionAuthorization {
+        keys: BTreeSet::from(["user/message".into()]),
+        goal_digest: digest(&deletion_goal),
+        phenotype_tip_digest: benign.phenotype_history_anchor.tip_digest.clone(),
+    })
+    .unwrap();
+    let mut authorized_deletion = unauthorized_deletion;
+    authorized_deletion.scenario_id = "authorized-deletion".into();
+    authorized_deletion.expected_decision = ExpectedDecision::Apply;
+    authorized_deletion
+        .fault_declaration
+        .suspectable
+        .insert(AuthorityKind::Deletion);
+    authorized_deletion.fault_declaration.deletion_fault_domains = BTreeMap::from([
+        ("deletion-lab".into(), "deletion-lab-domain".into()),
+        ("deletion-review".into(), "deletion-review-domain".into()),
+    ]);
+    authorized_deletion.fault_declaration.maximum_hypotheses = 5;
+    authorized_deletion.authorities.extend([
+        envelope(
+            &deletion_key,
+            AuthorityKind::Deletion,
+            "deletion-lab",
+            authorization.clone(),
+        ),
+        envelope(
+            &deletion_review_key,
+            AuthorityKind::Deletion,
+            "deletion-review",
+            authorization,
+        ),
+    ]);
+    write_scenario("authorized-deletion", &authorized_deletion);
     let all_domains_weakened = make(
         "all-viability-domains-weakened",
         json!({"user/message": "attacker-controlled"}),

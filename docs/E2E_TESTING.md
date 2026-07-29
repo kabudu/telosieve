@@ -38,3 +38,8 @@ viability domain weakened. The Rust and Python checkers must independently rejec
 loss of a key present on every current replica, while focused tests preserve
 ordinary value updates and key additions. The 512-scenario aggregate assertion
 requires zero unsafe approvals without relabelling expected decisions.
+
+Certificate-v6 coverage adds signed authorized and unauthorized deletion
+fixtures. It verifies exact key removal through the public engine, unchanged
+state on refusal, goal-binding replay rejection, mapping failures, and refusal
+when one correlated domain contains every deletion issuer.
