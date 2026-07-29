@@ -150,3 +150,9 @@ After process death and explicit stale-lock removal, each case must recover to
 generation zero/old values/no receipt or generation one/new values/a receipt.
 Backup, restore, and consistent recovery latency are measured over 50 iterations.
 See [ACTUATOR_RECOVERY](ACTUATOR_RECOVERY.md).
+
+The same nine recovery-state tests, 16-process termination stress test, and
+50-iteration benchmark also pass in a pinned network-disabled Linux container on
+native arm64 and emulated amd64. Actuator state resides on a Docker-managed
+`ext2/ext3`-reported volume. This is cross-architecture VM/filesystem evidence,
+not bare-metal, power-loss, or hardware-performance qualification.

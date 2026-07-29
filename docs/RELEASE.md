@@ -42,6 +42,12 @@ restore, and rollback detection against a co-located witness. This does not
 qualify whole-disk recovery, other platforms, hostile storage, multiple hosts,
 or an external production service, so the release block remains.
 
+Pinned offline Linux arm64 and emulated amd64 containers subsequently reproduce
+the recovery-state and forced-termination suites on Docker-managed volumes.
+This removes the macOS-only software-path limitation for that VM boundary, but
+does not qualify bare-metal power loss, device caches, hostile storage,
+multi-host operation, or external actuation. The release block remains.
+
 ## CI and delivery policy
 
 Telosieve is private, so local CI is the sole authoritative quality gate:

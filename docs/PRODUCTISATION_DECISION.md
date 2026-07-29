@@ -83,6 +83,13 @@ recovery risk but do not reverse the decision. Whole-disk rollback, other
 platforms, external actuation, organizational independence, and third-party
 review remain reopening conditions.
 
+Pinned network-disabled Linux arm64 and emulated amd64 runs subsequently pass
+the recovery-state and forced-termination suites on Docker-managed volumes.
+This resolves the macOS-only software-path concern within that virtualized
+boundary, not bare-metal power-loss durability, external actuation,
+organizational independence, or third-party review. The decision remains
+**narrow**.
+
 ## Evidence basis
 
 - [M2 Adversarial Results](M2_RESULTS.md)

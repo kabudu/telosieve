@@ -83,6 +83,17 @@ Actuator schema-v1 files must be upgraded with `local-upgrade`; do not
 reinitialize them and discard deletion-consumption history. See
 [Actuator Recovery](docs/ACTUATOR_RECOVERY.md).
 
+Reproduce the bounded Linux recovery qualification from the cached pinned image:
+
+```sh
+./scripts/qualify-linux-recovery.sh linux/arm64
+./scripts/qualify-linux-recovery.sh linux/amd64
+```
+
+The amd64 run is emulated on the current arm64 host. Both runs are
+network-disabled and use disposable Docker-managed Linux volumes; neither is a
+bare-metal or whole-disk durability claim.
+
 For the complete private-repository quality gate, run:
 
 ```sh

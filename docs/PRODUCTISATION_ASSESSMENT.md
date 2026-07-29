@@ -86,3 +86,9 @@ macOS/aarch64 filesystem, killed local actuator processes recover to an exact
 witnessed generation and stale primary backups refuse. The co-located witness
 does not protect whole-disk rollback or establish other-platform, multi-host, or
 external-service reliability. See [ACTUATOR_RECOVERY](ACTUATOR_RECOVERY.md).
+
+The later pinned Linux qualification passes the recovery suite on native arm64
+and emulated amd64 Docker environments using disposable managed volumes. It
+expands OS/architecture evidence but is not bare-metal power-loss, independent,
+or production-storage qualification; emulated timings are not performance
+evidence.

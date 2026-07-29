@@ -23,6 +23,9 @@ struct OperationResult {
 struct BenchmarkResult {
     platform: String,
     architecture: String,
+    execution_environment: Option<String>,
+    container_image: Option<String>,
+    qualification_filesystem: Option<String>,
     state_bytes: u64,
     backup_bytes: u64,
     recover_consistent: OperationResult,
@@ -90,6 +93,9 @@ fn main() {
     let result = BenchmarkResult {
         platform: std::env::consts::OS.into(),
         architecture: std::env::consts::ARCH.into(),
+        execution_environment: std::env::var("TELOSIEVE_EXECUTION_ENVIRONMENT").ok(),
+        container_image: std::env::var("TELOSIEVE_CONTAINER_IMAGE").ok(),
+        qualification_filesystem: std::env::var("TELOSIEVE_QUALIFICATION_FILESYSTEM").ok(),
         state_bytes: fs::metadata(&actuator_path).unwrap().len(),
         backup_bytes: fs::metadata(&restore_backup).unwrap().len(),
         recover_consistent: summarize(recover_timings),

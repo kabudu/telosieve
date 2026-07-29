@@ -1,0 +1,24 @@
+{
+  "platform": "linux",
+  "architecture": "aarch64",
+  "execution_environment": "docker-linux-vm-native-arm64",
+  "container_image": "rust:1.97-bookworm@sha256:77fac8b98f9f46062bb680b6d25d5bcaabfc400143952ebc572e924bcbedc3fa",
+  "qualification_filesystem": "ext2/ext3",
+  "state_bytes": 457,
+  "backup_bytes": 603,
+  "recover_consistent": {
+    "iterations": 50,
+    "latency_micros_p50": 39,
+    "latency_micros_p95": 64
+  },
+  "backup_create": {
+    "iterations": 50,
+    "latency_micros_p50": 448,
+    "latency_micros_p95": 1802
+  },
+  "restore_latest": {
+    "iterations": 50,
+    "latency_micros_p50": 700,
+    "latency_micros_p95": 2475
+  }
+}

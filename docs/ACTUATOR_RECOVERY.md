@@ -5,9 +5,9 @@ Date: 2026-07-29
 ## Qualified boundary
 
 This milestone qualifies the file-backed reference actuator's recovery protocol
-on macOS/aarch64 with the local filesystem used by the test environment. It does
-not qualify other operating systems, filesystems, storage firmware, multiple
-hosts, or hostile rollback.
+on the macOS/aarch64 host filesystem and on disposable Docker-managed Linux
+volumes for arm64 and emulated amd64. It does not qualify bare-metal Linux,
+storage firmware, power-loss persistence, multiple hosts, or hostile rollback.
 
 Actuator schema v2 adds a monotonic generation, a separate same-directory
 recovery witness, content-addressed create-new backups, exact-latest restore,
@@ -93,3 +93,35 @@ Fifty-iteration macOS/aarch64 measurements for the 457-byte benign state:
 The 603-byte raw backup and measurements are retained in
 `results/actuator-recovery-benchmark.json`. These are local observations, not
 service-level objectives or population estimates.
+
+## Linux qualification
+
+The Linux harness pins the immutable multi-architecture
+`rust:1.97-bookworm` image, disables networking, mounts the repository
+read-only, and places actuator state on disposable Docker-managed volumes rather
+than `tmpfs`:
+
+```sh
+./scripts/qualify-linux-recovery.sh linux/arm64 \
+  > results/actuator-recovery-linux-arm64.json
+./scripts/qualify-linux-recovery.sh linux/amd64 \
+  > results/actuator-recovery-linux-amd64.json
+```
+
+Each architecture runs all nine actuator-store recovery tests, including
+contention and injected commit boundaries, followed by the 16-process
+forced-termination test and the 50-iteration benchmark. Both runs passed on an
+`ext2/ext3`-reported Docker volume under LinuxKit 6.12.76.
+
+| Environment | Recovery p50/p95 | Backup p50/p95 | Restore p50/p95 |
+|---|---:|---:|---:|
+| Linux/aarch64 Docker VM, native arm64 | 39/64 µs | 448/1,802 µs | 700/2,475 µs |
+| Linux/x86_64 Docker VM, emulated amd64 | 47/66 µs | 461/1,857 µs | 754/2,307 µs |
+
+The immutable image identity, execution mode, filesystem type, object sizes,
+iteration counts, and timings are retained in
+`results/actuator-recovery-linux-arm64.json` and
+`results/actuator-recovery-linux-amd64.json`. Emulated amd64 timings are not
+hardware performance evidence. Docker VM success also does not demonstrate
+bare-metal behavior, real power-loss ordering, or storage-device cache
+durability.

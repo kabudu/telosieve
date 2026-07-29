@@ -79,4 +79,6 @@ This is a single-host reference backend, not a production actuator. It does not
 provide external service transactions, authentication or authorization for local
 operators, hostile-storage rollback protection, multi-host consensus, whole-disk
 disaster recovery, or incident-tested integration with Kubernetes, GitOps, or a
-database. Recovery is qualified only on the measured macOS/aarch64 filesystem.
+database. Recovery evidence covers the measured macOS/aarch64 host filesystem
+and bounded Docker-managed Linux arm64/emulated-amd64 volumes; it does not cover
+bare-metal power loss or production storage.

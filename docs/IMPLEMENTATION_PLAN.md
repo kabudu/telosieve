@@ -154,6 +154,33 @@ remain unresolved.
 - [x] Exit: each tested interruption recovers to one exact committed generation
   or fails closed; stale restore cannot roll the witness back.
 
-Evidence: [ACTUATOR_RECOVERY](ACTUATOR_RECOVERY.md). Qualification is limited to
-the tested macOS/aarch64 single-host filesystem. Whole-disk rollback, other
-platforms, external service integration, and independent review remain open.
+Evidence: [ACTUATOR_RECOVERY](ACTUATOR_RECOVERY.md). At Post-M10, qualification
+was limited to the tested macOS/aarch64 single-host filesystem. Whole-disk
+rollback, other platforms, external service integration, and independent review
+remained open.
+
+## Post-M11 — Linux recovery qualification
+
+- [x] Run recovery-state and forced-termination tests on Linux arm64 and amd64.
+- [x] Use a pinned, network-disabled multi-architecture container with the
+  repository mounted read-only.
+- [x] Put actuator mutations on Docker-managed Linux volumes rather than tmpfs.
+- [x] Retain architecture, image, filesystem, object-size, and latency evidence.
+- [x] Exit: both architectures recover every tested termination to an exact
+  witnessed generation; emulated timing and VM/storage limits remain explicit.
+
+Evidence: [ACTUATOR_RECOVERY](ACTUATOR_RECOVERY.md). This removes the
+macOS-only software-path gap for the tested Linux VM/volume boundary. Bare-metal
+Linux, power-loss persistence, whole-disk rollback, external service integration,
+and independent review remain open.
+
+## Post-M12 — key and identity lifecycle
+
+- [ ] Define authority-key rotation, revocation, expiry, and compromised-key
+  recovery without invalidating historical certificates.
+- [ ] Bind lifecycle statements to authority kind, subject, sequence, and
+  predecessor state.
+- [ ] Reject revoked or superseded keys for new transitions while retaining
+  deterministic historical verification.
+- [ ] Exercise stale rotation, rollback, equivocation, partial availability,
+  emergency revocation, and bounded state growth.

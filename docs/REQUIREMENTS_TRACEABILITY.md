@@ -16,6 +16,7 @@
 | REC-1 | Recover an interrupted local actuator commit without guessing | Pending/committed witness with exact previous/next generations | deterministic crash-point and forced-termination tests |
 | REC-2 | Reject stale or tampered primary-state restore | Content-addressed backup must equal latest surviving witness | stale/tampered/missing-primary restore tests |
 | REC-3 | Preserve v1 deletion consumption during recovery upgrade | Explicit witnessed in-place schema upgrade | completed/interrupted upgrade tests |
+| REC-4 | Preserve exact-generation recovery across qualified OS/architecture boundaries | Pinned offline Linux arm64/amd64 harness on Docker-managed volumes | nine recovery tests, 16 forced terminations, retained per-platform measurements |
 | SEC-3 | Detect signed-history rollback and broken chains | Bounded phenotype chain plus trusted tip anchor | predecessor replay, omitted/forked/old-tip tests |
 | SEM-4 | Refuse ambiguity | protocol acceptance rule | contradictory-authority E2E |
 | REL-1 | Reproducible decisions | content addressing | deterministic replay |
