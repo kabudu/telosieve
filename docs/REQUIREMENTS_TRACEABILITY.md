@@ -10,3 +10,8 @@
 | REL-1 | Reproducible decisions | content addressing | deterministic replay |
 | SEC-2 | Fail closed | resource/error policy | timeout and ledger-failure E2E |
 | NOV-1 | Compare established baselines | harness adapters | registered benchmark report |
+
+M1 evidence is executable in `tests/m0.rs`: protocol rejection covers stale,
+unknown-schema, duplicate, digest/signature-tampered, and over-budget inputs;
+public replay covers provenance exclusion, diverse checking, refusal,
+determinism, ledger persistence, rollback, and all three baselines.

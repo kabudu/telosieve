@@ -128,12 +128,24 @@ pub enum ProtocolError {
 /// Returns [`ProtocolError`] when an authority is missing, duplicated, stale,
 /// malformed, digest-mismatched, or has an invalid signature.
 pub fn verify(scenario: &Scenario) -> Result<VerifiedAuthorities, ProtocolError> {
+    for envelope in &scenario.authorities {
+        validate_envelope(scenario, envelope)?;
+    }
     let mut by_kind = BTreeMap::new();
     for envelope in &scenario.authorities {
-        if by_kind.insert(envelope.kind, envelope).is_some() {
+        if let Some(previous) = by_kind.insert(envelope.kind, envelope) {
+            if previous.issuer == envelope.issuer
+                && previous.sequence == envelope.sequence
+                && previous.content_digest != envelope.content_digest
+            {
+                return Err(ProtocolError::Invalid {
+                    kind: envelope.kind,
+                    field: "sequence",
+                    reason: "authenticated issuer equivocation".into(),
+                });
+            }
             return Err(ProtocolError::Cardinality(envelope.kind));
         }
-        validate_envelope(scenario, envelope)?;
     }
 
     let goal = parse_content::<Values>(&by_kind, AuthorityKind::Goal)?;
@@ -174,6 +186,9 @@ fn validate_envelope(scenario: &Scenario, envelope: &Envelope) -> Result<(), Pro
     };
     if envelope.schema_version != SCHEMA_VERSION {
         return Err(invalid("schema_version", "unsupported schema".into()));
+    }
+    if envelope.sequence > 1 && envelope.parent_digests.is_empty() {
+        return Err(invalid("parent_digests", "broken lineage".into()));
     }
     if envelope.subject != scenario.subject {
         return Err(invalid("subject", "subject mismatch".into()));

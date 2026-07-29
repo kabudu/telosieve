@@ -174,3 +174,55 @@ fn rust_and_python_checkers_agree_on_safe_and_unsafe_transitions() {
         }
     }
 }
+
+#[test]
+fn protocol_rejects_stale_unknown_schema_and_duplicate_authorities() {
+    let mut stale = load("benign.json");
+    stale.evaluation_time = stale.authorities[0].expires_at;
+    assert!(matches!(run_scenario(&stale), Err(RunError::Protocol(_))));
+
+    let mut schema = load("benign.json");
+    schema.authorities[0].schema_version = "unknown/v9".into();
+    assert!(matches!(run_scenario(&schema), Err(RunError::Protocol(_))));
+
+    let mut duplicate = load("benign.json");
+    duplicate.authorities.push(duplicate.authorities[0].clone());
+    assert!(matches!(
+        run_scenario(&duplicate),
+        Err(RunError::Protocol(_))
+    ));
+
+    let mut broken_lineage = load("benign.json");
+    broken_lineage.authorities[0].sequence = 2;
+    assert!(matches!(
+        run_scenario(&broken_lineage),
+        Err(RunError::Protocol(_))
+    ));
+}
+
+#[test]
+fn public_replay_reports_all_baselines_and_protocol_evidence() {
+    for fixture in ["benign.json", "poisoned-goal.json"] {
+        let certificate = run_scenario(&load(fixture)).unwrap();
+        let names: Vec<_> = certificate
+            .baselines
+            .iter()
+            .map(|baseline| baseline.name.as_str())
+            .collect();
+        assert_eq!(
+            names,
+            [
+                "conventional-reconciler/v0",
+                "signed-history-rollback/v0",
+                "invariant-gated-reconciler/v0"
+            ]
+        );
+        assert_eq!(certificate.authority_digests.len(), 3);
+        assert!(certificate.hypotheses.iter().all(|hypothesis| {
+            hypothesis.suspected == hypothesis.excluded
+                && hypothesis.checker.as_ref().is_none_or(|verdict| {
+                    verdict.implementation == "telosieve-python-checker/v1" || !verdict.safe
+                })
+        }));
+    }
+}
