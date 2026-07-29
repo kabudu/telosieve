@@ -30,3 +30,6 @@ reproduction exists.
 The evidence supports continued narrow research into multi-principal viability
 and checker amortisation. It does not support an operator product, hosted control
 plane, production adapter, or safety claim.
+
+The resulting binding decision is documented in
+[PRODUCTISATION_DECISION](PRODUCTISATION_DECISION.md).

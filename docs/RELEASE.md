@@ -12,6 +12,12 @@ There is no product release yet. Research releases require:
 Version `0.1.0-research` may tag the first reproducible artifact. Public hosting,
 packages, telemetry, production adapters, and claims are separately gated.
 
+The M3 decision is to narrow the project to private research. The observed
+weakened-viability unsafe approval blocks `0.1.0-research`, any public release,
+and productisation. A tag or release requires a new explicit decision after the
+reopening conditions in
+[PRODUCTISATION_DECISION](PRODUCTISATION_DECISION.md) are satisfied.
+
 ## CI and delivery policy
 
 Telosieve is private, so local CI is the sole authoritative quality gate:

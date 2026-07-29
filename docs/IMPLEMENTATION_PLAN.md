@@ -34,4 +34,17 @@ configuration whose finite hypothesis count exceeds `maximum_hypotheses`.
 - [x] Compare the registered safety claim with quantified availability and
   complexity costs.
 - [x] Refresh novelty, name, security, soundness, and release diligence.
-- [ ] Exit: explicitly proceed, narrow, or archive the project based on evidence.
+- [x] Exit: explicitly proceed, narrow, or archive the project based on evidence.
+
+Decision: **narrow**. Productisation and public release are blocked. See
+[PRODUCTISATION_DECISION](PRODUCTISATION_DECISION.md).
+
+## Post-M3 — narrowed research (not productisation)
+
+- [ ] Define multi-principal or explicitly suspectable viability semantics,
+  preregistering the fault model and falsifiers.
+- [ ] Replace per-hypothesis process spawning with a bounded checker service or
+  batch boundary without reducing semantic diversity.
+- [ ] Implement an authenticated, replayable history baseline rather than the
+  current fixture-level proxy.
+- [ ] Obtain independent reproduction of the registered experiments.

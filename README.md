@@ -19,9 +19,11 @@ and refuse repair when surviving evidence cannot distinguish safe outcomes.
 
 ## Status
 
-The M0 executable research contract is implemented. It authenticates a bounded
-scenario, evaluates its declared hypotheses, applies only one common independently
-checked transition, and otherwise emits a refusal certificate. See
+M3 is complete with an explicit decision to **narrow** the project. Telosieve
+remains private research; productisation and public release are blocked by an
+unsafe approval under weakened viability constraints. The harness authenticates a
+bounded scenario, evaluates its declared hypotheses, applies only one common
+independently checked transition, and otherwise emits a refusal certificate. See
 [VALIDATION](docs/VALIDATION.md) for the falsification plan, [NOVELTY](docs/NOVELTY.md)
 for claim limits, and [IMPLEMENTATION_PLAN](docs/IMPLEMENTATION_PLAN.md) for scope.
 
@@ -49,6 +51,8 @@ M2 results and negative findings are reported in
 [M2 Adversarial Results](docs/M2_RESULTS.md).
 The evidence-to-product comparison is recorded in
 [Productisation Assessment](docs/PRODUCTISATION_ASSESSMENT.md).
+The binding M3 outcome and its reopening conditions are recorded in
+[Productisation Decision](docs/PRODUCTISATION_DECISION.md).
 
 Each run authenticates all authority envelopes before evaluation. The certificate
 is deterministic for identical inputs; the JSONL ledger is append-only. The
