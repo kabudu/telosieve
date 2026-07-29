@@ -191,11 +191,22 @@ a durable organizational identity service.
 
 ## Post-M13 — shadow-mode external adapter
 
-- [ ] Name one external target and define a read-only phenotype/goal mapping
+- [x] Name one external target and define a read-only phenotype/goal mapping
   without mutation credentials.
-- [ ] Bind observations to resource versions and reject schema or concurrency
+- [x] Bind observations to resource versions and reject schema or concurrency
   ambiguity.
-- [ ] Exercise drift, partial reads, stale watches, identity mismatch, and
+- [x] Exercise drift, partial reads, stale watches, identity mismatch, and
   bounded observation size.
-- [ ] Retain shadow decisions and operator-facing refusal reasons without adding
+- [x] Retain shadow decisions and operator-facing refusal reasons without adding
   production actuation.
+
+Evidence: [KUBERNETES_SHADOW](KUBERNETES_SHADOW.md). This is a bounded exported
+snapshot adapter, not live Kubernetes access or actuation.
+
+## Post-M14 — incident and recovery exercises
+
+- [ ] Define machine-readable drills for corruption, witness loss, full ledgers,
+  stale locks, bad upgrades, key compromise, and lifecycle rollback.
+- [ ] Require explicit expected state, operator action, recovery point, and
+  evidence preservation for every drill.
+- [ ] Execute the drills without production credentials and retain results.

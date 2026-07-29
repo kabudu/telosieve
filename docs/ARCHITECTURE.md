@@ -34,6 +34,11 @@ phenotype records use issuance-time keys; current evidence must still use the
 evaluation-time active key. Lifecycle roots, statements, and trusted tips are
 included in the certificate evidence digest map.
 
+The Kubernetes shadow adapter is a pre-verification mapping gate for exported
+ConfigMap/StatefulSet JSON. It requires exact equality with authenticated
+goal/phenotype content and adds resource identity/version evidence to certificate
+v9; it has no cluster client or actuation path.
+
 ## Failure behavior
 
 Malformed, stale, equivocal, over-budget, or unverifiable evidence yields refusal.

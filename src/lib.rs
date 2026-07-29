@@ -4,6 +4,7 @@ pub mod certificate;
 pub mod checker;
 pub mod engine;
 pub mod external_checker;
+pub mod kubernetes_shadow;
 pub mod model;
 pub mod protocol;
 

@@ -558,6 +558,77 @@ fn local_upgrade_cli_preserves_legacy_service_state() {
 }
 
 #[test]
+fn kubernetes_shadow_cli_emits_bound_evidence_without_mutating_inputs() {
+    let test_dir = Path::new("target")
+        .join("kubernetes-shadow-cli-tests")
+        .join(std::process::id().to_string());
+    let _ = fs::remove_dir_all(&test_dir);
+    fs::create_dir_all(&test_dir).unwrap();
+    let scenario = Path::new("scenarios/benign.json");
+    let snapshot = Path::new("snapshots/kubernetes-shadow-benign.json");
+    let scenario_before = fs::read(scenario).unwrap();
+    let snapshot_before = fs::read(snapshot).unwrap();
+    let certificate_path = test_dir.join("certificate.json");
+    let ledger_path = test_dir.join("ledger.jsonl");
+    let output = Command::new(env!("CARGO_BIN_EXE_telosieve"))
+        .args(["shadow-kubernetes"])
+        .arg(scenario)
+        .arg(snapshot)
+        .arg(&certificate_path)
+        .arg(&ledger_path)
+        .output()
+        .unwrap();
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let certificate: telosieve::certificate::Certificate =
+        serde_json::from_slice(&output.stdout).unwrap();
+    assert_eq!(certificate.certificate_version, "telosieve.certificate/v9");
+    assert_eq!(certificate.decision, Decision::Applied);
+    assert!(certificate.actuation.is_none());
+    let shadow = certificate.shadow.unwrap();
+    assert_eq!(shadow.adapter, "telosieve.kubernetes-shadow/v1");
+    assert_eq!(shadow.observed_resource_version, "73");
+    assert_eq!(fs::read(scenario).unwrap(), scenario_before);
+    assert_eq!(fs::read(snapshot).unwrap(), snapshot_before);
+    assert_eq!(fs::read_to_string(ledger_path).unwrap().lines().count(), 1);
+
+    let collision = Command::new(env!("CARGO_BIN_EXE_telosieve"))
+        .args(["shadow-kubernetes"])
+        .arg(scenario)
+        .arg(snapshot)
+        .arg(test_dir.join("collision-certificate.json"))
+        .arg(snapshot)
+        .output()
+        .unwrap();
+    assert!(!collision.status.success());
+    assert_eq!(fs::read(snapshot).unwrap(), snapshot_before);
+
+    let oversized = test_dir.join("oversized.json");
+    fs::write(
+        &oversized,
+        vec![b' '; usize::try_from(telosieve::kubernetes_shadow::MAX_SNAPSHOT_BYTES).unwrap() + 1],
+    )
+    .unwrap();
+    let rejected_certificate = test_dir.join("rejected.json");
+    let rejected_ledger = test_dir.join("rejected.jsonl");
+    let rejected = Command::new(env!("CARGO_BIN_EXE_telosieve"))
+        .args(["shadow-kubernetes"])
+        .arg(scenario)
+        .arg(&oversized)
+        .arg(&rejected_certificate)
+        .arg(&rejected_ledger)
+        .output()
+        .unwrap();
+    assert!(!rejected.status.success());
+    assert!(!rejected_certificate.exists());
+    assert!(!rejected_ledger.exists());
+    fs::remove_dir_all(test_dir).unwrap();
+}
+
+#[test]
 fn forced_termination_stress_never_exposes_torn_actuator_state() {
     let root = Path::new("target")
         .join("local-actuator-termination-tests")

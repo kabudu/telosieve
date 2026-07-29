@@ -98,3 +98,7 @@ expired, and revoked operational keys while preserving historical phenotype
 verification. Recovery roots and lifecycle tips remain trusted scenario
 configuration, so this is not a production identity or organizational custody
 system.
+
+Certificate v9 later maps a bounded exported Kubernetes snapshot and binds its
+UID/resource versions without cluster credentials. This tests a named external
+schema but not live API consistency, permissions, admission, or actuation.

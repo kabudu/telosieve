@@ -1,8 +1,8 @@
 use std::{
     collections::BTreeSet,
     fs::{self, OpenOptions},
-    io::Write,
-    path::Path,
+    io::{Read, Write},
+    path::{Path, PathBuf},
 };
 
 use thiserror::Error;
@@ -32,6 +32,8 @@ pub enum RunError {
     Anchor(#[from] crate::anchor_store::AnchorError),
     #[error("transactional local actuator failed: {0}")]
     Actuator(#[from] crate::actuator_store::ActuatorError),
+    #[error("Kubernetes shadow adapter failed: {0}")]
+    Shadow(#[from] crate::kubernetes_shadow::ShadowError),
 }
 
 /// Runs a scenario through the public file boundary and persists its evidence.
@@ -48,6 +50,82 @@ pub fn run_scenario_file(
     let certificate = run_scenario(&scenario)?;
     persist_evidence(&certificate, certificate_path, ledger_path)?;
     Ok(certificate)
+}
+
+/// Evaluates a scenario only after a bounded exported Kubernetes snapshot
+/// exactly matches its authenticated desired and observed authorities.
+///
+/// # Errors
+///
+/// Returns [`RunError`] on input bounds, parsing, shadow mapping, verification,
+/// checking, or evidence persistence failure.
+pub fn run_kubernetes_shadow_file(
+    scenario_path: &Path,
+    snapshot_path: &Path,
+    certificate_path: &Path,
+    ledger_path: &Path,
+) -> Result<Certificate, RunError> {
+    reject_shadow_path_collisions(scenario_path, snapshot_path, certificate_path, ledger_path)?;
+    let scenario: Scenario = serde_json::from_slice(&fs::read(scenario_path)?)?;
+    let mut snapshot_bytes = Vec::new();
+    fs::File::open(snapshot_path)?
+        .take(crate::kubernetes_shadow::MAX_SNAPSHOT_BYTES + 1)
+        .read_to_end(&mut snapshot_bytes)?;
+    let maximum_snapshot_bytes = usize::try_from(crate::kubernetes_shadow::MAX_SNAPSHOT_BYTES)
+        .map_err(|_| {
+            crate::kubernetes_shadow::ShadowError::ResourceBound(
+                "snapshot bound does not fit this platform".into(),
+            )
+        })?;
+    if snapshot_bytes.len() > maximum_snapshot_bytes {
+        return Err(
+            crate::kubernetes_shadow::ShadowError::ResourceBound(format!(
+                "snapshot exceeds {} bytes",
+                crate::kubernetes_shadow::MAX_SNAPSHOT_BYTES
+            ))
+            .into(),
+        );
+    }
+    let snapshot: crate::kubernetes_shadow::KubernetesShadowSnapshot =
+        serde_json::from_slice(&snapshot_bytes)?;
+    let authorities = verify(&scenario)?;
+    let shadow = crate::kubernetes_shadow::validate(&scenario, &authorities, &snapshot)?;
+    let mut certificate = run_verified_scenario(&scenario, authorities)?;
+    certificate.certificate_version = "telosieve.certificate/v9".into();
+    certificate.shadow = Some(shadow);
+    persist_evidence(&certificate, certificate_path, ledger_path)?;
+    Ok(certificate)
+}
+
+fn reject_shadow_path_collisions(
+    scenario_path: &Path,
+    snapshot_path: &Path,
+    certificate_path: &Path,
+    ledger_path: &Path,
+) -> Result<(), RunError> {
+    let scenario = fs::canonicalize(scenario_path)?;
+    let snapshot = fs::canonicalize(snapshot_path)?;
+    let certificate = canonical_output_path(certificate_path)?;
+    let ledger = canonical_output_path(ledger_path)?;
+    if certificate == ledger
+        || [scenario, snapshot]
+            .iter()
+            .any(|input| input == &certificate || input == &ledger)
+    {
+        return Err(crate::kubernetes_shadow::ShadowError::OutputCollision.into());
+    }
+    Ok(())
+}
+
+fn canonical_output_path(path: &Path) -> Result<PathBuf, std::io::Error> {
+    if path.exists() {
+        return fs::canonicalize(path);
+    }
+    let parent = path.parent().unwrap_or_else(|| Path::new("."));
+    let name = path
+        .file_name()
+        .ok_or_else(|| std::io::Error::other("evidence output has no file name"))?;
+    Ok(fs::canonicalize(parent)?.join(name))
 }
 
 /// Runs a scenario through the durable-anchor and public file boundaries.
@@ -346,6 +424,7 @@ fn evaluate_preflighted_scenario(
         authority_digests: authorities.digests,
         deletion_authorization_id: authorities.deletion_authorization_id,
         actuation: None,
+        shadow: None,
         phenotype_history_anchor: scenario.phenotype_history_anchor.clone(),
         hypotheses,
         decision,

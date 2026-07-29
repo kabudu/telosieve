@@ -95,6 +95,11 @@ key assumption for enrolled issuers. Root custody, durable lifecycle tips,
 trusted time, organizational process, and independent review remain unresolved,
 so the binding decision remains **narrow**.
 
+The exported Kubernetes shadow adapter later exercises a named external schema
+without credentials or mutation. Live-cluster consistency, production
+authorization, actuation, and independent review remain unresolved; the binding
+decision remains **narrow**.
+
 ## Evidence basis
 
 - [M2 Adversarial Results](M2_RESULTS.md)

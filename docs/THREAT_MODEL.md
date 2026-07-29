@@ -76,3 +76,10 @@ recovery because roots must be distinct and are never operational. Recovery-root
 compromise remains critical: it can authorize arbitrary future keys. Lifecycle
 roots and trusted tips are scenario configuration, so coordinated rollback of
 that configuration remains outside the detected boundary.
+
+The Kubernetes shadow adapter has no client or cluster credentials. It rejects
+resource-version/UID drift, partial or stale controller observations, oversized
+exports, and output/input aliasing. A malicious or incoherent exporter that
+fabricates a self-consistent snapshot remains outside the boundary; exact
+agreement with signed Telosieve authorities is required but does not prove live
+cluster truth.

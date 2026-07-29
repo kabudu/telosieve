@@ -54,6 +54,11 @@ remain trusted scenario configuration without durable organizational custody or
 ceremony. It narrows static-key risk but does not satisfy independent review,
 production identity, or release gates.
 
+Certificate v9 adds a credential-free exported Kubernetes shadow mapping. It
+does not contact or mutate a cluster and therefore does not qualify Kubernetes
+authorization, live-watch consistency, admission behavior, or production
+actuation. The release block remains.
+
 ## CI and delivery policy
 
 Telosieve is private, so local CI is the sole authoritative quality gate:

@@ -1,0 +1,305 @@
+{
+  "certificate_version": "telosieve.certificate/v9",
+  "scenario_id": "benign-update",
+  "seed": 7,
+  "authority_digests": {
+    "current:goal:goal-lab:1": "077d01a92ebbc5440b91cf901af1b0a5a97c4b48795d957ca34ac9b7d72b2250",
+    "current:goal:goal-review:1": "470418a9b33773b8d6ecbda317ac2b60bca23d458ac8eeb68341e6bc6671124f",
+    "current:phenotype:phenotype-lab:2": "11f857b1ee6f693bc7d87cda9bead6baf8ad941ac2e333e2a347a5defa6b477a",
+    "current:viability:viability-lab:1": "a7a2d356e6b6be17cc37b1050e6a6a9fdf54d37d314413d1ca21adc95dff9798",
+    "current:viability:viability-peer:1": "47db3c262a7c4b034e53d272e4bcad31937f62b4f6f85c0ecea13c7496388b9d",
+    "current:viability:viability-review:1": "3690565e4fe484c64df3e11da8dfb367946117086d5029e4a858c445d23c6088",
+    "history:phenotype:phenotype-lab:1": "7eb85be26a07901d191e880195405adb6f2740ce3b11b718969f7b41c5952004"
+  },
+  "deletion_authorization_id": null,
+  "shadow": {
+    "adapter": "telosieve.kubernetes-shadow/v1",
+    "snapshot_digest": "06e8e41f5a9d6f420a666488ffc618a508ed4321a4081ea191cc403838df6dcd",
+    "target_uid": "1dff3e34-3c1c-4cbe-ac7b-5ae13032c002",
+    "desired_resource_version": "41",
+    "observed_resource_version": "73",
+    "captured_at": 1750000000
+  },
+  "phenotype_history_anchor": {
+    "issuer": "phenotype-lab",
+    "sequence": 2,
+    "tip_digest": "11f857b1ee6f693bc7d87cda9bead6baf8ad941ac2e333e2a347a5defa6b477a"
+  },
+  "hypotheses": [
+    {
+      "suspected": [],
+      "excluded": [],
+      "suspected_issuers": [],
+      "excluded_issuers": [],
+      "suspected_fault_domains": [],
+      "excluded_fault_domains": [],
+      "authorized_deletions": [],
+      "proposed_transition": {
+        "before_digest": "949517d197c6e3f2fcf57eeaa614e16426269cf886d7f534573b729a4d1950cd",
+        "after": {
+          "replicas": {
+            "replica-a": {
+              "cluster/epoch": "7",
+              "user/message": "new"
+            },
+            "replica-b": {
+              "cluster/epoch": "7",
+              "user/message": "new"
+            },
+            "replica-c": {
+              "cluster/epoch": "7",
+              "user/message": "new"
+            }
+          }
+        }
+      },
+      "checker": {
+        "implementation": "telosieve-multi-principal-checker/v2",
+        "safe": true,
+        "reasons": []
+      }
+    },
+    {
+      "suspected": [
+        "viability"
+      ],
+      "excluded": [
+        "viability"
+      ],
+      "suspected_issuers": [
+        "viability-lab",
+        "viability-peer"
+      ],
+      "excluded_issuers": [
+        "viability-lab",
+        "viability-peer"
+      ],
+      "suspected_fault_domains": [
+        "lab-domain"
+      ],
+      "excluded_fault_domains": [
+        "lab-domain"
+      ],
+      "authorized_deletions": [],
+      "proposed_transition": {
+        "before_digest": "949517d197c6e3f2fcf57eeaa614e16426269cf886d7f534573b729a4d1950cd",
+        "after": {
+          "replicas": {
+            "replica-a": {
+              "cluster/epoch": "7",
+              "user/message": "new"
+            },
+            "replica-b": {
+              "cluster/epoch": "7",
+              "user/message": "new"
+            },
+            "replica-c": {
+              "cluster/epoch": "7",
+              "user/message": "new"
+            }
+          }
+        }
+      },
+      "checker": {
+        "implementation": "telosieve-multi-principal-checker/v2",
+        "safe": true,
+        "reasons": []
+      }
+    },
+    {
+      "suspected": [
+        "viability"
+      ],
+      "excluded": [
+        "viability"
+      ],
+      "suspected_issuers": [
+        "viability-review"
+      ],
+      "excluded_issuers": [
+        "viability-review"
+      ],
+      "suspected_fault_domains": [
+        "review-domain"
+      ],
+      "excluded_fault_domains": [
+        "review-domain"
+      ],
+      "authorized_deletions": [],
+      "proposed_transition": {
+        "before_digest": "949517d197c6e3f2fcf57eeaa614e16426269cf886d7f534573b729a4d1950cd",
+        "after": {
+          "replicas": {
+            "replica-a": {
+              "cluster/epoch": "7",
+              "user/message": "new"
+            },
+            "replica-b": {
+              "cluster/epoch": "7",
+              "user/message": "new"
+            },
+            "replica-c": {
+              "cluster/epoch": "7",
+              "user/message": "new"
+            }
+          }
+        }
+      },
+      "checker": {
+        "implementation": "telosieve-multi-principal-checker/v2",
+        "safe": true,
+        "reasons": []
+      }
+    }
+  ],
+  "decision": "applied",
+  "refusal_reason": null,
+  "transition": {
+    "before_digest": "949517d197c6e3f2fcf57eeaa614e16426269cf886d7f534573b729a4d1950cd",
+    "after": {
+      "replicas": {
+        "replica-a": {
+          "cluster/epoch": "7",
+          "user/message": "new"
+        },
+        "replica-b": {
+          "cluster/epoch": "7",
+          "user/message": "new"
+        },
+        "replica-c": {
+          "cluster/epoch": "7",
+          "user/message": "new"
+        }
+      }
+    }
+  },
+  "rollback": {
+    "before_digest": "6daed3bd53a0217ba49225340db6aa449da0c3f27dd2b5f92b18fe99702a3fd0",
+    "after": {
+      "replicas": {
+        "replica-a": {
+          "cluster/epoch": "7",
+          "user/message": "old"
+        },
+        "replica-b": {
+          "cluster/epoch": "7",
+          "user/message": "old"
+        },
+        "replica-c": {
+          "cluster/epoch": "7",
+          "user/message": "old"
+        }
+      }
+    }
+  },
+  "final_state": {
+    "replicas": {
+      "replica-a": {
+        "cluster/epoch": "7",
+        "user/message": "new"
+      },
+      "replica-b": {
+        "cluster/epoch": "7",
+        "user/message": "new"
+      },
+      "replica-c": {
+        "cluster/epoch": "7",
+        "user/message": "new"
+      }
+    }
+  },
+  "baselines": [
+    {
+      "name": "conventional-reconciler/v0",
+      "decision": "applied",
+      "transition": {
+        "before_digest": "949517d197c6e3f2fcf57eeaa614e16426269cf886d7f534573b729a4d1950cd",
+        "after": {
+          "replicas": {
+            "replica-a": {
+              "cluster/epoch": "7",
+              "user/message": "new"
+            },
+            "replica-b": {
+              "cluster/epoch": "7",
+              "user/message": "new"
+            },
+            "replica-c": {
+              "cluster/epoch": "7",
+              "user/message": "new"
+            }
+          }
+        }
+      },
+      "checker": {
+        "implementation": "telosieve-multi-principal-reference-checker/v2",
+        "safe": true,
+        "reasons": []
+      },
+      "unsafe_approval": false
+    },
+    {
+      "name": "signed-history-replay/v1",
+      "decision": "applied",
+      "transition": {
+        "before_digest": "949517d197c6e3f2fcf57eeaa614e16426269cf886d7f534573b729a4d1950cd",
+        "after": {
+          "replicas": {
+            "replica-a": {
+              "cluster/epoch": "7",
+              "user/message": "stable"
+            },
+            "replica-b": {
+              "cluster/epoch": "7",
+              "user/message": "stable"
+            },
+            "replica-c": {
+              "cluster/epoch": "7",
+              "user/message": "stable"
+            }
+          }
+        }
+      },
+      "checker": {
+        "implementation": "telosieve-multi-principal-checker/v2",
+        "safe": true,
+        "reasons": []
+      },
+      "unsafe_approval": false
+    },
+    {
+      "name": "invariant-gated-reconciler/v0",
+      "decision": "applied",
+      "transition": {
+        "before_digest": "949517d197c6e3f2fcf57eeaa614e16426269cf886d7f534573b729a4d1950cd",
+        "after": {
+          "replicas": {
+            "replica-a": {
+              "cluster/epoch": "7",
+              "user/message": "new"
+            },
+            "replica-b": {
+              "cluster/epoch": "7",
+              "user/message": "new"
+            },
+            "replica-c": {
+              "cluster/epoch": "7",
+              "user/message": "new"
+            }
+          }
+        }
+      },
+      "checker": {
+        "implementation": "telosieve-multi-principal-reference-checker/v2",
+        "safe": true,
+        "reasons": []
+      },
+      "unsafe_approval": false
+    }
+  ],
+  "metrics": {
+    "hypothesis_count": 3,
+    "unsafe_approvals": 0,
+    "false_refusals": 0
+  }
+}

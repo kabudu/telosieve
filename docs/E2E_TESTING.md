@@ -67,3 +67,7 @@ engine and binds its chain, recovery root, and trusted tip into the certificate.
 Focused protocol tests preserve historical old-key verification while rejecting
 superseded, expired, revoked, reused, wrong-kind, tampered, partial, rolled-back,
 equivocating, and oversized lifecycle evidence before planning.
+
+The executable `shadow-kubernetes` lifecycle consumes only local exported JSON,
+emits certificate-v9 evidence, and leaves scenario and snapshot bytes unchanged.
+It rejects oversized snapshots and any evidence path that aliases an input.

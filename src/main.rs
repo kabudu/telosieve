@@ -70,6 +70,14 @@ fn main() -> ExitCode {
             Path::new(&args[3]),
             Path::new(&args[4]),
         )),
+        Some("shadow-kubernetes") if args.len() == 6 => {
+            emit(telosieve::engine::run_kubernetes_shadow_file(
+                Path::new(&args[2]),
+                Path::new(&args[3]),
+                Path::new(&args[4]),
+                Path::new(&args[5]),
+            ))
+        }
         Some("run-anchored") if args.len() == 6 => {
             emit(telosieve::engine::run_scenario_file_anchored(
                 Path::new(&args[2]),
@@ -100,6 +108,8 @@ fn usage() -> ExitCode {
          telosieve local-recover <actuator.json>\n  \
          telosieve local-upgrade <actuator.json>\n  \
          telosieve run <scenario.json> <certificate.json> <ledger.jsonl>\n  \
+         telosieve shadow-kubernetes <scenario.json> <snapshot.json> \
+         <certificate.json> <ledger.jsonl>\n  \
          telosieve run-anchored <scenario.json> <certificate.json> \
          <ledger.jsonl> <anchor.json>\n  \
          telosieve apply-local <scenario.json> <certificate.json> \

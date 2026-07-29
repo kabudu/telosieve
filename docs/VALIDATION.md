@@ -166,3 +166,11 @@ non-canonical, wrong-kind, tampered, partially configured, equivocating,
 rolled-back, and oversized lifecycle evidence. An old phenotype record remains
 verifiable after rotation while current evidence cannot use its superseded key.
 See [KEY_LIFECYCLE](KEY_LIFECYCLE.md).
+
+## Kubernetes shadow adapter
+
+Certificate v9 binds the retained snapshot digest, target UID, resource
+versions, and capture time while leaving actuation absent. Mapping and CLI tests
+cover drift, partial/stale observations, replacement identity, schema/context
+and authority mismatch, resource bounds, output aliasing, deterministic evidence,
+and unchanged inputs. See [KUBERNETES_SHADOW](KUBERNETES_SHADOW.md).

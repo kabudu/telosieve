@@ -52,6 +52,16 @@ pub struct ActuationRecord {
     pub after_digest: String,
 }
 
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ShadowRecord {
+    pub adapter: String,
+    pub snapshot_digest: String,
+    pub target_uid: String,
+    pub desired_resource_version: String,
+    pub observed_resource_version: String,
+    pub captured_at: u64,
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Certificate {
     pub certificate_version: String,
@@ -61,6 +71,8 @@ pub struct Certificate {
     pub deletion_authorization_id: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub actuation: Option<ActuationRecord>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub shadow: Option<ShadowRecord>,
     pub phenotype_history_anchor: HistoryAnchor,
     pub hypotheses: Vec<HypothesisRecord>,
     pub decision: Decision,

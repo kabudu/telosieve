@@ -1,0 +1,54 @@
+{
+  "schema_version": "telosieve.kubernetes-shadow/v1",
+  "subject": "kv/research",
+  "captured_at": 1750000000,
+  "desired": {
+    "metadata": {
+      "api_version": "v1",
+      "kind": "ConfigMap",
+      "namespace": "telosieve-research",
+      "name": "repair-goal",
+      "uid": "7fc5de6d-4a76-4c65-bce0-5cbb1fb83001",
+      "resource_version": "41"
+    },
+    "target": {
+      "api_version": "apps/v1",
+      "kind": "StatefulSet",
+      "namespace": "telosieve-research",
+      "name": "research-kv",
+      "uid": "1dff3e34-3c1c-4cbe-ac7b-5ae13032c002",
+      "resource_version": "73"
+    },
+    "data": {
+      "cluster/epoch": "7",
+      "user/message": "new"
+    }
+  },
+  "observed": {
+    "metadata": {
+      "api_version": "apps/v1",
+      "kind": "StatefulSet",
+      "namespace": "telosieve-research",
+      "name": "research-kv",
+      "uid": "1dff3e34-3c1c-4cbe-ac7b-5ae13032c002",
+      "resource_version": "73"
+    },
+    "generation": 9,
+    "observed_generation": 9,
+    "complete": true,
+    "replicas": {
+      "replica-a": {
+        "cluster/epoch": "7",
+        "user/message": "old"
+      },
+      "replica-b": {
+        "cluster/epoch": "7",
+        "user/message": "old"
+      },
+      "replica-c": {
+        "cluster/epoch": "7",
+        "user/message": "old"
+      }
+    }
+  }
+}

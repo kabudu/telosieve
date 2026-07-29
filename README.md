@@ -76,6 +76,17 @@ cargo run -- local-show out/local-actuator.json
 This reference backend proves atomic adapter semantics; it is not a production
 service integration.
 
+Evaluate a bounded exported Kubernetes snapshot without cluster access or
+actuation:
+
+```sh
+cargo run --locked --offline -- shadow-kubernetes \
+  scenarios/benign.json snapshots/kubernetes-shadow-benign.json \
+  out/shadow-certificate.json out/shadow-ledger.jsonl
+```
+
+See [Kubernetes Shadow Adapter](docs/KUBERNETES_SHADOW.md).
+
 Back up, restore, and recover its current single-host generation:
 
 ```sh

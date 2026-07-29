@@ -48,3 +48,9 @@ independently obtained trusted tip together. Never repair a missing statement by
 editing sequence or parent fields, reuse an old operational key, or fall back to
 a revoked bootstrap key. Missing or conflicting lifecycle state is a refusal and
 incident condition.
+
+For `shadow-kubernetes`, export the ConfigMap and StatefulSet evidence through a
+separate read-only process, preserve the raw export, and run Telosieve offline.
+Treat drift, incomplete observations, stale generations, identity changes, or
+authority mismatch as an incident/refusal. Never use the shadow certificate as a
+mutation command; it records a research decision only.
