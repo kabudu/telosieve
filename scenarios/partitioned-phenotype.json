@@ -1,0 +1,84 @@
+{
+  "scenario_id": "partitioned-phenotype",
+  "seed": 7,
+  "evaluation_time": 1750000000,
+  "subject": "kv/research",
+  "expected_decision": "apply",
+  "public_keys": {
+    "goal-lab": "66be7e332c7a453332bd9d0a7f7db055f5c5ef1a06ada66d98b39fb6810c473a",
+    "phenotype-lab": "511c34a1a2cb521df16bb246b8de8e7997ce235c7e76b22a3d7503a24819dd8a",
+    "viability-lab": "884b8857f4eaa1613c61504db34d4beaf346517a0e31de3cddd4d9b4201d9d0b"
+  },
+  "fault_declaration": {
+    "maximum_faults": 1,
+    "suspectable": [
+      "phenotype"
+    ],
+    "maximum_hypotheses": 4
+  },
+  "authorities": [
+    {
+      "kind": "goal",
+      "subject": "kv/research",
+      "schema_version": "telosieve.authority/v0",
+      "issued_at": 1700000000,
+      "expires_at": 1800000000,
+      "issuer": "goal-lab",
+      "sequence": 1,
+      "content_digest": "fe738338d53f190a21004319c46de8c95146c916657293933f60210e4829ce45",
+      "parent_digests": [],
+      "content": {
+        "cluster/epoch": "7",
+        "user/message": "new"
+      },
+      "signature": "a2b0c0998766d607212dfc6d30b0c60a68495d9e2882e79935589bfde7f4ae0e90fe1f23b7119ccd19f3bc256f20e41cd7e46a2f8e1d505ea1529fb30a8b3706"
+    },
+    {
+      "kind": "phenotype",
+      "subject": "kv/research",
+      "schema_version": "telosieve.authority/v0",
+      "issued_at": 1700000000,
+      "expires_at": 1800000000,
+      "issuer": "phenotype-lab",
+      "sequence": 1,
+      "content_digest": "1317b1951480ca93bdf470fe433ba7f97731bfa0906046dfcf7edcb591d46d64",
+      "parent_digests": [],
+      "content": {
+        "replicas": {
+          "replica-a": {
+            "cluster/epoch": "7",
+            "user/message": "old"
+          },
+          "replica-b": {
+            "cluster/epoch": "7",
+            "user/message": "old"
+          },
+          "replica-c": {
+            "cluster/epoch": "7",
+            "user/message": "partition"
+          }
+        }
+      },
+      "signature": "2d674ca8b78b90996ead76a2bc85cab6446b7782e20fae55d3465238b40611807161815dd8e8e40ec19d5c0514bcc84c4c224ee58808f5ffbbb21d41a431a90d"
+    },
+    {
+      "kind": "viability",
+      "subject": "kv/research",
+      "schema_version": "telosieve.authority/v0",
+      "issued_at": 1700000000,
+      "expires_at": 1800000000,
+      "issuer": "viability-lab",
+      "sequence": 1,
+      "content_digest": "e986b557bdc1b57ba5689ce50f8ad64313b3bebcaba2dc79e358c2941faa1af8",
+      "parent_digests": [],
+      "content": {
+        "replica_count": 3,
+        "require_consensus": true,
+        "required_keys": {
+          "cluster/epoch": "7"
+        }
+      },
+      "signature": "3f24c8d9e330c154587b96b99dc4fa56d9e11e17cb0e97fa882e74f37edfba4c916fe089fa678f025271400691cd9fbb5c33af6c979238a06a179fb82da6d304"
+    }
+  ]
+}

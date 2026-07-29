@@ -58,6 +58,15 @@ fn envelope(key: &SigningKey, kind: AuthorityKind, issuer: &str, content: Value)
     envelope
 }
 
+fn write_scenario(name: &str, scenario: &Scenario) {
+    fs::write(
+        format!("scenarios/{name}.json"),
+        serde_json::to_vec_pretty(scenario).unwrap(),
+    )
+    .unwrap();
+}
+
+#[allow(clippy::too_many_lines)]
 fn main() {
     let goal_key = SigningKey::from_bytes(&[11; 32]);
     let phenotype_key = SigningKey::from_bytes(&[22; 32]);
@@ -88,8 +97,15 @@ fn main() {
         "require_consensus": true,
         "required_keys": {"cluster/epoch": "7"}
     });
-    let make =
-        |scenario_id: &str, goal: Value, expected_decision, maximum_faults, suspectable| Scenario {
+    let make = |scenario_id: &str,
+                goal: Value,
+                phenotype: Value,
+                rules: Value,
+                expected_decision,
+                maximum_faults,
+                suspectable|
+     -> Scenario {
+        Scenario {
             scenario_id: scenario_id.into(),
             seed: 7,
             evaluation_time: 1_750_000_000,
@@ -107,19 +123,22 @@ fn main() {
                     &phenotype_key,
                     AuthorityKind::Phenotype,
                     "phenotype-lab",
-                    current.clone(),
+                    phenotype,
                 ),
                 envelope(
                     &viability_key,
                     AuthorityKind::Viability,
                     "viability-lab",
-                    viability.clone(),
+                    rules,
                 ),
             ],
-        };
+        }
+    };
     let benign = make(
         "benign-update",
         json!({"cluster/epoch": "7", "user/message": "new"}),
+        current.clone(),
+        viability.clone(),
         ExpectedDecision::Apply,
         0,
         BTreeSet::new(),
@@ -127,19 +146,35 @@ fn main() {
     let poisoned = make(
         "poisoned-goal",
         json!({"user/message": "attacker-controlled"}),
+        current.clone(),
+        viability.clone(),
         ExpectedDecision::Refuse,
         1,
         BTreeSet::from([AuthorityKind::Goal]),
     );
+    let weakened = make(
+        "weakened-viability",
+        json!({"user/message": "attacker-controlled"}),
+        current.clone(),
+        json!({"replica_count": 3, "require_consensus": true, "required_keys": {}}),
+        ExpectedDecision::Apply,
+        0,
+        BTreeSet::new(),
+    );
+    let mut partition = current.clone();
+    partition["replicas"]["replica-c"]["user/message"] = "partition".into();
+    let partitioned = make(
+        "partitioned-phenotype",
+        json!({"cluster/epoch": "7", "user/message": "new"}),
+        partition,
+        viability.clone(),
+        ExpectedDecision::Apply,
+        1,
+        BTreeSet::from([AuthorityKind::Phenotype]),
+    );
     fs::create_dir_all("scenarios").unwrap();
-    fs::write(
-        "scenarios/benign.json",
-        serde_json::to_vec_pretty(&benign).unwrap(),
-    )
-    .unwrap();
-    fs::write(
-        "scenarios/poisoned-goal.json",
-        serde_json::to_vec_pretty(&poisoned).unwrap(),
-    )
-    .unwrap();
+    write_scenario("benign", &benign);
+    write_scenario("poisoned-goal", &poisoned);
+    write_scenario("weakened-viability", &weakened);
+    write_scenario("partitioned-phenotype", &partitioned);
 }

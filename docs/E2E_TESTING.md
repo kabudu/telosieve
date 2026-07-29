@@ -23,3 +23,10 @@ signature tampering, hypothesis-budget exhaustion, benign apply and rollback,
 poisoned-goal refusal, deterministic byte replay, certificate persistence, and
 append-only ledger records. The broader fault suites listed above remain M1/M2
 work.
+
+`tests/adversarial.rs` registers the M2 hostile-input matrix: poisoned and stale
+goals, omitted and forged phenotype evidence, invariant weakening, partitioned
+phenotypes, equivocation, parser differential coverage, and correlated faults
+against the declared budget. Mutations without valid signatures are expected to
+fail at provenance verification; authenticated poisoned intent proceeds to
+hypothesis evaluation and refusal.

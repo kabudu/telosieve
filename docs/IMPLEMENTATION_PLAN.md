@@ -23,7 +23,7 @@ configuration whose finite hypothesis count exceeds `maximum_hypotheses`.
 
 ## M2 — adversarial evaluation
 
-- [ ] Run malicious/stale goals, omitted/forged observations, weakened invariants,
+- [x] Run malicious/stale goals, omitted/forged observations, weakened invariants,
   partitions, equivocation, parser differential, and correlated-fault probes.
 - [ ] Measure hypothesis growth, compute cost, recovery latency, unsafe approvals,
   and false refusals against every baseline.
