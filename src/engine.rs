@@ -26,6 +26,8 @@ pub enum RunError {
     Protocol(#[from] ProtocolError),
     #[error("fault declaration invalid: {0}")]
     FaultDeclaration(String),
+    #[error("independent checker failed: {0}")]
+    Checker(#[from] crate::external_checker::ExternalCheckerError),
 }
 
 /// Runs a scenario through the public file boundary and persists its evidence.
@@ -63,7 +65,7 @@ pub fn run_scenario_file(
 pub fn run_scenario(scenario: &Scenario) -> Result<Certificate, RunError> {
     validate_declaration(scenario)?;
     let authorities = verify(scenario)?;
-    let hypotheses = enumerate_hypotheses(scenario, &authorities);
+    let hypotheses = enumerate_hypotheses(scenario, &authorities)?;
     let safe_transitions: Vec<&Transition> = hypotheses
         .iter()
         .filter_map(
@@ -225,7 +227,7 @@ fn bounded_hypothesis_count(n: usize, budget: usize, limit: usize) -> Result<usi
 fn enumerate_hypotheses(
     scenario: &Scenario,
     authorities: &VerifiedAuthorities,
-) -> Vec<HypothesisRecord> {
+) -> Result<Vec<HypothesisRecord>, RunError> {
     let kinds: Vec<_> = scenario
         .fault_declaration
         .suspectable
@@ -263,7 +265,7 @@ fn combinations(
 fn evaluate_hypothesis(
     authorities: &VerifiedAuthorities,
     suspected: BTreeSet<AuthorityKind>,
-) -> HypothesisRecord {
+) -> Result<HypothesisRecord, RunError> {
     let desired = if suspected.contains(&AuthorityKind::Goal)
         && suspected.contains(&AuthorityKind::Phenotype)
     {
@@ -274,24 +276,31 @@ fn evaluate_hypothesis(
         Some(authorities.goal.clone())
     };
     let proposed_transition = desired.map(|values| authorities.phenotype.transition_to(&values));
-    let checker = proposed_transition.as_ref().map(|transition| {
-        if suspected.contains(&AuthorityKind::Viability) {
-            crate::checker::CheckerVerdict {
-                implementation: "telosieve-independent-checker/v0".into(),
-                safe: false,
-                reasons: vec![
-                    "viability authority is suspected; no independent rules remain".into(),
-                ],
-            }
-        } else {
-            checker::check(&authorities.phenotype, transition, &authorities.viability)
-        }
-    });
+    let checker = proposed_transition
+        .as_ref()
+        .map(|transition| -> Result<_, RunError> {
+            Ok(if suspected.contains(&AuthorityKind::Viability) {
+                crate::checker::CheckerVerdict {
+                    implementation: "telosieve-independent-checker/v0".into(),
+                    safe: false,
+                    reasons: vec![
+                        "viability authority is suspected; no independent rules remain".into(),
+                    ],
+                }
+            } else {
+                crate::external_checker::check(
+                    &authorities.phenotype,
+                    transition,
+                    &authorities.viability,
+                )?
+            })
+        })
+        .transpose()?;
     let suspected: Vec<_> = suspected.into_iter().collect();
-    HypothesisRecord {
+    Ok(HypothesisRecord {
         excluded: suspected.clone(),
         suspected,
         proposed_transition,
         checker,
-    }
+    })
 }

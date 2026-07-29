@@ -157,3 +157,20 @@ fn ledger_failure_does_not_publish_a_certificate() {
     assert!(!certificate_path.exists());
     fs::remove_dir_all(test_dir).unwrap();
 }
+
+#[test]
+fn rust_and_python_checkers_agree_on_safe_and_unsafe_transitions() {
+    let scenario = load("poisoned-goal.json");
+    let certificate = run_scenario(&scenario).unwrap();
+    for hypothesis in certificate.hypotheses {
+        if let (Some(transition), Some(external)) =
+            (hypothesis.proposed_transition, hypothesis.checker)
+        {
+            let current = serde_json::from_value(scenario.authorities[1].content.clone()).unwrap();
+            let rules = serde_json::from_value(scenario.authorities[2].content.clone()).unwrap();
+            let rust = telosieve::checker::check(&current, &transition, &rules);
+            assert_eq!(rust.safe, external.safe);
+            assert_eq!(rust.reasons, external.reasons);
+        }
+    }
+}

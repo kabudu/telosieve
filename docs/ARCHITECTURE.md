@@ -39,7 +39,6 @@ content-bound replacement of every named replica, so commit and rollback are
 deterministic state values rather than production side effects. Hypothesis work is
 bounded by `maximum_hypotheses`; every authority subset up to the declared budget
 is enumerated deterministically and rejected before evaluation when the configured
-bound is insufficient. The checker owns invariant evaluation, but planner and checker still share
-Rust/Serde parsing and the service representation. This is not sufficient evidence
-of implementation independence and must be replaced by a diverse checker boundary
-before M1 can satisfy the soundness case.
+bound is insufficient. M1 invokes a separately implemented Python checker over a
+JSON process boundary. It independently parses and evaluates the service and
+viability models; differential tests compare it with the Rust reference checker.

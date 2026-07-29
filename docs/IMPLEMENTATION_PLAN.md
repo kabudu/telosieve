@@ -16,7 +16,7 @@ configuration whose finite hypothesis count exceeds `maximum_hypotheses`.
 
 - [x] Implement bounded general hypothesis enumeration and provenance exclusion.
 - [x] Add signed-history rollback and invariant-gated reconciler baselines.
-- [ ] Replace shared Rust/Serde planner-checker semantics with a diverse checker
+- [x] Replace shared Rust/Serde planner-checker semantics with a diverse checker
   boundary and demonstrate parser/model differential tests.
 - [ ] Exit: every protocol requirement has behavioural evidence and all three
   baselines replay through the public harness.
