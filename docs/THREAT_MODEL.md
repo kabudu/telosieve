@@ -135,6 +135,13 @@ loopback fixture tokens and project-controlled processes, it does not defend
 against TLS/DNS compromise, credential theft, hostile networks, endpoint load,
 or organizational collusion.
 
+The operator-return validator rejects request substitution, project-control
+disclosures, same-origin authorities, non-HTTPS origins, incomplete outcomes,
+hosted-CI claims, stale records, unknown fields, attachment traversal, oversize,
+and digest mismatch. It does not authenticate names, organizations, signatures,
+DNS ownership, endpoint behavior, or narrative truth; an independently trusted
+assessor must verify those facts outside the repository.
+
 The Kubernetes shadow adapter has no client or cluster credentials. It rejects
 resource-version/UID drift, partial or stale controller observations, oversized
 exports, and output/input aliasing. A malicious or incoherent exporter that

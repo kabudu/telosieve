@@ -1,0 +1,62 @@
+{
+  "schema_version": "telosieve.witness-operator-request/v1",
+  "source_commit": "c8b18a748204c8b617230ccfc18a793550055956",
+  "repository_visibility": "private",
+  "authoritative_ci": "./scripts/ci-local.sh",
+  "required_commands": [
+    "./scripts/ci-local.sh",
+    "./scripts/run-witness-durability.sh",
+    "./scripts/run-witness-endpoint-harness.sh"
+  ],
+  "source_artifacts": [
+    {
+      "path": "docs/WITNESS_DURABILITY.md",
+      "sha256": "b7af9ddb84e3c8dd0b25bda9fc13e36b7006f5ccd116d0b7dc24f475d67ac0a5"
+    },
+    {
+      "path": "docs/WITNESS_ENDPOINT_HARNESS.md",
+      "sha256": "45a451c31a11458fed03de60ff31afedd63f39d6a123953b0a1c585ac37ae51a"
+    },
+    {
+      "path": "results/witness-durability-linux-amd64.json",
+      "sha256": "bd4efc18f15c1e4919d3a7cf0be6fdfecb64c007e619292a4cac1b00161132fb"
+    },
+    {
+      "path": "results/witness-durability-linux-arm64.json",
+      "sha256": "978e2cb917a2ba4e1aec6a32ce4ba954a441bfca51d2abe210565412279a653e"
+    },
+    {
+      "path": "results/witness-endpoint-qualification.json",
+      "sha256": "41953c81a8d7d99b3eaec4600265e105872270a4da4693c0ea7a327548a610b4"
+    },
+    {
+      "path": "scripts/ci-local.sh",
+      "sha256": "7b293b2765915664181f99650e2c3693dd19249de8d397eddc18afb4ef0904cc"
+    },
+    {
+      "path": "scripts/run-witness-durability.sh",
+      "sha256": "a6b1d1eb9fe703c5ff99e1f3c569ddddcea90f09198f5deb49bebc7dfc5f2448"
+    },
+    {
+      "path": "scripts/run-witness-endpoint-harness.sh",
+      "sha256": "08db3627efdd917b2f7ed57ce19f1c1b80daf5962d7533fbe03cb31576201f30"
+    }
+  ],
+  "required_success_cases": [
+    "authenticated-restart",
+    "healthy-exact-artifacts",
+    "one-sided-partition-fallback"
+  ],
+  "required_refusal_cases": [
+    "delayed-timeout",
+    "dropped-connection",
+    "equivocal-artifact",
+    "oversized-response",
+    "stale-revocation",
+    "total-outage",
+    "unauthorized-request"
+  ],
+  "maximum_record_bytes": 65536,
+  "maximum_attachment_bytes": 1048576,
+  "maximum_attachments": 16
+}

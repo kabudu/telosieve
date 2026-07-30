@@ -280,6 +280,16 @@ outage, equivocal, and stale paths refuse. The retained ten-case result uses a
 bodies, two providers, and three attempts. See
 [WITNESS_ENDPOINT_HARNESS](WITNESS_ENDPOINT_HARNESS.md).
 
+## Independent witness operator handoff
+
+The frozen Post-M25 request binds eight M24 source artifacts, three commands,
+three success cases, and seven refusal cases. Its returned-record qualification
+accepts one synthetic conforming record and refuses thirteen request, control,
+origin, outcome, CI, digest, path, time, and schema faults. This validates only
+the repository-owned handoff boundary. See
+[WITNESS_OPERATOR_HANDOFF](WITNESS_OPERATOR_HANDOFF.md).
+The retained aggregate explicitly sets `independent_evidence` to false.
+
 ## Compatibility consumer qualification
 
 The independent Python reader and Rust compatibility boundary agree on three

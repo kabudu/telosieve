@@ -129,6 +129,12 @@ endpoint mutation authority. All processes, credentials, keys, and execution
 remain project-controlled and TLS/live-network/independent-operator evidence is
 absent, so the release block remains.
 
+A commit- and digest-bound Post-M25 operator request plus strict returned-record
+validator now prepares the independent witness exercise. The validator refuses
+thirteen policy, origin, freshness, path, schema, and digest faults but cannot
+verify real identity or organizational independence. No independently signed
+record or raw operator evidence has been returned, so the release block remains.
+
 ## CI and delivery policy
 
 Telosieve is private, so local CI is the sole authoritative quality gate:

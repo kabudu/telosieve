@@ -337,7 +337,14 @@ the existing cryptographic verifier within explicit request/resource bounds.
 
 ## Post-M25 — independently operated witness reproduction
 
+- [x] Freeze an operator handoff and fail-closed returned-evidence validator
+  without manufacturing or self-certifying organizational independence.
 - [ ] Integrate one independently administered timestamp/revocation endpoint
   with documented identity, custody, clock, and incident boundaries.
 - [ ] Have an independent operator reproduce durability and live network fault
   results without project-controlled credentials or execution.
+
+Preparation evidence: [WITNESS_OPERATOR_HANDOFF](WITNESS_OPERATOR_HANDOFF.md).
+The handoff binds the M24 source and required outcomes; its adversarial validator
+accepts one synthetic schema fixture and refuses thirteen integrity/policy faults.
+No independent record has been returned, so both external gates remain open.

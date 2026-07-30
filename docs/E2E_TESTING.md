@@ -125,3 +125,8 @@ timestamp/revocation HTTP processes, fetches through bounded authenticated
 transport, and verifies through the normal Rust witness boundary. It covers
 healthy, restart, partition fallback, delay, drop, unauthorized, oversized,
 outage, equivocal, and stale cases with deterministic cleanup.
+
+`scripts/qualify-witness-operator-record.py` exercises the Post-M25 return
+validator with one conforming synthetic record and thirteen fail-closed
+mutations. This qualifies the handoff parser and integrity boundary, not an
+operator, organization, endpoint, or independent result.

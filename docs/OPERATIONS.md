@@ -111,6 +111,13 @@ failure as evidence unavailability; do not cache past expiry, retry beyond the
 bound, or accept HTTP success without exact cryptographic verification. Harness
 tokens and loopback HTTP are fixtures and must not be deployed.
 
+For Post-M25 handoff work, distribute only the frozen request and exact private
+source through an approved read-only channel. Do not provide endpoint
+credentials or operate the assessor's environment. Validate returned records
+with `python3 scripts/witness_operator_record.py RECORD.json`, then separately
+verify operator identity, signature, custody, and raw evidence before changing
+any independent-reproduction checklist state.
+
 For `shadow-kubernetes`, export the ConfigMap and StatefulSet evidence through a
 separate read-only process, preserve the raw export, and run Telosieve offline.
 Treat drift, incomplete observations, stale generations, identity changes, or

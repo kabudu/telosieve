@@ -22,7 +22,9 @@ REQUIRED = (
     "docs/SUPPLY_CHAIN.md",
     "docs/THREAT_MODEL.md",
     "docs/VALIDATION.md",
+    "docs/WITNESS_OPERATOR_HANDOFF.md",
     "assessment/manifest.json",
+    "assessment/witness-operator-request.json",
 )
 LINK = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
 PLACEHOLDER = re.compile(r"\b(?:TODO|FIXME|REPLACE_WITH)\b")
