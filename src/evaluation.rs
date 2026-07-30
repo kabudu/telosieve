@@ -9,11 +9,16 @@ use thiserror::Error;
 
 use crate::{
     certificate::Decision,
-    engine::{RunError, certificate_temporary_path, run_kubernetes_shadow_file},
+    engine::{
+        RunError, certificate_temporary_path, read_scenario, run_kubernetes_shadow_file,
+        run_kubernetes_shadow_snapshot,
+    },
+    kubernetes_live::{LiveError, LiveKubernetesConfig},
     model::digest,
 };
 
 pub const CONFIG_SCHEMA_VERSION: &str = "telosieve.evaluation-config/v1";
+pub const LIVE_CONFIG_SCHEMA_VERSION: &str = "telosieve.evaluation-config/v2";
 pub const REPORT_SCHEMA_VERSION: &str = "telosieve.evaluation-report/v1";
 pub const MAX_CONFIG_BYTES: u64 = 64 * 1024;
 const MAX_PATH_BYTES: usize = 4096;
@@ -21,13 +26,24 @@ const KUBERNETES_SHADOW_MODE: &str = "kubernetes-shadow";
 
 #[derive(Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
-struct EvaluationConfig {
+struct EvaluationConfigV1 {
     schema_version: String,
     mode: String,
     scenario_path: String,
     snapshot_path: String,
     certificate_path: String,
     ledger_path: String,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct EvaluationConfigV2 {
+    schema_version: String,
+    mode: String,
+    scenario_path: String,
+    certificate_path: String,
+    ledger_path: String,
+    kubernetes: LiveKubernetesConfig,
 }
 
 #[derive(Debug, PartialEq, Eq, Serialize)]
@@ -59,6 +75,8 @@ pub enum EvaluationError {
     ConfigOutputCollision,
     #[error("evaluation failed: {0}")]
     Run(#[from] RunError),
+    #[error("live Kubernetes collection failed: {0}")]
+    Live(#[from] LiveError),
 }
 
 /// Runs the stable read-only evaluation boundary from a bounded configuration.
@@ -84,38 +102,124 @@ pub fn run_config_file(config_path: &Path) -> Result<EvaluationReport, Evaluatio
     {
         return Err(EvaluationError::ConfigTooLarge);
     }
-    let config: EvaluationConfig = serde_json::from_slice(&bytes)?;
-    if config.schema_version != CONFIG_SCHEMA_VERSION {
-        return Err(EvaluationError::Schema);
-    }
-    if config.mode != KUBERNETES_SHADOW_MODE {
-        return Err(EvaluationError::Mode);
-    }
+    let value: serde_json::Value = serde_json::from_slice(&bytes)?;
+    let schema = value
+        .get("schema_version")
+        .and_then(serde_json::Value::as_str)
+        .ok_or(EvaluationError::Schema)?;
     let base = canonical_config
         .parent()
         .ok_or_else(|| EvaluationError::Path("configuration has no parent directory".into()))?;
+    if schema == CONFIG_SCHEMA_VERSION {
+        let config: EvaluationConfigV1 = serde_json::from_value(value)?;
+        if config.schema_version != CONFIG_SCHEMA_VERSION {
+            return Err(EvaluationError::Schema);
+        }
+        if config.mode != KUBERNETES_SHADOW_MODE {
+            return Err(EvaluationError::Mode);
+        }
+        let scenario = resolve_path(base, &config.scenario_path, "scenario_path")?;
+        let snapshot = resolve_path(base, &config.snapshot_path, "snapshot_path")?;
+        let certificate = resolve_path(base, &config.certificate_path, "certificate_path")?;
+        let ledger = resolve_path(base, &config.ledger_path, "ledger_path")?;
+        reject_config_collision(&canonical_config, &certificate, &ledger)?;
+        let certificate_value =
+            run_kubernetes_shadow_file(&scenario, &snapshot, &certificate, &ledger)?;
+        return Ok(report(
+            CONFIG_SCHEMA_VERSION,
+            KUBERNETES_SHADOW_MODE,
+            &certificate_value,
+        ));
+    }
+    if schema != LIVE_CONFIG_SCHEMA_VERSION {
+        return Err(EvaluationError::Schema);
+    }
+    let config: EvaluationConfigV2 = serde_json::from_value(value)?;
+    if config.schema_version != LIVE_CONFIG_SCHEMA_VERSION {
+        return Err(EvaluationError::Schema);
+    }
+    if config.mode != "kubernetes-live" {
+        return Err(EvaluationError::Mode);
+    }
     let scenario = resolve_path(base, &config.scenario_path, "scenario_path")?;
-    let snapshot = resolve_path(base, &config.snapshot_path, "snapshot_path")?;
     let certificate = resolve_path(base, &config.certificate_path, "certificate_path")?;
     let ledger = resolve_path(base, &config.ledger_path, "ledger_path")?;
-    let certificate_temporary = certificate_temporary_path(&certificate);
-    for output in [&certificate, &certificate_temporary, &ledger] {
+    reject_config_collision(&canonical_config, &certificate, &ledger)?;
+    reject_live_path_collisions(
+        &scenario,
+        Path::new(&config.kubernetes.kubectl_path),
+        Path::new(&config.kubernetes.kubeconfig_path),
+        &certificate,
+        &ledger,
+    )?;
+    let scenario_value = read_scenario(&scenario)?;
+    let snapshot = crate::kubernetes_live::collect(&scenario_value, &config.kubernetes)?;
+    let certificate_value =
+        run_kubernetes_shadow_snapshot(&scenario_value, &snapshot, &certificate, &ledger)?;
+    Ok(report(
+        LIVE_CONFIG_SCHEMA_VERSION,
+        "kubernetes-live",
+        &certificate_value,
+    ))
+}
+
+fn reject_live_path_collisions(
+    scenario: &Path,
+    kubectl: &Path,
+    kubeconfig: &Path,
+    certificate: &Path,
+    ledger: &Path,
+) -> Result<(), EvaluationError> {
+    let inputs = [
+        fs::canonicalize(scenario)?,
+        fs::canonicalize(kubectl)?,
+        fs::canonicalize(kubeconfig)?,
+    ];
+    let outputs = [
+        canonical_output_path(certificate)?,
+        canonical_output_path(&certificate_temporary_path(certificate))?,
+        canonical_output_path(ledger)?,
+    ];
+    if outputs[0] == outputs[1]
+        || outputs[0] == outputs[2]
+        || outputs[1] == outputs[2]
+        || outputs
+            .iter()
+            .any(|output| inputs.iter().any(|input| input == output))
+    {
+        return Err(EvaluationError::ConfigOutputCollision);
+    }
+    Ok(())
+}
+
+fn reject_config_collision(
+    canonical_config: &Path,
+    certificate: &Path,
+    ledger: &Path,
+) -> Result<(), EvaluationError> {
+    let certificate_temporary = certificate_temporary_path(certificate);
+    for output in [certificate, certificate_temporary.as_path(), ledger] {
         if canonical_output_path(output)? == canonical_config {
             return Err(EvaluationError::ConfigOutputCollision);
         }
     }
+    Ok(())
+}
 
-    let certificate_value =
-        run_kubernetes_shadow_file(&scenario, &snapshot, &certificate, &ledger)?;
-    Ok(EvaluationReport {
+fn report(
+    configuration_schema: &'static str,
+    mode: &'static str,
+    certificate_value: &crate::certificate::Certificate,
+) -> EvaluationReport {
+    EvaluationReport {
         schema_version: REPORT_SCHEMA_VERSION,
-        configuration_schema: CONFIG_SCHEMA_VERSION,
-        mode: KUBERNETES_SHADOW_MODE,
+        configuration_schema,
+        mode,
         scenario_id: certificate_value.scenario_id.clone(),
         decision: certificate_value.decision.clone(),
         certificate_digest: digest(&certificate_value),
         target_mutated: false,
-    })
+    }
 }
 
 fn resolve_path(base: &Path, value: &str, field: &str) -> Result<PathBuf, EvaluationError> {

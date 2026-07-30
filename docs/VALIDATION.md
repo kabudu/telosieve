@@ -300,6 +300,17 @@ field, schema, mode, path, collision, configuration-size, and scenario-size
 failures produce no success report; the scenario file boundary is capped at
 2 MiB for all CLI paths. See [EVALUATION_CLI](EVALUATION_CLI.md).
 
+## Live Kubernetes collector
+
+The real `telosieve evaluate` process accepts v2 live configuration and drives a
+separate fake `kubectl` executable through the production subprocess boundary.
+The healthy case proves the exact four-call `get` protocol, output evidence,
+report schema, and absence of mutation verbs. Controller drift, unready Pod,
+wrong owner, unsupported selector expression, nonzero process exit, output over
+1 MiB, and a process exceeding five seconds all fail without certificate or
+ledger output. This is a
+project-controlled integration harness, not real-cluster qualification.
+
 ## Compatibility consumer qualification
 
 The independent Python reader and Rust compatibility boundary agree on three

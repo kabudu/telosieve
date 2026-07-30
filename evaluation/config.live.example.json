@@ -1,0 +1,15 @@
+{
+  "schema_version": "telosieve.evaluation-config/v2",
+  "mode": "kubernetes-live",
+  "scenario_path": "../scenarios/benign.json",
+  "certificate_path": "out/live-certificate.json",
+  "ledger_path": "out/live-ledger.jsonl",
+  "kubernetes": {
+    "kubectl_path": "/usr/local/bin/kubectl",
+    "kubeconfig_path": "/var/run/telosieve/kubeconfig",
+    "context": "evaluation",
+    "namespace": "telosieve-research",
+    "desired_config_map": "repair-goal",
+    "observed_stateful_set": "research-kv"
+  }
+}

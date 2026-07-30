@@ -1,0 +1,96 @@
+#!/usr/bin/env python3
+import json
+import os
+import sys
+import time
+
+args = sys.argv[1:]
+log = os.environ["TELOSIEVE_KUBECTL_LOG"]
+with open(log, "a", encoding="utf-8") as stream:
+    stream.write(json.dumps(args) + "\n")
+
+namespace = "telosieve-research"
+metadata = {
+    "name": "research-kv",
+    "namespace": namespace,
+    "uid": "1dff3e34-3c1c-4cbe-ac7b-5ae13032c002",
+    "resourceVersion": "73",
+    "generation": 9,
+}
+statefulset = {
+    "apiVersion": "apps/v1",
+    "kind": "StatefulSet",
+    "metadata": metadata,
+    "spec": {"replicas": 3, "selector": {"matchLabels": {"app": "research-kv"}}},
+    "status": {"observedGeneration": 9, "readyReplicas": 3},
+}
+if os.environ.get("TELOSIEVE_KUBECTL_CASE") == "selector-expression":
+    statefulset["spec"]["selector"]["matchExpressions"] = [
+        {"key": "track", "operator": "In", "values": ["stable"]}
+    ]
+resource = args[args.index("get") + 1]
+case = os.environ.get("TELOSIEVE_KUBECTL_CASE")
+if case == "error":
+    sys.stderr.write("bounded simulated API refusal")
+    sys.exit(1)
+if case == "timeout":
+    time.sleep(6)
+if case == "oversized":
+    sys.stdout.write("x" * (1024 * 1024 + 1))
+    sys.exit(0)
+if resource == "configmap":
+    result = {
+        "apiVersion": "v1",
+        "kind": "ConfigMap",
+        "metadata": {
+            "name": "repair-goal",
+            "namespace": namespace,
+            "uid": "7fc5de6d-4a76-4c65-bce0-5cbb1fb83001",
+            "resourceVersion": "41",
+        },
+        "data": {"cluster/epoch": "7", "user/message": "new"},
+    }
+    if case == "not-ready":
+        result["items"][0]["status"]["conditions"][0]["status"] = "False"
+    if case == "wrong-owner":
+        result["items"][0]["metadata"]["ownerReferences"][0]["uid"] = "other-controller"
+elif resource == "pods":
+    owner = {
+        "apiVersion": "apps/v1",
+        "kind": "StatefulSet",
+        "name": "research-kv",
+        "uid": metadata["uid"],
+        "controller": True,
+    }
+    result = {
+        "apiVersion": "v1",
+        "kind": "PodList",
+        "items": [
+            {
+                "metadata": {
+                    "name": name,
+                    "namespace": namespace,
+                    "uid": f"pod-{name}",
+                    "resourceVersion": "52",
+                    "ownerReferences": [owner],
+                    "annotations": {
+                        "telosieve.io/values": json.dumps(
+                            {"cluster/epoch": "7", "user/message": "old"}
+                        )
+                    },
+                },
+                "status": {"conditions": [{"type": "Ready", "status": "True"}]},
+            }
+            for name in ("replica-a", "replica-b", "replica-c")
+        ],
+    }
+else:
+    result = statefulset
+    counter = os.environ["TELOSIEVE_KUBECTL_COUNTER"]
+    count = int(open(counter, encoding="utf-8").read()) if os.path.exists(counter) else 0
+    with open(counter, "w", encoding="utf-8") as stream:
+        stream.write(str(count + 1))
+    if case == "drift" and count:
+        result["metadata"] = dict(metadata, resourceVersion="74")
+
+json.dump(result, sys.stdout)

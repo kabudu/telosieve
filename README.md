@@ -99,6 +99,11 @@ mkdir -p out
 cargo run --locked --offline -- evaluate evaluation/config.example.json
 ```
 
+Configuration v2 also supports bounded, read-only live Kubernetes collection
+through an explicitly selected `kubectl` and kubeconfig. See
+[Evaluation CLI](docs/EVALUATION_CLI.md); this remains evaluation software and
+the repository's fake-process evidence is not real-cluster qualification.
+
 See [Versioned Evaluation CLI](docs/EVALUATION_CLI.md). This mode writes only
 certificate and ledger evidence; it has no target-system mutation authority.
 

@@ -2,7 +2,7 @@
 
 ## Stable boundary
 
-The first evaluation interface is:
+The evaluation interface is:
 
 ```sh
 mkdir -p out
@@ -77,6 +77,35 @@ silently migrated. Configuration validation completes before scenario or
 snapshot reads. Scenario and snapshot bytes are unchanged by evaluation, and
 the resulting certificate contains shadow evidence but no actuation record.
 
-The interface does not yet collect live Kubernetes state, install itself, redact
-an assessor bundle, or qualify production resources. Those remain separate
+The v2 `kubernetes-live` mode accepts the common scenario, certificate, and
+ledger paths plus a `kubernetes` object containing absolute `kubectl_path` and
+`kubeconfig_path` values, context, namespace, desired ConfigMap name, and
+observed StatefulSet name. It issues exactly four subprocess calls: ConfigMap,
+StatefulSet, selected Pods, and the same StatefulSet again. Every call is a
+fixed `get`, has a five-second process timeout, and accepts at most 1 MiB stdout
+and 16 KiB stderr. Collection refuses stale or unready controllers, incomplete,
+unready, or incorrectly owned Pods, invalid identities, and any pre/post
+StatefulSet change. Pod state is read from the JSON object in the
+`telosieve.io/values` annotation and is then checked by the existing
+authenticated shadow evaluator. The controller selector must contain 1–16
+bounded `matchLabels`; `matchExpressions` refuse rather than being approximated.
+
+`evaluation/config.live.example.json` is the versioned example. Its absolute
+binary and credential paths are illustrative and must be replaced with
+operator-controlled regular files; its output directory must exist.
+
+Use `deploy/kubernetes/evaluation-rbac.yaml` as a concrete least-privilege
+starting point, changing its namespace and resource names together with the
+evaluation configuration. It grants only ConfigMap `get`, StatefulSet `get`,
+and Pod `get/list`; it grants no Secret or mutation access. The supplied
+kubeconfig and `kubectl` binary are trusted operator inputs and may include
+credential plugins, so protect and review both.
+
+The live process harness uses a fake executable to prove command shape,
+success, drift refusal, evidence behavior, and absence of mutation verbs. This
+is not real-cluster permission, network, Kubernetes-version, or availability
+qualification.
+
+The interface does not yet install itself, redact an assessor bundle, or
+qualify production resources. Those remain separate
 candidate-readiness milestones.

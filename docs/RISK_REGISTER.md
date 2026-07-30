@@ -12,7 +12,7 @@
 | R8 | Name/package collision | Low | Medium | Repeat registry/domain/trademark search pre-launch |
 | R9 | VM/filesystem tests mistaken for device-level durability | Medium | Critical | Record execution/filesystem metadata; require bare-metal power-loss testing before production claims |
 | R10 | Lifecycle recovery root or trusted tip is compromised or rolled back | Medium | Critical | Separate offline roots; bind chains/tips into evidence; require durable quorum or hardware roots before production |
-| R11 | Exported Kubernetes snapshot is coherent but not live cluster truth | Medium | High | Bind UID/resource versions/time and signed authorities; require independently collected live observations before promotion |
+| R11 | Project-controlled Kubernetes collection evidence may not represent a real target cluster | Medium | High | Live v2 binds object identity and pre/post controller equality under least-privilege reads; require real-cluster and independent qualification before candidate promotion |
 | R12 | Malformed input reaches an untested parser edge | Medium | High | Bounded deterministic corpora; retain minimized regressions; require deeper independent fuzzing before release |
 | R13 | Evaluation label is mistaken for production authorization | Medium | Critical | Read-only supported mode; machine-checked prohibitions; explicit promotion decision |
 | R14 | Evaluation collector gains mutation or excess read privileges | Medium | Critical | Least-privilege manifests; no mutation verbs or credentials; fail-closed permission tests |

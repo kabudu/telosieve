@@ -358,7 +358,7 @@ No independent record has been returned, so both external gates remain open.
 - [x] Define candidate readiness and production-promotion gates without
   weakening the private-repository local-CI policy.
 - [x] Stabilize a versioned evaluation CLI and strictly validated configuration.
-- [ ] Add a fail-closed, least-privilege live Kubernetes read-only collector.
+- [x] Add a fail-closed, least-privilege live Kubernetes read-only collector.
 - [ ] Package documented install, upgrade, rollback, backup, and uninstall
   workflows for supported evaluation platforms.
 - [ ] Add bounded operator diagnostics and privacy-reviewed evidence export.
@@ -372,4 +372,8 @@ an evaluation release or production promotion.
 
 CLI evidence: [EVALUATION_CLI](EVALUATION_CLI.md). The v1 read-only command and
 configuration pass their real process/file lifecycle plus nine fail-closed
-configuration and input-bound cases; live collection remains the next milestone.
+configuration and input-bound cases. The v2 live mode adds a four-read,
+time/response-bounded `kubectl` collector with pre/post controller consistency,
+pod ownership/readiness checks, and a namespace-scoped example RBAC grant. Its
+process harness is project-controlled simulation evidence, not real-cluster
+qualification.

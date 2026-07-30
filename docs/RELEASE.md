@@ -148,12 +148,15 @@ remediation, production adapter evidence, identity/custody design, and a new
 explicit decision. Until those gates pass, Telosieve remains evaluation software
 with no production mutation authority.
 
-The stable `evaluate` command now accepts only
-`telosieve.evaluation-config/v1` and emits
+The stable `evaluate` command accepts the compatible exported-snapshot v1
+configuration and the live read-only v2 configuration, and emits
 `telosieve.evaluation-report/v1` after persisted read-only shadow evidence.
 Unknown versions, mutation modes, oversized files, invalid paths, and output
-collisions refuse. This completes one candidate-readiness gate, not a candidate
-release.
+collisions refuse. Live collection performs four bounded `kubectl get` calls,
+checks controller stability plus Pod ownership/readiness, and ships a
+least-privilege example Role. Its fake-process evidence does not qualify a real
+cluster. This completes two candidate-readiness engineering gates, not a
+candidate release.
 
 ## CI and delivery policy
 

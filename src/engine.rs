@@ -90,9 +90,18 @@ pub fn run_kubernetes_shadow_file(
     }
     let snapshot: crate::kubernetes_shadow::KubernetesShadowSnapshot =
         serde_json::from_slice(&snapshot_bytes)?;
-    let authorities = verify(&scenario)?;
-    let shadow = crate::kubernetes_shadow::validate(&scenario, &authorities, &snapshot)?;
-    let mut certificate = run_verified_scenario(&scenario, authorities)?;
+    run_kubernetes_shadow_snapshot(&scenario, &snapshot, certificate_path, ledger_path)
+}
+
+pub(crate) fn run_kubernetes_shadow_snapshot(
+    scenario: &Scenario,
+    snapshot: &crate::kubernetes_shadow::KubernetesShadowSnapshot,
+    certificate_path: &Path,
+    ledger_path: &Path,
+) -> Result<Certificate, RunError> {
+    let authorities = verify(scenario)?;
+    let shadow = crate::kubernetes_shadow::validate(scenario, &authorities, snapshot)?;
+    let mut certificate = run_verified_scenario(scenario, authorities)?;
     certificate.certificate_version = crate::certificate::CERTIFICATE_VERSION_V9.into();
     certificate.shadow = Some(shadow);
     persist_evidence(&certificate, certificate_path, ledger_path)?;
@@ -327,7 +336,7 @@ pub(crate) fn certificate_temporary_path(certificate_path: &Path) -> PathBuf {
     certificate_path.with_extension("json.tmp")
 }
 
-fn read_scenario(path: &Path) -> Result<Scenario, RunError> {
+pub(crate) fn read_scenario(path: &Path) -> Result<Scenario, RunError> {
     let mut bytes = Vec::new();
     fs::File::open(path)?
         .take(MAX_SCENARIO_BYTES + 1)

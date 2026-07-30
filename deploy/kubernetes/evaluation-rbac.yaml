@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: telosieve-evaluation
+  namespace: telosieve-research
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: telosieve-evaluation-reader
+  namespace: telosieve-research
+rules:
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    resourceNames: ["repair-goal"]
+    verbs: ["get"]
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list"]
+  - apiGroups: ["apps"]
+    resources: ["statefulsets"]
+    resourceNames: ["research-kv"]
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: telosieve-evaluation-reader
+  namespace: telosieve-research
+subjects:
+  - kind: ServiceAccount
+    name: telosieve-evaluation
+    namespace: telosieve-research
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: telosieve-evaluation-reader

@@ -84,6 +84,15 @@ configuration directory, unknown schema or mode values refuse, and the
 versioned success report binds the exact certificate digest while declaring
 that the target was not mutated.
 
+Configuration v2 adds a live read-only collector without adding a Kubernetes
+SDK or mutation boundary. It invokes an absolute, operator-selected `kubectl`
+exactly four times for ConfigMap, StatefulSet, selected Pods, and the same
+StatefulSet. Per-process time and output bounds, exact pre/post controller
+equality, generation/readiness checks, Pod ownership, and existing authenticated
+shadow validation make incoherent or incomplete observations fail closed. The
+binary and kubeconfig are explicit trusted inputs; a namespace-scoped RBAC
+example grants only the reads required by this protocol.
+
 ## Failure behavior
 
 Malformed, stale, equivocal, over-budget, or unverifiable evidence yields refusal.
