@@ -10,5 +10,7 @@ pub mod kubernetes_shadow;
 pub mod model;
 pub mod protocol;
 pub mod recovery_ceremony;
+pub mod witness_availability;
+pub mod witness_tip_store;
 
 pub use engine::{RunError, run_scenario};

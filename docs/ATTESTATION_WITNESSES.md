@@ -43,3 +43,7 @@ There is no HSM custody, secure clock, gossip, multi-party log, availability
 service, organizational identity, or independent implementation ownership.
 Compromise or rollback of both a witness authority and its externally retained
 tip defeats the corresponding protection.
+
+Post-M23 adds optional local durable storage and bounded availability
+qualification for these tips. See [WITNESS_DURABILITY](WITNESS_DURABILITY.md).
+It does not turn the local fixture authorities into independent services.

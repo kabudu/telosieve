@@ -1,0 +1,58 @@
+{
+  "schema_version": "telosieve.witness-availability/v1",
+  "model": "deterministic-scripted-distribution",
+  "maximum_attempts": 3,
+  "maximum_providers": 2,
+  "maximum_budget_ms": 250,
+  "measurements": [
+    {
+      "profile": "nominal",
+      "outcome": "available",
+      "attempts": 1,
+      "elapsed_ms": 10,
+      "reason": "exact_artifact"
+    },
+    {
+      "profile": "bounded-delay",
+      "outcome": "available",
+      "attempts": 1,
+      "elapsed_ms": 249,
+      "reason": "exact_artifact"
+    },
+    {
+      "profile": "one-sided-partition",
+      "outcome": "available",
+      "attempts": 2,
+      "elapsed_ms": 100,
+      "reason": "exact_artifact"
+    },
+    {
+      "profile": "loss-exhaustion",
+      "outcome": "refused",
+      "attempts": 3,
+      "elapsed_ms": 75,
+      "reason": "unavailable"
+    },
+    {
+      "profile": "authority-outage",
+      "outcome": "refused",
+      "attempts": 2,
+      "elapsed_ms": 200,
+      "reason": "unavailable"
+    },
+    {
+      "profile": "over-budget-delay",
+      "outcome": "refused",
+      "attempts": 1,
+      "elapsed_ms": 251,
+      "reason": "budget_exhausted"
+    },
+    {
+      "profile": "equivocal-artifact",
+      "outcome": "refused",
+      "attempts": 1,
+      "elapsed_ms": 10,
+      "reason": "equivocation"
+    }
+  ]
+}

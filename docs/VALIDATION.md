@@ -261,6 +261,15 @@ The retained `telosieve.witness-qualification/v1` result reports seven passes,
 zero disagreements, 64-entry/64-KiB limits, and a two-second reader deadline.
 See [ATTESTATION_WITNESSES](ATTESTATION_WITNESSES.md).
 
+## Witness durability and availability
+
+The dual-tip store passes previous/next interrupted recovery, stale-backup
+rejection, exact-latest restore after primary loss, independent-path copy, and
+rollback/equivocation refusal on macOS and pinned network-disabled Linux arm64
+and amd64 containers. The seven-profile deterministic availability result
+records three available and four refused outcomes within three attempts and a
+250 ms virtual budget. See [WITNESS_DURABILITY](WITNESS_DURABILITY.md).
+
 ## Compatibility consumer qualification
 
 The independent Python reader and Rust compatibility boundary agree on three

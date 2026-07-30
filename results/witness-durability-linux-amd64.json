@@ -1,0 +1,11 @@
+{
+  "schema_version":"telosieve.witness-durability-linux/v1",
+  "platform":"linux/amd64",
+  "architecture":"x86_64",
+  "container_image":"rust:1.97-bookworm@sha256:77fac8b98f9f46062bb680b6d25d5bcaabfc400143952ebc572e924bcbedc3fa",
+  "network":"none",
+  "filesystem":"docker-managed-volume",
+  "cases":["host-to-linux-read-only-transfer","interrupted-previous","interrupted-next","stale-backup","exact-latest-restore","independent-path-copy","rollback-equivocation-refusal","missing-witness-refusal","oversized-state-refusal"],
+  "passed":9,
+  "failed":0
+}

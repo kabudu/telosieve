@@ -313,7 +313,20 @@ trusted tips, custody, and distribution remain research configuration.
 
 ## Post-M23 — witness durability and availability
 
-- [ ] Qualify timestamp/revocation trusted-tip persistence across crash,
+- [x] Qualify timestamp/revocation trusted-tip persistence across crash,
   backup/restore, and independent-host boundaries.
-- [ ] Measure bounded witness and revocation distribution availability under
+- [x] Measure bounded witness and revocation distribution availability under
   delay, loss, partition, and authority outage.
+
+Evidence: [WITNESS_DURABILITY](WITNESS_DURABILITY.md). Atomic dual-tip state,
+exact recovery/restore, and path-independent copies pass on macOS plus pinned
+offline Linux arm64/amd64. Seven deterministic bounded distribution profiles
+preserve three available paths and refuse loss, outage, over-budget delay, and
+equivocation.
+
+## Post-M24 — independently operated witness pilot
+
+- [ ] Integrate one independently administered timestamp/revocation endpoint
+  without adding mutation authority or weakening exact-tip verification.
+- [ ] Reproduce durability and live network fault results under an independent
+  operator with documented identity, custody, clock, and incident boundaries.

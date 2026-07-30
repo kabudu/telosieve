@@ -98,6 +98,13 @@ tips. Treat missing inputs, stale snapshots, tip mismatch, or witness
 unavailability as refusal; never extend times or roll tips back to restore
 availability. Run `scripts/run-witness-qualification.sh` after related changes.
 
+Persist timestamp and revocation tips together with `WitnessTipStore`; preserve
+its primary and recovery-witness files as one operational unit. Restore only a
+create-new backup accepted against the surviving committed witness. On missing,
+corrupt, locked, pending-inconsistent, stale, or conflicting state, stop
+verification and preserve all files. Run `scripts/run-witness-durability.sh`
+after store or distribution-policy changes.
+
 For `shadow-kubernetes`, export the ConfigMap and StatefulSet evidence through a
 separate read-only process, preserve the raw export, and run Telosieve offline.
 Treat drift, incomplete observations, stale generations, identity changes, or

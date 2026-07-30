@@ -121,6 +121,13 @@ Exact timestamp and revocation digests detect rollback and equivocation relative
 to independently retained tips. Joint authority/tip compromise, malicious
 clocks, unavailable distribution, and non-durable local tip configuration remain.
 
+Post-M23 detects local tip rollback, same-sequence conflict, interrupted
+replacement, stale/tampered restore, and copied-state inconsistency. It bounds
+distribution attempts and refuses unavailable or equivocal artifacts. A hostile
+disk, lock-owner impersonation, joint primary/witness rollback, power-loss
+semantics outside the tested filesystems, endpoint compromise, and denial of
+service remain outside the protection.
+
 The Kubernetes shadow adapter has no client or cluster credentials. It rejects
 resource-version/UID drift, partial or stale controller observations, oversized
 exports, and output/input aliasing. A malicious or incoherent exporter that

@@ -112,3 +112,10 @@ hash-chained timestamp and digest-anchored revocation snapshot. It preserves
 pre-revocation history and refuses inclusive revocation, tip rollback,
 same-sequence equivocation, staleness, signature tampering, and chain omission
 under the same two-second process deadline.
+
+Witness-tip durability tests drive initialization, atomic advance, both pending
+recovery boundaries, create-new backup, stale rejection, exact restore after
+primary loss, and a primary/witness copy through the public store API. The same
+tests run in pinned offline Linux arm64 and amd64 containers. A deterministic
+seven-profile distribution model covers delay, loss, partition, outage,
+budget exhaustion, and equivocation.

@@ -115,6 +115,13 @@ qualification agrees across seven historical and refusal cases. Keys, clock,
 tips, and distribution remain local fixtures without durable independent
 operation or availability qualification, so the release block remains.
 
+Trusted tips now have transactional local persistence, exact-latest restore, and
+pinned offline Linux arm64/amd64 filesystem qualification. A deterministic
+three-attempt, 250 ms distribution model records availability under bounded
+delay and one-sided partition while refusing loss, outage, over-budget response,
+and equivocation. No independently operated service, custody, real-network
+measurement, or power-loss qualification exists, so the release block remains.
+
 ## CI and delivery policy
 
 Telosieve is private, so local CI is the sole authoritative quality gate:

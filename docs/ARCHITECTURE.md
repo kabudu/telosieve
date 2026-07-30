@@ -62,6 +62,12 @@ or attestation bytes: a signed hash-chained timestamp log anchored by an exact
 trusted tip, and a signed revocation snapshot anchored by sequence and digest.
 Historical evidence remains valid only when witnessed before revocation.
 
+Timestamp and revocation tips can be persisted as one transactional local
+generation. A separate pending/committed recovery witness binds exact previous
+and next state digests; backups restore only the latest committed generation.
+Distribution remains an external boundary with a three-attempt, 250 ms modeled
+budget and fail-closed digest matching.
+
 The Kubernetes shadow adapter is a pre-verification mapping gate for exported
 ConfigMap/StatefulSet JSON. It requires exact equality with authenticated
 goal/phenotype content and adds resource identity/version evidence to certificate
