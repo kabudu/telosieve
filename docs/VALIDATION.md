@@ -237,3 +237,17 @@ top-level fields, confused version/extension shapes, and inputs beyond 2 MiB are
 rejected. The two exact vectors pass and are retained in
 `results/compatibility-corpus.json`. See
 [PROTOCOL_COMPATIBILITY](PROTOCOL_COMPATIBILITY.md).
+
+## Compatibility consumer qualification
+
+The independent Python reader and Rust compatibility boundary agree on three
+accepted version vectors and nine refusal classes. The accepted inputs are an
+actual v7 stateless certificate, actual v8 local-actuator certificate, and the
+retained v9 Kubernetes shadow certificate. Future versions, unknown or missing
+fields, wrong types, out-of-range integers, cross-version extensions, duplicate
+keys, malformed JSON, and oversized input all refuse in both implementations.
+
+The retained `telosieve.reader-qualification/v1` aggregate reports 13 passes and
+zero disagreements within 16-case and 2 MiB bounds. This is implementation
+diversity under project control, not independent assessment. See
+[PROTOCOL_COMPATIBILITY](PROTOCOL_COMPATIBILITY.md).

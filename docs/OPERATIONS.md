@@ -70,6 +70,17 @@ value. Migration requires verification of the authoritative scenario followed
 by new evidence generation; the historical certificate remains immutable. See
 [PROTOCOL_COMPATIBILITY](PROTOCOL_COMPATIBILITY.md).
 
+Use `scripts/certificate-reader.py` only through bounded standard input and
+preserve its SHA-256 acceptance summary with the source certificate. A refusal
+is an incident or migration stop; do not retry after stripping fields or
+relabelling versions. Run `scripts/run-reader-qualification.sh` after changing
+certificate schemas, readers, or version support.
+
+Do not remove a certificate version operationally until its documented
+deprecation has remained in force for two completed milestones, every registered
+consumer is inactive or migrated, historical reading remains available, and the
+separate explicitly approved major-compatibility gate has merged.
+
 For `shadow-kubernetes`, export the ConfigMap and StatefulSet evidence through a
 separate read-only process, preserve the raw export, and run Telosieve offline.
 Treat drift, incomplete observations, stale generations, identity changes, or

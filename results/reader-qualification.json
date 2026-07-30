@@ -1,0 +1,15 @@
+{
+  "schema_version":"telosieve.reader-qualification/v1",
+  "reader":"telosieve-python-certificate-reader/v1",
+  "independence_boundary":"python-standard-library-no-rust-or-serde-code",
+  "bounds":{"maximum_cases":16,"maximum_total_bytes":2097152,"maximum_certificate_bytes":2097152,"reader_timeout_seconds":2},
+  "versions":[
+    {"certificate_version":"telosieve.certificate/v7","source":"actual-stateless-output","status":"accepted"},
+    {"certificate_version":"telosieve.certificate/v8","source":"actual-local-actuator-output","status":"accepted"},
+    {"certificate_version":"telosieve.certificate/v9","source":"retained-kubernetes-shadow-output","status":"accepted"}
+  ],
+  "rejection_classes":["future-version","unknown-field","missing-field","wrong-type","out-of-range-integer","confused-extension","duplicate-field","malformed-json","oversized"],
+  "rust_python_disagreements":0,
+  "passed":13,
+  "failed":0
+}

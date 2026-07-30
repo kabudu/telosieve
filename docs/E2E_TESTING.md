@@ -93,3 +93,9 @@ It produces actual certificate-v7 and certificate-v8 outputs, reads the retained
 certificate-v9 shadow output, and rejects missing required trust, unknown future
 fields/versions, cross-version extension confusion, and oversized certificate
 input. `scripts/run-compatibility-corpus.sh` retains the two-vector aggregate.
+
+The same suite invokes `scripts/certificate-reader.py` as a separate Python
+process and compares its verdict with Rust for real v7, v8, and v9 outputs plus
+ten fail-closed vectors across nine refusal classes.
+`scripts/run-reader-qualification.sh` retains the 13-case version-by-version
+result only after zero disagreements.

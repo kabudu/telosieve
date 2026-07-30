@@ -44,6 +44,12 @@ cross-version extension shapes, and inputs over 2 MiB fail closed. Migration
 regenerates evidence from verified authoritative input rather than rewriting an
 existing certificate.
 
+The qualified downstream boundary is separately implemented in dependency-free
+Python. It independently rejects duplicate/unknown/missing fields, invalid
+top-level types, unsupported versions, confused extensions, malformed JSON, and
+oversized input. This provides parser diversity for the compatibility envelope,
+not full nested semantic or organizational independence.
+
 The Kubernetes shadow adapter is a pre-verification mapping gate for exported
 ConfigMap/StatefulSet JSON. It requires exact equality with authenticated
 goal/phenotype content and adds resource identity/version evidence to certificate

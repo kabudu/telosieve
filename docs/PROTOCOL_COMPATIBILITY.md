@@ -70,3 +70,53 @@ certificates are deterministic evidence records rather than signed envelopes.
 It does not migrate durable actuator schemas, external consumer databases, or
 unknown future protocol semantics. Adding another supported version requires
 explicit invariants, retained vectors, documentation, and a reviewed milestone.
+
+## Independent downstream reader
+
+`scripts/certificate-reader.py` is a dependency-free Python consumer. It shares
+no Rust, Serde, certificate type, or parsing helper with the producer. It reads
+at most 2 MiB from standard input, rejects duplicate JSON keys, validates the
+complete top-level field set and version-specific extension, and emits only a
+version, scenario identifier, input SHA-256 digest, implementation identifier,
+and acceptance status. Qualification terminates each reader process after two
+seconds.
+
+Run:
+
+```sh
+./scripts/run-reader-qualification.sh
+```
+
+The differential test passes actual v7 stateless, v8 local-actuator, and retained
+v9 shadow certificates through both readers. It also requires agreement on
+future-version, unknown-field, missing-field, wrong-type, out-of-range integer,
+confused-extension, duplicate-field, malformed-JSON, and oversized refusals. The
+bounded aggregate is retained in `results/reader-qualification.json`.
+
+This is implementation diversity on one project-controlled machine, not
+third-party or organizational independence. The Python reader validates the
+compatibility envelope and execution extension, not every nested semantic
+invariant or certificate authenticity.
+
+## Deprecation and removal policy
+
+Versions v7, v8, and v9 are **active**; none is deprecated. A version may become
+deprecated only in a reviewed milestone that satisfies all of:
+
+1. a supported successor exists with Rust and independent-reader vectors;
+2. registered consumer and retained-artifact usage has been measured;
+3. migration and rollback instructions are executable and locally validated;
+4. the release, operations, compatibility, and threat-model documents announce
+   the deprecation and its exact earliest removal milestone; and
+5. the user explicitly approves the compatibility-policy change.
+
+A deprecated version remains readable for at least two subsequently completed
+roadmap milestones. Deprecation does not permit evidence rewriting.
+
+Removal is a separate compatibility-breaking decision. It requires zero
+registered active consumers, preserved access to the historical reader and
+vectors, successful migration evidence for every registered retained artifact,
+updates to both reader implementations and the compatibility corpus, explicit
+user approval in the authorizing pull request, and classification as a major
+research-protocol compatibility change in `docs/RELEASE.md`. A calendar date,
+repository visibility change, or new version alone cannot trigger removal.

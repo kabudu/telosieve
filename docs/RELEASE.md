@@ -93,6 +93,14 @@ Unknown future semantics remain intentionally unsupported, and no independent
 downstream consumer has yet been qualified. This reduces accidental migration
 ambiguity but does not change the release decision.
 
+A separately implemented Python reader now agrees on v7–v9 acceptance and nine
+bounded refusal classes. All three versions remain active. Deprecation requires
+an evidenced successor, measured consumer usage, validated migration, two later
+completed milestone windows, and explicit approval; removal additionally
+requires zero registered consumers and a separately approved major
+research-protocol compatibility change. This local qualification is not
+third-party assessment and does not authenticate certificate origin.
+
 ## CI and delivery policy
 
 Telosieve is private, so local CI is the sole authoritative quality gate:

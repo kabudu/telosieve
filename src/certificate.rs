@@ -63,6 +63,7 @@ pub struct BaselineRecord {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct ActuationRecord {
     pub adapter: String,
     pub operation_digest: String,
@@ -71,6 +72,7 @@ pub struct ActuationRecord {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct ShadowRecord {
     pub adapter: String,
     pub snapshot_digest: String,

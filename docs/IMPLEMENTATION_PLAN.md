@@ -276,7 +276,20 @@ it never silently rewrites retained evidence.
 
 ## Post-M20 — compatibility consumer qualification
 
-- [ ] Exercise the supported certificate boundary in an independent downstream
+- [x] Exercise the supported certificate boundary in an independent downstream
   reader and retain version-by-version results.
-- [ ] Define a deprecation window and explicit removal gate for supported
+- [x] Define a deprecation window and explicit removal gate for supported
   certificate versions.
+
+Evidence: [PROTOCOL_COMPATIBILITY](PROTOCOL_COMPATIBILITY.md). A dependency-free
+Python reader agrees with Rust on three supported versions and nine refusal
+classes in 13 bounded cases. Versions v7–v9 remain active; deprecation requires
+explicit evidence and approval, and removal requires two later completed
+milestones plus zero registered consumers and a major compatibility decision.
+
+## Post-M21 — certificate evidence authenticity
+
+- [ ] Define a domain-separated certificate-attestation envelope without
+  invalidating retained unsigned research certificates.
+- [ ] Exercise signer rotation, tampering, cross-context replay, expiry, and
+  bounded verification through both supported readers.

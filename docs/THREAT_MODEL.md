@@ -94,6 +94,13 @@ that bypasses the boundary and deserializes the public structure directly.
 Validate-then-regenerate avoids mutating historical evidence but cannot recover
 missing authoritative inputs.
 
+The Python reader reduces common-parser risk for version and top-level shape
+decisions. Both implementations still follow one project-owned specification
+and run on the same host, and the Python reader deliberately does not reproduce
+all nested Rust types. A malicious certificate may therefore pass the envelope
+reader yet fail later semantic processing. Neither reader authenticates who
+created a certificate.
+
 The Kubernetes shadow adapter has no client or cluster credentials. It rejects
 resource-version/UID drift, partial or stale controller observations, oversized
 exports, and output/input aliasing. A malicious or incoherent exporter that

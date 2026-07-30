@@ -1,6 +1,13 @@
-use std::{fs, process};
+use std::{
+    fs,
+    io::{Read, Write},
+    process::{self, Command, Stdio},
+    thread,
+    time::{Duration, Instant},
+};
 
 use serde_json::{Value, json};
+use sha2::{Digest, Sha256};
 use telosieve::{
     actuator_store::LocalActuatorStore,
     certificate::{
@@ -26,6 +33,55 @@ fn scenario(path: &str) -> Scenario {
 fn assert_bounds(cases: &[Vec<u8>]) {
     assert!(cases.len() <= MAX_COMPATIBILITY_CASES);
     assert!(cases.iter().map(Vec::len).sum::<usize>() <= MAX_COMPATIBILITY_CORPUS_BYTES);
+}
+
+fn read_downstream(bytes: &[u8]) -> (std::process::Output, bool) {
+    let mut child = Command::new("python3")
+        .arg("scripts/certificate-reader.py")
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .unwrap();
+    let mut stdin = child.stdin.take().unwrap();
+    let payload = bytes.to_vec();
+    let writer = thread::spawn(move || stdin.write_all(&payload));
+    let deadline = Instant::now() + Duration::from_secs(2);
+    let mut timed_out = false;
+    let status = loop {
+        if let Some(status) = child.try_wait().unwrap() {
+            break status;
+        }
+        if Instant::now() >= deadline {
+            timed_out = true;
+            let _ = child.kill();
+            break child.wait().unwrap();
+        }
+        thread::sleep(Duration::from_millis(10));
+    };
+    let _ = writer.join().unwrap();
+    let mut stdout = Vec::new();
+    child
+        .stdout
+        .take()
+        .unwrap()
+        .read_to_end(&mut stdout)
+        .unwrap();
+    let mut stderr = Vec::new();
+    child
+        .stderr
+        .take()
+        .unwrap()
+        .read_to_end(&mut stderr)
+        .unwrap();
+    (
+        std::process::Output {
+            status,
+            stdout,
+            stderr,
+        },
+        timed_out,
+    )
 }
 
 #[test]
@@ -146,5 +202,103 @@ fn certificate_vectors_accept_v7_to_v9_and_reject_future_or_confused_shapes() {
         confused_bytes,
     ]);
 
+    fs::remove_dir_all(directory).unwrap();
+}
+
+#[test]
+fn independent_reader_agrees_on_supported_versions_and_failure_matrix() {
+    let legacy = scenario("scenarios/benign.json");
+    let certificate_v7 = run_scenario(&legacy).unwrap();
+    let bytes_v7 = serde_json::to_vec(&certificate_v7).unwrap();
+
+    let directory =
+        std::env::temp_dir().join(format!("telosieve-reader-qualification-{}", process::id()));
+    let _ = fs::remove_dir_all(&directory);
+    fs::create_dir_all(&directory).unwrap();
+    let path = directory.join("actuator.json");
+    let authorities = verify(&legacy).unwrap();
+    LocalActuatorStore::new(&path)
+        .initialize(&authorities.phenotype, &legacy.phenotype_history_anchor)
+        .unwrap();
+    let bytes_v8 = serde_json::to_vec(&run_scenario_actuated(&legacy, &path).unwrap()).unwrap();
+    let bytes_v9 = fixture("results/kubernetes-shadow-certificate.json");
+
+    for (version, bytes) in [
+        (CERTIFICATE_VERSION_V7, &bytes_v7),
+        (CERTIFICATE_VERSION_V8, &bytes_v8),
+        (CERTIFICATE_VERSION_V9, &bytes_v9),
+    ] {
+        parse_supported_certificate(bytes).unwrap();
+        let (output, timed_out) = read_downstream(bytes);
+        assert!(!timed_out, "downstream reader timed out");
+        assert!(
+            output.status.success(),
+            "{}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+        let summary: Value = serde_json::from_slice(&output.stdout).unwrap();
+        assert_eq!(summary["certificate_version"], version);
+        assert_eq!(
+            summary["implementation"],
+            "telosieve-python-certificate-reader/v1"
+        );
+        assert_eq!(summary["input_sha256"], hex::encode(Sha256::digest(bytes)));
+    }
+
+    let mut future = serde_json::to_value(&certificate_v7).unwrap();
+    future["certificate_version"] = json!("telosieve.certificate/v99");
+    let mut unknown = serde_json::to_value(&certificate_v7).unwrap();
+    unknown["future_extension"] = json!({});
+    let mut nested_unknown: Value = serde_json::from_slice(&bytes_v9).unwrap();
+    nested_unknown["shadow"]["future_extension"] = json!(true);
+    let mut missing = serde_json::to_value(&certificate_v7).unwrap();
+    missing.as_object_mut().unwrap().remove("metrics");
+    let mut wrong_type = serde_json::to_value(&certificate_v7).unwrap();
+    wrong_type["seed"] = json!("7");
+    let mut out_of_range = serde_json::to_value(&certificate_v7).unwrap();
+    out_of_range["seed"] = serde_json::from_str("18446744073709551616").unwrap();
+    let mut confused = serde_json::to_value(&certificate_v7).unwrap();
+    confused["certificate_version"] = json!(CERTIFICATE_VERSION_V8);
+    let duplicate = bytes_v7
+        .strip_prefix(b"{")
+        .map(|tail| {
+            [
+                br#"{"certificate_version":"telosieve.certificate/v7","#.as_slice(),
+                tail,
+            ]
+            .concat()
+        })
+        .unwrap();
+    let rejected = [
+        serde_json::to_vec(&future).unwrap(),
+        serde_json::to_vec(&unknown).unwrap(),
+        serde_json::to_vec(&nested_unknown).unwrap(),
+        serde_json::to_vec(&missing).unwrap(),
+        serde_json::to_vec(&wrong_type).unwrap(),
+        serde_json::to_vec(&out_of_range).unwrap(),
+        serde_json::to_vec(&confused).unwrap(),
+        duplicate,
+        b"{".to_vec(),
+    ];
+    assert!(3 + rejected.len() <= MAX_COMPATIBILITY_CASES);
+    assert!(
+        bytes_v7.len()
+            + bytes_v8.len()
+            + bytes_v9.len()
+            + rejected.iter().map(Vec::len).sum::<usize>()
+            <= MAX_COMPATIBILITY_CORPUS_BYTES
+    );
+    for bytes in rejected {
+        assert!(parse_supported_certificate(&bytes).is_err());
+        let (output, timed_out) = read_downstream(&bytes);
+        assert!(!timed_out, "downstream reader timed out");
+        assert!(!output.status.success());
+    }
+
+    let oversized = vec![b' '; MAX_COMPATIBILITY_CERTIFICATE_BYTES + 1];
+    assert!(parse_supported_certificate(&oversized).is_err());
+    let (output, timed_out) = read_downstream(&oversized);
+    assert!(!timed_out, "downstream reader timed out");
+    assert!(!output.status.success());
     fs::remove_dir_all(directory).unwrap();
 }
