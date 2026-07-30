@@ -73,7 +73,7 @@ explicit invariants, retained vectors, documentation, and a reviewed milestone.
 
 ## Independent downstream reader
 
-`scripts/certificate-reader.py` v2 is a dependency-free Python consumer. It shares
+`scripts/certificate-reader.py` v3 is a dependency-free Python consumer. It shares
 no Rust, Serde, certificate type, or parsing helper with the producer. It reads
 at most 2 MiB from standard input, rejects duplicate JSON keys, validates the
 complete top-level field set and version-specific extension, and emits only a
@@ -97,10 +97,15 @@ This is implementation diversity on one project-controlled machine, not
 third-party or organizational independence. The Python reader validates the
 compatibility envelope and execution extension, not every nested semantic
 invariant. When an attestation and trust file are explicitly supplied together,
-v2 also independently verifies the detached
+v3 also independently verifies the detached
 `telosieve.certificate-attestation/v1` envelope. Unsigned v7–v9 reading remains
 available for historical compatibility and is never silently promoted to
 authenticated evidence.
+
+Reader v3 optionally accepts the all-or-nothing timestamp-chain,
+revocation-snapshot, and witness-trust inputs. These detached schemas do not
+alter certificate or attestation bytes; requesting witness verification never
+falls back when any witness input fails.
 
 ## Deprecation and removal policy
 

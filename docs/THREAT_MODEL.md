@@ -115,6 +115,12 @@ qualification but is project-controlled and unaudited. Rust `ed25519-dalek`
 strict verification remains the primary research implementation; neither
 constitutes production HSM or organizational assurance.
 
+The Post-M22 witness prototype bounds backdating after revocation by requiring a
+separate signed timestamp observed before the inclusive revocation boundary.
+Exact timestamp and revocation digests detect rollback and equivocation relative
+to independently retained tips. Joint authority/tip compromise, malicious
+clocks, unavailable distribution, and non-durable local tip configuration remain.
+
 The Kubernetes shadow adapter has no client or cluster credentials. It rejects
 resource-version/UID drift, partial or stale controller observations, oversized
 exports, and output/input aliasing. A malicious or incoherent exporter that

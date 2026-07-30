@@ -106,3 +106,9 @@ independent Python reader. Both accept the two declared signing windows and
 refuse tampering, a different certificate, cross-context replay, expiry, and
 issuance outside the selected key window. The runner retains seven cases with a
 two-second per-reader deadline.
+
+`tests/witness.rs` then requires both readers to verify a separately signed,
+hash-chained timestamp and digest-anchored revocation snapshot. It preserves
+pre-revocation history and refuses inclusive revocation, tip rollback,
+same-sequence equivocation, staleness, signature tampering, and chain omission
+under the same two-second process deadline.

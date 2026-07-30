@@ -301,7 +301,19 @@ Rust/Python disagreements.
 
 ## Post-M22 — attestation timestamp and revocation witnesses
 
-- [ ] Prototype an append-only trusted timestamp witness that prevents
+- [x] Prototype an append-only trusted timestamp witness that prevents
   compromised signers from backdating attestations.
-- [ ] Define bounded signer-revocation distribution and retained historical
+- [x] Define bounded signer-revocation distribution and retained historical
   verification semantics across both readers.
+
+Evidence: [ATTESTATION_WITNESSES](ATTESTATION_WITNESSES.md). Separate signed
+timestamp chains and digest-anchored revocation snapshots pass seven bounded
+historical and refusal cases with zero Rust/Python disagreements. Authorities,
+trusted tips, custody, and distribution remain research configuration.
+
+## Post-M23 — witness durability and availability
+
+- [ ] Qualify timestamp/revocation trusted-tip persistence across crash,
+  backup/restore, and independent-host boundaries.
+- [ ] Measure bounded witness and revocation distribution availability under
+  delay, loss, partition, and authority outage.

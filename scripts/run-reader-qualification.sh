@@ -10,7 +10,7 @@ cargo test --locked --offline --test compatibility "$test_name" -- --exact >&2
 
 printf '{\n'
 printf '  "schema_version":"telosieve.reader-qualification/v1",\n'
-printf '  "reader":"telosieve-python-certificate-reader/v2",\n'
+printf '  "reader":"telosieve-python-certificate-reader/v3",\n'
 printf '  "independence_boundary":"python-standard-library-no-rust-or-serde-code",\n'
 printf '  "bounds":{"maximum_cases":16,"maximum_total_bytes":2097152,"maximum_certificate_bytes":2097152,"reader_timeout_seconds":2},\n'
 printf '  "versions":[\n'

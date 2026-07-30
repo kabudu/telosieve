@@ -57,17 +57,18 @@ Run:
 The retained result covers old/new rotation acceptance plus tampered signature,
 wrong certificate, cross-context replay, expiry, and outside-key-window refusal
 with zero Rust/Python disagreements. Rust uses `ed25519-dalek` strict
-verification. The dependency-free Python reader v2 independently implements
+verification. The dependency-free Python reader v3 independently implements
 canonical parsing, lifecycle checks, prime-subgroup point checks, and Ed25519
 verification for qualification.
 
 ## Residual limits
 
-The repository contains only deterministic test private keys. It does not
-provide production key generation, custody, HSM integration, secure time,
-revocation distribution, transparency logging, or organizational signer
-identity. A compromised key can backdate an attestation within its declared
-window unless an external trusted timestamp or append-only witness prevents it.
+The repository contains only deterministic test private keys. Post-M22 adds an
+optional local timestamp/revocation witness prototype, but no production key
+generation, custody, HSM integration, secure time, durable distribution,
+transparency service, or organizational signer identity. A compromised key can
+backdate within its declared window unless callers require the separately
+anchored witness contract.
 
 The pure-Python verifier provides implementation diversity but has not received
 independent cryptographic review and is not presented as a production crypto

@@ -57,6 +57,11 @@ Verification is bounded by certificate/attestation bytes and at most eight
 trusted keys. Both Rust and the independent Python reader implement the envelope
 and signature checks.
 
+Stronger authenticity adds two detached authorities without changing certificate
+or attestation bytes: a signed hash-chained timestamp log anchored by an exact
+trusted tip, and a signed revocation snapshot anchored by sequence and digest.
+Historical evidence remains valid only when witnessed before revocation.
+
 The Kubernetes shadow adapter is a pre-verification mapping gate for exported
 ConfigMap/StatefulSet JSON. It requires exact equality with authenticated
 goal/phenotype content and adds resource identity/version evidence to certificate

@@ -1,0 +1,12 @@
+{
+  "schema_version":"telosieve.witness-qualification/v1",
+  "timestamp_schema":"telosieve.attestation-timestamp/v1",
+  "revocation_schema":"telosieve.signer-revocations/v1",
+  "readers":["rust-ed25519-dalek","telosieve-python-certificate-reader/v3"],
+  "bounds":{"maximum_timestamp_records":64,"maximum_revocations":64,"maximum_file_bytes":65536,"maximum_revocation_lifetime_seconds":2592000,"reader_timeout_seconds":2},
+  "accepted":["witnessed-before-revocation"],
+  "refused":["witnessed-at-revocation","timestamp-tip-rollback","same-sequence-revocation-equivocation","stale-revocation-snapshot","tampered-timestamp-signature","omitted-timestamp-chain"],
+  "rust_python_disagreements":0,
+  "passed":7,
+  "failed":0
+}

@@ -55,6 +55,7 @@ pub struct AttestationTrust {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
+#[non_exhaustive]
 pub struct VerifiedAttestation {
     pub signer: String,
     pub key_id: String,

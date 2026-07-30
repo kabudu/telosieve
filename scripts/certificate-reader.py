@@ -14,8 +14,12 @@ MAX_CERTIFICATE_BYTES = 2 * 1024 * 1024
 MAX_ATTESTATION_BYTES = 64 * 1024
 MAX_ATTESTATION_KEYS = 8
 MAX_ATTESTATION_LIFETIME_SECONDS = 30 * 24 * 60 * 60
+MAX_WITNESS_RECORDS = 64
+MAX_REVOCATIONS = 64
 MAX_U64 = (1 << 64) - 1
 ATTESTATION_SCHEMA = "telosieve.certificate-attestation/v1"
+TIMESTAMP_SCHEMA = "telosieve.attestation-timestamp/v1"
+REVOCATION_SCHEMA = "telosieve.signer-revocations/v1"
 SUPPORTED = {
     "telosieve.certificate/v7": (False, False),
     "telosieve.certificate/v8": (True, False),
@@ -59,6 +63,21 @@ ATTESTATION_FIELDS = {
 }
 TRUST_FIELDS = {"context", "evaluation_time", "keys"}
 TRUST_KEY_FIELDS = {"signer", "key_id", "public_key", "not_before", "not_after"}
+TIMESTAMP_FIELDS = {
+    "schema_version", "context", "sequence", "previous_digest",
+    "attestation_sha256", "observed_at", "authority", "key_id", "signature",
+}
+REVOCATION_FIELDS = {
+    "schema_version", "context", "sequence", "issued_at", "expires_at",
+    "entries", "authority", "key_id", "signature",
+}
+REVOCATION_ENTRY_FIELDS = {"signer", "key_id", "revoked_at"}
+WITNESS_TRUST_FIELDS = {
+    "context", "evaluation_time", "timestamp_authority", "timestamp_key_id",
+    "timestamp_public_key", "trusted_tip_sequence", "trusted_tip_digest",
+    "revocation_authority", "revocation_key_id", "revocation_public_key",
+    "trusted_revocation_sequence", "trusted_revocation_digest",
+}
 
 FIELD = 2**255 - 19
 ORDER = 2**252 + 27742317777372353535851937790883648493
@@ -291,7 +310,7 @@ def read_certificate(stream: Any) -> tuple[dict[str, Any], bytes]:
     return validate_certificate(value), raw
 
 
-def load_bounded_json(path: str, maximum: int, label: str) -> tuple[dict[str, Any], bytes]:
+def load_bounded_json(path: str, maximum: int, label: str) -> tuple[Any, bytes]:
     with open(path, "rb") as stream:
         raw = stream.read(maximum + 1)
     if len(raw) > maximum:
@@ -300,8 +319,6 @@ def load_bounded_json(path: str, maximum: int, label: str) -> tuple[dict[str, An
         value = json.loads(raw, object_pairs_hook=unique_object)
     except (UnicodeDecodeError, json.JSONDecodeError) as error:
         raise ReaderError(f"{label} JSON is malformed") from error
-    if not isinstance(value, dict):
-        raise ReaderError(f"{label} must be an object")
     return value, raw
 
 
@@ -388,29 +405,209 @@ def verify_attestation(
     return attestation
 
 
+def canonical_json(value: Any) -> bytes:
+    return json.dumps(value, ensure_ascii=False, separators=(",", ":")).encode()
+
+
+def signed_message(domain: str, value: dict[str, Any]) -> bytes:
+    return domain.encode() + b"\0" + canonical_json(value)
+
+
+def verify_witnesses(
+    attestation: dict[str, Any],
+    attestation_raw: bytes,
+    timestamps: Any,
+    revocations: dict[str, Any],
+    revocations_raw: bytes,
+    trust: dict[str, Any],
+) -> dict[str, Any]:
+    exact_object(trust, WITNESS_TRUST_FIELDS, "witness trust")
+    text_fields = {
+        "context", "timestamp_authority", "timestamp_key_id",
+        "revocation_authority", "revocation_key_id",
+    }
+    if (
+        any(not valid_text(trust[field]) for field in text_fields)
+        or not canonical_hex(trust["timestamp_public_key"], 32)
+        or not canonical_hex(trust["revocation_public_key"], 32)
+        or not canonical_hex(trust["trusted_tip_digest"], 32)
+        or not canonical_hex(trust["trusted_revocation_digest"], 32)
+        or not is_unsigned(trust["evaluation_time"])
+        or not is_unsigned(trust["trusted_tip_sequence"])
+        or trust["trusted_tip_sequence"] == 0
+        or not is_unsigned(trust["trusted_revocation_sequence"])
+        or trust["trusted_revocation_sequence"] == 0
+    ):
+        raise ReaderError("witness trust is invalid")
+    if not isinstance(timestamps, list) or not 1 <= len(timestamps) <= MAX_WITNESS_RECORDS:
+        raise ReaderError("timestamp chain exceeds its bound")
+
+    predecessor = None
+    previous_observed_at = None
+    match = None
+    attestation_digest = hashlib.sha256(attestation_raw).hexdigest()
+    for index, record_value in enumerate(timestamps, 1):
+        record = exact_object(record_value, TIMESTAMP_FIELDS, "timestamp")
+        if (
+            record["schema_version"] != TIMESTAMP_SCHEMA
+            or record["context"] != trust["context"]
+            or record["sequence"] != index
+            or record["previous_digest"] != predecessor
+            or record["authority"] != trust["timestamp_authority"]
+            or record["key_id"] != trust["timestamp_key_id"]
+            or not canonical_hex(record["attestation_sha256"], 32)
+            or not canonical_hex(record["signature"], 64)
+            or not is_unsigned(record["observed_at"])
+            or (
+                previous_observed_at is not None
+                and record["observed_at"] < previous_observed_at
+            )
+        ):
+            raise ReaderError("timestamp chain is invalid")
+        unsigned = {
+            "schema_version": record["schema_version"],
+            "context": record["context"],
+            "sequence": record["sequence"],
+            "previous_digest": record["previous_digest"],
+            "attestation_sha256": record["attestation_sha256"],
+            "observed_at": record["observed_at"],
+            "authority": record["authority"],
+            "key_id": record["key_id"],
+        }
+        verify_ed25519(
+            bytes.fromhex(trust["timestamp_public_key"]),
+            bytes.fromhex(record["signature"]),
+            signed_message(TIMESTAMP_SCHEMA, unsigned),
+        )
+        if record["attestation_sha256"] == attestation_digest:
+            if match is not None:
+                raise ReaderError("attestation has ambiguous timestamp records")
+            match = record
+        predecessor = hashlib.sha256(canonical_json({
+            **unsigned, "signature": record["signature"]
+        })).hexdigest()
+        previous_observed_at = record["observed_at"]
+    if (
+        timestamps[-1]["sequence"] != trust["trusted_tip_sequence"]
+        or predecessor != trust["trusted_tip_digest"]
+        or match is None
+    ):
+        raise ReaderError("timestamp trusted tip is incomplete or rolled back")
+    if not (attestation["issued_at"] <= match["observed_at"] < attestation["expires_at"]):
+        raise ReaderError("attestation timestamp is outside its validity interval")
+
+    exact_object(revocations, REVOCATION_FIELDS, "revocation snapshot")
+    if (
+        revocations["schema_version"] != REVOCATION_SCHEMA
+        or hashlib.sha256(revocations_raw).hexdigest()
+        != trust["trusted_revocation_digest"]
+        or revocations["context"] != trust["context"]
+        or revocations["sequence"] != trust["trusted_revocation_sequence"]
+        or revocations["authority"] != trust["revocation_authority"]
+        or revocations["key_id"] != trust["revocation_key_id"]
+        or not canonical_hex(revocations["signature"], 64)
+        or not is_unsigned(revocations["issued_at"])
+        or not is_unsigned(revocations["expires_at"])
+        or revocations["issued_at"] >= revocations["expires_at"]
+        or revocations["expires_at"] - revocations["issued_at"]
+        > MAX_ATTESTATION_LIFETIME_SECONDS
+        or not revocations["issued_at"] <= trust["evaluation_time"] < revocations["expires_at"]
+        or not isinstance(revocations["entries"], list)
+        or len(revocations["entries"]) > MAX_REVOCATIONS
+    ):
+        raise ReaderError("revocation snapshot is invalid")
+    identities = set()
+    for entry in revocations["entries"]:
+        exact_object(entry, REVOCATION_ENTRY_FIELDS, "revocation entry")
+        identity = (entry["signer"], entry["key_id"])
+        if (
+            not valid_text(entry["signer"])
+            or not valid_text(entry["key_id"])
+            or not is_unsigned(entry["revoked_at"])
+            or identity in identities
+        ):
+            raise ReaderError("revocation entry is invalid")
+        identities.add(identity)
+    unsigned_revocations = {
+        "schema_version": revocations["schema_version"],
+        "context": revocations["context"],
+        "sequence": revocations["sequence"],
+        "issued_at": revocations["issued_at"],
+        "expires_at": revocations["expires_at"],
+        "entries": [
+            {
+                "signer": entry["signer"],
+                "key_id": entry["key_id"],
+                "revoked_at": entry["revoked_at"],
+            }
+            for entry in revocations["entries"]
+        ],
+        "authority": revocations["authority"],
+        "key_id": revocations["key_id"],
+    }
+    verify_ed25519(
+        bytes.fromhex(trust["revocation_public_key"]),
+        bytes.fromhex(revocations["signature"]),
+        signed_message(REVOCATION_SCHEMA, unsigned_revocations),
+    )
+    if any(
+        entry["signer"] == attestation["signer"]
+        and entry["key_id"] == attestation["key_id"]
+        and match["observed_at"] >= entry["revoked_at"]
+        for entry in revocations["entries"]
+    ):
+        raise ReaderError("attestation signer was revoked before observation")
+    return match
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--attestation")
     parser.add_argument("--trust")
+    parser.add_argument("--timestamps")
+    parser.add_argument("--revocations")
+    parser.add_argument("--witness-trust")
     arguments = parser.parse_args()
     try:
         certificate, raw = read_certificate(sys.stdin.buffer)
         if bool(arguments.attestation) != bool(arguments.trust):
             raise ReaderError("attestation and trust must be supplied together")
         attestation = None
+        timestamp = None
         if arguments.attestation:
-            attestation_value, _ = load_bounded_json(
+            attestation_value, attestation_raw = load_bounded_json(
                 arguments.attestation, MAX_ATTESTATION_BYTES, "attestation"
             )
             trust_value, _ = load_bounded_json(
                 arguments.trust, MAX_ATTESTATION_BYTES, "attestation trust"
             )
             attestation = verify_attestation(raw, attestation_value, trust_value)
+        witness_arguments = (
+            arguments.timestamps, arguments.revocations, arguments.witness_trust
+        )
+        if any(witness_arguments) and not all(witness_arguments):
+            raise ReaderError("timestamps, revocations, and witness trust must be supplied together")
+        if all(witness_arguments):
+            if attestation is None:
+                raise ReaderError("witness verification requires attestation verification")
+            timestamp_value, _ = load_bounded_json(
+                arguments.timestamps, MAX_ATTESTATION_BYTES, "timestamps"
+            )
+            revocation_value, revocation_raw = load_bounded_json(
+                arguments.revocations, MAX_ATTESTATION_BYTES, "revocations"
+            )
+            witness_trust_value, _ = load_bounded_json(
+                arguments.witness_trust, MAX_ATTESTATION_BYTES, "witness trust"
+            )
+            timestamp = verify_witnesses(
+                attestation, attestation_raw, timestamp_value,
+                revocation_value, revocation_raw, witness_trust_value
+            )
     except ReaderError as error:
         print(f"certificate-reader: refused: {error}", file=sys.stderr)
         return 2
     summary = {
-        "implementation": "telosieve-python-certificate-reader/v2",
+        "implementation": "telosieve-python-certificate-reader/v3",
         "certificate_version": certificate["certificate_version"],
         "scenario_id": certificate["scenario_id"],
         "input_sha256": hashlib.sha256(raw).hexdigest(),
@@ -421,6 +618,13 @@ def main() -> int:
             "schema_version": attestation["schema_version"],
             "signer": attestation["signer"],
             "key_id": attestation["key_id"],
+            "status": "verified",
+        }
+    if timestamp is not None:
+        summary["timestamp"] = {
+            "schema_version": timestamp["schema_version"],
+            "sequence": timestamp["sequence"],
+            "observed_at": timestamp["observed_at"],
             "status": "verified",
         }
     json.dump(

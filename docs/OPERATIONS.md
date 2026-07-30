@@ -92,6 +92,12 @@ Run `scripts/run-attestation-qualification.sh` after changing certificate,
 attestation, key-window, or reader logic. The repository’s signing keys are
 fixtures only and must never be reused for operational evidence.
 
+When timestamp/revocation verification is required, supply the complete bounded
+timestamp chain, current revocation snapshot, and independently retained exact
+tips. Treat missing inputs, stale snapshots, tip mismatch, or witness
+unavailability as refusal; never extend times or roll tips back to restore
+availability. Run `scripts/run-witness-qualification.sh` after related changes.
+
 For `shadow-kubernetes`, export the ConfigMap and StatefulSet evidence through a
 separate read-only process, preserve the raw export, and run Telosieve offline.
 Treat drift, incomplete observations, stale generations, identity changes, or

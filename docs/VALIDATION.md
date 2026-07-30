@@ -252,6 +252,15 @@ reports seven passes and zero disagreements within the 2 MiB certificate,
 64 KiB attestation, eight-key, 30-day, and two-second limits. See
 [CERTIFICATE_ATTESTATION](CERTIFICATE_ATTESTATION.md).
 
+## Timestamp and revocation witnesses
+
+The Rust and Python readers agree on pre-revocation historical acceptance and
+refuse inclusive revocation, timestamp-tip rollback, same-sequence revocation
+equivocation, stale snapshots, timestamp-signature tampering, and omitted chains.
+The retained `telosieve.witness-qualification/v1` result reports seven passes,
+zero disagreements, 64-entry/64-KiB limits, and a two-second reader deadline.
+See [ATTESTATION_WITNESSES](ATTESTATION_WITNESSES.md).
+
 ## Compatibility consumer qualification
 
 The independent Python reader and Rust compatibility boundary agree on three

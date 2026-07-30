@@ -109,6 +109,12 @@ an attestation. Production custody, trusted timestamping, revocation,
 organizational identity, and independent cryptographic assessment remain absent,
 so the release block remains.
 
+Separate timestamp and revocation authorities now constrain post-revocation
+backdating when exact trusted tips are independently retained. Rust/Python
+qualification agrees across seven historical and refusal cases. Keys, clock,
+tips, and distribution remain local fixtures without durable independent
+operation or availability qualification, so the release block remains.
+
 ## CI and delivery policy
 
 Telosieve is private, so local CI is the sole authoritative quality gate:
