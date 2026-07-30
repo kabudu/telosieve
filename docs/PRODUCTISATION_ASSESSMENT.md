@@ -3,6 +3,11 @@
 This table records the M3 evidence at the time of the original decision. Later
 remediation does not rewrite those observations.
 
+The assessment is historical. The later
+[Private Evaluation Product Decision](EVALUATION_PRODUCT_DECISION.md) authorizes
+a bounded read-only evaluation lane without reinterpreting these M3 results as
+production evidence.
+
 ## Registered claim comparison
 
 | Dimension | Telosieve evidence | Baseline comparison | Gate |

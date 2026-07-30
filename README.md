@@ -19,10 +19,14 @@ and refuse repair when surviving evidence cannot distinguish safe outcomes.
 
 ## Status
 
-M3 is complete with an explicit decision to **narrow** the project. Telosieve
-remains private research. A post-M3 multi-principal experiment removes the
-registered weakened-viability unsafe approval under a one-domain fault bound,
-but productisation and public release remain blocked. Certificate v4's
+The original M3 decision narrowed Telosieve to private research. After the
+registered unsafe approval was removed and the bounded evidence base expanded,
+the project authorized a private, production-shaped evaluation product on
+2026-07-30. Evaluation engineering is active; no evaluation candidate has yet
+met its readiness gates. Public release, autonomous production actuation, and
+general safety claims remain blocked pending their separate explicit decisions;
+production promotion additionally requires independent validation of the exact
+candidate. Certificate v4's
 stable-key continuity kernel removes every unsafe approval reproduced by the
 registered fixtures and 512-scenario generated state space without changing
 their oracles. Certificate v5's two agreeing declared goal domains also remove
@@ -130,7 +134,9 @@ M2 results and negative findings are reported in
 The evidence-to-product comparison is recorded in
 [Productisation Assessment](docs/PRODUCTISATION_ASSESSMENT.md).
 The binding M3 outcome and its reopening conditions are recorded in
-[Productisation Decision](docs/PRODUCTISATION_DECISION.md).
+[Productisation Decision](docs/PRODUCTISATION_DECISION.md). The later bounded
+authorization is recorded in
+[Private Evaluation Product Decision](docs/EVALUATION_PRODUCT_DECISION.md).
 
 Each run authenticates all authority envelopes before evaluation. The certificate
 is deterministic for identical inputs; the JSONL ledger is append-only. The

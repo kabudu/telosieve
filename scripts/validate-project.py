@@ -16,6 +16,7 @@ REQUIRED = (
     "docs/ASSESSOR_HANDOFF.md",
     "docs/AUTHORITY_PROTOCOL.md",
     "docs/E2E_TESTING.md",
+    "docs/EVALUATION_PRODUCT_DECISION.md",
     "docs/IMPLEMENTATION_PLAN.md",
     "docs/RELEASE.md",
     "docs/REQUIREMENTS_TRACEABILITY.md",
@@ -25,6 +26,7 @@ REQUIRED = (
     "docs/WITNESS_OPERATOR_HANDOFF.md",
     "assessment/manifest.json",
     "assessment/witness-operator-request.json",
+    "evaluation/contract.json",
 )
 LINK = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
 PLACEHOLDER = re.compile(r"\b(?:TODO|FIXME|REPLACE_WITH)\b")

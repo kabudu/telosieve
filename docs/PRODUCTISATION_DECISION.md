@@ -2,10 +2,16 @@
 
 Date: 2026-07-29
 
+Status: superseded on 2026-07-30 only for the private read-only evaluation lane
+defined in
+[Private Evaluation Product Decision](EVALUATION_PRODUCT_DECISION.md). Its
+production, public-release, hosted-CI, credential, and safety-claim prohibitions
+remain binding.
+
 ## Decision
 
-Telosieve will continue only as a private, narrowly scoped research project.
-Productisation and public release are blocked.
+At this decision date, Telosieve was limited to a private, narrowly scoped
+research project, with productisation and public release blocked.
 
 The M2 evidence preserves a useful research question: under the registered
 poisoned-goal fixture, Telosieve refused repair while two baselines made unsafe

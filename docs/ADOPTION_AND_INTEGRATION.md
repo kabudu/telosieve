@@ -1,8 +1,10 @@
 # Adoption and Integration
 
-The first integration is an offline sidecar around a deterministic key-value
-simulator. JSON authority envelopes enter through files; decisions leave as JSON
-and an append-only log. No cluster credentials are required.
+The first supported evaluation shape is a private read-only sidecar. The current
+offline simulator and exported Kubernetes snapshot establish its input and
+decision boundaries; the live least-privilege collector remains roadmap work.
+JSON authority envelopes enter through bounded interfaces; decisions leave as
+JSON and an append-only log. Telosieve must not receive mutation credentials.
 
 The first shadow-mode adapter now maps bounded exported Kubernetes ConfigMap and
 StatefulSet evidence without API access or actuation. Promotion requires zero unsafe approvals in the
@@ -20,3 +22,9 @@ certificate generation is insufficient.
 Compatibility risks include schema drift, clock assumptions, identity/key
 rotation, and semantic mismatch between declared invariants and platform behavior.
 See [KUBERNETES_SHADOW](KUBERNETES_SHADOW.md).
+
+Evaluation adoption requires a versioned CLI/configuration contract, documented
+install and lifecycle operations, bounded diagnostics, reproducible private
+artifacts, and an operator escape hatch. Independent validation targets the exact
+candidate after these capabilities exist. Production integration remains a
+separate promotion decision.

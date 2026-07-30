@@ -36,10 +36,12 @@ configuration whose finite hypothesis count exceeds `maximum_hypotheses`.
 - [x] Refresh novelty, name, security, soundness, and release diligence.
 - [x] Exit: explicitly proceed, narrow, or archive the project based on evidence.
 
-Decision: **narrow**. Productisation and public release are blocked. See
+Historical decision: **narrow**. Productisation and public release were blocked
+at M3. The private evaluation lane was later authorized in Post-M26; production
+promotion and public release remain blocked. See
 [PRODUCTISATION_DECISION](PRODUCTISATION_DECISION.md).
 
-## Post-M3 — narrowed research (not productisation)
+## Post-M3 — narrowed research (historical scope)
 
 - [x] Define multi-principal or explicitly suspectable viability semantics,
   preregistering the fault model and falsifiers.
@@ -348,3 +350,22 @@ Preparation evidence: [WITNESS_OPERATOR_HANDOFF](WITNESS_OPERATOR_HANDOFF.md).
 The handoff binds the M24 source and required outcomes; its adversarial validator
 accepts one synthetic schema fixture and refuses thirteen integrity/policy faults.
 No independent record has been returned, so both external gates remain open.
+
+## Post-M26 — private evaluation product authorization
+
+- [x] Authorize a production-shaped private evaluation lane with a
+  machine-checked scope and claim boundary.
+- [x] Define candidate readiness and production-promotion gates without
+  weakening the private-repository local-CI policy.
+- [ ] Stabilize a versioned evaluation CLI and strictly validated configuration.
+- [ ] Add a fail-closed, least-privilege live Kubernetes read-only collector.
+- [ ] Package documented install, upgrade, rollback, backup, and uninstall
+  workflows for supported evaluation platforms.
+- [ ] Add bounded operator diagnostics and privacy-reviewed evidence export.
+- [ ] Qualify platform resources, interruption, recovery, and private bundle
+  reproducibility before proposing an evaluation candidate.
+
+Decision evidence:
+[EVALUATION_PRODUCT_DECISION](EVALUATION_PRODUCT_DECISION.md). The authorization
+enables implementation and later private candidate packaging; it is not itself
+an evaluation release or production promotion.

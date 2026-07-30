@@ -1,0 +1,41 @@
+{
+  "schema_version": "telosieve.evaluation-product-contract/v1",
+  "decision": "private-evaluation-product-authorized",
+  "decision_date": "2026-07-30",
+  "repository_visibility": "private",
+  "authoritative_ci": "./scripts/ci-local.sh",
+  "supported_evaluation_mode": "read-only-shadow",
+  "authorized_work": [
+    "diagnostics-and-operator-evidence",
+    "installation-upgrade-rollback-packaging",
+    "private-evaluation-candidate-preparation",
+    "read-only-external-observation",
+    "stable-cli-and-configuration"
+  ],
+  "prohibited_without_separate_authorization": [
+    "autonomous-production-actuation",
+    "default-on-telemetry",
+    "general-safety-or-byzantine-resilience-claims",
+    "hosted-ci-while-private",
+    "production-credential-custody",
+    "public-package-or-release"
+  ],
+  "candidate_readiness_gates": [
+    "bounded-and-versioned-cli-configuration",
+    "fail-closed-live-read-only-integration",
+    "install-upgrade-rollback-and-uninstall-procedure",
+    "least-privilege-and-secret-free-defaults",
+    "operator-diagnostics-and-evidence-export",
+    "platform-resource-and-recovery-qualification",
+    "signed-checksummed-reproducible-private-bundle",
+    "threat-model-runbook-and-known-limitations"
+  ],
+  "production_promotion_gates": [
+    "explicit-production-promotion-decision",
+    "independent-operator-reproduction-of-exact-candidate",
+    "independent-security-assessment-of-exact-candidate",
+    "material-findings-remediated-and-reassessed",
+    "named-production-adapter-concurrency-and-recovery-proof",
+    "production-identity-key-clock-and-custody-design"
+  ]
+}

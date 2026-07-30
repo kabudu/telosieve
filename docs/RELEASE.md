@@ -1,6 +1,10 @@
 # Release Strategy
 
-There is no product release yet. Research releases require:
+There is no product release yet. Private evaluation-product engineering is
+authorized by
+[EVALUATION_PRODUCT_DECISION](EVALUATION_PRODUCT_DECISION.md), but no candidate
+has passed its readiness gates and no artifact distribution is authorized by
+that decision alone. Research or evaluation releases require:
 
 1. frozen protocol and fault model;
 2. reproducible harness and locked dependencies;
@@ -12,11 +16,12 @@ There is no product release yet. Research releases require:
 Version `0.1.0-research` may tag the first reproducible artifact. Public hosting,
 packages, telemetry, production adapters, and claims are separately gated.
 
-The M3 decision is to narrow the project to private research. The observed
-weakened-viability unsafe approval blocks `0.1.0-research`, any public release,
-and productisation. A tag or release requires a new explicit decision after the
-reopening conditions in
-[PRODUCTISATION_DECISION](PRODUCTISATION_DECISION.md) are satisfied.
+The 2026-07-29 M3 decision narrowed the project after a weakened-viability unsafe
+approval. That approval was subsequently removed across the registered fixtures
+and finite generated state space. On 2026-07-30, an explicit decision authorized
+a private read-only evaluation lane so an operational candidate can be built
+before independent validation. It did not authorize a tag, artifact
+distribution, public release, production actuation, hosted CI, or safety claim.
 
 Certificate v4's stable-key safety kernel removes the original and cross-domain
 unsafe approvals across all retained fixtures and the 512 generated scenarios.
@@ -134,6 +139,14 @@ validator now prepares the independent witness exercise. The validator refuses
 thirteen policy, origin, freshness, path, schema, and digest faults but cannot
 verify real identity or organizational independence. No independently signed
 record or raw operator evidence has been returned, so the release block remains.
+
+The machine-checked evaluation contract authorizes stable interfaces, live
+read-only observation, lifecycle packaging, diagnostics, and private candidate
+preparation. Candidate readiness has eight separate gates. Production promotion
+has six further gates, including independent assessment of the exact candidate,
+remediation, production adapter evidence, identity/custody design, and a new
+explicit decision. Until those gates pass, Telosieve remains evaluation software
+with no production mutation authority.
 
 ## CI and delivery policy
 
