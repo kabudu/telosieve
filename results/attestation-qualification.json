@@ -1,0 +1,11 @@
+{
+  "schema_version":"telosieve.attestation-qualification/v1",
+  "attestation_schema":"telosieve.certificate-attestation/v1",
+  "readers":["rust-ed25519-dalek","telosieve-python-certificate-reader/v2"],
+  "bounds":{"maximum_cases":12,"maximum_total_bytes":2097152,"maximum_certificate_bytes":2097152,"maximum_attestation_bytes":65536,"maximum_trust_keys":8,"maximum_lifetime_seconds":2592000,"reader_timeout_seconds":2},
+  "accepted":["old-key-during-declared-window","new-key-after-rotation"],
+  "refused":["tampered-signature","wrong-certificate","cross-context-replay","expired-attestation","outside-key-window"],
+  "rust_python_disagreements":0,
+  "passed":7,
+  "failed":0
+}

@@ -101,6 +101,14 @@ requires zero registered consumers and a separately approved major
 research-protocol compatibility change. This local qualification is not
 third-party assessment and does not authenticate certificate origin.
 
+Detached certificate attestation now authenticates exact v7–v9 evidence bytes
+under bounded Ed25519 signer windows, and the Rust/Python qualification has zero
+disagreements across rotation and five refusal paths. This removes the purely
+unauthenticated-file limitation only when callers explicitly require and verify
+an attestation. Production custody, trusted timestamping, revocation,
+organizational identity, and independent cryptographic assessment remain absent,
+so the release block remains.
+
 ## CI and delivery policy
 
 Telosieve is private, so local CI is the sole authoritative quality gate:

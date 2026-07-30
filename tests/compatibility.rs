@@ -240,7 +240,7 @@ fn independent_reader_agrees_on_supported_versions_and_failure_matrix() {
         assert_eq!(summary["certificate_version"], version);
         assert_eq!(
             summary["implementation"],
-            "telosieve-python-certificate-reader/v1"
+            "telosieve-python-certificate-reader/v2"
         );
         assert_eq!(summary["input_sha256"], hex::encode(Sha256::digest(bytes)));
     }

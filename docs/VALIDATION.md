@@ -238,6 +238,20 @@ rejected. The two exact vectors pass and are retained in
 `results/compatibility-corpus.json`. See
 [PROTOCOL_COMPATIBILITY](PROTOCOL_COMPATIBILITY.md).
 
+## Certificate evidence attestation
+
+Detached certificate attestation binds exact bytes to a context, signer/key,
+issuance, and exclusive expiry under domain-separated Ed25519. Old and new
+rotation keys both verify within their declared signing windows without changing
+retained unsigned certificates.
+
+Rust and Python accept the old/new vectors and refuse signature tampering,
+another valid certificate, cross-context replay, expiry, and issuance outside
+the signer window. The retained `telosieve.attestation-qualification/v1` result
+reports seven passes and zero disagreements within the 2 MiB certificate,
+64 KiB attestation, eight-key, 30-day, and two-second limits. See
+[CERTIFICATE_ATTESTATION](CERTIFICATE_ATTESTATION.md).
+
 ## Compatibility consumer qualification
 
 The independent Python reader and Rust compatibility boundary agree on three

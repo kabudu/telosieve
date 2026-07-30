@@ -81,6 +81,17 @@ deprecation has remained in force for two completed milestones, every registered
 consumer is inactive or migrated, historical reading remains available, and the
 separate explicitly approved major-compatibility gate has merged.
 
+When authenticity is required, preserve the certificate and its detached
+attestation as separate immutable files. Verify both against an independently
+obtained context, evaluation time, and bounded signer trust set; do not accept an
+unsigned fallback after requesting verification. Keep retired public keys while
+their historical attestations must verify, but never extend their signing
+windows to repair a failure.
+
+Run `scripts/run-attestation-qualification.sh` after changing certificate,
+attestation, key-window, or reader logic. The repository’s signing keys are
+fixtures only and must never be reused for operational evidence.
+
 For `shadow-kubernetes`, export the ConfigMap and StatefulSet evidence through a
 separate read-only process, preserve the raw export, and run Telosieve offline.
 Treat drift, incomplete observations, stale generations, identity changes, or

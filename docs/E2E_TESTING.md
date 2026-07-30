@@ -99,3 +99,10 @@ process and compares its verdict with Rust for real v7, v8, and v9 outputs plus
 ten fail-closed vectors across nine refusal classes.
 `scripts/run-reader-qualification.sh` retains the 13-case version-by-version
 result only after zero disagreements.
+
+`tests/attestation.rs` creates a real certificate-v7 artifact, signs it with old
+and rotated Ed25519 keys, and passes the detached envelope through Rust and the
+independent Python reader. Both accept the two declared signing windows and
+refuse tampering, a different certificate, cross-context replay, expiry, and
+issuance outside the selected key window. The runner retains seven cases with a
+two-second per-reader deadline.

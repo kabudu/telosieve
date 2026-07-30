@@ -101,6 +101,20 @@ all nested Rust types. A malicious certificate may therefore pass the envelope
 reader yet fail later semantic processing. Neither reader authenticates who
 created a certificate.
 
+Detached Ed25519 attestation detects exact-byte tampering, certificate
+substitution, cross-context replay, unknown signers, invalid signing windows,
+and expiry. Key identifiers permit bounded rotation without rewriting historical
+certificates. Compromise of a trusted private key remains critical: without an
+external trusted timestamp or append-only witness, an attacker can backdate a
+forged attestation inside that key’s declared window. Trust configuration,
+evaluation time, signer identity, key custody, and revocation distribution
+remain external.
+
+The Python Ed25519 verifier is independently implemented for differential
+qualification but is project-controlled and unaudited. Rust `ed25519-dalek`
+strict verification remains the primary research implementation; neither
+constitutes production HSM or organizational assurance.
+
 The Kubernetes shadow adapter has no client or cluster credentials. It rejects
 resource-version/UID drift, partial or stale controller observations, oversized
 exports, and output/input aliasing. A malicious or incoherent exporter that

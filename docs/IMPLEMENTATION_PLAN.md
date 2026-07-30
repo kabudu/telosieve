@@ -289,7 +289,19 @@ milestones plus zero registered consumers and a major compatibility decision.
 
 ## Post-M21 — certificate evidence authenticity
 
-- [ ] Define a domain-separated certificate-attestation envelope without
+- [x] Define a domain-separated certificate-attestation envelope without
   invalidating retained unsigned research certificates.
-- [ ] Exercise signer rotation, tampering, cross-context replay, expiry, and
+- [x] Exercise signer rotation, tampering, cross-context replay, expiry, and
   bounded verification through both supported readers.
+
+Evidence: [CERTIFICATE_ATTESTATION](CERTIFICATE_ATTESTATION.md). Detached
+attestation preserves v7–v9 bytes, binds exact certificate/context/time/key
+evidence, and passes seven bounded old/new and failure cases with zero
+Rust/Python disagreements.
+
+## Post-M22 — attestation timestamp and revocation witnesses
+
+- [ ] Prototype an append-only trusted timestamp witness that prevents
+  compromised signers from backdating attestations.
+- [ ] Define bounded signer-revocation distribution and retained historical
+  verification semantics across both readers.

@@ -50,6 +50,13 @@ top-level types, unsupported versions, confused extensions, malformed JSON, and
 oversized input. This provides parser diversity for the compatibility envelope,
 not full nested semantic or organizational independence.
 
+Certificate authenticity is a detached trust boundary. A domain-separated
+Ed25519 envelope signs the exact certificate-byte SHA-256 digest, context,
+signer/key identity, issuance, and expiry without changing certificate v7–v9.
+Verification is bounded by certificate/attestation bytes and at most eight
+trusted keys. Both Rust and the independent Python reader implement the envelope
+and signature checks.
+
 The Kubernetes shadow adapter is a pre-verification mapping gate for exported
 ConfigMap/StatefulSet JSON. It requires exact equality with authenticated
 goal/phenotype content and adds resource identity/version evidence to certificate
