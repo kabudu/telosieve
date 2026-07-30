@@ -148,6 +148,13 @@ remediation, production adapter evidence, identity/custody design, and a new
 explicit decision. Until those gates pass, Telosieve remains evaluation software
 with no production mutation authority.
 
+The stable `evaluate` command now accepts only
+`telosieve.evaluation-config/v1` and emits
+`telosieve.evaluation-report/v1` after persisted read-only shadow evidence.
+Unknown versions, mutation modes, oversized files, invalid paths, and output
+collisions refuse. This completes one candidate-readiness gate, not a candidate
+release.
+
 ## CI and delivery policy
 
 Telosieve is private, so local CI is the sole authoritative quality gate:

@@ -142,6 +142,14 @@ and digest mismatch. It does not authenticate names, organizations, signatures,
 DNS ownership, endpoint behavior, or narrative truth; an independently trusted
 assessor must verify those facts outside the repository.
 
+The evaluation configuration boundary rejects unknown fields, future schemas,
+mutation modes, oversized files, control/overlong paths, and configuration
+output aliasing before target inputs are evaluated. It does not make
+configuration trustworthy, protect output confidentiality, collect a coherent
+live snapshot, or make certificate and ledger writes one transaction. Operators
+must protect evidence directories, enforce a single writer per output pair, and
+investigate partial persistence failures.
+
 The Kubernetes shadow adapter has no client or cluster credentials. It rejects
 resource-version/UID drift, partial or stale controller observations, oversized
 exports, and output/input aliasing. A malicious or incoherent exporter that

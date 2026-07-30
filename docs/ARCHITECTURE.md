@@ -78,6 +78,12 @@ ConfigMap/StatefulSet JSON. It requires exact equality with authenticated
 goal/phenotype content and adds resource identity/version evidence to certificate
 v9; it has no cluster client or actuation path.
 
+The stable evaluation CLI wraps that adapter in a bounded
+`telosieve.evaluation-config/v1` file boundary. Relative paths resolve from the
+configuration directory, unknown schema or mode values refuse, and the
+versioned success report binds the exact certificate digest while declaring
+that the target was not mutated.
+
 ## Failure behavior
 
 Malformed, stale, equivocal, over-budget, or unverifiable evidence yields refusal.

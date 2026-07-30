@@ -4,6 +4,15 @@ The research harness runs locally with fixed seeds and no production credentials
 Every run records source commit, configuration digest, dependency lock digest,
 authority envelopes, decision certificate, timing, and outcome.
 
+For the supported evaluation entrypoint, copy
+`evaluation/config.example.json`, create its output directory, and run
+`telosieve evaluate CONFIG.json`. Keep configuration and evidence directories
+operator-writable but not broadly readable. Treat status 1 as an incomplete
+evaluation: preserve the directory and inspect possible ledger or temporary
+certificate evidence before retrying. Use one writer per certificate/ledger path
+and bind retained reports to their certificate digest. See
+[EVALUATION_CLI](EVALUATION_CLI.md).
+
 Operational alerts cover signature failure, equivocation, schema mismatch,
 hypothesis-budget exhaustion, checker disagreement, ledger write failure, and
 actuator partial failure. No automatic retry may broaden authority or weaken an

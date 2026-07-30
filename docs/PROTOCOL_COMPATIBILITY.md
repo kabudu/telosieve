@@ -2,6 +2,12 @@
 
 Date: 2026-07-30
 
+The evaluation product adds a separate
+`telosieve.evaluation-config/v1`/`telosieve.evaluation-report/v1` boundary.
+Unknown configuration versions and modes refuse, and no automatic migration is
+performed. Existing research CLI commands and certificate v7–v9 support remain
+unchanged. See [EVALUATION_CLI](EVALUATION_CLI.md).
+
 ## Support matrix
 
 Telosieve retains one bounded compatibility corpus for the currently supported

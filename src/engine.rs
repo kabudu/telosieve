@@ -16,6 +16,8 @@ use crate::{
     },
 };
 
+pub const MAX_SCENARIO_BYTES: u64 = 2 * 1024 * 1024;
+
 #[derive(Debug, Error)]
 pub enum RunError {
     #[error("scenario I/O failed: {0}")]
@@ -46,7 +48,7 @@ pub fn run_scenario_file(
     certificate_path: &Path,
     ledger_path: &Path,
 ) -> Result<Certificate, RunError> {
-    let scenario: Scenario = serde_json::from_slice(&fs::read(path)?)?;
+    let scenario = read_scenario(path)?;
     let certificate = run_scenario(&scenario)?;
     persist_evidence(&certificate, certificate_path, ledger_path)?;
     Ok(certificate)
@@ -66,7 +68,7 @@ pub fn run_kubernetes_shadow_file(
     ledger_path: &Path,
 ) -> Result<Certificate, RunError> {
     reject_shadow_path_collisions(scenario_path, snapshot_path, certificate_path, ledger_path)?;
-    let scenario: Scenario = serde_json::from_slice(&fs::read(scenario_path)?)?;
+    let scenario = read_scenario(scenario_path)?;
     let mut snapshot_bytes = Vec::new();
     fs::File::open(snapshot_path)?
         .take(crate::kubernetes_shadow::MAX_SNAPSHOT_BYTES + 1)
@@ -106,11 +108,15 @@ fn reject_shadow_path_collisions(
     let scenario = fs::canonicalize(scenario_path)?;
     let snapshot = fs::canonicalize(snapshot_path)?;
     let certificate = canonical_output_path(certificate_path)?;
+    let certificate_temporary =
+        canonical_output_path(&certificate_temporary_path(certificate_path))?;
     let ledger = canonical_output_path(ledger_path)?;
     if certificate == ledger
-        || [scenario, snapshot]
-            .iter()
-            .any(|input| input == &certificate || input == &ledger)
+        || certificate_temporary == certificate
+        || certificate_temporary == ledger
+        || [scenario, snapshot].iter().any(|input| {
+            input == &certificate || input == &certificate_temporary || input == &ledger
+        })
     {
         return Err(crate::kubernetes_shadow::ShadowError::OutputCollision.into());
     }
@@ -140,7 +146,7 @@ pub fn run_scenario_file_anchored(
     ledger_path: &Path,
     anchor_path: &Path,
 ) -> Result<Certificate, RunError> {
-    let scenario: Scenario = serde_json::from_slice(&fs::read(path)?)?;
+    let scenario = read_scenario(path)?;
     let certificate = run_scenario_anchored(&scenario, anchor_path)?;
     persist_evidence(&certificate, certificate_path, ledger_path)?;
     Ok(certificate)
@@ -153,7 +159,7 @@ pub fn run_scenario_file_anchored(
 /// Returns [`RunError`] when the scenario is invalid, the store already exists,
 /// or persistence fails.
 pub fn initialize_anchor_file(scenario_path: &Path, anchor_path: &Path) -> Result<(), RunError> {
-    let scenario: Scenario = serde_json::from_slice(&fs::read(scenario_path)?)?;
+    let scenario = read_scenario(scenario_path)?;
     verify(&scenario)?;
     crate::anchor_store::AnchorStore::new(anchor_path)
         .initialize(&scenario.phenotype_history_anchor)?;
@@ -171,7 +177,7 @@ pub fn initialize_actuator_file(
     scenario_path: &Path,
     actuator_path: &Path,
 ) -> Result<(), RunError> {
-    let scenario: Scenario = serde_json::from_slice(&fs::read(scenario_path)?)?;
+    let scenario = read_scenario(scenario_path)?;
     let authorities = verify(&scenario)?;
     crate::actuator_store::LocalActuatorStore::new(actuator_path)
         .initialize(&authorities.phenotype, &scenario.phenotype_history_anchor)?;
@@ -221,7 +227,7 @@ pub fn run_scenario_file_actuated(
     ledger_path: &Path,
     actuator_path: &Path,
 ) -> Result<Certificate, RunError> {
-    let scenario: Scenario = serde_json::from_slice(&fs::read(scenario_path)?)?;
+    let scenario = read_scenario(scenario_path)?;
     let certificate = run_scenario_actuated(&scenario, actuator_path)?;
     persist_evidence(&certificate, certificate_path, ledger_path)?;
     Ok(certificate)
@@ -311,10 +317,30 @@ fn persist_evidence(
     ledger.write_all(b"\n")?;
     ledger.sync_all()?;
     let bytes = serde_json::to_vec_pretty(&certificate)?;
-    let temporary_path = certificate_path.with_extension("json.tmp");
+    let temporary_path = certificate_temporary_path(certificate_path);
     fs::write(&temporary_path, &bytes)?;
     fs::rename(temporary_path, certificate_path)?;
     Ok(())
+}
+
+pub(crate) fn certificate_temporary_path(certificate_path: &Path) -> PathBuf {
+    certificate_path.with_extension("json.tmp")
+}
+
+fn read_scenario(path: &Path) -> Result<Scenario, RunError> {
+    let mut bytes = Vec::new();
+    fs::File::open(path)?
+        .take(MAX_SCENARIO_BYTES + 1)
+        .read_to_end(&mut bytes)?;
+    if bytes.len()
+        > usize::try_from(MAX_SCENARIO_BYTES)
+            .map_err(|_| std::io::Error::other("scenario bound does not fit this platform"))?
+    {
+        return Err(
+            std::io::Error::other(format!("scenario exceeds {MAX_SCENARIO_BYTES} bytes")).into(),
+        );
+    }
+    Ok(serde_json::from_slice(&bytes)?)
 }
 
 /// Evaluates one deterministic, bounded research scenario.

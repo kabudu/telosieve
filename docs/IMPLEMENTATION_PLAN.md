@@ -357,7 +357,7 @@ No independent record has been returned, so both external gates remain open.
   machine-checked scope and claim boundary.
 - [x] Define candidate readiness and production-promotion gates without
   weakening the private-repository local-CI policy.
-- [ ] Stabilize a versioned evaluation CLI and strictly validated configuration.
+- [x] Stabilize a versioned evaluation CLI and strictly validated configuration.
 - [ ] Add a fail-closed, least-privilege live Kubernetes read-only collector.
 - [ ] Package documented install, upgrade, rollback, backup, and uninstall
   workflows for supported evaluation platforms.
@@ -369,3 +369,7 @@ Decision evidence:
 [EVALUATION_PRODUCT_DECISION](EVALUATION_PRODUCT_DECISION.md). The authorization
 enables implementation and later private candidate packaging; it is not itself
 an evaluation release or production promotion.
+
+CLI evidence: [EVALUATION_CLI](EVALUATION_CLI.md). The v1 read-only command and
+configuration pass their real process/file lifecycle plus nine fail-closed
+configuration and input-bound cases; live collection remains the next milestone.

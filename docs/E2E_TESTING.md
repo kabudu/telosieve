@@ -130,3 +130,10 @@ outage, equivocal, and stale cases with deterministic cleanup.
 validator with one conforming synthetic record and thirteen fail-closed
 mutations. This qualifies the handoff parser and integrity boundary, not an
 operator, organization, endpoint, or independent result.
+
+`tests/evaluation_cli.rs` invokes the real `telosieve evaluate` process through
+configuration parsing, shadow verification, checker execution, certificate and
+ledger persistence, and versioned report parsing. It verifies unchanged inputs
+and no actuation record, then refuses unknown fields, future schema, mutation
+mode, final or temporary config/output aliasing, long paths, oversized
+configuration, and an oversized scenario before evidence output.

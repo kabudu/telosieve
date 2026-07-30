@@ -290,6 +290,16 @@ the repository-owned handoff boundary. See
 [WITNESS_OPERATOR_HANDOFF](WITNESS_OPERATOR_HANDOFF.md).
 The retained aggregate explicitly sets `independent_evidence` to false.
 
+## Versioned evaluation CLI
+
+The real binary accepts one v1 configuration, validates a bounded exported
+snapshot through the existing cryptographic/checker path, persists certificate
+and ledger evidence, and emits a v1 report bound to the certificate digest.
+Inputs remain byte-identical and the certificate has no actuation record. Nine
+field, schema, mode, path, collision, configuration-size, and scenario-size
+failures produce no success report; the scenario file boundary is capped at
+2 MiB for all CLI paths. See [EVALUATION_CLI](EVALUATION_CLI.md).
+
 ## Compatibility consumer qualification
 
 The independent Python reader and Rust compatibility boundary agree on three

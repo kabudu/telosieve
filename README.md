@@ -91,6 +91,17 @@ cargo run --locked --offline -- shadow-kubernetes \
 
 See [Kubernetes Shadow Adapter](docs/KUBERNETES_SHADOW.md).
 
+Run the stable, versioned private-evaluation boundary with a strict
+configuration:
+
+```sh
+mkdir -p out
+cargo run --locked --offline -- evaluate evaluation/config.example.json
+```
+
+See [Versioned Evaluation CLI](docs/EVALUATION_CLI.md). This mode writes only
+certificate and ledger evidence; it has no target-system mutation authority.
+
 Back up, restore, and recover its current single-host generation:
 
 ```sh

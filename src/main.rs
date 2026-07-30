@@ -1,8 +1,13 @@
-use std::{env, path::Path, process::ExitCode};
+use std::{env, fmt::Display, path::Path, process::ExitCode};
 
 fn main() -> ExitCode {
     let args: Vec<String> = env::args().collect();
     match args.get(1).map(String::as_str) {
+        Some("--version") if args.len() == 2 => {
+            println!("telosieve {}", env!("CARGO_PKG_VERSION"));
+            ExitCode::SUCCESS
+        }
+        Some("evaluate") if args.len() == 3 => evaluate(Path::new(&args[2])),
         Some("anchor-init") if args.len() == 4 => {
             match telosieve::engine::initialize_anchor_file(
                 Path::new(&args[2]),
@@ -98,9 +103,23 @@ fn main() -> ExitCode {
     }
 }
 
+fn evaluate(config_path: &Path) -> ExitCode {
+    match telosieve::evaluation::run_config_file(config_path) {
+        Ok(report) => {
+            println!(
+                "{}",
+                serde_json::to_string(&report).expect("evaluation report serializes")
+            );
+            ExitCode::SUCCESS
+        }
+        Err(error) => fail(&error),
+    }
+}
+
 fn usage() -> ExitCode {
     eprintln!(
         "usage:\n  telosieve anchor-init <scenario.json> <anchor.json>\n  \
+         telosieve evaluate <evaluation-config.json>\n  \
          telosieve local-init <scenario.json> <actuator.json>\n  \
          telosieve local-show <actuator.json>\n  \
          telosieve local-backup <actuator.json> <backup.json>\n  \
@@ -133,7 +152,7 @@ fn emit(
     }
 }
 
-fn fail(error: &telosieve::engine::RunError) -> ExitCode {
+fn fail(error: &impl Display) -> ExitCode {
     eprintln!("telosieve: {error}");
     ExitCode::FAILURE
 }
