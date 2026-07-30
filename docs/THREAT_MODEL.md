@@ -86,6 +86,14 @@ It therefore demonstrates deterministic protocol behavior but not participant
 identity, organizational independence, protected root-key custody, coercion
 resistance, or a real authorization act.
 
+The certificate compatibility boundary prevents unknown future versions,
+unknown top-level fields, oversized inputs, and cross-version extension
+relabelling from being treated as supported evidence. It does not authenticate
+certificates, infer unknown future semantics, or protect a downstream consumer
+that bypasses the boundary and deserializes the public structure directly.
+Validate-then-regenerate avoids mutating historical evidence but cannot recover
+missing authoritative inputs.
+
 The Kubernetes shadow adapter has no client or cluster credentials. It rejects
 resource-version/UID drift, partial or stale controller observations, oversized
 exports, and output/input aliasing. A malicious or incoherent exporter that

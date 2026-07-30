@@ -87,3 +87,9 @@ continued rejection of four minimized fixtures.
 under locked offline resolution. It emits the retained aggregate only after the
 2-of-3 success/exclusion path and duplicate, missing, divergent, stale, veto,
 and excluded-compromised abort paths pass.
+
+`tests/compatibility.rs` runs bounded old/new scenario and certificate vectors.
+It produces actual certificate-v7 and certificate-v8 outputs, reads the retained
+certificate-v9 shadow output, and rejects missing required trust, unknown future
+fields/versions, cross-version extension confusion, and oversized certificate
+input. `scripts/run-compatibility-corpus.sh` retains the two-vector aggregate.

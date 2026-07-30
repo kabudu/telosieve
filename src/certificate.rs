@@ -1,12 +1,30 @@
 use std::collections::BTreeMap;
 
 use serde::{Deserialize, Serialize};
+use thiserror::Error;
 
 use crate::{
     checker::CheckerVerdict,
     model::{ServiceState, Transition},
     protocol::{AuthorityKind, HistoryAnchor},
 };
+
+pub const CERTIFICATE_VERSION_V7: &str = "telosieve.certificate/v7";
+pub const CERTIFICATE_VERSION_V8: &str = "telosieve.certificate/v8";
+pub const CERTIFICATE_VERSION_V9: &str = "telosieve.certificate/v9";
+pub const MAX_COMPATIBILITY_CERTIFICATE_BYTES: usize = 2 * 1024 * 1024;
+
+#[derive(Debug, Error)]
+pub enum CertificateCompatibilityError {
+    #[error("certificate exceeds the compatibility input bound")]
+    ResourceBound,
+    #[error("certificate JSON is malformed or contains unknown fields: {0}")]
+    Malformed(#[from] serde_json::Error),
+    #[error("unsupported certificate version: {0}")]
+    UnsupportedVersion(String),
+    #[error("certificate extensions do not match {0}")]
+    InvalidVersionShape(String),
+}
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -63,6 +81,7 @@ pub struct ShadowRecord {
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct Certificate {
     pub certificate_version: String,
     pub scenario_id: String,
@@ -82,4 +101,38 @@ pub struct Certificate {
     pub final_state: ServiceState,
     pub baselines: Vec<BaselineRecord>,
     pub metrics: Metrics,
+}
+
+/// Parses a retained certificate through the supported compatibility boundary.
+///
+/// Versions 7–9 share one additive serialized shape. Their extension fields
+/// remain version-specific so an artifact cannot be relabelled across execution
+/// modes.
+///
+/// # Errors
+///
+/// Rejects oversized, malformed, unknown-version, or cross-version artifacts.
+pub fn parse_supported_certificate(
+    bytes: &[u8],
+) -> Result<Certificate, CertificateCompatibilityError> {
+    if bytes.len() > MAX_COMPATIBILITY_CERTIFICATE_BYTES {
+        return Err(CertificateCompatibilityError::ResourceBound);
+    }
+    let certificate: Certificate = serde_json::from_slice(bytes)?;
+    let valid_shape = match certificate.certificate_version.as_str() {
+        CERTIFICATE_VERSION_V7 => certificate.actuation.is_none() && certificate.shadow.is_none(),
+        CERTIFICATE_VERSION_V8 => certificate.actuation.is_some() && certificate.shadow.is_none(),
+        CERTIFICATE_VERSION_V9 => certificate.actuation.is_none() && certificate.shadow.is_some(),
+        version => {
+            return Err(CertificateCompatibilityError::UnsupportedVersion(
+                version.into(),
+            ));
+        }
+    };
+    if !valid_shape {
+        return Err(CertificateCompatibilityError::InvalidVersionShape(
+            certificate.certificate_version.clone(),
+        ));
+    }
+    Ok(certificate)
 }

@@ -263,7 +263,20 @@ key custody, or organizational independence.
 
 ## Post-M19 — protocol compatibility and migration corpus
 
-- [ ] Retain old/new scenario and certificate compatibility vectors across
+- [x] Retain old/new scenario and certificate compatibility vectors across
   supported protocol versions.
-- [ ] Define fail-closed migration rules for optional-to-required trust fields
+- [x] Define fail-closed migration rules for optional-to-required trust fields
   and unknown future versions.
+
+Evidence: [PROTOCOL_COMPATIBILITY](PROTOCOL_COMPATIBILITY.md). Two bounded
+integration vectors cover legacy/current/missing-trust scenarios, certificates
+v7–v9, future fields/versions, cross-version shape confusion, and oversized
+certificate input. Migration validates and regenerates from authoritative input;
+it never silently rewrites retained evidence.
+
+## Post-M20 — compatibility consumer qualification
+
+- [ ] Exercise the supported certificate boundary in an independent downstream
+  reader and retain version-by-version results.
+- [ ] Define a deprecation window and explicit removal gate for supported
+  certificate versions.

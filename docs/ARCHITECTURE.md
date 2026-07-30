@@ -37,6 +37,13 @@ Enrolled lifecycle evaluation also requires a content-bound trusted-time window
 containing the evaluation instant and no wider than 300 seconds. This bounds
 local rollback/forward mistakes but does not create an independent clock.
 
+Retained certificates cross a separate bounded compatibility boundary.
+Certificate v7 accepts no execution extension, v8 requires actuation only, and
+v9 requires shadow evidence only. Unknown versions, unknown top-level fields,
+cross-version extension shapes, and inputs over 2 MiB fail closed. Migration
+regenerates evidence from verified authoritative input rather than rewriting an
+existing certificate.
+
 The Kubernetes shadow adapter is a pre-verification mapping gate for exported
 ConfigMap/StatefulSet JSON. It requires exact equality with authenticated
 goal/phenotype content and adds resource identity/version evidence to certificate

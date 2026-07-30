@@ -91,7 +91,7 @@ pub fn run_kubernetes_shadow_file(
     let authorities = verify(&scenario)?;
     let shadow = crate::kubernetes_shadow::validate(&scenario, &authorities, &snapshot)?;
     let mut certificate = run_verified_scenario(&scenario, authorities)?;
-    certificate.certificate_version = "telosieve.certificate/v9".into();
+    certificate.certificate_version = crate::certificate::CERTIFICATE_VERSION_V9.into();
     certificate.shadow = Some(shadow);
     persist_evidence(&certificate, certificate_path, ledger_path)?;
     Ok(certificate)
@@ -204,7 +204,7 @@ pub fn run_scenario_actuated(
             certificate.transition.as_ref(),
             consumed_identifier,
         )?;
-    certificate.certificate_version = "telosieve.certificate/v8".into();
+    certificate.certificate_version = crate::certificate::CERTIFICATE_VERSION_V8.into();
     certificate.actuation = Some(actuation);
     Ok(certificate)
 }
@@ -418,7 +418,7 @@ fn evaluate_preflighted_scenario(
     let hypothesis_count = hypotheses.len();
 
     Ok(Certificate {
-        certificate_version: "telosieve.certificate/v7".into(),
+        certificate_version: crate::certificate::CERTIFICATE_VERSION_V7.into(),
         scenario_id: scenario.scenario_id.clone(),
         seed: scenario.seed,
         authority_digests: authorities.digests,

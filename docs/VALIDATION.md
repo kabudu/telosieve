@@ -223,3 +223,17 @@ excluded-compromised failure tests pass. This is deterministic local protocol
 evidence, not authenticated time, participant identity, private-key custody, or
 organizational independence. See
 [RECOVERY_ROOT_CEREMONY](RECOVERY_ROOT_CEREMONY.md).
+
+## Protocol compatibility and migration
+
+The bounded compatibility corpus preserves legacy unenrolled scenarios and
+current enrolled trusted-time scenarios while proving that an enrolled scenario
+without trusted time parses only for diagnosis and then refuses verification.
+Unknown scenario fields and future authority/lifecycle versions fail closed.
+
+Actual v7 stateless and v8 actuator certificates plus the retained v9 shadow
+certificate pass the supported-certificate boundary. Unknown versions,
+top-level fields, confused version/extension shapes, and inputs beyond 2 MiB are
+rejected. The two exact vectors pass and are retained in
+`results/compatibility-corpus.json`. See
+[PROTOCOL_COMPATIBILITY](PROTOCOL_COMPATIBILITY.md).

@@ -62,6 +62,14 @@ lower the original quorum. Preserve the generated aggregate, but never interpret
 it as a real recovery-root authorization, signature, custody record, or HSM
 operation. See [RECOVERY_ROOT_CEREMONY](RECOVERY_ROOT_CEREMONY.md).
 
+Before consuming retained certificates, parse them through the supported
+compatibility boundary and preserve the original bytes. Accept only v7 without
+an execution extension, v8 with actuation only, or v9 with shadow evidence only.
+Never relabel a version, strip an unknown field, or invent a newly required trust
+value. Migration requires verification of the authoritative scenario followed
+by new evidence generation; the historical certificate remains immutable. See
+[PROTOCOL_COMPATIBILITY](PROTOCOL_COMPATIBILITY.md).
+
 For `shadow-kubernetes`, export the ConfigMap and StatefulSet evidence through a
 separate read-only process, preserve the raw export, and run Telosieve offline.
 Treat drift, incomplete observations, stale generations, identity changes, or

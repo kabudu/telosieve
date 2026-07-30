@@ -87,6 +87,12 @@ identity, private-key custody, organizational independence, or a real ceremony.
 They therefore do not remove the independent-assessment or production-identity
 release gates.
 
+The compatibility corpus defines fail-closed support for legacy/current
+scenarios and certificates v7–v9, with validate-then-regenerate migration.
+Unknown future semantics remain intentionally unsupported, and no independent
+downstream consumer has yet been qualified. This reduces accidental migration
+ambiguity but does not change the release decision.
+
 ## CI and delivery policy
 
 Telosieve is private, so local CI is the sole authoritative quality gate:
