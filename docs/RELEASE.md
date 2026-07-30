@@ -79,6 +79,14 @@ snapshot reports no known finding for the lockfile. This is time-bounded advisor
 matching, not dependency or build-system assurance, so the release block
 remains.
 
+Bounded trusted-time checks now reject enrolled lifecycle evaluation outside an
+explicit maximum-300-second window, and the credential-free recovery-root
+rehearsal exercises quorum, exclusion, veto, and malformed-vote paths. These
+local controls do not supply an authenticated production clock, participant
+identity, private-key custody, organizational independence, or a real ceremony.
+They therefore do not remove the independent-assessment or production-identity
+release gates.
+
 ## CI and delivery policy
 
 Telosieve is private, so local CI is the sole authoritative quality gate:

@@ -67,6 +67,9 @@ engine and binds its chain, recovery root, and trusted tip into the certificate.
 Focused protocol tests preserve historical old-key verification while rejecting
 superseded, expired, revoked, reused, wrong-kind, tampered, partial, rolled-back,
 equivocating, and oversized lifecycle evidence before planning.
+They additionally enforce exact exclusive-expiry and inclusive-revocation
+boundaries and reject evaluation below, above, or beyond the maximum width of
+the trusted-time assertion.
 
 The executable `shadow-kubernetes` lifecycle consumes only local exported JSON,
 emits certificate-v9 evidence, and leaves scenario and snapshot bytes unchanged.
@@ -79,3 +82,8 @@ machine-readable pass aggregate only after all seven exit successfully.
 authority, lifecycle, Kubernetes shadow, and actuator recovery parsers. It
 requires valid round trips, fail-closed malformed inputs, structural bounds, and
 continued rejection of four minimized fixtures.
+
+`scripts/run-recovery-ceremony.sh` runs exact credential-free ceremony tests
+under locked offline resolution. It emits the retained aggregate only after the
+2-of-3 success/exclusion path and duplicate, missing, divergent, stale, veto,
+and excluded-compromised abort paths pass.

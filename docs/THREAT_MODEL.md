@@ -74,8 +74,17 @@ Operational issuer keys may be rotated, expired, or revoked through bounded
 recovery-root-signed chains. A compromised operational key cannot sign its own
 recovery because roots must be distinct and are never operational. Recovery-root
 compromise remains critical: it can authorize arbitrary future keys. Lifecycle
-roots and trusted tips are scenario configuration, so coordinated rollback of
-that configuration remains outside the detected boundary.
+roots, trusted tips, evaluation time, and the bounded trusted-time assertion are
+scenario configuration. Local rollback, forward-jump, and maximum-window checks
+do not provide an independent clock; coordinated rollback of that configuration
+remains outside the detected boundary.
+
+The recovery-root ceremony model binds a strict-majority quorum to exact request
+and evidence digests, retains the original quorum after exclusion, and treats
+any veto as an abort. Its participant names and votes are unsigned local data.
+It therefore demonstrates deterministic protocol behavior but not participant
+identity, organizational independence, protected root-key custody, coercion
+resistance, or a real authorization act.
 
 The Kubernetes shadow adapter has no client or cluster credentials. It rejects
 resource-version/UID drift, partial or stale controller observations, oversized

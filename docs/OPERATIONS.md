@@ -49,6 +49,19 @@ editing sequence or parent fields, reuse an old operational key, or fall back to
 a revoked bootstrap key. Missing or conflicting lifecycle state is a refusal and
 incident condition.
 
+For every enrolled lifecycle, obtain the evaluation time and its bounded
+trusted-time assertion through the approved operational source. Refuse a window
+wider than 300 seconds or an evaluation outside its inclusive bounds. The local
+source label is evidence metadata, not clock authentication; never claim that
+Telosieve itself proves wall-clock time.
+
+Run `./scripts/run-recovery-ceremony.sh` after ceremony-protocol changes. A veto,
+duplicate, stale, divergent, excluded, or missing-quorum vote aborts the
+ceremony. Excluding a suspected custodian requires a new request and must not
+lower the original quorum. Preserve the generated aggregate, but never interpret
+it as a real recovery-root authorization, signature, custody record, or HSM
+operation. See [RECOVERY_ROOT_CEREMONY](RECOVERY_ROOT_CEREMONY.md).
+
 For `shadow-kubernetes`, export the ConfigMap and StatefulSet evidence through a
 separate read-only process, preserve the raw export, and run Telosieve offline.
 Treat drift, incomplete observations, stale generations, identity changes, or

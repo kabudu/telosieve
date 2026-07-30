@@ -9,6 +9,7 @@ use crate::model::{ServiceState, Values, digest};
 
 pub const SCHEMA_VERSION: &str = "telosieve.authority/v0";
 pub const KEY_LIFECYCLE_SCHEMA_VERSION: &str = "telosieve.key-lifecycle/v1";
+pub const MAX_TRUSTED_TIME_WINDOW_SECONDS: u64 = 300;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -113,6 +114,14 @@ pub struct KeyLifecycleAnchor {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct TrustedTimeWindow {
+    pub not_before: u64,
+    pub not_after: u64,
+    pub source: String,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "action", rename_all = "snake_case", deny_unknown_fields)]
 pub enum KeyLifecycleAction {
     Activate { public_key: String, expires_at: u64 },
@@ -183,6 +192,8 @@ pub struct Scenario {
     pub key_lifecycle: Vec<KeyLifecycleStatement>,
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     pub key_lifecycle_anchors: BTreeMap<String, KeyLifecycleAnchor>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub trusted_time: Option<TrustedTimeWindow>,
     pub fault_declaration: FaultDeclaration,
     pub phenotype_history_anchor: HistoryAnchor,
     #[serde(default)]
@@ -471,6 +482,9 @@ fn authority_digests(scenario: &Scenario) -> BTreeMap<String, String> {
     for (issuer, root) in &scenario.key_lifecycle_roots {
         digests.insert(format!("lifecycle-root:{issuer}"), digest(root));
     }
+    if let Some(trusted_time) = &scenario.trusted_time {
+        digests.insert("trusted-time".into(), digest(trusted_time));
+    }
     digests
 }
 
@@ -559,6 +573,23 @@ fn verify_key_lifecycle(
             .push(statement);
     }
     let enrolled: BTreeSet<_> = by_issuer.keys().cloned().collect();
+    if !enrolled.is_empty() {
+        let trusted_time = scenario.trusted_time.as_ref().ok_or_else(|| {
+            ProtocolError::KeyLifecycle("enrolled lifecycle requires a trusted-time window".into())
+        })?;
+        if trusted_time.source.is_empty()
+            || trusted_time.source.len() > 128
+            || trusted_time.source.chars().any(char::is_control)
+            || trusted_time.not_before > scenario.evaluation_time
+            || scenario.evaluation_time > trusted_time.not_after
+            || trusted_time.not_after < trusted_time.not_before
+            || trusted_time.not_after - trusted_time.not_before > MAX_TRUSTED_TIME_WINDOW_SECONDS
+        {
+            return Err(ProtocolError::KeyLifecycle(
+                "trusted time is absent, unbounded, rolled back, or advanced".into(),
+            ));
+        }
+    }
     if scenario
         .key_lifecycle_roots
         .keys()
@@ -837,6 +868,11 @@ mod key_lifecycle_tests {
         root: &SigningKey,
         actions: Vec<(u64, KeyLifecycleAction)>,
     ) {
+        scenario.trusted_time = Some(TrustedTimeWindow {
+            not_before: scenario.evaluation_time.saturating_sub(60),
+            not_after: scenario.evaluation_time.saturating_add(60),
+            source: "credential-free-test-clock".into(),
+        });
         let mut parent_digest = None;
         for (index, (effective_at, action)) in actions.into_iter().enumerate() {
             let mut statement = KeyLifecycleStatement {
@@ -1043,6 +1079,137 @@ mod key_lifecycle_tests {
         goal.issued_at = 1_735_000_000;
         sign_envelope(goal, &recovered);
         verify(&scenario).unwrap();
+    }
+
+    #[test]
+    fn trusted_time_expiry_and_revocation_boundaries_fail_closed() {
+        let root = SigningKey::from_bytes(&[90; 32]);
+        let rotated = SigningKey::from_bytes(&[91; 32]);
+        let mut candidate = scenario();
+        enroll(
+            &mut candidate,
+            "goal-lab",
+            AuthorityKind::Goal,
+            &root,
+            vec![(
+                1_690_000_000,
+                KeyLifecycleAction::Activate {
+                    public_key: encoded_key(&rotated),
+                    expires_at: 1_790_000_000,
+                },
+            )],
+        );
+        let goal = candidate
+            .authorities
+            .iter_mut()
+            .find(|envelope| envelope.issuer == "goal-lab")
+            .unwrap();
+        sign_envelope(goal, &rotated);
+
+        let set_time = |scenario: &mut Scenario, at| {
+            scenario.evaluation_time = at;
+            scenario.trusted_time = Some(TrustedTimeWindow {
+                not_before: at,
+                not_after: at,
+                source: "credential-free-test-clock".into(),
+            });
+        };
+        set_time(&mut candidate, 1_789_999_999);
+        verify(&candidate).unwrap();
+        set_time(&mut candidate, 1_790_000_000);
+        assert!(matches!(
+            verify(&candidate),
+            Err(ProtocolError::Invalid {
+                field: "public_key",
+                ..
+            })
+        ));
+
+        let mut revoked = scenario();
+        enroll(
+            &mut revoked,
+            "goal-lab",
+            AuthorityKind::Goal,
+            &root,
+            vec![
+                (
+                    1_690_000_000,
+                    KeyLifecycleAction::Activate {
+                        public_key: encoded_key(&rotated),
+                        expires_at: 1_790_000_000,
+                    },
+                ),
+                (
+                    1_760_000_000,
+                    KeyLifecycleAction::Revoke {
+                        public_key_digest: digest(&encoded_key(&rotated)),
+                    },
+                ),
+            ],
+        );
+        let goal = revoked
+            .authorities
+            .iter_mut()
+            .find(|envelope| envelope.issuer == "goal-lab")
+            .unwrap();
+        sign_envelope(goal, &rotated);
+        set_time(&mut revoked, 1_760_000_000);
+        assert!(matches!(
+            verify(&revoked),
+            Err(ProtocolError::Invalid {
+                field: "public_key",
+                ..
+            })
+        ));
+    }
+
+    #[test]
+    fn trusted_time_rollback_forward_and_unbounded_windows_refuse() {
+        let root = SigningKey::from_bytes(&[90; 32]);
+        let rotated = SigningKey::from_bytes(&[91; 32]);
+        let mut candidate = scenario();
+        enroll(
+            &mut candidate,
+            "goal-lab",
+            AuthorityKind::Goal,
+            &root,
+            vec![(
+                1_720_000_000,
+                KeyLifecycleAction::Activate {
+                    public_key: encoded_key(&rotated),
+                    expires_at: 1_790_000_000,
+                },
+            )],
+        );
+        let window = candidate.trusted_time.clone().unwrap();
+
+        let mut absent = candidate.clone();
+        absent.trusted_time = None;
+        assert!(matches!(
+            verify(&absent),
+            Err(ProtocolError::KeyLifecycle(_))
+        ));
+
+        let mut rollback = candidate.clone();
+        rollback.evaluation_time = window.not_before - 1;
+        assert!(matches!(
+            verify(&rollback),
+            Err(ProtocolError::KeyLifecycle(_))
+        ));
+
+        let mut forward = candidate.clone();
+        forward.evaluation_time = window.not_after + 1;
+        assert!(matches!(
+            verify(&forward),
+            Err(ProtocolError::KeyLifecycle(_))
+        ));
+
+        candidate.trusted_time.as_mut().unwrap().not_after =
+            window.not_before + MAX_TRUSTED_TIME_WINDOW_SECONDS + 1;
+        assert!(matches!(
+            verify(&candidate),
+            Err(ProtocolError::KeyLifecycle(_))
+        ));
     }
 
     #[test]

@@ -249,7 +249,21 @@ vulnerability or warning and no finding is accepted.
 
 ## Post-M18 — trusted-time and recovery-root ceremony
 
-- [ ] Model trusted-time rollback/forward failure paths for lifecycle expiry and
+- [x] Model trusted-time rollback/forward failure paths for lifecycle expiry and
   emergency revocation.
-- [ ] Define and rehearse a credential-free multi-party recovery-root ceremony
+- [x] Define and rehearse a credential-free multi-party recovery-root ceremony
   with explicit quorum, evidence, abort, and compromise handling.
+
+Evidence: [RECOVERY_ROOT_CEREMONY](RECOVERY_ROOT_CEREMONY.md). Enrolled
+lifecycle evaluation now requires a bounded trusted-time window and the
+credential-free 2-of-3 local rehearsal exercises success, exclusion, duplicate,
+missing, divergent, stale, veto, and compromised-participant failure paths.
+Neither mechanism establishes a production clock, participant identity, private
+key custody, or organizational independence.
+
+## Post-M19 — protocol compatibility and migration corpus
+
+- [ ] Retain old/new scenario and certificate compatibility vectors across
+  supported protocol versions.
+- [ ] Define fail-closed migration rules for optional-to-required trust fields
+  and unknown future versions.

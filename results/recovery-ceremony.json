@@ -1,0 +1,15 @@
+{
+  "schema_version":"telosieve.recovery-ceremony-result/v1",
+  "execution_mode":"credential-free-deterministic-local",
+  "participants":3,
+  "quorum":2,
+  "maximum_participants":7,
+  "maximum_duration_seconds":3600,
+  "cases":[
+    {"case":"quorum-and-exclusion","command":"cargo test --locked --offline recovery_ceremony::tests::quorum_ceremony_emits_bound_approval_and_survives_exclusion -- --exact","status":"passed"},
+    {"case":"abort-matrix","command":"cargo test --locked --offline recovery_ceremony::tests::duplicate_missing_divergent_stale_veto_and_compromised_votes_abort -- --exact","status":"passed"}
+  ],
+  "abort_classes":["duplicate","missing","divergent","stale","veto","excluded-compromised"],
+  "passed":2,
+  "failed":0
+}

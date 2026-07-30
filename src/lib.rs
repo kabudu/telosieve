@@ -7,5 +7,6 @@ pub mod external_checker;
 pub mod kubernetes_shadow;
 pub mod model;
 pub mod protocol;
+pub mod recovery_ceremony;
 
 pub use engine::{RunError, run_scenario};

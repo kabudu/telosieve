@@ -207,3 +207,19 @@ The retained cargo-audit result binds that lockfile to a named RustSec commit an
 reports zero known vulnerabilities, warnings, or accepted findings. Local CI
 regenerates the inventory offline and rejects an advisory result older than 30
 days. See [SUPPLY_CHAIN](SUPPLY_CHAIN.md).
+
+## Trusted time and recovery-root ceremony
+
+Enrolled key lifecycles now require an inclusive trusted-time window no wider
+than 300 seconds around evaluation. Focused tests prove exact exclusive-expiry
+and inclusive-revocation behavior and refuse rollback, forward-jump, and
+over-wide windows. The trusted-time assertion is content-bound into certificate
+authority evidence.
+
+The credential-free recovery-root rehearsal uses a fixed 2-of-3 profile and a
+bounded general 3–7 participant model. The retained result is emitted only after
+success/exclusion and duplicate, missing, divergent, stale, veto, and
+excluded-compromised failure tests pass. This is deterministic local protocol
+evidence, not authenticated time, participant identity, private-key custody, or
+organizational independence. See
+[RECOVERY_ROOT_CEREMONY](RECOVERY_ROOT_CEREMONY.md).

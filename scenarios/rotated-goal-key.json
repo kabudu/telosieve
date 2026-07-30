@@ -40,6 +40,11 @@
       "tip_digest": "2c99683fac50698e90b04390c01df08ea837c1a4a1d079cc286d4aef3111dccc"
     }
   },
+  "trusted_time": {
+    "not_before": 1749999940,
+    "not_after": 1750000060,
+    "source": "credential-free-research-clock"
+  },
   "fault_declaration": {
     "maximum_faults": 1,
     "suspectable": [

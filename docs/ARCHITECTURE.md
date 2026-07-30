@@ -33,6 +33,9 @@ recovery-root-signed key lifecycle before accepting its envelope. Historical
 phenotype records use issuance-time keys; current evidence must still use the
 evaluation-time active key. Lifecycle roots, statements, and trusted tips are
 included in the certificate evidence digest map.
+Enrolled lifecycle evaluation also requires a content-bound trusted-time window
+containing the evaluation instant and no wider than 300 seconds. This bounds
+local rollback/forward mistakes but does not create an independent clock.
 
 The Kubernetes shadow adapter is a pre-verification mapping gate for exported
 ConfigMap/StatefulSet JSON. It requires exact equality with authenticated
