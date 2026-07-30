@@ -68,6 +68,11 @@ and next state digests; backups restore only the latest committed generation.
 Distribution remains an external boundary with a three-attempt, 250 ms modeled
 budget and fail-closed digest matching.
 
+The isolated endpoint harness places immutable timestamp and revocation files
+behind separate authenticated loopback HTTP processes. Transport success is
+only an input to the existing cryptographic verifier; endpoint processes have no
+Telosieve mutation or trust-anchor update API.
+
 The Kubernetes shadow adapter is a pre-verification mapping gate for exported
 ConfigMap/StatefulSet JSON. It requires exact equality with authenticated
 goal/phenotype content and adds resource identity/version evidence to certificate

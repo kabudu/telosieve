@@ -122,6 +122,13 @@ delay and one-sided partition while refusing loss, outage, over-budget response,
 and equivocation. No independently operated service, custody, real-network
 measurement, or power-loss qualification exists, so the release block remains.
 
+An isolated loopback HTTP harness now exercises separate authenticated timestamp
+and revocation processes through ten live success/fault paths before the existing
+cryptographic verifier. This adds transport-shaped evidence without granting
+endpoint mutation authority. All processes, credentials, keys, and execution
+remain project-controlled and TLS/live-network/independent-operator evidence is
+absent, so the release block remains.
+
 ## CI and delivery policy
 
 Telosieve is private, so local CI is the sole authoritative quality gate:

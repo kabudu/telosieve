@@ -49,3 +49,6 @@ control, encryption, HSM, quorum, remote consensus, repair protocol, live
 service, hostile-disk defense, bare-metal power-loss qualification, or
 independent operator. Container evidence is project-run local qualification,
 not third-party assessment.
+
+Post-M24 adds live loopback transport and process isolation on top of this
+storage work. See [WITNESS_ENDPOINT_HARNESS](WITNESS_ENDPOINT_HARNESS.md).

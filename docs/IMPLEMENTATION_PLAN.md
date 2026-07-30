@@ -324,9 +324,20 @@ offline Linux arm64/amd64. Seven deterministic bounded distribution profiles
 preserve three available paths and refuse loss, outage, over-budget delay, and
 equivocation.
 
-## Post-M24 — independently operated witness pilot
+## Post-M24 — isolated external-endpoint harness
+
+- [x] Orchestrate separate authenticated timestamp/revocation HTTP processes
+  without adding mutation authority or weakening exact-tip verification.
+- [x] Exercise bounded live delay, loss, partition, outage, restart, stale,
+  equivocal, unauthorized, and oversized endpoint behavior.
+
+Evidence: [WITNESS_ENDPOINT_HARNESS](WITNESS_ENDPOINT_HARNESS.md). Three
+end-to-end success paths and seven live refusal paths pass through real HTTP and
+the existing cryptographic verifier within explicit request/resource bounds.
+
+## Post-M25 — independently operated witness reproduction
 
 - [ ] Integrate one independently administered timestamp/revocation endpoint
-  without adding mutation authority or weakening exact-tip verification.
-- [ ] Reproduce durability and live network fault results under an independent
-  operator with documented identity, custody, clock, and incident boundaries.
+  with documented identity, custody, clock, and incident boundaries.
+- [ ] Have an independent operator reproduce durability and live network fault
+  results without project-controlled credentials or execution.

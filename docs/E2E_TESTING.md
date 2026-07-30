@@ -119,3 +119,9 @@ primary loss, and a primary/witness copy through the public store API. The same
 tests run in pinned offline Linux arm64 and amd64 containers. A deterministic
 seven-profile distribution model covers delay, loss, partition, outage,
 budget exhaustion, and equivocation.
+
+`tests/witness_endpoints.rs` creates real signed artifacts, starts separate
+timestamp/revocation HTTP processes, fetches through bounded authenticated
+transport, and verifies through the normal Rust witness boundary. It covers
+healthy, restart, partition fallback, delay, drop, unauthorized, oversized,
+outage, equivocal, and stale cases with deterministic cleanup.

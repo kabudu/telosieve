@@ -105,6 +105,12 @@ corrupt, locked, pending-inconsistent, stale, or conflicting state, stop
 verification and preserve all files. Run `scripts/run-witness-durability.sh`
 after store or distribution-policy changes.
 
+Run `scripts/run-witness-endpoint-harness.sh` after endpoint, authentication,
+transport, retry, timeout, or response-bound changes. Treat every transport
+failure as evidence unavailability; do not cache past expiry, retry beyond the
+bound, or accept HTTP success without exact cryptographic verification. Harness
+tokens and loopback HTTP are fixtures and must not be deployed.
+
 For `shadow-kubernetes`, export the ConfigMap and StatefulSet evidence through a
 separate read-only process, preserve the raw export, and run Telosieve offline.
 Treat drift, incomplete observations, stale generations, identity changes, or

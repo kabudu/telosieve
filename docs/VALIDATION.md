@@ -270,6 +270,16 @@ and amd64 containers. The seven-profile deterministic availability result
 records three available and four refused outcomes within three attempts and a
 250 ms virtual budget. See [WITNESS_DURABILITY](WITNESS_DURABILITY.md).
 
+## Isolated witness endpoints
+
+Separate authenticated timestamp and revocation HTTP processes serve immutable
+real artifacts to the bounded client harness. Healthy, restart, and partition
+fallback paths verify cryptographically; delay, drop, unauthorized, oversized,
+outage, equivocal, and stale paths refuse. The retained ten-case result uses a
+250 ms request timeout, two-second scenario deadline, 4 KiB headers, 64 KiB
+bodies, two providers, and three attempts. See
+[WITNESS_ENDPOINT_HARNESS](WITNESS_ENDPOINT_HARNESS.md).
+
 ## Compatibility consumer qualification
 
 The independent Python reader and Rust compatibility boundary agree on three

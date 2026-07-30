@@ -1,0 +1,11 @@
+{
+  "schema_version":"telosieve.witness-endpoint-qualification/v1",
+  "transport":"authenticated-loopback-http/1.1",
+  "isolation":"separate-project-controlled-processes",
+  "bounds":{"maximum_providers":2,"maximum_attempts":3,"response_bytes":65536,"header_bytes":4096,"request_timeout_ms":250,"scenario_deadline_ms":2000},
+  "accepted":["healthy-exact-artifacts","authenticated-restart","one-sided-partition-fallback"],
+  "refused":["delayed-timeout","dropped-connection","unauthorized-request","oversized-response","total-outage","equivocal-artifact","stale-revocation"],
+  "cryptographic_verification":"existing-rust-witness-verifier",
+  "passed":10,
+  "failed":0
+}

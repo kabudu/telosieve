@@ -128,6 +128,13 @@ disk, lock-owner impersonation, joint primary/witness rollback, power-loss
 semantics outside the tested filesystems, endpoint compromise, and denial of
 service remain outside the protection.
 
+The isolated HTTP harness detects wrong credentials, delay beyond the request
+deadline, dropped connections, oversized bodies, complete outage, stale
+revocation, and equivocal bytes before verification can succeed. Because it uses
+loopback fixture tokens and project-controlled processes, it does not defend
+against TLS/DNS compromise, credential theft, hostile networks, endpoint load,
+or organizational collusion.
+
 The Kubernetes shadow adapter has no client or cluster credentials. It rejects
 resource-version/UID drift, partial or stale controller observations, oversized
 exports, and output/input aliasing. A malicious or incoherent exporter that
