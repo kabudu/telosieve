@@ -9,7 +9,7 @@ FILES = [
     "AGENTS.md", "README.md", "Cargo.lock", "docs/EVALUATION_CLI.md",
     "docs/EVALUATION_LIFECYCLE.md", "docs/OPERATOR_DIAGNOSTICS.md",
     "docs/OPERATIONS.md", "docs/PRIVATE_BUNDLE.md", "docs/RELEASE.md",
-    "docs/CANDIDATE_SIGNING.md",
+    "docs/BUILD_PROVENANCE.md", "docs/CANDIDATE_SIGNING.md",
     "deploy/kubernetes/evaluation-rbac.yaml", "evaluation/config.example.json",
     "evaluation/config.live.example.json", "evaluation/contract.json",
     "scripts/evaluation-lifecycle.py", "scripts/evaluation-diagnostics.py",

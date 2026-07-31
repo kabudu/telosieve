@@ -210,3 +210,7 @@ Candidate bundles use manifest version 2 and bind the canonical full source
 commit. Follow [CANDIDATE_SIGNING](CANDIDATE_SIGNING.md); an executed ceremony
 requires explicit operational identity/custody approval and does not waive the
 independent assessment gates.
+
+Candidate signing additionally requires a clean-tree same-commit reproducible
+build record and exact bundled-binary digest match. Same-host qualification does
+not satisfy the independent rebuild or toolchain-trust gates.

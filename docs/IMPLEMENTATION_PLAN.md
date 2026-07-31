@@ -425,3 +425,17 @@ produce a release signature, or satisfy independent assessment.
 Evidence: [CANDIDATE_SIGNING](CANDIDATE_SIGNING.md) and
 [PRIVATE_BUNDLE](PRIVATE_BUNDLE.md). Project-controlled qualification proves the
 mechanism only; it does not satisfy the operational or independent gates.
+
+## Post-M29 — reproducible candidate build provenance
+
+- [x] Rebuild the locked/offline release binary in two isolated target trees and
+  require byte identity under explicit time, output, and resource bounds.
+- [x] Retain commit, clean-tree, binary, toolchain, target, and resource evidence
+  and prove altered-binary detection.
+- [x] Require the candidate ceremony to match the bundle binary to a clean-tree
+  provenance record for the same commit.
+- [ ] Obtain an independent and cross-platform reproducible build.
+
+Evidence: [BUILD_PROVENANCE](BUILD_PROVENANCE.md). The qualification is
+same-host and project-controlled; compiler/dependency trust and hermeticity are
+not established.

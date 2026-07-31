@@ -252,6 +252,13 @@ source commits and requires different bundle digests. A malformed commit refuses
 before publication. This proves source-identity binding, not that a supplied
 commit was reviewed or that an operational ceremony occurred.
 
+## Reproducible candidate build
+
+Two isolated non-incremental locked/offline release builds produce byte-identical
+binaries on the current host. Qualification records bounded build resources and
+detects a deliberately altered comparison binary. This is same-host
+project-controlled evidence, not hermetic or independent reproduction.
+
 ## Certificate evidence attestation
 
 Detached certificate attestation binds exact bytes to a context, signer/key,

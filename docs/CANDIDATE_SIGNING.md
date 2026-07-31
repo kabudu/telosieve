@@ -9,6 +9,8 @@ replace independent assessment.
 1. Record a clean reviewed `master` commit and run `./scripts/ci-local.sh` at
    that exact commit.
 2. Build the release binary and deterministic bundle with the full commit SHA.
+   Retain a passing clean-tree [BUILD_PROVENANCE](BUILD_PROVENANCE.md) record
+   for that commit and require the bundled binary digest to match it.
 3. Have two named custodians verify the commit, bundle manifest, intended
    recipients, context, signer, key ID, and validity interval. The private key
    remains offline, outside the repository and bundle.

@@ -204,3 +204,8 @@ Commit binding prevents silent reuse of one bundle under a different declared
 source identity. It does not prove that the binary was built from that commit;
 reproducible-build provenance, compiler trust, custodian collusion, and ceremony
 execution remain separate controls and assessment targets.
+
+Isolated same-host rebuild comparison detects nondeterminism visible across two
+clean target directories and later binary substitution. It shares the source
+tree, host, compiler, dependency cache, environment, and build script, so a
+common compromise or deterministic malicious toolchain remains undetected.
