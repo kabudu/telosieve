@@ -9,6 +9,11 @@ mkdir -p out
 cargo run --locked --offline -- evaluate evaluation/config.example.json
 ```
 
+`telosieve evaluation-capabilities` emits the bounded compiled
+`telosieve.evaluation-capabilities/v1` inventory. Its schema/mode records must
+exactly equal contract v2's `supported_evaluation_modes`, and every record must
+declare `target_mutated: false`.
+
 `telosieve --version` prints the binary package version. The `evaluate` command,
 `telosieve.evaluation-config/v1` configuration, and
 `telosieve.evaluation-report/v1` success report are the supported evaluation

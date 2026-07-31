@@ -1,10 +1,28 @@
 {
-  "schema_version": "telosieve.evaluation-product-contract/v1",
+  "schema_version": "telosieve.evaluation-product-contract/v2",
   "decision": "private-evaluation-product-authorized",
   "decision_date": "2026-07-30",
+  "contract_revision_date": "2026-07-31",
   "repository_visibility": "private",
   "authoritative_ci": "./scripts/ci-local.sh",
-  "supported_evaluation_mode": "read-only-shadow",
+  "evaluation_authority_boundary": "read-only-no-target-mutation",
+  "supported_evaluation_modes": [
+    {
+      "configuration_schema": "telosieve.evaluation-config/v1",
+      "mode": "kubernetes-shadow",
+      "target_mutated": false
+    },
+    {
+      "configuration_schema": "telosieve.evaluation-config/v2",
+      "mode": "kubernetes-live",
+      "target_mutated": false
+    },
+    {
+      "configuration_schema": "telosieve.evaluation-config/v3",
+      "mode": "opentofu-plan",
+      "target_mutated": false
+    }
+  ],
   "authorized_work": [
     "diagnostics-and-operator-evidence",
     "installation-upgrade-rollback-packaging",

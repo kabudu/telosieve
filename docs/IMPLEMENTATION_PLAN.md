@@ -468,3 +468,17 @@ real local-cluster gap, not the managed-platform or independent-validation gates
 Evidence: [OPENTOFU_PLAN](OPENTOFU_PLAN.md). The real local lifecycle uses only
 the built-in `terraform_data` resource and disposable local state. It establishes
 plan parsing and evidence binding, not provider correctness or apply safety.
+
+## Post-M32 — evaluation contract and capability reconciliation
+
+- [x] Replace the stale single-mode contract field with an explicit bounded
+  schema-to-mode inventory under a no-target-mutation authority boundary.
+- [x] Publish the compiled capability inventory through the CLI and require
+  exact agreement with the policy contract.
+- [x] Refuse uncontracted, missing, mutation-capable, mutation-shaped,
+  duplicate-schema, and authority-boundary-weakened variants.
+
+Evidence: [EVALUATION_PRODUCT_DECISION](EVALUATION_PRODUCT_DECISION.md) and
+`results/evaluation-contract-validation.json`. Contract v2 reconciles three
+implemented read-only modes and passes six adversarial drift refusals. It does
+not authorize production actuation, credentials, publication, or promotion.

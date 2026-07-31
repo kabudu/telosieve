@@ -25,6 +25,31 @@ pub const MAX_CONFIG_BYTES: u64 = 64 * 1024;
 const MAX_PATH_BYTES: usize = 4096;
 const KUBERNETES_SHADOW_MODE: &str = "kubernetes-shadow";
 
+#[derive(Debug, PartialEq, Eq, Serialize)]
+pub struct EvaluationCapability {
+    pub configuration_schema: &'static str,
+    pub mode: &'static str,
+    pub target_mutated: bool,
+}
+
+pub const SUPPORTED_EVALUATION_CAPABILITIES: &[EvaluationCapability] = &[
+    EvaluationCapability {
+        configuration_schema: CONFIG_SCHEMA_VERSION,
+        mode: KUBERNETES_SHADOW_MODE,
+        target_mutated: false,
+    },
+    EvaluationCapability {
+        configuration_schema: LIVE_CONFIG_SCHEMA_VERSION,
+        mode: "kubernetes-live",
+        target_mutated: false,
+    },
+    EvaluationCapability {
+        configuration_schema: OPENTOFU_CONFIG_SCHEMA_VERSION,
+        mode: "opentofu-plan",
+        target_mutated: false,
+    },
+];
+
 #[derive(Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct EvaluationConfigV1 {
@@ -119,6 +144,14 @@ pub fn run_config_file(config_path: &Path) -> Result<EvaluationReport, Evaluatio
         .get("schema_version")
         .and_then(serde_json::Value::as_str)
         .ok_or(EvaluationError::Schema)?;
+    let capability = SUPPORTED_EVALUATION_CAPABILITIES
+        .iter()
+        .find(|capability| capability.configuration_schema == schema)
+        .ok_or(EvaluationError::Schema)?;
+    if capability.target_mutated {
+        return Err(EvaluationError::Mode);
+    }
+    let schema = capability.configuration_schema;
     let base = canonical_config
         .parent()
         .ok_or_else(|| EvaluationError::Path("configuration has no parent directory".into()))?;
@@ -127,7 +160,7 @@ pub fn run_config_file(config_path: &Path) -> Result<EvaluationReport, Evaluatio
         if config.schema_version != CONFIG_SCHEMA_VERSION {
             return Err(EvaluationError::Schema);
         }
-        if config.mode != KUBERNETES_SHADOW_MODE {
+        if config.mode != capability.mode {
             return Err(EvaluationError::Mode);
         }
         let scenario = resolve_path(base, &config.scenario_path, "scenario_path")?;
@@ -138,8 +171,8 @@ pub fn run_config_file(config_path: &Path) -> Result<EvaluationReport, Evaluatio
         let certificate_value =
             run_kubernetes_shadow_file(&scenario, &snapshot, &certificate, &ledger)?;
         return Ok(report(
-            CONFIG_SCHEMA_VERSION,
-            KUBERNETES_SHADOW_MODE,
+            capability.configuration_schema,
+            capability.mode,
             &certificate_value,
         ));
     }
@@ -148,7 +181,7 @@ pub fn run_config_file(config_path: &Path) -> Result<EvaluationReport, Evaluatio
         if config.schema_version != OPENTOFU_CONFIG_SCHEMA_VERSION {
             return Err(EvaluationError::Schema);
         }
-        if config.mode != "opentofu-plan" {
+        if config.mode != capability.mode {
             return Err(EvaluationError::Mode);
         }
         let scenario = resolve_path(base, &config.scenario_path, "scenario_path")?;
@@ -158,8 +191,8 @@ pub fn run_config_file(config_path: &Path) -> Result<EvaluationReport, Evaluatio
         reject_config_collision(&canonical_config, &certificate, &ledger)?;
         let certificate_value = run_opentofu_plan_file(&scenario, &plan, &certificate, &ledger)?;
         return Ok(report(
-            OPENTOFU_CONFIG_SCHEMA_VERSION,
-            "opentofu-plan",
+            capability.configuration_schema,
+            capability.mode,
             &certificate_value,
         ));
     }
@@ -170,7 +203,7 @@ pub fn run_config_file(config_path: &Path) -> Result<EvaluationReport, Evaluatio
     if config.schema_version != LIVE_CONFIG_SCHEMA_VERSION {
         return Err(EvaluationError::Schema);
     }
-    if config.mode != "kubernetes-live" {
+    if config.mode != capability.mode {
         return Err(EvaluationError::Mode);
     }
     let scenario = resolve_path(base, &config.scenario_path, "scenario_path")?;
@@ -189,8 +222,8 @@ pub fn run_config_file(config_path: &Path) -> Result<EvaluationReport, Evaluatio
     let certificate_value =
         run_kubernetes_shadow_snapshot(&scenario_value, &snapshot, &certificate, &ledger)?;
     Ok(report(
-        LIVE_CONFIG_SCHEMA_VERSION,
-        "kubernetes-live",
+        capability.configuration_schema,
+        capability.mode,
         &certificate_value,
     ))
 }

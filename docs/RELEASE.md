@@ -148,8 +148,15 @@ remediation, production adapter evidence, identity/custody design, and a new
 explicit decision. Until those gates pass, Telosieve remains evaluation software
 with no production mutation authority.
 
-The stable `evaluate` command accepts the compatible exported-snapshot v1
-configuration and the live read-only v2 configuration, and emits
+Contract v2 now enumerates the three implemented read-only configuration modes
+and binds them to the capability inventory emitted by the compiled CLI. Six
+adversarial mutations prove uncontracted, missing, mutation-capable,
+mutation-shaped, duplicate-schema, and weakened-boundary variants refuse. This
+reconciles policy with Kubernetes shadow/live and OpenTofu plan evaluation; it
+does not expand the no-target-mutation authority boundary.
+
+The stable `evaluate` command accepts the exported-snapshot v1, live read-only
+Kubernetes v2, and saved OpenTofu plan v3 configurations, and emits
 `telosieve.evaluation-report/v1` after persisted read-only shadow evidence.
 Unknown versions, mutation modes, oversized files, invalid paths, and output
 collisions refuse. Live collection performs four bounded `kubectl get` calls,

@@ -112,6 +112,16 @@ fn product_command(args: &[String]) -> Option<ExitCode> {
         Some("bundle-sign") if args.len() == 10 => Some(bundle_sign(args)),
         Some("bundle-verify") if args.len() == 5 => Some(bundle_verify(args)),
         Some("bundle-public-key") if args.len() == 3 => Some(bundle_public_key(&args[2])),
+        Some("evaluation-capabilities") if args.len() == 2 => {
+            println!(
+                "{}",
+                serde_json::json!({
+                    "schema_version": "telosieve.evaluation-capabilities/v1",
+                    "capabilities": telosieve::evaluation::SUPPORTED_EVALUATION_CAPABILITIES,
+                })
+            );
+            Some(ExitCode::SUCCESS)
+        }
         _ => None,
     }
 }
@@ -294,6 +304,7 @@ fn usage() -> ExitCode {
     eprintln!(
         "usage:\n  telosieve anchor-init <scenario.json> <anchor.json>\n  \
          telosieve evaluate <evaluation-config.json>\n  \
+         telosieve evaluation-capabilities\n  \
          telosieve bundle-sign <bundle.zip> <private-key.hex> <context> <signer> <key-id> <issued-at> <expires-at> <signature.json>\n  \
          telosieve bundle-public-key <private-key.hex>\n  \
          telosieve bundle-verify <bundle.zip> <signature.json> <trust.json>\n  \

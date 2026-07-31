@@ -17,6 +17,17 @@ hosted CI, default-on telemetry, or general safety claims.
 The machine-readable contract is `evaluation/contract.json`. Local validation
 must reject any silent weakening of its authorized and prohibited sets.
 
+### 2026-07-31 contract-v2 clarification
+
+Contract v2 expresses the existing authorization as the explicit
+`read-only-no-target-mutation` boundary. Its supported inventory is Kubernetes
+exported shadow, live read-only Kubernetes collection, and saved OpenTofu plan
+evaluation. All three modes produce `target_mutated: false`; the clarification
+does not authorize credentials or actuation beyond the boundaries below. The
+compiled CLI publishes the same schema-to-mode inventory, and local validation
+rejects drift, uncontracted modes, mutation-shaped modes, duplicate schemas, or
+a weakened authority boundary.
+
 ## Supported evaluation boundary
 
 The first supported mode is read-only shadow evaluation:

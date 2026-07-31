@@ -7,7 +7,10 @@ use std::{
 use serde_json::{Value, json};
 use telosieve::{
     certificate::{Certificate, Decision},
-    evaluation::{CONFIG_SCHEMA_VERSION, MAX_CONFIG_BYTES, REPORT_SCHEMA_VERSION},
+    evaluation::{
+        CONFIG_SCHEMA_VERSION, MAX_CONFIG_BYTES, REPORT_SCHEMA_VERSION,
+        SUPPORTED_EVALUATION_CAPABILITIES,
+    },
     model::digest,
 };
 
@@ -22,6 +25,45 @@ impl TestDirectory {
         fs::create_dir_all(&path).unwrap();
         Self(path)
     }
+}
+
+#[test]
+fn compiled_capabilities_exactly_match_the_product_contract() {
+    let output = Command::new(env!("CARGO_BIN_EXE_telosieve"))
+        .arg("evaluation-capabilities")
+        .output()
+        .unwrap();
+    assert!(output.status.success());
+    let emitted: Value = serde_json::from_slice(&output.stdout).unwrap();
+    assert_eq!(
+        emitted["schema_version"],
+        "telosieve.evaluation-capabilities/v1"
+    );
+    assert_eq!(
+        emitted["capabilities"],
+        serde_json::to_value(SUPPORTED_EVALUATION_CAPABILITIES).unwrap()
+    );
+    let contract: Value =
+        serde_json::from_slice(include_bytes!("../evaluation/contract.json")).unwrap();
+    assert_eq!(
+        contract["schema_version"],
+        "telosieve.evaluation-product-contract/v2"
+    );
+    assert_eq!(
+        contract["evaluation_authority_boundary"],
+        "read-only-no-target-mutation"
+    );
+    assert_eq!(
+        contract["supported_evaluation_modes"],
+        emitted["capabilities"]
+    );
+    assert!(
+        emitted["capabilities"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .all(|capability| capability["target_mutated"] == false)
+    );
 }
 
 impl Drop for TestDirectory {

@@ -1,1 +1,1 @@
-{"schema_version":"telosieve.evaluation-contract-validation/v1","authorized_work":5,"prohibited_actions":6,"candidate_readiness_gates":8,"production_promotion_gates":6,"status":"passed"}
+{"schema_version":"telosieve.evaluation-contract-validation/v2","supported_modes":3,"authorized_work":5,"prohibited_actions":6,"candidate_readiness_gates":8,"production_promotion_gates":6,"adversarial_refusals":6,"status":"passed"}

@@ -158,6 +158,12 @@ cargo run --locked --offline --example state_space -- results/generated-state-sp
 Hosted CI is intentionally disabled until an explicitly approved public-opening
 or research-release gate.
 
+Inspect the exact machine-checked read-only evaluation surface with:
+
+```sh
+cargo run --locked --offline -- evaluation-capabilities
+```
+
 Generate and qualify the credential-free OpenTofu plan integration with:
 
 ```sh
