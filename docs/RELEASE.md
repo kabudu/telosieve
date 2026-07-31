@@ -167,6 +167,13 @@ local lifecycle and ten refusal paths pass in authoritative local CI. This
 completes the lifecycle procedure gate, but is not a package, distributed
 artifact, service installation, power-loss qualification, or candidate release.
 
+The offline operator-diagnostics tool now verifies a managed installation and
+exports only release/configuration digests plus opaque evidence digest/size
+records under 1,000-file and 256-MiB bounds. A unique-secret regression proves
+zero direct content/path disclosure and four unsafe export paths refuse.
+Digests remain sensitive correlators, and this does not provide telemetry,
+raw-evidence packaging, or independent privacy assessment.
+
 ## CI and delivery policy
 
 Telosieve is private, so local CI is the sole authoritative quality gate:

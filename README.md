@@ -110,6 +110,12 @@ digest-bound binary/configuration pair, creates verified backups, and uninstalls
 software while preserving evidence. See
 [Evaluation Installation Lifecycle](docs/EVALUATION_LIFECYCLE.md).
 
+Generate bounded, content-redacted installation diagnostics with
+`scripts/evaluation-diagnostics.py`. The fixed export allowlist excludes paths,
+configuration values, evidence contents, environment, and application values;
+digests remain sensitive. See
+[Operator Diagnostics](docs/OPERATOR_DIAGNOSTICS.md).
+
 See [Versioned Evaluation CLI](docs/EVALUATION_CLI.md). This mode writes only
 certificate and ledger evidence; it has no target-system mutation authority.
 

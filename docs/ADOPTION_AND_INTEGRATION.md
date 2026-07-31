@@ -24,8 +24,8 @@ rotation, and semantic mismatch between declared invariants and platform behavio
 See [KUBERNETES_SHADOW](KUBERNETES_SHADOW.md).
 
 Evaluation adoption now has a versioned CLI/configuration contract plus
-documented and qualified single-host lifecycle operations. Bounded diagnostics,
-reproducible private artifacts, resource/recovery qualification, and an operator
-escape hatch remain candidate work. Independent validation targets the exact
+documented and qualified single-host lifecycle operations plus content-redacted
+diagnostics. Reproducible private artifacts, resource/recovery qualification,
+and an operator escape hatch remain candidate work. Independent validation targets the exact
 candidate after these capabilities exist. Production integration remains a
 separate promotion decision.

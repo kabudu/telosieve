@@ -325,6 +325,16 @@ without changing the active release. This is local-filesystem lifecycle
 evidence, not
 power-loss, package-manager, service-manager, or distribution qualification.
 
+## Operator diagnostics
+
+The diagnostics qualification installs a managed evaluator, writes a unique
+secret into a uniquely named evidence file, exports through the public tool, and
+validates the exact recursive v1 allowlist. Neither secret, file name, path,
+configuration value, nor environment is present. Existing output, evidence
+symlink, permission drift, and an in-root destination refuse without an export.
+This proves the project-owned disclosure contract, not anonymity of digests or
+independent privacy assessment.
+
 ## Compatibility consumer qualification
 
 The independent Python reader and Rust compatibility boundary agree on three

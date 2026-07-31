@@ -19,3 +19,4 @@
 | R15 | Diagnostic or assessor bundles disclose sensitive platform data | Medium | High | Bounded allowlisted export; redaction and privacy review; telemetry off by default |
 | R16 | Private candidate diverges from independently assessed artifacts | Medium | Critical | Commit, checksum, and signature binding; assess exact bundle; reassess material fixes |
 | R17 | Upgrade, rollback, or uninstall mixes versions or loses evaluation evidence | Medium | Critical | Atomic digest-bound release activation; verified bounded backup; exact-root removal confirmation; preserve evidence on rollback/uninstall |
+| R18 | Diagnostic export discloses sensitive platform or application data | Medium | High | Fixed content-free allowlist; opaque ordinals; file/count bounds; permission checks; unique-secret disclosure regression; encrypted handling |

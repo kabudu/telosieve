@@ -49,8 +49,9 @@ and an operator runbook are candidate gates rather than assumed capabilities.
 
 The versioned evaluation CLI, strict configuration, bounded live collector, and
 single-host lifecycle manager now satisfy the stable-interface, live-read, and
-lifecycle-procedure gates. This does not satisfy the separate diagnostics,
-resource/recovery qualification, or reproducible private-bundle gates.
+lifecycle-procedure, and bounded diagnostics/export gates. This does not satisfy
+the separate resource/recovery qualification or reproducible private-bundle
+gates.
 
 The transactional local reference actuator is evidence for the required adapter
 contract, not a supported production adapter. Production promotion still

@@ -166,6 +166,13 @@ administrators, network filesystems, and evidence changes by a concurrent
 evaluator during backup remain outside this qualification; operators must stop
 writers and protect the root and backup storage.
 
+Diagnostics rejects symlinks, hard links, unsafe permissions, installation
+manifest drift, evidence changes during hashing, resource-bound excess, and
+output collision. Its allowlist omits contents, paths, names, environment, and
+command output. SHA-256 and exact sizes can still correlate known or
+low-entropy evidence, and a privileged local actor can change files between
+separate entries; operators must stop writers and treat the export as sensitive.
+
 Incident drills validate deterministic software responses, not operator timing,
 hardware failure, hostile administrators, or multi-host disaster recovery.
 

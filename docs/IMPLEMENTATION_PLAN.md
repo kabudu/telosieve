@@ -361,7 +361,7 @@ No independent record has been returned, so both external gates remain open.
 - [x] Add a fail-closed, least-privilege live Kubernetes read-only collector.
 - [x] Package documented install, upgrade, rollback, backup, and uninstall
   workflows for supported evaluation platforms.
-- [ ] Add bounded operator diagnostics and privacy-reviewed evidence export.
+- [x] Add bounded operator diagnostics and privacy-reviewed evidence export.
 - [ ] Qualify platform resources, interruption, recovery, and private bundle
   reproducibility before proposing an evaluation candidate.
 
@@ -384,3 +384,10 @@ binary/configuration releases, verifies owner-only backups, preserves evidence
 through rollback and uninstall, and passes the real five-phase lifecycle plus
 ten unsafe/tamper refusals. Package-manager, service, power-loss, and
 reproducible private-bundle qualification remain later gates.
+
+Diagnostics evidence: [OPERATOR_DIAGNOSTICS](OPERATOR_DIAGNOSTICS.md). The
+offline exporter verifies the managed release and owner-only evidence under
+1,000-file/256-MiB bounds, emits only an explicit digest/size allowlist, and
+passes a unique-secret non-disclosure check plus four fail-closed paths. Digests
+remain sensitive correlators; this is not telemetry or independent privacy
+assessment.

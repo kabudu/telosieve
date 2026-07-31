@@ -20,6 +20,12 @@ never rewinds evidence; uninstall requires the canonical root twice and
 preserves evidence. See
 [EVALUATION_LIFECYCLE](EVALUATION_LIFECYCLE.md).
 
+Generate assessor diagnostics only with `scripts/evaluation-diagnostics.py`.
+Treat even its content-redacted digest/size manifest as sensitive, transfer it
+through an approved encrypted channel, and never substitute it for raw evidence
+when raw evidence is explicitly required. See
+[OPERATOR_DIAGNOSTICS](OPERATOR_DIAGNOSTICS.md).
+
 Operational alerts cover signature failure, equivocation, schema mismatch,
 hypothesis-budget exhaustion, checker disagreement, ledger write failure, and
 actuator partial failure. No automatic retry may broaden authority or weaken an

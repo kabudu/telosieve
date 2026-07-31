@@ -99,6 +99,11 @@ selects the pair, avoiding mixed-version activation. Its exclusive local lock
 serializes lifecycle operations; bounded checksummed backups include evidence,
 while rollback and uninstall never replace or delete the live evidence tree.
 
+Operator diagnostics is a separate offline projection over the verified managed
+release and evidence directory. It exposes a fixed content-free schema of
+digests, sizes, counts, and boolean checks; stable file identity bounds each hash
+and no-clobber publication prevents overwriting an operator artifact.
+
 ## Failure behavior
 
 Malformed, stale, equivocal, over-budget, or unverifiable evidence yields refusal.
