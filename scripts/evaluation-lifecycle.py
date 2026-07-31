@@ -19,7 +19,7 @@ SCHEMA = "telosieve.evaluation-install/v1"
 BACKUP_SCHEMA = "telosieve.evaluation-backup/v1"
 CONFIG_SCHEMAS = {
     "telosieve.evaluation-config/v5",
-    "telosieve.evaluation-config/v3",
+    "telosieve.evaluation-config/v6",
     "telosieve.evaluation-config/v4",
 }
 MAX_BINARY_BYTES = 128 * 1024 * 1024
@@ -97,15 +97,16 @@ def validated_inputs(binary_value: str, config_value: str) -> tuple[bytes, bytes
             "ledger_path", "kubernetes", "observation_trust_path",
             "observation_sources",
         },
-        "telosieve.evaluation-config/v3": {
+        "telosieve.evaluation-config/v6": {
             "schema_version", "mode", "scenario_path", "plan_path",
-            "certificate_path", "ledger_path",
+            "certificate_path", "ledger_path", "observation_trust_path",
+            "observation_sources",
         },
     }[parsed["schema_version"]]
     expected_mode = {
         "telosieve.evaluation-config/v4": "kubernetes-shadow",
         "telosieve.evaluation-config/v5": "kubernetes-live",
-        "telosieve.evaluation-config/v3": "opentofu-plan",
+        "telosieve.evaluation-config/v6": "opentofu-plan",
     }[parsed["schema_version"]]
     if set(parsed) != expected or parsed.get("mode") != expected_mode:
         raise LifecycleError("configuration fields or mode do not match its schema")
@@ -138,6 +139,7 @@ def validated_inputs(binary_value: str, config_value: str) -> tuple[bytes, bytes
             kubernetes["kubeconfig_path"]
         ).is_absolute():
             raise LifecycleError("live Kubernetes file paths must be absolute")
+    if parsed["schema_version"] in {"telosieve.evaluation-config/v5", "telosieve.evaluation-config/v6"}:
         sources = parsed.get("observation_sources")
         if (
             not isinstance(sources, list) or not 2 <= len(sources) <= 8
@@ -155,7 +157,7 @@ def validated_inputs(binary_value: str, config_value: str) -> tuple[bytes, bytes
                 for source in sources
             )
         ):
-            raise LifecycleError("live observation sources are invalid")
+            raise LifecycleError("observation sources are invalid")
     return binary, config
 
 

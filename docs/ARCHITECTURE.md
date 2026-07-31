@@ -47,13 +47,15 @@ existing certificate.
 
 The OpenTofu boundary consumes only saved-plan JSON, requires supported format
 1.2 and bounded `terraform_data` updates, maps exact before/after inputs to
-authenticated phenotype/goal evidence, and binds the original plan-byte digest
-in certificate v10. It has no backend, provider, credential, or apply capability.
+authenticated phenotype/goal evidence, requires an authenticated multi-domain
+quorum over the original plan bytes, and binds both plan and quorum digests in
+certificate v10. It has no backend, provider, credential, or apply capability.
 
 The observation-quorum module verifies canonical, bounded Ed25519 attestations
-from distinct configured producer domains over exact platform input bytes. It is
-a reusable protocol primitive and is not yet wired into evaluation schemas or
-certificate persistence; see [OBSERVATION_QUORUM](OBSERVATION_QUORUM.md).
+from distinct configured producer domains over exact platform input bytes. It
+is mandatory for Kubernetes shadow v4, Kubernetes live v5, and OpenTofu plan v6
+evaluation and is bound into their retained evidence; see
+[OBSERVATION_QUORUM](OBSERVATION_QUORUM.md).
 
 The qualified downstream boundary is separately implemented in dependency-free
 Python. It independently rejects duplicate/unknown/missing fields, invalid

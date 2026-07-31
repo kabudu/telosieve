@@ -12,7 +12,7 @@ use crate::{
     engine::{
         RunError, certificate_temporary_path, read_scenario,
         run_kubernetes_shadow_file_corroborated, run_kubernetes_shadow_snapshot_corroborated,
-        run_opentofu_plan_file,
+        run_opentofu_plan_bytes_corroborated,
     },
     kubernetes_live::{LiveError, LiveKubernetesConfig},
     model::digest,
@@ -20,7 +20,7 @@ use crate::{
 
 pub const CONFIG_SCHEMA_VERSION: &str = "telosieve.evaluation-config/v4";
 pub const LIVE_CONFIG_SCHEMA_VERSION: &str = "telosieve.evaluation-config/v5";
-pub const OPENTOFU_CONFIG_SCHEMA_VERSION: &str = "telosieve.evaluation-config/v3";
+pub const OPENTOFU_CONFIG_SCHEMA_VERSION: &str = "telosieve.evaluation-config/v6";
 pub const REPORT_SCHEMA_VERSION: &str = "telosieve.evaluation-report/v1";
 pub const MAX_CONFIG_BYTES: u64 = 64 * 1024;
 const MAX_PATH_BYTES: usize = 4096;
@@ -35,11 +35,6 @@ pub struct EvaluationCapability {
 
 pub const SUPPORTED_EVALUATION_CAPABILITIES: &[EvaluationCapability] = &[
     EvaluationCapability {
-        configuration_schema: OPENTOFU_CONFIG_SCHEMA_VERSION,
-        mode: "opentofu-plan",
-        target_mutated: false,
-    },
-    EvaluationCapability {
         configuration_schema: CONFIG_SCHEMA_VERSION,
         mode: KUBERNETES_SHADOW_MODE,
         target_mutated: false,
@@ -47,6 +42,11 @@ pub const SUPPORTED_EVALUATION_CAPABILITIES: &[EvaluationCapability] = &[
     EvaluationCapability {
         configuration_schema: LIVE_CONFIG_SCHEMA_VERSION,
         mode: "kubernetes-live",
+        target_mutated: false,
+    },
+    EvaluationCapability {
+        configuration_schema: OPENTOFU_CONFIG_SCHEMA_VERSION,
+        mode: "opentofu-plan",
         target_mutated: false,
     },
 ];
@@ -79,13 +79,15 @@ struct EvaluationConfigV5 {
 
 #[derive(Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
-struct EvaluationConfigV3 {
+struct EvaluationConfigV6 {
     schema_version: String,
     mode: String,
     scenario_path: String,
     plan_path: String,
     certificate_path: String,
     ledger_path: String,
+    observation_trust_path: String,
+    observation_sources: Vec<crate::observation_source::ObservationSourceConfig>,
 }
 
 #[derive(Debug, PartialEq, Eq, Serialize)]
@@ -166,7 +168,7 @@ pub fn run_config_file(config_path: &Path) -> Result<EvaluationReport, Evaluatio
         return run_shadow_config(value, base, &canonical_config, capability);
     }
     if schema == OPENTOFU_CONFIG_SCHEMA_VERSION {
-        let config: EvaluationConfigV3 = serde_json::from_value(value)?;
+        let config: EvaluationConfigV6 = serde_json::from_value(value)?;
         if config.schema_version != OPENTOFU_CONFIG_SCHEMA_VERSION {
             return Err(EvaluationError::Schema);
         }
@@ -177,8 +179,40 @@ pub fn run_config_file(config_path: &Path) -> Result<EvaluationReport, Evaluatio
         let plan = resolve_path(base, &config.plan_path, "plan_path")?;
         let certificate = resolve_path(base, &config.certificate_path, "certificate_path")?;
         let ledger = resolve_path(base, &config.ledger_path, "ledger_path")?;
+        let trust = resolve_path(
+            base,
+            &config.observation_trust_path,
+            "observation_trust_path",
+        )?;
         reject_config_collision(&canonical_config, &certificate, &ledger)?;
-        let certificate_value = run_opentofu_plan_file(&scenario, &plan, &certificate, &ledger)?;
+        let source_executables = config
+            .observation_sources
+            .iter()
+            .map(|source| Path::new(&source.executable_path))
+            .collect::<Vec<_>>();
+        reject_external_path_collisions(
+            &[scenario.as_path(), plan.as_path(), trust.as_path()],
+            &source_executables,
+            &certificate,
+            &ledger,
+        )?;
+        let scenario_value = read_scenario(&scenario)?;
+        let plan_bytes = crate::opentofu_plan::read_bounded(&plan).map_err(RunError::OpenTofu)?;
+        let trust_bytes = crate::observation_source::read_trust(&trust)?;
+        let verified = crate::observation_source::corroborate_bytes(
+            &plan_bytes,
+            &scenario_value.subject,
+            "opentofu-plan",
+            &trust_bytes,
+            &config.observation_sources,
+        )?;
+        let certificate_value = run_opentofu_plan_bytes_corroborated(
+            &scenario_value,
+            &plan_bytes,
+            verified.evidence_digest,
+            &certificate,
+            &ledger,
+        )?;
         return Ok(report(
             capability.configuration_schema,
             capability.mode,
@@ -189,6 +223,39 @@ pub fn run_config_file(config_path: &Path) -> Result<EvaluationReport, Evaluatio
         return Err(EvaluationError::Schema);
     }
     run_live_config(value, base, &canonical_config, capability)
+}
+
+fn reject_external_path_collisions(
+    inputs: &[&Path],
+    executables: &[&Path],
+    certificate: &Path,
+    ledger: &Path,
+) -> Result<(), EvaluationError> {
+    let mut canonical_inputs = inputs
+        .iter()
+        .map(fs::canonicalize)
+        .collect::<Result<Vec<_>, _>>()?;
+    canonical_inputs.extend(
+        executables
+            .iter()
+            .map(fs::canonicalize)
+            .collect::<Result<Vec<_>, _>>()?,
+    );
+    let outputs = [
+        canonical_output_path(certificate)?,
+        canonical_output_path(&certificate_temporary_path(certificate))?,
+        canonical_output_path(ledger)?,
+    ];
+    if outputs[0] == outputs[1]
+        || outputs[0] == outputs[2]
+        || outputs[1] == outputs[2]
+        || outputs
+            .iter()
+            .any(|output| canonical_inputs.iter().any(|input| input == output))
+    {
+        return Err(EvaluationError::ConfigOutputCollision);
+    }
+    Ok(())
 }
 
 fn run_live_config(

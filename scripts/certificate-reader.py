@@ -57,6 +57,7 @@ OPENTOFU_FIELDS = {
     "adapter", "plan_sha256", "format_version", "terraform_version",
     "resource_change_count",
 }
+OPENTOFU_OPTIONAL_FIELDS = {"observation_quorum_digest"}
 ATTESTATION_FIELDS = {
     "schema_version",
     "context",
@@ -308,8 +309,12 @@ def validate_certificate(value: Any) -> dict[str, Any]:
         if "observation_quorum_digest" in record and not canonical_hex(record["observation_quorum_digest"], 32):
             raise ReaderError("shadow observation quorum digest is invalid")
     if requires_opentofu:
-        record = exact_object(opentofu, OPENTOFU_FIELDS, "opentofu")
+        if not isinstance(opentofu, dict) or not OPENTOFU_FIELDS.issubset(opentofu) or not set(opentofu).issubset(OPENTOFU_FIELDS | OPENTOFU_OPTIONAL_FIELDS):
+            raise ReaderError("opentofu fields are invalid")
+        record = opentofu
         require_strings(record, OPENTOFU_FIELDS - {"resource_change_count"}, "opentofu")
+        if "observation_quorum_digest" in record and not canonical_hex(record["observation_quorum_digest"], 32):
+            raise ReaderError("opentofu observation quorum digest is invalid")
         if not canonical_hex(record["plan_sha256"], 32):
             raise ReaderError("opentofu plan digest is invalid")
         if record["adapter"] != "telosieve.opentofu-plan/v1" or record["format_version"] != "1.2":

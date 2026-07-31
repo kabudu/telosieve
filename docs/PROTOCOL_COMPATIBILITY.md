@@ -4,8 +4,8 @@ Date: 2026-07-30
 
 The evaluation product adds a separate
 versioned evaluation configuration/report boundary. The current product
-capabilities are configuration v2 (Kubernetes live), v3 (OpenTofu plan), and v4
-(corroborated Kubernetes shadow).
+capabilities are configuration v4 (corroborated Kubernetes shadow), v5
+(corroborated Kubernetes live), and v6 (corroborated OpenTofu plan).
 Unknown configuration versions and modes refuse, and no automatic migration is
 performed. Existing research CLI commands and certificate v7–v10 support remain
 unchanged. See [EVALUATION_CLI](EVALUATION_CLI.md).
@@ -23,7 +23,7 @@ research artifacts:
 | Certificate v7 | No actuation or shadow extension | Parse through the supported-certificate boundary |
 | Certificate v8 | Actuation extension only | Parse through the supported-certificate boundary |
 | Certificate v9 | Shadow extension; optional quorum digest | Parse historical and corroborated forms through the supported-certificate boundary |
-| Certificate v10 | OpenTofu plan extension only | Parse through the supported-certificate boundary |
+| Certificate v10 | OpenTofu plan extension; optional quorum digest | Parse historical and corroborated forms through the supported-certificate boundary |
 
 Scenario objects reject unknown top-level fields. Authority and lifecycle
 verification rejects unknown schema versions. The certificate compatibility

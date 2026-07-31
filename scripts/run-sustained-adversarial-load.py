@@ -47,9 +47,14 @@ def config(case: Path, mode: str, hostile_input: Path, index: int) -> Path:
         }
     elif mode == "opentofu-plan":
         value = {
-            "schema_version": "telosieve.evaluation-config/v3",
+            "schema_version": "telosieve.evaluation-config/v6",
             "mode": mode,
             "plan_path": str(hostile_input.resolve()),
+            "observation_trust_path": str((ROOT / "evaluation/observation-trust.example.json").resolve()),
+            "observation_sources": [
+                {"executable_path": "/bin/cat", "arguments": [str((ROOT / "evaluation/observation-quorum.example.json").resolve())]},
+                {"executable_path": "/bin/cat", "arguments": [str((ROOT / "evaluation/observation-quorum.example.json").resolve())]},
+            ],
             **common,
         }
     else:

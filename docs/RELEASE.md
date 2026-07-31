@@ -156,7 +156,7 @@ reconciles policy with Kubernetes shadow/live and OpenTofu plan evaluation; it
 does not expand the no-target-mutation authority boundary.
 
 The stable `evaluate` command accepts the exported-snapshot v1, live read-only
-Kubernetes v2, and saved OpenTofu plan v3 configurations, and emits
+Kubernetes v5, and saved OpenTofu plan v6 configurations, and emits
 `telosieve.evaluation-report/v1` after persisted read-only shadow evidence.
 Unknown versions, mutation modes, oversized files, invalid paths, and output
 collisions refuse. Live collection performs four bounded `kubectl get` calls,

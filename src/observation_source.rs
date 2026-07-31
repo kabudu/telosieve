@@ -22,7 +22,7 @@ use crate::{
 pub const ENVELOPE_SCHEMA_VERSION: &str = "telosieve.observation-source/v1";
 const MAX_ARGUMENTS: usize = 32;
 const MAX_ARGUMENT_BYTES: usize = 4096;
-const MAX_STDOUT_BYTES: usize = 2 * 1024 * 1024;
+const MAX_STDOUT_BYTES: usize = 5 * 1024 * 1024;
 const MAX_STDERR_BYTES: usize = 16 * 1024;
 const COMMAND_TIMEOUT: Duration = Duration::from_secs(5);
 
@@ -38,6 +38,14 @@ pub struct ObservationSourceConfig {
 struct ObservationSourceEnvelope {
     schema_version: String,
     snapshot: KubernetesShadowSnapshot,
+    attestation: ObservationAttestation,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct ByteObservationSourceEnvelope {
+    schema_version: String,
+    input_hex: String,
     attestation: ObservationAttestation,
 }
 
@@ -103,6 +111,51 @@ pub fn corroborate(
         mode,
         trust_bytes,
         &quorum_bytes,
+    )?)
+}
+
+/// Collects exact-byte producer envelopes and verifies signed agreement.
+///
+/// # Errors
+///
+/// Refuses unsafe source shape, process faults, malformed/oversized envelopes,
+/// byte disagreement, invalid hexadecimal, and quorum verification failure.
+pub fn corroborate_bytes(
+    expected: &[u8],
+    subject: &str,
+    mode: &str,
+    trust_bytes: &[u8],
+    sources: &[ObservationSourceConfig],
+) -> Result<VerifiedObservationQuorum, ObservationSourceError> {
+    if !(2..=MAX_PARTICIPANTS).contains(&sources.len()) {
+        return Err(ObservationSourceError::Configuration(
+            "source count must be 2..=8".into(),
+        ));
+    }
+    let mut attestations = Vec::with_capacity(sources.len());
+    for source in sources {
+        validate_source(source)?;
+        let envelope: ByteObservationSourceEnvelope = serde_json::from_slice(&invoke(source)?)?;
+        let observed =
+            hex::decode(&envelope.input_hex).map_err(|_| ObservationSourceError::Disagreement)?;
+        if envelope.schema_version != ENVELOPE_SCHEMA_VERSION || observed != expected {
+            return Err(ObservationSourceError::Disagreement);
+        }
+        attestations.push(envelope.attestation);
+    }
+    let quorum = ObservationQuorum {
+        schema_version: QUORUM_SCHEMA_VERSION.into(),
+        subject: subject.into(),
+        mode: mode.into(),
+        input_sha256: hex::encode(Sha256::digest(expected)),
+        attestations,
+    };
+    Ok(verify_observation_quorum(
+        expected,
+        subject,
+        mode,
+        trust_bytes,
+        &serde_json::to_vec(&quorum)?,
     )?)
 }
 

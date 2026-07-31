@@ -1,8 +1,13 @@
 {
-  "schema_version": "telosieve.evaluation-config/v3",
+  "schema_version": "telosieve.evaluation-config/v6",
   "mode": "opentofu-plan",
   "scenario_path": "../scenarios/benign.json",
   "plan_path": "../out/opentofu-plan.json",
   "certificate_path": "../out/opentofu-certificate.json",
-  "ledger_path": "../out/opentofu-ledger.jsonl"
+  "ledger_path": "../out/opentofu-ledger.jsonl",
+  "observation_trust_path": "observation-trust.opentofu.example.json",
+  "observation_sources": [
+    {"executable_path": "/bin/cat", "arguments": ["/var/run/telosieve/plan-a.envelope.json"]},
+    {"executable_path": "/bin/cat", "arguments": ["/var/run/telosieve/plan-b.envelope.json"]}
+  ]
 }

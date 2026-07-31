@@ -32,8 +32,9 @@ Post-M37 makes the control mandatory for stable Kubernetes shadow evaluation
 configuration v4 and binds the verified evidence digest into certificate v9.
 `evaluation/observation-*.example.json` and the fixture generator use published,
 deterministic test keys and must never be treated as operational credentials.
-OpenTofu evaluation is not yet integrated. Post-M39 applies the protocol to
-Kubernetes-live through bounded external producer processes. Configured
+Post-M39 applies the protocol to Kubernetes-live through bounded external
+producer processes, and Post-M40 applies exact-byte producer envelopes to
+OpenTofu plans. Configured
 domain labels do not establish real organizational independence, protected
 custody, or truth when every participating domain colludes.
 
@@ -60,7 +61,7 @@ Each producer must execute this command in its own collection and key-custody
 domain. Central generation of multiple attestations over a single collector's
 bytes does not provide independent observation. The command deliberately emits
 one attestation rather than asserting or assembling a quorum; the evaluator
-must compare independently obtained observations and verify the combined
-quorum. M38 proves CLI/library interoperability plus unsafe-key, oversized-input,
-and output-collision refusal, but does not yet integrate producer processes into
-Kubernetes-live or OpenTofu evaluation.
+compares independently obtained observations and verifies the combined quorum.
+M38 proves CLI/library interoperability plus unsafe-key, oversized-input, and
+output-collision refusal; M39 and M40 integrate bounded producer processes into
+Kubernetes-live and OpenTofu evaluation respectively.

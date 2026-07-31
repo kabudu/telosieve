@@ -20,6 +20,7 @@ FILES = [
     "evaluation/config.live.example.json", "evaluation/config.opentofu.example.json",
     "evaluation/observation-trust.example.json", "evaluation/observation-quorum.example.json",
     "evaluation/observation-trust.live.example.json",
+    "evaluation/observation-trust.opentofu.example.json",
     "evaluation/contract.json", "evaluation/candidate-test-plan.json",
     "evaluation/adversarial-coverage.json",
     "examples/opentofu/main.tf",
@@ -131,8 +132,8 @@ def validate_test_inputs(capability_document, contract, sources):
     configurations = [
         strict_json(sources[path], path)
         for path in (
-            "evaluation/config.opentofu.example.json", "evaluation/config.example.json",
-            "evaluation/config.live.example.json",
+            "evaluation/config.example.json", "evaluation/config.live.example.json",
+            "evaluation/config.opentofu.example.json",
         )
     ]
     packaged = [

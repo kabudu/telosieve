@@ -93,6 +93,8 @@ pub struct OpenTofuRecord {
     pub format_version: String,
     pub terraform_version: String,
     pub resource_change_count: usize,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub observation_quorum_digest: Option<String>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -197,6 +199,15 @@ fn valid_opentofu_record(record: &OpenTofuRecord) -> bool {
         && record.format_version == "1.2"
         && valid_version_text(&record.terraform_version)
         && (1..=64).contains(&record.resource_change_count)
+        && record
+            .observation_quorum_digest
+            .as_ref()
+            .is_none_or(|digest| {
+                digest.len() == 64
+                    && digest
+                        .bytes()
+                        .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
+            })
 }
 
 fn valid_version_text(value: &str) -> bool {

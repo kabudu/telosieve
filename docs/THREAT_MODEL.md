@@ -159,9 +159,11 @@ cluster truth.
 
 The OpenTofu adapter has no backend, provider, state, credential, or apply
 capability. It rejects unsupported format versions, non-update or non-built-in
-resources, sensitive/unknown inputs, structural excess, and exact authority
-disagreement. A malicious producer can lie in plan JSON, and provider behavior
-after evaluation is outside the boundary; operators must retain and verify the
+resources, sensitive/unknown inputs, structural excess, exact authority
+disagreement, producer byte disagreement, and invalid producer attestations. A
+set of producers sharing the same plan-generation, provider, state, backend, or
+custody fault can still corroborate a consistent lie. Provider behavior after
+evaluation is outside the boundary; operators must retain and verify the
 digest-bound saved plan and separately control any apply step.
 
 The lifecycle manager rejects relative or symlinked roots and inputs, concurrent

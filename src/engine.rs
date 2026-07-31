@@ -252,6 +252,23 @@ pub fn run_opentofu_plan_file(
     Ok(certificate)
 }
 
+pub(crate) fn run_opentofu_plan_bytes_corroborated(
+    scenario: &Scenario,
+    plan_bytes: &[u8],
+    observation_quorum_digest: String,
+    certificate_path: &Path,
+    ledger_path: &Path,
+) -> Result<Certificate, RunError> {
+    let authorities = verify(scenario)?;
+    let mut plan = crate::opentofu_plan::validate_bytes(plan_bytes, &authorities)?;
+    plan.observation_quorum_digest = Some(observation_quorum_digest);
+    let mut certificate = run_verified_scenario(scenario, authorities)?;
+    certificate.certificate_version = crate::certificate::CERTIFICATE_VERSION_V10.into();
+    certificate.opentofu = Some(plan);
+    persist_evidence(&certificate, certificate_path, ledger_path)?;
+    Ok(certificate)
+}
+
 fn reject_adapter_path_collisions(
     scenario_path: &Path,
     input_path: &Path,

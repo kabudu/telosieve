@@ -611,3 +611,22 @@ Evidence: [KUBERNETES_REAL_CLUSTER](KUBERNETES_REAL_CLUSTER.md),
 envelope faults but retains the compromised-producer cell because every
 qualified process still trusts one API server. External independence and
 production custody remain open gates.
+
+## Post-M40 — corroborated OpenTofu plan bytes
+
+- [x] Replace OpenTofu configuration v3 with v6 requiring a bounded trust
+  document and two to eight external exact-byte producer envelopes.
+- [x] Require every producer plan to match the primary plan byte-for-byte before
+  multi-domain signature verification and before plan parsing.
+- [x] Bind the verified quorum digest into compatible certificate v10 evidence.
+- [x] Refuse forged and disagreeing producer envelopes without certificate or
+  ledger persistence while retaining destructive and authority mismatch checks.
+- [ ] Establish separately operated provider/state observation paths and
+  operational key custody.
+
+Evidence: [OPENTOFU_PLAN](OPENTOFU_PLAN.md),
+[OBSERVATION_QUORUM](OBSERVATION_QUORUM.md), and
+`scripts/run-opentofu-plan.py`. M40 authenticates exact agreement between
+configured producer processes; because the qualified producers consume the same
+locally generated plan, the compromised-consistent-producer cell remains
+deferred.

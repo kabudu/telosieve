@@ -173,6 +173,7 @@ fn certificate_vectors_accept_v7_to_v10_and_reject_future_or_confused_shapes() {
         format_version: "1.2".into(),
         terraform_version: "1.12.5".into(),
         resource_change_count: 3,
+        observation_quorum_digest: None,
     });
     let bytes_v10 = serde_json::to_vec(&certificate_v10).unwrap();
     parse_supported_certificate(&bytes_v10).unwrap();
@@ -244,6 +245,7 @@ fn independent_reader_agrees_on_supported_versions_and_failure_matrix() {
         format_version: "1.2".into(),
         terraform_version: "1.12.5".into(),
         resource_change_count: 3,
+        observation_quorum_digest: Some("cd".repeat(32)),
     });
     let bytes_v10 = serde_json::to_vec(&certificate_v10).unwrap();
 
@@ -286,6 +288,8 @@ fn independent_reader_agrees_on_supported_versions_and_failure_matrix() {
     confused["certificate_version"] = json!(CERTIFICATE_VERSION_V8);
     let mut invalid_opentofu = serde_json::to_value(&certificate_v10).unwrap();
     invalid_opentofu["opentofu"]["plan_sha256"] = json!("00");
+    let mut invalid_opentofu_quorum = serde_json::to_value(&certificate_v10).unwrap();
+    invalid_opentofu_quorum["opentofu"]["observation_quorum_digest"] = json!("CD".repeat(32));
     let duplicate = bytes_v7
         .strip_prefix(b"{")
         .map(|tail| {
@@ -305,6 +309,7 @@ fn independent_reader_agrees_on_supported_versions_and_failure_matrix() {
         serde_json::to_vec(&out_of_range).unwrap(),
         serde_json::to_vec(&confused).unwrap(),
         serde_json::to_vec(&invalid_opentofu).unwrap(),
+        serde_json::to_vec(&invalid_opentofu_quorum).unwrap(),
         duplicate,
         b"{".to_vec(),
     ];

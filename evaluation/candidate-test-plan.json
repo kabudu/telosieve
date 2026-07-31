@@ -12,12 +12,6 @@
   },
   "tests": [
     {
-      "configuration_schema": "telosieve.evaluation-config/v3",
-      "mode": "opentofu-plan",
-      "command": "python3 scripts/run-opentofu-plan.py",
-      "expected_target_mutated": false
-    },
-    {
       "configuration_schema": "telosieve.evaluation-config/v4",
       "mode": "kubernetes-shadow",
       "command": "telosieve evaluate evaluation/config.example.json",
@@ -27,6 +21,12 @@
       "configuration_schema": "telosieve.evaluation-config/v5",
       "mode": "kubernetes-live",
       "command": "python3 scripts/run-kubernetes-real-cluster.py",
+      "expected_target_mutated": false
+    },
+    {
+      "configuration_schema": "telosieve.evaluation-config/v6",
+      "mode": "opentofu-plan",
+      "command": "python3 scripts/run-opentofu-plan.py",
       "expected_target_mutated": false
     }
   ]

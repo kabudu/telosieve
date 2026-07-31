@@ -79,6 +79,16 @@ pub fn read_and_validate(
     path: &Path,
     authorities: &VerifiedAuthorities,
 ) -> Result<OpenTofuRecord, OpenTofuError> {
+    let bytes = read_bounded(path)?;
+    validate_bytes(&bytes, authorities)
+}
+
+/// Reads an exact plan file within the adapter byte bound.
+///
+/// # Errors
+///
+/// Refuses I/O failure and plans exceeding the byte bound.
+pub fn read_bounded(path: &Path) -> Result<Vec<u8>, OpenTofuError> {
     let mut bytes = Vec::new();
     File::open(path)?
         .take(MAX_PLAN_BYTES + 1)
@@ -91,14 +101,33 @@ pub fn read_and_validate(
             "plan exceeds {MAX_PLAN_BYTES} bytes"
         )));
     }
-    let plan: Plan = serde_json::from_slice(&bytes)?;
+    Ok(bytes)
+}
+
+/// Validates exact bounded plan bytes against authenticated authorities.
+///
+/// # Errors
+///
+/// Refuses excess, malformed, unsafe, unknown, sensitive, destructive, or
+/// authority-mismatched plan content.
+pub fn validate_bytes(
+    bytes: &[u8],
+    authorities: &VerifiedAuthorities,
+) -> Result<OpenTofuRecord, OpenTofuError> {
+    if bytes.len() > usize::try_from(MAX_PLAN_BYTES).unwrap_or(usize::MAX) {
+        return Err(OpenTofuError::ResourceBound(
+            "plan exceeds byte bound".into(),
+        ));
+    }
+    let plan: Plan = serde_json::from_slice(bytes)?;
     validate_plan(&plan, authorities)?;
     Ok(OpenTofuRecord {
         adapter: ADAPTER_VERSION.into(),
-        plan_sha256: hex::encode(Sha256::digest(&bytes)),
+        plan_sha256: hex::encode(Sha256::digest(bytes)),
         format_version: plan.format_version,
         terraform_version: plan.terraform_version,
         resource_change_count: plan.resource_changes.len(),
+        observation_quorum_digest: None,
     })
 }
 

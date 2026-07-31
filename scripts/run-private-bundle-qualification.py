@@ -19,9 +19,9 @@ SOURCE_COMMIT = "a" * 40
 MAX_BUNDLE_BYTES = 160 * 1024 * 1024
 MAX_BUILD_SECONDS = 15
 EXPECTED_CONFIGURATIONS = (
-    "evaluation/config.opentofu.example.json",
     "evaluation/config.example.json",
     "evaluation/config.live.example.json",
+    "evaluation/config.opentofu.example.json",
 )
 
 
@@ -125,6 +125,7 @@ def assert_bundle(path: Path) -> int:
             "evaluation/config.opentofu.example.json", "evaluation/candidate-test-plan.json",
             "evaluation/observation-trust.example.json", "evaluation/observation-quorum.example.json",
             "evaluation/observation-trust.live.example.json",
+            "evaluation/observation-trust.opentofu.example.json",
             "scripts/kubernetes-observation-producer.py",
             "evaluation/adversarial-coverage.json", "docs/ADVERSARIAL_COVERAGE.md",
             "scripts/validate-adversarial-coverage.py", "results/adversarial-coverage-validation.json",

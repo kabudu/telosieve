@@ -140,12 +140,17 @@ the complete path against a disposable real API server and real RBAC. Managed
 clusters, production-scale load, credential plugins, and independent operation remain
 unqualified.
 
-The v3 `opentofu-plan` mode adds a `plan_path` for bounded JSON emitted by
+The v6 `opentofu-plan` mode adds a `plan_path` for bounded JSON emitted by
 `tofu show -json` from a saved plan. It accepts only explicit in-place updates
 to built-in `terraform_data` inputs whose before and after states exactly match
 the authenticated phenotype and goal. The exact input bytes are bound into
 certificate v10. Telosieve does not invoke OpenTofu or apply the plan. See
 [OPENTOFU_PLAN](OPENTOFU_PLAN.md).
+It also requires a trust document and two to eight bounded external byte-source
+processes. Each v1 envelope carries lowercase hexadecimal exact plan bytes plus
+an attestation. Every producer must match the primary file byte-for-byte and
+satisfy the multi-domain quorum before parsing or certificate persistence. The
+verified quorum digest is bound into certificate v10.
 
 The separate bounded lifecycle manager installs the CLI and configuration; see
 [EVALUATION_LIFECYCLE](EVALUATION_LIFECYCLE.md). The product does not yet redact
