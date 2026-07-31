@@ -27,6 +27,7 @@ run python3 scripts/qualify-witness-operator-record.py
 run python3 scripts/validate-evaluation-contract.py
 run python3 scripts/run-evaluation-lifecycle-qualification.py
 run python3 scripts/run-diagnostics-qualification.py
+run python3 scripts/run-private-bundle-qualification.py
 run git diff --check
 
 if rg -n '\b(TODO|FIXME|REPLACE_WITH)\b' \

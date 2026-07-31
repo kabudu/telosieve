@@ -20,6 +20,7 @@ REQUIRED = (
     "docs/EVALUATION_CLI.md",
     "docs/EVALUATION_LIFECYCLE.md",
     "docs/OPERATOR_DIAGNOSTICS.md",
+    "docs/PRIVATE_BUNDLE.md",
     "docs/IMPLEMENTATION_PLAN.md",
     "docs/RELEASE.md",
     "docs/REQUIREMENTS_TRACEABILITY.md",
@@ -35,6 +36,8 @@ REQUIRED = (
     "scripts/run-evaluation-lifecycle-qualification.py",
     "scripts/evaluation-diagnostics.py",
     "scripts/run-diagnostics-qualification.py",
+    "scripts/build-private-bundle.py",
+    "scripts/run-private-bundle-qualification.py",
 )
 LINK = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
 PLACEHOLDER = re.compile(r"\b(?:TODO|FIXME|REPLACE_WITH)\b")

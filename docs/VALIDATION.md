@@ -335,6 +335,15 @@ symlink, permission drift, and an in-root destination refuse without an export.
 This proves the project-owned disclosure contract, not anonymity of digests or
 independent privacy assessment.
 
+## Private bundle qualification
+
+The bundle qualification builds the fixed private ZIP twice and requires exact
+byte identity, verifies every entry against its manifest, kills a build before
+publication, confirms no partial output, and recovers the identical digest. It
+records local platform, wall time, peak child RSS, and output size bounds. This
+is local macOS process/filesystem evidence, not signing, power-loss, Linux,
+Kubernetes-load, distribution, or independent qualification.
+
 ## Compatibility consumer qualification
 
 The independent Python reader and Rust compatibility boundary agree on three

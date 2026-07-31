@@ -174,6 +174,13 @@ zero direct content/path disclosure and four unsafe export paths refuse.
 Digests remain sensitive correlators, and this does not provide telemetry,
 raw-evidence packaging, or independent privacy assessment.
 
+Deterministic private bundle assembly now fixes entry selection, ordering,
+timestamps, modes, and compression and binds every file by SHA-256. Two builds
+are byte-identical; forced pre-publication termination leaves no output and a
+retry recovers the same digest under measured local resource bounds. The bundle
+is not operationally signed or released, and cross-platform plus independent
+qualification remain required.
+
 ## CI and delivery policy
 
 Telosieve is private, so local CI is the sole authoritative quality gate:

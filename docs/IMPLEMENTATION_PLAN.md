@@ -362,7 +362,7 @@ No independent record has been returned, so both external gates remain open.
 - [x] Package documented install, upgrade, rollback, backup, and uninstall
   workflows for supported evaluation platforms.
 - [x] Add bounded operator diagnostics and privacy-reviewed evidence export.
-- [ ] Qualify platform resources, interruption, recovery, and private bundle
+- [x] Qualify platform resources, interruption, recovery, and private bundle
   reproducibility before proposing an evaluation candidate.
 
 Decision evidence:
@@ -391,3 +391,10 @@ offline exporter verifies the managed release and owner-only evidence under
 passes a unique-secret non-disclosure check plus four fail-closed paths. Digests
 remain sensitive correlators; this is not telemetry or independent privacy
 assessment.
+
+Bundle evidence: [PRIVATE_BUNDLE](PRIVATE_BUNDLE.md). The current macOS host
+records bounded build time and peak child RSS, forced pre-publication
+interruption leaves no bundle, recovery succeeds, and two independently built
+ZIPs are byte-identical with a verified per-entry checksum manifest. This is
+candidate engineering evidence, not signing custody, Linux/Kubernetes resource
+qualification, power-loss proof, or independent validation.
