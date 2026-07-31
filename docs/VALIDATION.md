@@ -238,6 +238,15 @@ rejected. The two exact vectors pass and are retained in
 `results/compatibility-corpus.json`. See
 [PROTOCOL_COMPATIBILITY](PROTOCOL_COMPATIBILITY.md).
 
+## Private bundle signature boundary
+
+The real CLI derives only the public key, signs exact bundle bytes, and verifies
+through a separately written trust file. Its integration test accepts the valid
+path and refuses byte tamper, expired evaluation time, and non-owner-only key
+material. Unit tests additionally refuse key substitution and context change.
+All signing keys are ephemeral test inputs; operational identity, custody, exact
+candidate signing, and independent assessment remain open gates.
+
 ## Certificate evidence attestation
 
 Detached certificate attestation binds exact bytes to a context, signer/key,

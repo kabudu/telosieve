@@ -199,3 +199,9 @@ Hosted CI is disabled by policy. It may be introduced only at a documented
 public-opening or research-release gate with explicit user approval and a review
 of workflow permissions, secrets, cost, dependency provenance, and untrusted
 pull-request behavior. A visibility change alone does not authorize hosted CI.
+
+The bundle-signature protocol authenticates exact candidate bytes against a
+separately supplied context, time, signer, key identifier, and public key. Test
+keys are ephemeral. Promotion still requires approved operational signing
+identity and custody, a frozen signed candidate, and independent assessment;
+protocol availability must not be described as a signed release.

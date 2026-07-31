@@ -398,3 +398,17 @@ interruption leaves no bundle, recovery succeeds, and two independently built
 ZIPs are byte-identical with a verified per-entry checksum manifest. This is
 candidate engineering evidence, not signing custody, Linux/Kubernetes resource
 qualification, power-loss proof, or independent validation.
+
+## Post-M27 — signed private candidate boundary
+
+- [x] Implement domain-separated Ed25519 signing and independently configured
+  verification for the exact private bundle bytes.
+- [x] Bound bundle, signature, identity, key-set, and validity-window inputs and
+  refuse tamper, substitution, ambiguity, unsafe key files, and stale evidence.
+- [ ] Establish an operational release-signing identity and independently
+  governed private-key custody.
+- [ ] Freeze, sign, and independently assess the exact evaluation candidate.
+
+Protocol evidence: [PRIVATE_BUNDLE](PRIVATE_BUNDLE.md). Tests use an ephemeral
+fixture key only. Implementing the signing boundary does not establish custody,
+produce a release signature, or satisfy independent assessment.

@@ -149,3 +149,10 @@ mutation command; it records a research decision only.
 Run `./scripts/run-incident-drills.sh` after recovery-protocol changes. A missing
 or failed drill blocks the milestone; never edit the aggregate result to convert
 a failure into a pass. See [INCIDENT_DRILLS](INCIDENT_DRILLS.md).
+
+For private bundle signing, keep the 32-byte lowercase-hex seed outside the
+repository and bundle in an owner-only, single-link regular file. Derive and
+distribute the public trust record through an independent channel. Do not repair
+verification failures by changing evaluation time, extending windows, replacing
+trust, or resigning unreviewed bytes. The repository tests only ephemeral keys;
+an approved operational custody procedure is required before candidate signing.

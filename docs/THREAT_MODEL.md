@@ -192,3 +192,10 @@ license drift. RustSec matching detects only published advisories in the retaine
 database snapshot; it cannot detect unknown vulnerabilities, compromised
 upstream releases or registries, malicious build scripts, license-text mismatch,
 or toolchain compromise.
+
+Private-bundle signatures bind exact bytes, context, signer identity, key ID,
+and a maximum 30-day validity interval. Verification refuses unknown fields,
+non-canonical encodings, ambiguous keys, invalid time windows, and oversized
+inputs. Compromised signer hosts, memory disclosure, rollback of independently
+supplied trust/time, key ceremony, revocation distribution, hardware custody,
+and assessor independence remain outside the implemented boundary.

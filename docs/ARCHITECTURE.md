@@ -170,3 +170,10 @@ pending/committed witness containing the exact previous and next generation and
 state digest. Recovery accepts only one of those states. Backups carry the typed
 state and digest, while restore requires equality with the latest witness; the
 witness itself is deliberately not restored from backup.
+
+The private-candidate signature boundary is a detached, domain-separated
+Ed25519 envelope over typed metadata and the SHA-256 digest of exact bundle
+bytes. Signing-key input and signature publication are local CLI concerns;
+verification consumes an independent bounded trust document. No private key,
+network trust discovery, revocation service, or implicit unsigned fallback is
+part of the architecture.
