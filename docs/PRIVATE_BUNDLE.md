@@ -8,6 +8,8 @@ and OpenTofu integration material, authenticated offline/real-cluster scenarios,
 the candidate test plan, and the operator/security documents needed to assess
 them. It also includes and digest-binds the adversarial coverage contract,
 validator, and retained result so open research gaps travel with the candidate.
+The fixed contents also carry the bounded sustained-load harness and its retained
+qualification contract.
 The builder executes the supplied binary's bounded
 `evaluation-capabilities` command and refuses unless it exactly matches contract
 v2, the packaged configurations, and the three-mode test plan. Every entry and

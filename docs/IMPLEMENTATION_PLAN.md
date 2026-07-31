@@ -448,7 +448,7 @@ not established.
   access while the target remains unchanged.
 - [x] Refuse authority mismatch and real API-server outage without evidence,
   under bounded time/memory and deterministic cluster cleanup.
-- [ ] Qualify managed clusters, sustained load, additional versions, and an
+- [ ] Qualify managed clusters, extended capacity/load, additional versions, and an
   independently operated environment.
 
 Evidence: [KUBERNETES_REAL_CLUSTER](KUBERNETES_REAL_CLUSTER.md). This closes the
@@ -510,11 +510,27 @@ assessment is manufactured.
   authority boundaries.
 - [x] Bind the registry, validator, retained result, and open gaps into the
   deterministic private candidate input.
-- [ ] Resolve compromised-consistent-producer and sustained-adversarial-load
-  gaps across the applicable modes.
+- [ ] Resolve compromised-consistent-producer gaps across the applicable modes.
+- [x] Resolve sustained-adversarial-load gaps across the applicable modes.
 
 Evidence: [ADVERSARIAL_COVERAGE](ADVERSARIAL_COVERAGE.md) and
-`results/adversarial-coverage-validation.json`. Ten threat classes contain 19
-covered cells, six explicit deferred cells, and five justified non-applicable
+`results/adversarial-coverage-validation.json`. Ten threat classes contain 22
+covered cells, three explicit deferred cells, and five justified non-applicable
 cells; eleven adversarial registry mutations fail closed. This inventory prevents
 coverage overstatement but is not independent validation or a robustness proof.
+
+## Post-M35 — sustained adversarial integration load
+
+- [x] Run 16 one-byte-over-limit attacks per evaluation mode with four-way
+  concurrency, per-case deadlines, and no evidence publication.
+- [x] Bound total wall time, peak child RSS, diagnostic output, process count,
+  input bytes, and retained-result drift.
+- [x] Run eight additional real Kubernetes evaluations at four-way concurrency
+  with separate evidence paths and verify the target remains unchanged.
+- [x] Promote only the three sustained-load cells to covered and retain the
+  compromised-consistent-producer cells as explicit gaps.
+
+Evidence: [SUSTAINED_ADVERSARIAL_LOAD](SUSTAINED_ADVERSARIAL_LOAD.md) and
+`results/sustained-adversarial-load.json`. The project-controlled bounded sample
+is not a capacity forecast, managed-platform result, denial-of-service guarantee,
+or independent validation.

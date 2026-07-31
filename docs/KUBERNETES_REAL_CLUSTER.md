@@ -17,6 +17,13 @@ different node image.
 
 This is a real local Kubernetes API server and real RBAC enforcement, but it is
 still project-controlled evidence on one macOS/arm64 host. It does not qualify
-EKS, GKE, AKS, other Kubernetes versions, multi-node behavior, sustained load,
+EKS, GKE, AKS, other Kubernetes versions, multi-node behavior, extended load,
 credential plugins, admission controllers, network policy, upgrades, or an
 independent operator.
+
+Post-M35 adds eight evaluations at four-way concurrency against the same real
+API server under a five-second per-evaluation timeout and 30-second load-phase
+bound. All use distinct evidence outputs, the least-privilege credential, and
+preserve the target UID, resource version, and generation. This bounded sample
+is not a capacity or managed-cluster claim;
+see [SUSTAINED_ADVERSARIAL_LOAD](SUSTAINED_ADVERSARIAL_LOAD.md).

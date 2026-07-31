@@ -8,6 +8,7 @@ import subprocess
 import sys
 import tempfile
 import time
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -15,6 +16,10 @@ KIND_IMAGE = "kindest/node@sha256:3489c7674813ba5d8b1a9977baea8a6e553784dab7b847
 NAMESPACE = "telosieve-research"
 MAX_SECONDS = 120
 MAX_PEAK_RSS_BYTES = 512 * 1024 * 1024
+LOAD_EVALUATIONS = 8
+LOAD_CONCURRENCY = 4
+MAX_LOAD_SECONDS = 30
+LOAD_CASE_TIMEOUT_SECONDS = 5
 
 
 def run(arguments, *, input_bytes=None, timeout=30, check=True, env=None):
@@ -80,6 +85,38 @@ def restricted_config(admin_config, output):
     output.chmod(0o600)
 
 
+def evaluate_load(binary, work, restricted):
+    def one(index):
+        case = work / f"load-{index}"
+        case.mkdir()
+        config_path = case / "evaluation.json"
+        config_path.write_text(json.dumps({
+            "schema_version": "telosieve.evaluation-config/v2", "mode": "kubernetes-live",
+            "scenario_path": str((ROOT / "scenarios/kubernetes-real-cluster.json").resolve()),
+            "certificate_path": str(case / "certificate.json"), "ledger_path": str(case / "ledger.jsonl"),
+            "kubernetes": {"kubectl_path": str(Path("/usr/local/bin/kubectl").resolve()), "kubeconfig_path": str(restricted.resolve()), "context": "evaluation", "namespace": NAMESPACE, "desired_config_map": "repair-goal", "observed_stateful_set": "research-kv"}
+        }), encoding="utf-8")
+        evaluation = run(
+            [str(binary), "evaluate", str(config_path)],
+            timeout=LOAD_CASE_TIMEOUT_SECONDS,
+        )
+        report = json.loads(evaluation.stdout)
+        if report["target_mutated"] or report["mode"] != "kubernetes-live":
+            raise RuntimeError(f"kubernetes load evaluation {index} returned an invalid report")
+        if not (case / "certificate.json").is_file() or len((case / "ledger.jsonl").read_text().splitlines()) != 1:
+            raise RuntimeError(f"kubernetes load evaluation {index} did not persist exact evidence")
+
+    started = time.monotonic()
+    with ThreadPoolExecutor(max_workers=LOAD_CONCURRENCY) as pool:
+        futures = [pool.submit(one, index) for index in range(LOAD_EVALUATIONS)]
+        for future in futures:
+            future.result(timeout=MAX_LOAD_SECONDS)
+    elapsed = time.monotonic() - started
+    if elapsed > MAX_LOAD_SECONDS:
+        raise SystemExit("kubernetes-e2e: sustained load exceeded its time bound")
+    return round(elapsed, 3)
+
+
 def main():
     for executable in ("docker", "kind", "kubectl"):
         if shutil.which(executable) is None:
@@ -119,6 +156,7 @@ def main():
             report = json.loads(evaluation.stdout)
             if report["target_mutated"] or report["mode"] != "kubernetes-live":
                 raise SystemExit("kubernetes-e2e: invalid success report")
+            load_elapsed = evaluate_load((ROOT / "target/debug/telosieve").resolve(), work, restricted)
             after = json.loads(kubectl(admin_config, "get", "statefulset/research-kv", f"--namespace={NAMESPACE}", "-o", "json").stdout)
             for field in ("uid", "resourceVersion", "generation"):
                 if before["metadata"].get(field) != after["metadata"].get(field):
@@ -154,7 +192,7 @@ def main():
     peak_rss_bytes = peak_rss if sys.platform == "darwin" else peak_rss * 1024
     if peak_rss_bytes > MAX_PEAK_RSS_BYTES:
         raise SystemExit("kubernetes-e2e: peak child RSS exceeds bound")
-    result = {"schema_version": "telosieve.kubernetes-real-cluster-qualification/v1", "server_version": server, "cluster_kind": "kind", "read_only_rbac": True, "real_api_server": True, "successful_evaluations": 1, "fail_closed_evaluations": 2, "target_mutated": False, "elapsed_seconds": elapsed, "peak_child_rss_bytes": peak_rss_bytes, "independent_evidence": False, "status": "passed"}
+    result = {"schema_version": "telosieve.kubernetes-real-cluster-qualification/v1", "server_version": server, "cluster_kind": "kind", "read_only_rbac": True, "real_api_server": True, "successful_evaluations": 1 + LOAD_EVALUATIONS, "load_evaluations": LOAD_EVALUATIONS, "load_concurrency": LOAD_CONCURRENCY, "load_case_timeout_seconds": LOAD_CASE_TIMEOUT_SECONDS, "load_elapsed_seconds": load_elapsed, "fail_closed_evaluations": 2, "target_mutated": False, "elapsed_seconds": elapsed, "peak_child_rss_bytes": peak_rss_bytes, "independent_evidence": False, "status": "passed"}
     print(json.dumps(result, separators=(",", ":")))
     return 0
 

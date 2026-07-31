@@ -6,6 +6,10 @@
     "registry": "evaluation/adversarial-coverage.json",
     "retained_result": "results/adversarial-coverage-validation.json"
   },
+  "load_qualification": {
+    "command": "python3 scripts/run-sustained-adversarial-load.py",
+    "retained_result": "results/sustained-adversarial-load.json"
+  },
   "tests": [
     {
       "configuration_schema": "telosieve.evaluation-config/v1",

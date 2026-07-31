@@ -229,3 +229,9 @@ target behavior with a short-lived token. A compromised host, Docker daemon,
 kind image, kubectl binary, cluster administrator, admission chain, or shared
 control plane can still falsify or alter observations; managed and independent
 environments remain required.
+
+The sustained-load qualification bounds 48 concurrent-process oversized-input
+refusals and eight concurrent real-cluster evaluations without target mutation.
+It does not establish production capacity, denial-of-service resistance,
+host-wide resource isolation, hostile scheduling, or managed control-plane
+behavior.

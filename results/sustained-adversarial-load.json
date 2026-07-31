@@ -1,0 +1,22 @@
+{
+  "schema_version": "telosieve.sustained-adversarial-load/v1",
+  "modes": [
+    "kubernetes-shadow",
+    "kubernetes-live",
+    "opentofu-plan"
+  ],
+  "cases_per_mode": 16,
+  "maximum_concurrency": 4,
+  "case_timeout_seconds": 10,
+  "maximum_elapsed_seconds": 30,
+  "maximum_peak_child_rss_bytes": 536870912,
+  "attack_bytes": {
+    "kubernetes-shadow": 1048577,
+    "kubernetes-live-response": 1048577,
+    "opentofu-plan": 2097153
+  },
+  "expected_refusals": 48,
+  "target_mutated": false,
+  "independent_evidence": false,
+  "status": "passed"
+}

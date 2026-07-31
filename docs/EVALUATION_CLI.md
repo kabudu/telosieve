@@ -112,7 +112,7 @@ credential plugins, so protect and review both.
 The fake process harness proves command shape and bounded process faults. The
 separate [KUBERNETES_REAL_CLUSTER](KUBERNETES_REAL_CLUSTER.md) harness qualifies
 the complete path against a disposable real API server and real RBAC. Managed
-clusters, sustained load, credential plugins, and independent operation remain
+clusters, production-scale load, credential plugins, and independent operation remain
 unqualified.
 
 The v3 `opentofu-plan` mode adds a `plan_path` for bounded JSON emitted by

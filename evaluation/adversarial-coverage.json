@@ -114,12 +114,12 @@
     {
       "id": "sustained-adversarial-load",
       "title": "Repeated hostile evaluations exhaust CPU, memory, process, or target request budgets",
-      "priority": "research-gap",
+      "priority": "required",
       "applicable_modes": ["kubernetes-shadow", "kubernetes-live", "opentofu-plan"],
       "coverage": {
-        "kubernetes-shadow": {"status": "deferred", "reason": "Per-input bounds exist, but sustained multi-process evaluation load is not qualified."},
-        "kubernetes-live": {"status": "deferred", "reason": "Request count and timeout are bounded, but sustained cluster/API load is not qualified."},
-        "opentofu-plan": {"status": "deferred", "reason": "Plan size is bounded, but repeated large-plan throughput and memory behavior are not qualified."}
+        "kubernetes-shadow": {"status": "covered", "evidence": [{"path": "scripts/run-sustained-adversarial-load.py", "anchor": "SHADOW_ATTACK_BYTES = 1024 * 1024 + 1"}]},
+        "kubernetes-live": {"status": "covered", "evidence": [{"path": "scripts/run-sustained-adversarial-load.py", "anchor": "LIVE_RESPONSE_ATTACK_BYTES = 1024 * 1024 + 1"}, {"path": "scripts/run-kubernetes-real-cluster.py", "anchor": "LOAD_EVALUATIONS = 8"}]},
+        "opentofu-plan": {"status": "covered", "evidence": [{"path": "scripts/run-sustained-adversarial-load.py", "anchor": "OPENTOFU_ATTACK_BYTES = 2 * 1024 * 1024 + 1"}]}
       }
     }
   ]

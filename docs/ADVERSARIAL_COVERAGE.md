@@ -9,13 +9,16 @@ claim cannot satisfy a covered cell. Each evidence reference is a bounded
 repository-relative regular file plus an exact anchor that the validator must
 find.
 
-The current registry contains ten threat classes. Eight required classes have
-19 applicable, executable cells. Five cells are inapplicable because the mode
-has no relevant credential or transport boundary. Six cells remain explicitly
-deferred across two research threats:
+The current registry contains ten threat classes. Nine required classes have
+22 applicable, executable cells. Five cells are inapplicable because the mode
+has no relevant credential or transport boundary. Three cells remain explicitly
+deferred across one research threat:
 
 - a compromised producer returning internally consistent false observations;
-- sustained adversarial evaluation load across process and target boundaries.
+
+Post-M35 resolves the previously deferred sustained-load cells with 48 bounded
+hostile process cases and eight concurrent real Kubernetes evaluations. See
+[SUSTAINED_ADVERSARIAL_LOAD](SUSTAINED_ADVERSARIAL_LOAD.md).
 
 Run the contract directly with:
 
@@ -40,6 +43,6 @@ the validator.
 
 This contract is a coverage inventory, not a proof that implementations or test
 oracles are correct. Project-controlled evidence cannot establish independent
-operation. The two deferred threats are candidate-hardening work and must not be
-described as covered; managed-platform, version-matrix, provider, remote-state,
+operation. The remaining deferred threat is candidate-hardening work and must
+not be described as covered; managed-platform, version-matrix, provider, remote-state,
 and independent-environment qualification also remain roadmap work.

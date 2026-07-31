@@ -15,6 +15,7 @@ FILES = [
     "docs/KUBERNETES_REAL_CLUSTER.md", "docs/KUBERNETES_SHADOW.md",
     "docs/OPENTOFU_PLAN.md", "docs/EVALUATION_PRODUCT_DECISION.md",
     "docs/THREAT_MODEL.md", "docs/ADVERSARIAL_COVERAGE.md",
+    "docs/SUSTAINED_ADVERSARIAL_LOAD.md",
     "deploy/kubernetes/evaluation-rbac.yaml", "evaluation/config.example.json",
     "evaluation/config.live.example.json", "evaluation/config.opentofu.example.json",
     "evaluation/contract.json", "evaluation/candidate-test-plan.json",
@@ -25,7 +26,9 @@ FILES = [
     "scripts/evaluation-lifecycle.py", "scripts/evaluation-diagnostics.py",
     "scripts/ci-local.sh", "scripts/run-kubernetes-real-cluster.py",
     "scripts/run-opentofu-plan.py", "scripts/validate-adversarial-coverage.py",
+    "scripts/run-sustained-adversarial-load.py",
     "results/adversarial-coverage-validation.json",
+    "results/sustained-adversarial-load.json",
 ]
 MAX_BINARY = 128 * 1024 * 1024
 MAX_CAPABILITIES = 64 * 1024
@@ -155,6 +158,10 @@ def validate_test_inputs(capability_document, contract, sources):
             "command": "python3 scripts/validate-adversarial-coverage.py",
             "registry": "evaluation/adversarial-coverage.json",
             "retained_result": "results/adversarial-coverage-validation.json",
+        }
+        or plan.get("load_qualification") != {
+            "command": "python3 scripts/run-sustained-adversarial-load.py",
+            "retained_result": "results/sustained-adversarial-load.json",
         }
         or coverage.get("schema_version") != "telosieve.adversarial-coverage/v1"
         or coverage.get("authority_boundary") != "read-only-no-target-mutation"

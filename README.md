@@ -43,7 +43,7 @@ transition, and otherwise emits a refusal certificate. See
 for claim limits, and [IMPLEMENTATION_PLAN](docs/IMPLEMENTATION_PLAN.md) for scope.
 The executable [adversarial coverage contract](docs/ADVERSARIAL_COVERAGE.md)
 tracks evidence and open attack-surface gaps separately for every evaluation
-mode; it currently retains six deferred cells and is not a robustness proof.
+mode; it currently retains three deferred cells and is not a robustness proof.
 
 Opt-in recovery-root-signed authority lifecycle chains now rotate, expire, and
 revoke operational keys without invalidating historical phenotype signatures.
