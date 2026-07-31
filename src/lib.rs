@@ -11,6 +11,7 @@ pub mod external_checker;
 pub mod kubernetes_live;
 pub mod kubernetes_shadow;
 pub mod model;
+pub mod observation_quorum;
 pub mod opentofu_plan;
 pub mod protocol;
 pub mod recovery_ceremony;

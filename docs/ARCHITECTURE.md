@@ -50,6 +50,11 @@ The OpenTofu boundary consumes only saved-plan JSON, requires supported format
 authenticated phenotype/goal evidence, and binds the original plan-byte digest
 in certificate v10. It has no backend, provider, credential, or apply capability.
 
+The observation-quorum module verifies canonical, bounded Ed25519 attestations
+from distinct configured producer domains over exact platform input bytes. It is
+a reusable protocol primitive and is not yet wired into evaluation schemas or
+certificate persistence; see [OBSERVATION_QUORUM](OBSERVATION_QUORUM.md).
+
 The qualified downstream boundary is separately implemented in dependency-free
 Python. It independently rejects duplicate/unknown/missing fields, invalid
 top-level types, unsupported versions, confused extensions, malformed JSON, and

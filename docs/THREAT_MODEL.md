@@ -235,3 +235,9 @@ refusals and eight concurrent real-cluster evaluations without target mutation.
 It does not establish production capacity, denial-of-service resistance,
 host-wide resource isolation, hostile scheduling, or managed control-plane
 behavior.
+
+The observation-quorum primitive can detect one false producer only when a
+separately trusted producer in a distinct configured domain signs different
+exact bytes. It is not yet mandatory in evaluation, and labels do not prove
+organizational independence. Colluding domains, compromised trust distribution,
+key theft, and consistently false agreement remain outside its protection.

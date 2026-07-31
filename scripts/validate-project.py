@@ -25,6 +25,7 @@ REQUIRED = (
     "docs/BUILD_PROVENANCE.md",
     "docs/ADVERSARIAL_COVERAGE.md",
     "docs/SUSTAINED_ADVERSARIAL_LOAD.md",
+    "docs/OBSERVATION_QUORUM.md",
     "docs/KUBERNETES_REAL_CLUSTER.md",
     "docs/IMPLEMENTATION_PLAN.md",
     "docs/RELEASE.md",

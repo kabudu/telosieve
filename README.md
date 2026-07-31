@@ -44,6 +44,9 @@ for claim limits, and [IMPLEMENTATION_PLAN](docs/IMPLEMENTATION_PLAN.md) for sco
 The executable [adversarial coverage contract](docs/ADVERSARIAL_COVERAGE.md)
 tracks evidence and open attack-surface gaps separately for every evaluation
 mode; it currently retains three deferred cells and is not a robustness proof.
+An authenticated [observation-quorum primitive](docs/OBSERVATION_QUORUM.md) now
+provides the cross-mode cryptographic foundation for those remaining cells, but
+evaluation does not yet require it and the cells remain deferred.
 
 Opt-in recovery-root-signed authority lifecycle chains now rotate, expire, and
 revoke operational keys without invalidating historical phenotype signatures.

@@ -534,3 +534,20 @@ Evidence: [SUSTAINED_ADVERSARIAL_LOAD](SUSTAINED_ADVERSARIAL_LOAD.md) and
 `results/sustained-adversarial-load.json`. The project-controlled bounded sample
 is not a capacity forecast, managed-platform result, denial-of-service guarantee,
 or independent validation.
+
+## Post-M36 — authenticated observation-quorum primitive
+
+- [x] Domain-separate Ed25519 signatures over exact observation bytes, subject,
+  mode, producer identity, fault domain, and bounded validity.
+- [x] Require canonical bounded trust/quorum documents and at least two distinct
+  authenticated producer domains.
+- [x] Exercise all three modes plus substitution, forgery, domain, time,
+  identity, canonical-shape, and resource refusals.
+- [ ] Make quorum verification mandatory in versioned evaluation schemas and
+  bind the verified evidence digest into compatible certificates.
+- [ ] Establish independently operated producer domains and key custody.
+
+Evidence: [OBSERVATION_QUORUM](OBSERVATION_QUORUM.md) and focused tests in
+`src/observation_quorum.rs`. This is a qualified protocol primitive, not a
+deployed evaluation control, so the three compromised-consistent-producer cells
+remain deferred.
