@@ -38,9 +38,11 @@ def config(case: Path, mode: str, hostile_input: Path, index: int) -> Path:
     }
     if mode == "kubernetes-shadow":
         value = {
-            "schema_version": "telosieve.evaluation-config/v1",
+            "schema_version": "telosieve.evaluation-config/v4",
             "mode": mode,
             "snapshot_path": str(hostile_input.resolve()),
+            "observation_trust_path": str((ROOT / "evaluation/observation-trust.example.json").resolve()),
+            "observation_quorum_path": str((ROOT / "evaluation/observation-quorum.example.json").resolve()),
             **common,
         }
     elif mode == "opentofu-plan":

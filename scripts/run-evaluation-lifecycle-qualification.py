@@ -35,12 +35,14 @@ def run(arguments: list[str], success: bool = True) -> subprocess.CompletedProce
 
 def configuration(path: Path, installation: Path, certificate: str) -> None:
     value = {
-        "schema_version": "telosieve.evaluation-config/v1",
+        "schema_version": "telosieve.evaluation-config/v4",
         "mode": "kubernetes-shadow",
         "scenario_path": str((ROOT / "scenarios/benign.json").resolve()),
         "snapshot_path": str(
             (ROOT / "snapshots/kubernetes-shadow-benign.json").resolve()
         ),
+        "observation_trust_path": str((ROOT / "evaluation/observation-trust.example.json").resolve()),
+        "observation_quorum_path": str((ROOT / "evaluation/observation-quorum.example.json").resolve()),
         "certificate_path": str(installation / "evidence" / certificate),
         "ledger_path": str(installation / "evidence/ledger.jsonl"),
     }
@@ -120,8 +122,8 @@ def main() -> int:
         assert evidence.read_text(encoding="utf-8") == '{"retained":true}\n'
         invalid_config = workspace / "invalid-config.json"
         invalid_config.write_text(
-            '{"schema_version":"telosieve.evaluation-config/v1",'
-            '"schema_version":"telosieve.evaluation-config/v1"}',
+            '{"schema_version":"telosieve.evaluation-config/v4",'
+            '"schema_version":"telosieve.evaluation-config/v4"}',
             encoding="utf-8",
         )
         run(

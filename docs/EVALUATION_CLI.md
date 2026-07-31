@@ -15,34 +15,39 @@ exactly equal contract v2's `supported_evaluation_modes`, and every record must
 declare `target_mutated: false`.
 
 `telosieve --version` prints the binary package version. The `evaluate` command,
-`telosieve.evaluation-config/v1` configuration, and
+the supported v2–v4 configurations, and
 `telosieve.evaluation-report/v1` success report are the supported evaluation
 surface. Other commands remain research, recovery, or reference-backend
 interfaces unless a later compatibility decision promotes them.
 
-The only v1 mode is `kubernetes-shadow`. It consumes an already exported
-Kubernetes snapshot and writes certificate and append-only ledger evidence. It
-does not accept a kubeconfig, contact Kubernetes, hold mutation credentials, or
-write to the target system.
+The v4 `kubernetes-shadow` mode consumes an already exported Kubernetes snapshot
+only after a signed multi-domain quorum authenticates its exact bytes and
+context. It writes certificate and append-only ledger evidence but does not
+accept a kubeconfig, contact Kubernetes, hold mutation credentials, or write to
+the target system. Configuration v1 is no longer a product capability; the
+separate research command remains available for explicitly uncorroborated work.
 
 ## Configuration
 
-The v1 object has exactly six fields:
+The v4 object has exactly eight fields:
 
 | Field | Required value or meaning |
 |---|---|
-| `schema_version` | exactly `telosieve.evaluation-config/v1` |
+| `schema_version` | exactly `telosieve.evaluation-config/v4` |
 | `mode` | exactly `kubernetes-shadow` |
 | `scenario_path` | authenticated Telosieve scenario |
 | `snapshot_path` | bounded Kubernetes shadow export |
+| `observation_trust_path` | canonical bounded signer/domain trust document |
+| `observation_quorum_path` | canonical bounded attestations for the snapshot |
 | `certificate_path` | replaceable current certificate evidence |
 | `ledger_path` | append-only certificate ledger |
 
 Unknown or missing fields refuse. Paths may be absolute or relative; relative
 paths resolve from the canonical configuration directory, not the caller's
 working directory. Each path is limited to 4,096 non-control bytes. The
-configuration is capped at 64 KiB, scenarios at 2 MiB, and shadow snapshots at
-1 MiB. Existing shadow structural bounds remain binding.
+configuration is capped at 64 KiB, scenarios at 2 MiB, shadow snapshots at
+1 MiB, and each quorum document at 64 KiB. Existing shadow structural bounds
+remain binding. Quorum verification precedes snapshot JSON parsing.
 
 Certificate, its temporary replacement, and ledger outputs must not alias the
 configuration, either input, or each other, including through existing
@@ -70,17 +75,19 @@ failure can leave partial evidence or a temporary certificate file. Preserve and
 inspect the output directory before retrying; do not treat the absence of a
 success report as proof that no evidence file changed.
 
-The v1 file backend is single-writer. Do not run concurrent evaluations against
+The file backend is single-writer. Do not run concurrent evaluations against
 the same certificate or ledger paths; it has no cross-process lock or
 compare-and-commit protocol. Preserve each report and verify its
 `certificate_digest` against the corresponding certificate before assessment.
 
 ## Compatibility and security
 
-Unknown future configuration schemas or modes refuse; v1 files are never
+Unknown configuration schemas or modes refuse; v1 files are not silently
 silently migrated. Configuration validation completes before scenario or
 snapshot reads. Scenario and snapshot bytes are unchanged by evaluation, and
-the resulting certificate contains shadow evidence but no actuation record.
+the resulting certificate contains shadow evidence, including the canonical
+verified quorum-evidence digest, but no actuation record. Historical v9
+certificates without that optional digest remain readable.
 
 The v2 `kubernetes-live` mode accepts the common scenario, certificate, and
 ledger paths plus a `kubernetes` object containing absolute `kubectl_path` and

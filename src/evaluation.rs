@@ -10,14 +10,15 @@ use thiserror::Error;
 use crate::{
     certificate::Decision,
     engine::{
-        RunError, certificate_temporary_path, read_scenario, run_kubernetes_shadow_file,
-        run_kubernetes_shadow_snapshot, run_opentofu_plan_file,
+        RunError, certificate_temporary_path, read_scenario,
+        run_kubernetes_shadow_file_corroborated, run_kubernetes_shadow_snapshot,
+        run_opentofu_plan_file,
     },
     kubernetes_live::{LiveError, LiveKubernetesConfig},
     model::digest,
 };
 
-pub const CONFIG_SCHEMA_VERSION: &str = "telosieve.evaluation-config/v1";
+pub const CONFIG_SCHEMA_VERSION: &str = "telosieve.evaluation-config/v4";
 pub const LIVE_CONFIG_SCHEMA_VERSION: &str = "telosieve.evaluation-config/v2";
 pub const OPENTOFU_CONFIG_SCHEMA_VERSION: &str = "telosieve.evaluation-config/v3";
 pub const REPORT_SCHEMA_VERSION: &str = "telosieve.evaluation-report/v1";
@@ -34,11 +35,6 @@ pub struct EvaluationCapability {
 
 pub const SUPPORTED_EVALUATION_CAPABILITIES: &[EvaluationCapability] = &[
     EvaluationCapability {
-        configuration_schema: CONFIG_SCHEMA_VERSION,
-        mode: KUBERNETES_SHADOW_MODE,
-        target_mutated: false,
-    },
-    EvaluationCapability {
         configuration_schema: LIVE_CONFIG_SCHEMA_VERSION,
         mode: "kubernetes-live",
         target_mutated: false,
@@ -48,15 +44,22 @@ pub const SUPPORTED_EVALUATION_CAPABILITIES: &[EvaluationCapability] = &[
         mode: "opentofu-plan",
         target_mutated: false,
     },
+    EvaluationCapability {
+        configuration_schema: CONFIG_SCHEMA_VERSION,
+        mode: KUBERNETES_SHADOW_MODE,
+        target_mutated: false,
+    },
 ];
 
 #[derive(Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
-struct EvaluationConfigV1 {
+struct EvaluationConfigV4 {
     schema_version: String,
     mode: String,
     scenario_path: String,
     snapshot_path: String,
+    observation_trust_path: String,
+    observation_quorum_path: String,
     certificate_path: String,
     ledger_path: String,
 }
@@ -156,25 +159,7 @@ pub fn run_config_file(config_path: &Path) -> Result<EvaluationReport, Evaluatio
         .parent()
         .ok_or_else(|| EvaluationError::Path("configuration has no parent directory".into()))?;
     if schema == CONFIG_SCHEMA_VERSION {
-        let config: EvaluationConfigV1 = serde_json::from_value(value)?;
-        if config.schema_version != CONFIG_SCHEMA_VERSION {
-            return Err(EvaluationError::Schema);
-        }
-        if config.mode != capability.mode {
-            return Err(EvaluationError::Mode);
-        }
-        let scenario = resolve_path(base, &config.scenario_path, "scenario_path")?;
-        let snapshot = resolve_path(base, &config.snapshot_path, "snapshot_path")?;
-        let certificate = resolve_path(base, &config.certificate_path, "certificate_path")?;
-        let ledger = resolve_path(base, &config.ledger_path, "ledger_path")?;
-        reject_config_collision(&canonical_config, &certificate, &ledger)?;
-        let certificate_value =
-            run_kubernetes_shadow_file(&scenario, &snapshot, &certificate, &ledger)?;
-        return Ok(report(
-            capability.configuration_schema,
-            capability.mode,
-            &certificate_value,
-        ));
+        return run_shadow_config(value, base, &canonical_config, capability);
     }
     if schema == OPENTOFU_CONFIG_SCHEMA_VERSION {
         let config: EvaluationConfigV3 = serde_json::from_value(value)?;
@@ -221,6 +206,49 @@ pub fn run_config_file(config_path: &Path) -> Result<EvaluationReport, Evaluatio
     let snapshot = crate::kubernetes_live::collect(&scenario_value, &config.kubernetes)?;
     let certificate_value =
         run_kubernetes_shadow_snapshot(&scenario_value, &snapshot, &certificate, &ledger)?;
+    Ok(report(
+        capability.configuration_schema,
+        capability.mode,
+        &certificate_value,
+    ))
+}
+
+fn run_shadow_config(
+    value: serde_json::Value,
+    base: &Path,
+    canonical_config: &Path,
+    capability: &EvaluationCapability,
+) -> Result<EvaluationReport, EvaluationError> {
+    let config: EvaluationConfigV4 = serde_json::from_value(value)?;
+    if config.schema_version != CONFIG_SCHEMA_VERSION {
+        return Err(EvaluationError::Schema);
+    }
+    if config.mode != capability.mode {
+        return Err(EvaluationError::Mode);
+    }
+    let scenario = resolve_path(base, &config.scenario_path, "scenario_path")?;
+    let snapshot = resolve_path(base, &config.snapshot_path, "snapshot_path")?;
+    let trust = resolve_path(
+        base,
+        &config.observation_trust_path,
+        "observation_trust_path",
+    )?;
+    let quorum = resolve_path(
+        base,
+        &config.observation_quorum_path,
+        "observation_quorum_path",
+    )?;
+    let certificate = resolve_path(base, &config.certificate_path, "certificate_path")?;
+    let ledger = resolve_path(base, &config.ledger_path, "ledger_path")?;
+    reject_config_collision(canonical_config, &certificate, &ledger)?;
+    let certificate_value = run_kubernetes_shadow_file_corroborated(
+        &scenario,
+        &snapshot,
+        &trust,
+        &quorum,
+        &certificate,
+        &ledger,
+    )?;
     Ok(report(
         capability.configuration_schema,
         capability.mode,

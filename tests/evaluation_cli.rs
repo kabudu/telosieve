@@ -86,6 +86,8 @@ fn valid_config(certificate: &str, ledger: &str) -> Value {
         "mode": "kubernetes-shadow",
         "scenario_path": "../../../scenarios/benign.json",
         "snapshot_path": "../../../snapshots/kubernetes-shadow-benign.json",
+        "observation_trust_path": "../../../evaluation/observation-trust.example.json",
+        "observation_quorum_path": "../../../evaluation/observation-quorum.example.json",
         "certificate_path": certificate,
         "ledger_path": ledger
     })
@@ -123,6 +125,14 @@ fn versioned_evaluation_cli_is_read_only_bounded_and_fail_closed() {
     assert_eq!(certificate.decision, Decision::Applied);
     assert!(certificate.actuation.is_none());
     assert!(certificate.shadow.is_some());
+    assert!(
+        certificate
+            .shadow
+            .as_ref()
+            .unwrap()
+            .observation_quorum_digest
+            .is_some()
+    );
     assert_eq!(report["certificate_digest"], digest(&certificate));
     assert_eq!(
         fs::read_to_string(directory.0.join("ledger.jsonl"))
@@ -136,6 +146,27 @@ fn versioned_evaluation_cli_is_read_only_bounded_and_fail_closed() {
         fs::read("snapshots/kubernetes-shadow-benign.json").unwrap(),
         snapshot_before
     );
+
+    let mut forged_quorum: Value =
+        serde_json::from_slice(&fs::read("evaluation/observation-quorum.example.json").unwrap())
+            .unwrap();
+    forged_quorum["attestations"][0]["signature"] = "00".repeat(64).into();
+    fs::write(
+        directory.0.join("forged-quorum.json"),
+        serde_json::to_vec(&forged_quorum).unwrap(),
+    )
+    .unwrap();
+    let mut forged_config = valid_config("forged-certificate.json", "forged-ledger.jsonl");
+    forged_config["observation_quorum_path"] = "forged-quorum.json".into();
+    let forged_config_path = directory.0.join("forged-evaluation.json");
+    fs::write(
+        &forged_config_path,
+        serde_json::to_vec(&forged_config).unwrap(),
+    )
+    .unwrap();
+    assert!(!run(&forged_config_path).status.success());
+    assert!(!directory.0.join("forged-certificate.json").exists());
+    assert!(!directory.0.join("forged-ledger.jsonl").exists());
 
     let version = Command::new(env!("CARGO_BIN_EXE_telosieve"))
         .arg("--version")
@@ -155,6 +186,8 @@ fn versioned_evaluation_cli_is_read_only_bounded_and_fail_closed() {
                 "mode": "kubernetes-shadow",
                 "scenario_path": "absent",
                 "snapshot_path": "absent",
+                "observation_trust_path": "absent",
+                "observation_quorum_path": "absent",
                 "certificate_path": "unused-certificate.json",
                 "ledger_path": "unused-ledger.jsonl",
                 "unexpected": true
@@ -163,10 +196,12 @@ fn versioned_evaluation_cli_is_read_only_bounded_and_fail_closed() {
         (
             "future-schema.json",
             json!({
-                "schema_version": "telosieve.evaluation-config/v2",
+                "schema_version": "telosieve.evaluation-config/v5",
                 "mode": "kubernetes-shadow",
                 "scenario_path": "absent",
                 "snapshot_path": "absent",
+                "observation_trust_path": "absent",
+                "observation_quorum_path": "absent",
                 "certificate_path": "unused-certificate.json",
                 "ledger_path": "unused-ledger.jsonl"
             }),
@@ -178,6 +213,8 @@ fn versioned_evaluation_cli_is_read_only_bounded_and_fail_closed() {
                 "mode": "kubernetes-shadow",
                 "scenario_path": "absent",
                 "snapshot_path": "absent",
+                "observation_trust_path": "absent",
+                "observation_quorum_path": "absent",
                 "certificate_path": "unused-certificate.json"
             }),
         ),

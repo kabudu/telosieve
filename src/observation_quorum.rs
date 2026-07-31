@@ -262,9 +262,9 @@ pub fn verify_observation_quorum(
         return Err(ObservationQuorumError::InsufficientDomains);
     }
     let mut evidence = b"telosieve.observation-quorum-evidence/v1\0".to_vec();
-    evidence.extend(trust_bytes);
+    evidence.extend(serde_json::to_vec(&trust).map_err(|_| ObservationQuorumError::Malformed)?);
     evidence.push(0);
-    evidence.extend(quorum_bytes);
+    evidence.extend(serde_json::to_vec(&quorum).map_err(|_| ObservationQuorumError::Malformed)?);
     Ok(VerifiedObservationQuorum {
         evidence_digest: hex::encode(Sha256::digest(evidence)),
         distinct_domains: domains.len(),
@@ -307,7 +307,8 @@ where
     T: for<'de> Deserialize<'de> + Serialize,
 {
     let value: T = serde_json::from_slice(bytes).map_err(|_| ObservationQuorumError::Malformed)?;
-    if serde_json::to_vec(&value).map_err(|_| ObservationQuorumError::Malformed)? != bytes {
+    let canonical = serde_json::to_vec(&value).map_err(|_| ObservationQuorumError::Malformed)?;
+    if bytes != canonical && bytes != [canonical.as_slice(), b"\n"].concat() {
         return Err(ObservationQuorumError::Malformed);
     }
     Ok(value)
@@ -540,6 +541,7 @@ mod tests {
         );
 
         let mut noncanonical = quorum_bytes.clone();
+        noncanonical.push(b'\n');
         noncanonical.push(b'\n');
         assert_eq!(
             verify_observation_quorum(

@@ -38,6 +38,8 @@ pub enum RunError {
     Shadow(#[from] crate::kubernetes_shadow::ShadowError),
     #[error("OpenTofu plan adapter failed: {0}")]
     OpenTofu(#[from] crate::opentofu_plan::OpenTofuError),
+    #[error("observation quorum failed: {0}")]
+    ObservationQuorum(#[from] crate::observation_quorum::ObservationQuorumError),
 }
 
 /// Runs a scenario through the public file boundary and persists its evidence.
@@ -95,19 +97,120 @@ pub fn run_kubernetes_shadow_file(
     run_kubernetes_shadow_snapshot(&scenario, &snapshot, certificate_path, ledger_path)
 }
 
+/// Evaluates a bounded Kubernetes snapshot only after a signed multi-domain
+/// quorum authenticates its exact bytes and context.
+///
+/// # Errors
+///
+/// Refuses path collision, input/resource excess, invalid quorum, snapshot or
+/// authority disagreement, unsafe transition, and evidence persistence failure.
+pub fn run_kubernetes_shadow_file_corroborated(
+    scenario_path: &Path,
+    snapshot_path: &Path,
+    trust_path: &Path,
+    quorum_path: &Path,
+    certificate_path: &Path,
+    ledger_path: &Path,
+) -> Result<Certificate, RunError> {
+    reject_multi_input_path_collisions(
+        &[scenario_path, snapshot_path, trust_path, quorum_path],
+        certificate_path,
+        ledger_path,
+    )?;
+    let scenario = read_scenario(scenario_path)?;
+    let snapshot_bytes = bounded_file(
+        snapshot_path,
+        crate::kubernetes_shadow::MAX_SNAPSHOT_BYTES,
+        "Kubernetes shadow snapshot",
+    )?;
+    let trust_bytes = bounded_file(
+        trust_path,
+        crate::observation_quorum::MAX_DOCUMENT_BYTES as u64,
+        "observation trust",
+    )?;
+    let quorum_bytes = bounded_file(
+        quorum_path,
+        crate::observation_quorum::MAX_DOCUMENT_BYTES as u64,
+        "observation quorum",
+    )?;
+    let verified = crate::observation_quorum::verify_observation_quorum(
+        &snapshot_bytes,
+        &scenario.subject,
+        "kubernetes-shadow",
+        &trust_bytes,
+        &quorum_bytes,
+    )?;
+    let snapshot: crate::kubernetes_shadow::KubernetesShadowSnapshot =
+        serde_json::from_slice(&snapshot_bytes)?;
+    let mut certificate = run_kubernetes_shadow_snapshot_unpersisted(&scenario, &snapshot)?;
+    certificate
+        .shadow
+        .as_mut()
+        .ok_or(crate::kubernetes_shadow::ShadowError::Context)?
+        .observation_quorum_digest = Some(verified.evidence_digest);
+    persist_evidence(&certificate, certificate_path, ledger_path)?;
+    Ok(certificate)
+}
+
 pub(crate) fn run_kubernetes_shadow_snapshot(
     scenario: &Scenario,
     snapshot: &crate::kubernetes_shadow::KubernetesShadowSnapshot,
     certificate_path: &Path,
     ledger_path: &Path,
 ) -> Result<Certificate, RunError> {
+    let certificate = run_kubernetes_shadow_snapshot_unpersisted(scenario, snapshot)?;
+    persist_evidence(&certificate, certificate_path, ledger_path)?;
+    Ok(certificate)
+}
+
+fn run_kubernetes_shadow_snapshot_unpersisted(
+    scenario: &Scenario,
+    snapshot: &crate::kubernetes_shadow::KubernetesShadowSnapshot,
+) -> Result<Certificate, RunError> {
     let authorities = verify(scenario)?;
     let shadow = crate::kubernetes_shadow::validate(scenario, &authorities, snapshot)?;
     let mut certificate = run_verified_scenario(scenario, authorities)?;
     certificate.certificate_version = crate::certificate::CERTIFICATE_VERSION_V9.into();
     certificate.shadow = Some(shadow);
-    persist_evidence(&certificate, certificate_path, ledger_path)?;
     Ok(certificate)
+}
+
+fn bounded_file(path: &Path, maximum: u64, _label: &str) -> Result<Vec<u8>, RunError> {
+    let mut bytes = Vec::new();
+    fs::File::open(path)?
+        .take(maximum + 1)
+        .read_to_end(&mut bytes)?;
+    if bytes.len()
+        > usize::try_from(maximum)
+            .map_err(|_| crate::observation_quorum::ObservationQuorumError::ResourceBound)?
+    {
+        return Err(crate::observation_quorum::ObservationQuorumError::ResourceBound.into());
+    }
+    Ok(bytes)
+}
+
+fn reject_multi_input_path_collisions(
+    input_paths: &[&Path],
+    certificate_path: &Path,
+    ledger_path: &Path,
+) -> Result<(), RunError> {
+    let inputs: Vec<_> = input_paths
+        .iter()
+        .map(fs::canonicalize)
+        .collect::<Result<_, _>>()?;
+    let certificate = canonical_output_path(certificate_path)?;
+    let temporary = canonical_output_path(&certificate_temporary_path(certificate_path))?;
+    let ledger = canonical_output_path(ledger_path)?;
+    if certificate == ledger
+        || temporary == certificate
+        || temporary == ledger
+        || inputs
+            .iter()
+            .any(|input| input == &certificate || input == &temporary || input == &ledger)
+    {
+        return Err(crate::observation_quorum::ObservationQuorumError::InvalidQuorum.into());
+    }
+    Ok(())
 }
 
 /// Evaluates a bounded `OpenTofu` JSON plan and binds its exact bytes into evidence.

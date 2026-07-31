@@ -10,11 +10,16 @@ repository-relative regular file plus an exact anchor that the validator must
 find.
 
 The current registry contains ten threat classes. Nine required classes have
-22 applicable, executable cells. Five cells are inapplicable because the mode
-has no relevant credential or transport boundary. Three cells remain explicitly
+23 applicable, executable cells. Five cells are inapplicable because the mode
+has no relevant credential or transport boundary. Two cells remain explicitly
 deferred across one research threat:
 
-- a compromised producer returning internally consistent false observations;
+- compromised live Kubernetes or OpenTofu producers returning internally
+  consistent false observations.
+
+Post-M37 requires a signed multi-domain observation quorum for stable shadow
+evaluation. This closes the project-controlled shadow test cell, but configured
+domain separation does not establish real operational independence.
 
 Post-M35 resolves the previously deferred sustained-load cells with 48 bounded
 hostile process cases and eight concurrent real Kubernetes evaluations. See

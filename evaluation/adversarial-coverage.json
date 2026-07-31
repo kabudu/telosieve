@@ -106,7 +106,7 @@
       "priority": "research-gap",
       "applicable_modes": ["kubernetes-shadow", "kubernetes-live", "opentofu-plan"],
       "coverage": {
-        "kubernetes-shadow": {"status": "deferred", "reason": "Requires an independent observation source or target-side witness outside the exported snapshot."},
+        "kubernetes-shadow": {"status": "covered", "evidence": [{"path": "tests/evaluation_cli.rs", "anchor": "forged_quorum"}]},
         "kubernetes-live": {"status": "deferred", "reason": "Requires an independently trusted API observation path outside the selected cluster control plane."},
         "opentofu-plan": {"status": "deferred", "reason": "Requires independent provider and state truth; plan JSON alone can lie consistently."}
       }

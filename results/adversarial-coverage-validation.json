@@ -3,8 +3,8 @@
   "modes": 3,
   "threat_classes": 10,
   "required_classes": 9,
-  "covered_cells": 22,
-  "deferred_cells": 3,
+  "covered_cells": 23,
+  "deferred_cells": 2,
   "not_applicable_cells": 5,
   "adversarial_refusals": 11,
   "status": "passed-with-registered-research-gaps"

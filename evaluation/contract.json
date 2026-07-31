@@ -8,11 +8,6 @@
   "evaluation_authority_boundary": "read-only-no-target-mutation",
   "supported_evaluation_modes": [
     {
-      "configuration_schema": "telosieve.evaluation-config/v1",
-      "mode": "kubernetes-shadow",
-      "target_mutated": false
-    },
-    {
       "configuration_schema": "telosieve.evaluation-config/v2",
       "mode": "kubernetes-live",
       "target_mutated": false
@@ -20,6 +15,11 @@
     {
       "configuration_schema": "telosieve.evaluation-config/v3",
       "mode": "opentofu-plan",
+      "target_mutated": false
+    },
+    {
+      "configuration_schema": "telosieve.evaluation-config/v4",
+      "mode": "kubernetes-shadow",
       "target_mutated": false
     }
   ],

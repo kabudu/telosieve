@@ -128,6 +128,7 @@ pub fn validate(
         desired_resource_version: snapshot.desired.metadata.resource_version.clone(),
         observed_resource_version: snapshot.observed.metadata.resource_version.clone(),
         captured_at: snapshot.captured_at,
+        observation_quorum_digest: None,
     })
 }
 

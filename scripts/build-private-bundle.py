@@ -18,6 +18,7 @@ FILES = [
     "docs/SUSTAINED_ADVERSARIAL_LOAD.md",
     "deploy/kubernetes/evaluation-rbac.yaml", "evaluation/config.example.json",
     "evaluation/config.live.example.json", "evaluation/config.opentofu.example.json",
+    "evaluation/observation-trust.example.json", "evaluation/observation-quorum.example.json",
     "evaluation/contract.json", "evaluation/candidate-test-plan.json",
     "evaluation/adversarial-coverage.json",
     "examples/opentofu/main.tf",
@@ -128,8 +129,8 @@ def validate_test_inputs(capability_document, contract, sources):
     configurations = [
         strict_json(sources[path], path)
         for path in (
-            "evaluation/config.example.json", "evaluation/config.live.example.json",
-            "evaluation/config.opentofu.example.json",
+            "evaluation/config.live.example.json", "evaluation/config.opentofu.example.json",
+            "evaluation/config.example.json",
         )
     ]
     packaged = [
@@ -165,7 +166,7 @@ def validate_test_inputs(capability_document, contract, sources):
         }
         or coverage.get("schema_version") != "telosieve.adversarial-coverage/v1"
         or coverage.get("authority_boundary") != "read-only-no-target-mutation"
-        or coverage.get("modes") != [item["mode"] for item in capabilities]
+        or set(coverage.get("modes", [])) != {item["mode"] for item in capabilities}
         or contract["supported_evaluation_modes"] != capabilities
     ):
         raise SystemExit("private-bundle: configurations or test plan do not cover capabilities")

@@ -1,8 +1,10 @@
 {
-  "schema_version": "telosieve.evaluation-config/v1",
+  "schema_version": "telosieve.evaluation-config/v4",
   "mode": "kubernetes-shadow",
   "scenario_path": "../scenarios/benign.json",
   "snapshot_path": "../snapshots/kubernetes-shadow-benign.json",
+  "observation_trust_path": "observation-trust.example.json",
+  "observation_quorum_path": "observation-quorum.example.json",
   "certificate_path": "../out/evaluation-certificate.json",
   "ledger_path": "../out/evaluation-ledger.jsonl"
 }

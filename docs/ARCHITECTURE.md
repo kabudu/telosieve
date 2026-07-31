@@ -90,7 +90,9 @@ goal/phenotype content and adds resource identity/version evidence to certificat
 v9; it has no cluster client or actuation path.
 
 The stable evaluation CLI wraps that adapter in a bounded
-`telosieve.evaluation-config/v1` file boundary. Relative paths resolve from the
+`telosieve.evaluation-config/v4` file boundary. It requires a signed quorum from
+at least two configured fault domains over the exact snapshot bytes and binds
+the verified evidence digest into certificate v9. Relative paths resolve from the
 configuration directory, unknown schema or mode values refuse, and the
 versioned success report binds the exact certificate digest while declaring
 that the target was not mutated.

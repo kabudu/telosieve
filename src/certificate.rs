@@ -81,6 +81,8 @@ pub struct ShadowRecord {
     pub desired_resource_version: String,
     pub observed_resource_version: String,
     pub captured_at: u64,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub observation_quorum_digest: Option<String>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -147,7 +149,7 @@ pub fn parse_supported_certificate(
         }
         CERTIFICATE_VERSION_V9 => {
             certificate.actuation.is_none()
-                && certificate.shadow.is_some()
+                && certificate.shadow.as_ref().is_some_and(valid_shadow_record)
                 && certificate.opentofu.is_none()
         }
         CERTIFICATE_VERSION_V10 => {
@@ -170,6 +172,19 @@ pub fn parse_supported_certificate(
         ));
     }
     Ok(certificate)
+}
+
+fn valid_shadow_record(record: &ShadowRecord) -> bool {
+    record.adapter == "telosieve.kubernetes-shadow/v1"
+        && record
+            .observation_quorum_digest
+            .as_ref()
+            .is_none_or(|digest| {
+                digest.len() == 64
+                    && digest
+                        .bytes()
+                        .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
+            })
 }
 
 fn valid_opentofu_record(record: &OpenTofuRecord) -> bool {

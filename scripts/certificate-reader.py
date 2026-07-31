@@ -52,6 +52,7 @@ SHADOW_FIELDS = {
     "observed_resource_version",
     "captured_at",
 }
+SHADOW_OPTIONAL_FIELDS = {"observation_quorum_digest"}
 OPENTOFU_FIELDS = {
     "adapter", "plan_sha256", "format_version", "terraform_version",
     "resource_change_count",
@@ -298,10 +299,14 @@ def validate_certificate(value: Any) -> dict[str, Any]:
         record = exact_object(actuation, ACTUATION_FIELDS, "actuation")
         require_strings(record, ACTUATION_FIELDS, "actuation")
     if requires_shadow:
-        record = exact_object(shadow, SHADOW_FIELDS, "shadow")
+        if not isinstance(shadow, dict) or not SHADOW_FIELDS.issubset(shadow) or not set(shadow).issubset(SHADOW_FIELDS | SHADOW_OPTIONAL_FIELDS):
+            raise ReaderError("shadow fields are invalid")
+        record = shadow
         require_strings(record, SHADOW_FIELDS - {"captured_at"}, "shadow")
         if not is_unsigned(record["captured_at"]):
             raise ReaderError("shadow captured_at is invalid")
+        if "observation_quorum_digest" in record and not canonical_hex(record["observation_quorum_digest"], 32):
+            raise ReaderError("shadow observation quorum digest is invalid")
     if requires_opentofu:
         record = exact_object(opentofu, OPENTOFU_FIELDS, "opentofu")
         require_strings(record, OPENTOFU_FIELDS - {"resource_change_count"}, "opentofu")

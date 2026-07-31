@@ -9,12 +9,12 @@ fault domains sign the same subject, evaluation mode, SHA-256 digest, and bounde
 validity window.
 
 The protocol supports `kubernetes-shadow`, `kubernetes-live`, and
-`opentofu-plan`. Trust and quorum documents are canonical compact JSON with exact
+`opentofu-plan`. Trust and quorum documents are canonical compact JSON (with an
+optional final newline) with exact
 schemas. Ed25519 signatures are domain-separated from every other Telosieve
 signature context. Trust binds each producer and key ID to one fault domain and
 key-validity window; a quorum statement cannot relabel its domain. The returned
-evidence digest binds the exact trust and quorum bytes for later certificate
-integration.
+evidence digest binds the canonical trust and quorum content.
 
 Resource and failure bounds are fixed in `src/observation_quorum.rs`: observation
 input is at most 4 MiB, each trust/quorum document at most 64 KiB, two to eight
@@ -28,10 +28,10 @@ Focused Rust tests accept two-domain corroboration for all three modes and refus
 input/subject substitution, signature tampering, domain relabelling, stale time,
 unknown and duplicate identities, non-canonical documents, and oversized input.
 
-This milestone does not yet resolve the registered compromised-producer cells.
-The current evaluation schemas do not require quorum files, live collection does
-not yet canonicalize its snapshot for quorum verification, and certificates do
-not yet bind the returned evidence digest. A later migration must make those
-steps mandatory before evidence persistence. Configured domain labels and test
-keys do not establish real organizational independence, protected custody, or
-truth when every participating domain colludes.
+Post-M37 makes the control mandatory for stable Kubernetes shadow evaluation
+configuration v4 and binds the verified evidence digest into certificate v9.
+`evaluation/observation-*.example.json` and the fixture generator use published,
+deterministic test keys and must never be treated as operational credentials.
+Live Kubernetes and OpenTofu evaluation are not yet integrated. Configured
+domain labels do not establish real organizational independence, protected
+custody, or truth when every participating domain colludes.

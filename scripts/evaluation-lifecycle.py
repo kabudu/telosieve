@@ -18,9 +18,9 @@ from pathlib import Path
 SCHEMA = "telosieve.evaluation-install/v1"
 BACKUP_SCHEMA = "telosieve.evaluation-backup/v1"
 CONFIG_SCHEMAS = {
-    "telosieve.evaluation-config/v1",
     "telosieve.evaluation-config/v2",
     "telosieve.evaluation-config/v3",
+    "telosieve.evaluation-config/v4",
 }
 MAX_BINARY_BYTES = 128 * 1024 * 1024
 MAX_CONFIG_BYTES = 64 * 1024
@@ -87,8 +87,9 @@ def validated_inputs(binary_value: str, config_value: str) -> tuple[bytes, bytes
     if not isinstance(parsed, dict) or parsed.get("schema_version") not in CONFIG_SCHEMAS:
         raise LifecycleError("configuration schema is unsupported")
     expected = {
-        "telosieve.evaluation-config/v1": {
+        "telosieve.evaluation-config/v4": {
             "schema_version", "mode", "scenario_path", "snapshot_path",
+            "observation_trust_path", "observation_quorum_path",
             "certificate_path", "ledger_path",
         },
         "telosieve.evaluation-config/v2": {
@@ -101,7 +102,7 @@ def validated_inputs(binary_value: str, config_value: str) -> tuple[bytes, bytes
         },
     }[parsed["schema_version"]]
     expected_mode = {
-        "telosieve.evaluation-config/v1": "kubernetes-shadow",
+        "telosieve.evaluation-config/v4": "kubernetes-shadow",
         "telosieve.evaluation-config/v2": "kubernetes-live",
         "telosieve.evaluation-config/v3": "opentofu-plan",
     }[parsed["schema_version"]]

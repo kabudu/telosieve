@@ -40,12 +40,14 @@ def main() -> int:
         config.write_text(
             json.dumps(
                 {
-                    "schema_version": "telosieve.evaluation-config/v1",
+                    "schema_version": "telosieve.evaluation-config/v4",
                     "mode": "kubernetes-shadow",
                     "scenario_path": str((ROOT / "scenarios/benign.json").resolve()),
                     "snapshot_path": str(
                         (ROOT / "snapshots/kubernetes-shadow-benign.json").resolve()
                     ),
+                    "observation_trust_path": str((ROOT / "evaluation/observation-trust.example.json").resolve()),
+                    "observation_quorum_path": str((ROOT / "evaluation/observation-quorum.example.json").resolve()),
                     "certificate_path": str(install.resolve() / "evidence/certificate.json"),
                     "ledger_path": str(install.resolve() / "evidence/ledger.jsonl"),
                 }

@@ -548,6 +548,25 @@ or independent validation.
 - [ ] Establish independently operated producer domains and key custody.
 
 Evidence: [OBSERVATION_QUORUM](OBSERVATION_QUORUM.md) and focused tests in
-`src/observation_quorum.rs`. This is a qualified protocol primitive, not a
-deployed evaluation control, so the three compromised-consistent-producer cells
-remain deferred.
+`src/observation_quorum.rs`. This is a qualified protocol primitive; M37 applies
+it to shadow evaluation while live and OpenTofu integration remain open.
+
+## Post-M37 — corroborated Kubernetes shadow evaluation
+
+- [x] Require a bounded canonical trust document and signed multi-domain quorum
+  in the stable Kubernetes shadow evaluation schema v4.
+- [x] Authenticate the exact snapshot bytes, subject, mode, signer identities,
+  fault domains, and validity window before parsing or evidence persistence.
+- [x] Bind the verified quorum evidence digest into certificate v9 while
+  retaining readability of historical v9 certificates without the extension.
+- [x] Package deterministic synthetic examples and a fixture generator, and
+  prove forged quorum refusal without certificate or ledger output.
+- [ ] Apply corroborated collection to Kubernetes live and OpenTofu evaluation.
+- [ ] Establish independently operated producer domains and operational key
+  custody; bundled fixture keys are public test material only.
+
+Evidence: [OBSERVATION_QUORUM](OBSERVATION_QUORUM.md),
+[EVALUATION_CLI](EVALUATION_CLI.md), and `tests/evaluation_cli.rs`. This closes
+only the shadow-mode compromised-consistent-producer test cell under distinct
+configured signing domains. It does not prove that those domains are genuinely
+independent or truthful in deployment.
