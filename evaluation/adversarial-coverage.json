@@ -107,7 +107,7 @@
       "applicable_modes": ["kubernetes-shadow", "kubernetes-live", "opentofu-plan"],
       "coverage": {
         "kubernetes-shadow": {"status": "covered", "evidence": [{"path": "tests/evaluation_cli.rs", "anchor": "forged_quorum"}]},
-        "kubernetes-live": {"status": "deferred", "reason": "Requires an independently trusted API observation path outside the selected cluster control plane."},
+        "kubernetes-live": {"status": "deferred", "reason": "Separate signed producer processes now detect local collector faults, but all qualified producers still trust one project-controlled Kubernetes API server."},
         "opentofu-plan": {"status": "deferred", "reason": "Requires independent provider and state truth; plan JSON alone can lie consistently."}
       }
     },

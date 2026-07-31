@@ -580,10 +580,34 @@ independent or truthful in deployment.
 - [x] Expose public-key derivation without disclosing the private seed.
 - [x] Prove two independently invoked CLI attestations interoperate with the
   quorum verifier and refuse unsafe keys, oversized input, and output collision.
-- [ ] Define and integrate bounded independently collecting producer processes
-  for Kubernetes-live and OpenTofu evaluation.
+- [x] Define and integrate bounded independently collecting producer processes
+  for Kubernetes-live evaluation.
+- [ ] Integrate independently collecting producers for OpenTofu evaluation.
 
 Evidence: [OBSERVATION_QUORUM](OBSERVATION_QUORUM.md) and
 `tests/observation_signature_cli.rs`. This establishes producer-side signing
 mechanics, not producer independence, truthful collection, or operational key
 custody; no adversarial coverage cell is promoted by M38.
+
+## Post-M39 — corroborated Kubernetes-live producer processes
+
+- [x] Replace live configuration v2 with v5 requiring a bounded trust document
+  and two to eight external observation-source commands.
+- [x] Require every producer's canonical snapshot to exactly equal the primary
+  four-read collector snapshot before multi-domain signature verification.
+- [x] Bind the verified quorum digest into certificate v9 and persist no
+  evidence on disagreement, forgery, malformed or oversized output, timeout,
+  invalid quorum, or path collision.
+- [x] Exercise two separately invoked producer collectors against a disposable
+  real Kubernetes API server and under concurrent evaluation load.
+- [ ] Establish separately operated clusters/control planes, credentials, hosts,
+  and key custody for independent validation.
+- [ ] Integrate independent OpenTofu plan producers.
+
+Evidence: [KUBERNETES_REAL_CLUSTER](KUBERNETES_REAL_CLUSTER.md),
+[OBSERVATION_QUORUM](OBSERVATION_QUORUM.md),
+`tests/kubernetes_live_cli.rs`, and
+`scripts/kubernetes-observation-producer.py`. M39 detects local collector and
+envelope faults but retains the compromised-producer cell because every
+qualified process still trusts one API server. External independence and
+production custody remain open gates.

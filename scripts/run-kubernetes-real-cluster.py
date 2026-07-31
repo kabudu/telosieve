@@ -20,6 +20,7 @@ LOAD_EVALUATIONS = 8
 LOAD_CONCURRENCY = 4
 MAX_LOAD_SECONDS = 30
 LOAD_CASE_TIMEOUT_SECONDS = 5
+PRODUCER = (ROOT / "scripts/kubernetes-observation-producer.py").resolve()
 
 
 def run(arguments, *, input_bytes=None, timeout=30, check=True, env=None):
@@ -85,15 +86,44 @@ def restricted_config(admin_config, output):
     output.chmod(0o600)
 
 
-def evaluate_load(binary, work, restricted):
+def observation_material(binary, work, restricted, scenario):
+    specifications = (("producer-a", "key-a", "api-reader-a", "0b" * 32),
+                      ("producer-b", "key-b", "api-reader-b", "0c" * 32))
+    keys, sources = [], []
+    for producer, key_id, domain, seed in specifications:
+        key = work / f"{producer}.key"
+        key.write_text(seed, encoding="ascii")
+        key.chmod(0o600)
+        public = run([str(binary), "observation-public-key", str(key)]).stdout.decode().strip()
+        keys.append({"producer": producer, "key_id": key_id, "fault_domain": domain,
+                     "public_key": public, "not_before": 1750000000,
+                     "not_after": 1750001000})
+        arguments = ["--kubectl", str(Path("/usr/local/bin/kubectl").resolve()),
+                     "--kubeconfig", str(restricted.resolve()), "--context", "evaluation",
+                     "--namespace", NAMESPACE, "--configmap", "repair-goal",
+                     "--statefulset", "research-kv", "--scenario", str(scenario),
+                     "--telosieve", str(binary), "--key", str(key), "--producer", producer,
+                     "--key-id", key_id, "--domain", domain, "--issued", "1750000000",
+                     "--expires", "1750000300"]
+        sources.append({"executable_path": str(PRODUCER), "arguments": arguments})
+    trust = work / "observation-trust.json"
+    trust.write_text(json.dumps({"schema_version": "telosieve.observation-trust/v1",
+                                 "evaluation_time": 1750000100,
+                                 "required_distinct_domains": 2, "keys": keys},
+                                separators=(",", ":")), encoding="utf-8")
+    return trust, sources
+
+
+def evaluate_load(binary, work, restricted, trust, sources):
     def one(index):
         case = work / f"load-{index}"
         case.mkdir()
         config_path = case / "evaluation.json"
         config_path.write_text(json.dumps({
-            "schema_version": "telosieve.evaluation-config/v2", "mode": "kubernetes-live",
+            "schema_version": "telosieve.evaluation-config/v5", "mode": "kubernetes-live",
             "scenario_path": str((ROOT / "scenarios/kubernetes-real-cluster.json").resolve()),
             "certificate_path": str(case / "certificate.json"), "ledger_path": str(case / "ledger.jsonl"),
+            "observation_trust_path": str(trust), "observation_sources": sources,
             "kubernetes": {"kubectl_path": str(Path("/usr/local/bin/kubectl").resolve()), "kubeconfig_path": str(restricted.resolve()), "context": "evaluation", "namespace": NAMESPACE, "desired_config_map": "repair-goal", "observed_stateful_set": "research-kv"}
         }), encoding="utf-8")
         evaluation = run(
@@ -138,6 +168,9 @@ def main():
             kubectl(admin_config, "rollout", "status", "statefulset/research-kv", f"--namespace={NAMESPACE}", "--timeout=60s", timeout=70)
             restricted = work / "evaluation-kubeconfig"
             restricted_config(admin_config, restricted)
+            binary = (ROOT / "target/debug/telosieve").resolve()
+            scenario = (ROOT / "scenarios/kubernetes-real-cluster.json").resolve()
+            trust, sources = observation_material(binary, work, restricted, scenario)
             access = lambda *args: run(["kubectl", f"--kubeconfig={restricted}", "--context=evaluation", *args], check=False).stdout.decode().strip()
             if access("auth", "can-i", "get", "configmap/repair-goal", f"--namespace={NAMESPACE}") != "yes":
                 raise SystemExit("kubernetes-e2e: required ConfigMap read denied")
@@ -146,17 +179,18 @@ def main():
                     raise SystemExit(f"kubernetes-e2e: unsafe permission granted: {request}")
             config_path = work / "evaluation.json"
             config_path.write_text(json.dumps({
-                "schema_version": "telosieve.evaluation-config/v2", "mode": "kubernetes-live",
-                "scenario_path": str((ROOT / "scenarios/kubernetes-real-cluster.json").resolve()),
+                "schema_version": "telosieve.evaluation-config/v5", "mode": "kubernetes-live",
+                "scenario_path": str(scenario),
                 "certificate_path": str(work / "certificate.json"), "ledger_path": str(work / "ledger.jsonl"),
+                "observation_trust_path": str(trust), "observation_sources": sources,
                 "kubernetes": {"kubectl_path": str(Path("/usr/local/bin/kubectl").resolve()), "kubeconfig_path": str(restricted.resolve()), "context": "evaluation", "namespace": NAMESPACE, "desired_config_map": "repair-goal", "observed_stateful_set": "research-kv"}
             }), encoding="utf-8")
             before = json.loads(kubectl(admin_config, "get", "statefulset/research-kv", f"--namespace={NAMESPACE}", "-o", "json").stdout)
-            evaluation = run([str((ROOT / "target/debug/telosieve").resolve()), "evaluate", str(config_path)], timeout=30)
+            evaluation = run([str(binary), "evaluate", str(config_path)], timeout=30)
             report = json.loads(evaluation.stdout)
             if report["target_mutated"] or report["mode"] != "kubernetes-live":
                 raise SystemExit("kubernetes-e2e: invalid success report")
-            load_elapsed = evaluate_load((ROOT / "target/debug/telosieve").resolve(), work, restricted)
+            load_elapsed = evaluate_load(binary, work, restricted, trust, sources)
             after = json.loads(kubectl(admin_config, "get", "statefulset/research-kv", f"--namespace={NAMESPACE}", "-o", "json").stdout)
             for field in ("uid", "resourceVersion", "generation"):
                 if before["metadata"].get(field) != after["metadata"].get(field):
@@ -165,14 +199,14 @@ def main():
             kubectl(admin_config, "patch", "configmap/repair-goal", f"--namespace={NAMESPACE}", "--type=merge", "-p", altered)
             (work / "certificate.json").unlink()
             (work / "ledger.jsonl").unlink()
-            refusal = run([str((ROOT / "target/debug/telosieve").resolve()), "evaluate", str(config_path)], timeout=30, check=False)
+            refusal = run([str(binary), "evaluate", str(config_path)], timeout=30, check=False)
             if refusal.returncode == 0 or (work / "certificate.json").exists() or (work / "ledger.jsonl").exists():
                 raise SystemExit("kubernetes-e2e: authority mismatch did not fail closed")
             paused = False
             try:
                 run(["docker", "pause", f"{cluster_name}-control-plane"])
                 paused = True
-                outage = run([str((ROOT / "target/debug/telosieve").resolve()), "evaluate", str(config_path)], timeout=30, check=False)
+                outage = run([str(binary), "evaluate", str(config_path)], timeout=30, check=False)
             finally:
                 if paused:
                     run(["docker", "unpause", f"{cluster_name}-control-plane"])
@@ -192,7 +226,7 @@ def main():
     peak_rss_bytes = peak_rss if sys.platform == "darwin" else peak_rss * 1024
     if peak_rss_bytes > MAX_PEAK_RSS_BYTES:
         raise SystemExit("kubernetes-e2e: peak child RSS exceeds bound")
-    result = {"schema_version": "telosieve.kubernetes-real-cluster-qualification/v1", "server_version": server, "cluster_kind": "kind", "read_only_rbac": True, "real_api_server": True, "successful_evaluations": 1 + LOAD_EVALUATIONS, "load_evaluations": LOAD_EVALUATIONS, "load_concurrency": LOAD_CONCURRENCY, "load_case_timeout_seconds": LOAD_CASE_TIMEOUT_SECONDS, "load_elapsed_seconds": load_elapsed, "fail_closed_evaluations": 2, "target_mutated": False, "elapsed_seconds": elapsed, "peak_child_rss_bytes": peak_rss_bytes, "independent_evidence": False, "status": "passed"}
+    result = {"schema_version": "telosieve.kubernetes-real-cluster-qualification/v1", "server_version": server, "cluster_kind": "kind", "read_only_rbac": True, "real_api_server": True, "observation_source_processes": 2, "configured_fault_domains": 2, "successful_evaluations": 1 + LOAD_EVALUATIONS, "load_evaluations": LOAD_EVALUATIONS, "load_concurrency": LOAD_CONCURRENCY, "load_case_timeout_seconds": LOAD_CASE_TIMEOUT_SECONDS, "load_elapsed_seconds": load_elapsed, "fail_closed_evaluations": 2, "target_mutated": False, "elapsed_seconds": elapsed, "peak_child_rss_bytes": peak_rss_bytes, "independent_evidence": False, "status": "passed"}
     print(json.dumps(result, separators=(",", ":")))
     return 0
 

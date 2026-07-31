@@ -15,7 +15,7 @@ exactly equal contract v2's `supported_evaluation_modes`, and every record must
 declare `target_mutated: false`.
 
 `telosieve --version` prints the binary package version. The `evaluate` command,
-the supported v2–v4 configurations, and
+the supported v3–v5 configurations, and
 `telosieve.evaluation-report/v1` success report are the supported evaluation
 surface. Other commands remain research, recovery, or reference-backend
 interfaces unless a later compatibility decision promotes them.
@@ -89,7 +89,7 @@ the resulting certificate contains shadow evidence, including the canonical
 verified quorum-evidence digest, but no actuation record. Historical v9
 certificates without that optional digest remain readable.
 
-The v2 `kubernetes-live` mode accepts the common scenario, certificate, and
+The v5 `kubernetes-live` mode accepts the common scenario, certificate, and
 ledger paths plus a `kubernetes` object containing absolute `kubectl_path` and
 `kubeconfig_path` values, context, namespace, desired ConfigMap name, and
 observed StatefulSet name. It issues exactly four subprocess calls: ConfigMap,
@@ -104,6 +104,24 @@ bounded `matchLabels`; `matchExpressions` refuse rather than being approximated.
 Desired ConfigMap values use the same annotation because `/` is valid in
 Telosieve authority keys but not in ConfigMap `data` keys. Legacy `data` remains
 accepted when the annotation is absent; disagreement between both forms refuses.
+
+It also requires `observation_trust_path` and two to eight
+`observation_sources`. Each source names an absolute executable and at most 32
+bounded arguments. Sources have five-second deadlines, 2 MiB stdout and 16 KiB
+stderr bounds. Every returned v1 envelope must contain a snapshot exactly equal
+to the primary collector's canonical snapshot and a valid attestation; the
+quorum must span at least two configured fault domains. Only then is its digest
+bound into certificate v9.
+Producer executables are trusted operator inputs with process authority on the
+evaluation host. They must be reviewed, installed immutably, granted read-only
+target credentials, and isolated from one another; domain labels alone enforce
+none of those properties. Never pass private key material directly in command
+arguments. The packaged Python producer passes only an owner-only key path to
+the bounded M38 signing command and issues fixed Kubernetes `get` operations.
+Sources run sequentially after the primary four-read collection, so eight
+maximal source timeouts add at most 40 seconds to the primary collector's four
+five-second process bounds. The direct source process is killed on timeout;
+operators must ensure trusted executables do not detach descendants.
 
 `evaluation/config.live.example.json` is the versioned example. Its absolute
 binary and credential paths are illustrative and must be replaced with

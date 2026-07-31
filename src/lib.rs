@@ -12,6 +12,7 @@ pub mod kubernetes_live;
 pub mod kubernetes_shadow;
 pub mod model;
 pub mod observation_quorum;
+pub mod observation_source;
 pub mod opentofu_plan;
 pub mod protocol;
 pub mod recovery_ceremony;

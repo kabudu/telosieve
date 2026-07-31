@@ -163,6 +163,23 @@ pub(crate) fn run_kubernetes_shadow_snapshot(
     Ok(certificate)
 }
 
+pub(crate) fn run_kubernetes_shadow_snapshot_corroborated(
+    scenario: &Scenario,
+    snapshot: &crate::kubernetes_shadow::KubernetesShadowSnapshot,
+    observation_quorum_digest: String,
+    certificate_path: &Path,
+    ledger_path: &Path,
+) -> Result<Certificate, RunError> {
+    let mut certificate = run_kubernetes_shadow_snapshot_unpersisted(scenario, snapshot)?;
+    certificate
+        .shadow
+        .as_mut()
+        .ok_or(crate::kubernetes_shadow::ShadowError::Context)?
+        .observation_quorum_digest = Some(observation_quorum_digest);
+    persist_evidence(&certificate, certificate_path, ledger_path)?;
+    Ok(certificate)
+}
+
 fn run_kubernetes_shadow_snapshot_unpersisted(
     scenario: &Scenario,
     snapshot: &crate::kubernetes_shadow::KubernetesShadowSnapshot,

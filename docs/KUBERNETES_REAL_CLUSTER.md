@@ -6,6 +6,13 @@ three-replica StatefulSet, desired ConfigMap, forbidden Secret, and the
 namespace-scoped evaluation Role. Telosieve receives only a ten-minute
 service-account token and the real `kubectl` and API-server boundaries.
 
+Post-M39 invokes two additional producer processes per evaluation. Each process
+performs its own four Kubernetes reads, canonicalizes the snapshot, and signs it
+with a separate synthetic owner-only key in a distinct configured fault domain.
+The primary collector and both producer snapshots must agree exactly before
+certificate persistence. Keys remain in the disposable harness directory and
+never enter Telosieve evaluation configuration or evidence.
+
 The harness requires successful evidence generation, an unchanged StatefulSet,
 the documented read permissions, denial of mutation and Secret access,
 fail-closed authority mismatch and API outage, completion within 120 seconds,
@@ -20,6 +27,10 @@ still project-controlled evidence on one macOS/arm64 host. It does not qualify
 EKS, GKE, AKS, other Kubernetes versions, multi-node behavior, extended load,
 credential plugins, admission controllers, network policy, upgrades, or an
 independent operator.
+Both producers still use the same disposable cluster, API endpoint, local host,
+project-controlled script, and credential. This proves process/envelope/quorum
+integration and detects injected single-producer disagreement in the harness;
+it does not prove independent control planes or organizations.
 
 Post-M35 adds eight evaluations at four-way concurrency against the same real
 API server under a five-second per-evaluation timeout and 30-second load-phase

@@ -18,7 +18,7 @@ from pathlib import Path
 SCHEMA = "telosieve.evaluation-install/v1"
 BACKUP_SCHEMA = "telosieve.evaluation-backup/v1"
 CONFIG_SCHEMAS = {
-    "telosieve.evaluation-config/v2",
+    "telosieve.evaluation-config/v5",
     "telosieve.evaluation-config/v3",
     "telosieve.evaluation-config/v4",
 }
@@ -92,9 +92,10 @@ def validated_inputs(binary_value: str, config_value: str) -> tuple[bytes, bytes
             "observation_trust_path", "observation_quorum_path",
             "certificate_path", "ledger_path",
         },
-        "telosieve.evaluation-config/v2": {
+        "telosieve.evaluation-config/v5": {
             "schema_version", "mode", "scenario_path", "certificate_path",
-            "ledger_path", "kubernetes",
+            "ledger_path", "kubernetes", "observation_trust_path",
+            "observation_sources",
         },
         "telosieve.evaluation-config/v3": {
             "schema_version", "mode", "scenario_path", "plan_path",
@@ -103,12 +104,12 @@ def validated_inputs(binary_value: str, config_value: str) -> tuple[bytes, bytes
     }[parsed["schema_version"]]
     expected_mode = {
         "telosieve.evaluation-config/v4": "kubernetes-shadow",
-        "telosieve.evaluation-config/v2": "kubernetes-live",
+        "telosieve.evaluation-config/v5": "kubernetes-live",
         "telosieve.evaluation-config/v3": "opentofu-plan",
     }[parsed["schema_version"]]
     if set(parsed) != expected or parsed.get("mode") != expected_mode:
         raise LifecycleError("configuration fields or mode do not match its schema")
-    string_fields = expected - {"schema_version", "mode", "kubernetes"}
+    string_fields = expected - {"schema_version", "mode", "kubernetes", "observation_sources"}
     if any(not isinstance(parsed.get(field), str) or not parsed[field] for field in string_fields):
         raise LifecycleError("configuration path fields must be nonempty strings")
     if any(
@@ -118,7 +119,7 @@ def validated_inputs(binary_value: str, config_value: str) -> tuple[bytes, bytes
         for field in string_fields
     ):
         raise LifecycleError("packaged configuration paths must be bounded absolute paths")
-    if parsed["schema_version"] == "telosieve.evaluation-config/v2":
+    if parsed["schema_version"] == "telosieve.evaluation-config/v5":
         kubernetes = parsed.get("kubernetes")
         kubernetes_fields = {
             "kubectl_path", "kubeconfig_path", "context", "namespace",
@@ -137,6 +138,24 @@ def validated_inputs(binary_value: str, config_value: str) -> tuple[bytes, bytes
             kubernetes["kubeconfig_path"]
         ).is_absolute():
             raise LifecycleError("live Kubernetes file paths must be absolute")
+        sources = parsed.get("observation_sources")
+        if (
+            not isinstance(sources, list) or not 2 <= len(sources) <= 8
+            or any(
+                not isinstance(source, dict)
+                or set(source) != {"executable_path", "arguments"}
+                or not isinstance(source["executable_path"], str)
+                or not Path(source["executable_path"]).is_absolute()
+                or not isinstance(source["arguments"], list)
+                or len(source["arguments"]) > 32
+                or any(
+                    not isinstance(argument, str) or not argument or len(argument) > 4096
+                    for argument in source["arguments"]
+                )
+                for source in sources
+            )
+        ):
+            raise LifecycleError("live observation sources are invalid")
     return binary, config
 
 

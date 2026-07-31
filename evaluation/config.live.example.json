@@ -1,9 +1,20 @@
 {
-  "schema_version": "telosieve.evaluation-config/v2",
+  "schema_version": "telosieve.evaluation-config/v5",
   "mode": "kubernetes-live",
   "scenario_path": "../scenarios/benign.json",
   "certificate_path": "out/live-certificate.json",
   "ledger_path": "out/live-ledger.jsonl",
+  "observation_trust_path": "observation-trust.live.example.json",
+  "observation_sources": [
+    {
+      "executable_path": "/opt/telosieve/bin/producer-a",
+      "arguments": ["--config", "/etc/telosieve/producer-a.json"]
+    },
+    {
+      "executable_path": "/opt/telosieve/bin/producer-b",
+      "arguments": ["--config", "/etc/telosieve/producer-b.json"]
+    }
+  ],
   "kubernetes": {
     "kubectl_path": "/usr/local/bin/kubectl",
     "kubeconfig_path": "/var/run/telosieve/kubeconfig",

@@ -19,6 +19,7 @@ FILES = [
     "deploy/kubernetes/evaluation-rbac.yaml", "evaluation/config.example.json",
     "evaluation/config.live.example.json", "evaluation/config.opentofu.example.json",
     "evaluation/observation-trust.example.json", "evaluation/observation-quorum.example.json",
+    "evaluation/observation-trust.live.example.json",
     "evaluation/contract.json", "evaluation/candidate-test-plan.json",
     "evaluation/adversarial-coverage.json",
     "examples/opentofu/main.tf",
@@ -28,6 +29,7 @@ FILES = [
     "scripts/ci-local.sh", "scripts/run-kubernetes-real-cluster.py",
     "scripts/run-opentofu-plan.py", "scripts/validate-adversarial-coverage.py",
     "scripts/run-sustained-adversarial-load.py",
+    "scripts/kubernetes-observation-producer.py",
     "results/adversarial-coverage-validation.json",
     "results/sustained-adversarial-load.json",
 ]
@@ -129,8 +131,8 @@ def validate_test_inputs(capability_document, contract, sources):
     configurations = [
         strict_json(sources[path], path)
         for path in (
-            "evaluation/config.live.example.json", "evaluation/config.opentofu.example.json",
-            "evaluation/config.example.json",
+            "evaluation/config.opentofu.example.json", "evaluation/config.example.json",
+            "evaluation/config.live.example.json",
         )
     ]
     packaged = [

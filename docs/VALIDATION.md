@@ -331,7 +331,7 @@ failures produce no success report; the scenario file boundary is capped at
 
 ## Live Kubernetes collector
 
-The real `telosieve evaluate` process accepts v2 live configuration and drives a
+The real `telosieve evaluate` process accepts v5 live configuration and drives a
 separate fake `kubectl` executable through the production subprocess boundary.
 The healthy case proves the exact four-call `get` protocol, output evidence,
 report schema, and absence of mutation verbs. Controller drift, unready Pod,
@@ -340,6 +340,9 @@ wrong owner, unsupported selector expression, nonzero process exit, output over
 ledger output. This is a
 project-controlled integration harness. Post-M30 adds a separate disposable
 real-cluster qualification without claiming managed or independent coverage.
+Post-M39 additionally refuses forged, disagreeing, malformed, oversized, or
+timed-out producer envelopes and exercises two signed producer processes
+against the real local cluster.
 
 ## Evaluation installation lifecycle
 

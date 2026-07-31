@@ -60,9 +60,14 @@ def config(case: Path, mode: str, hostile_input: Path, index: int) -> Path:
         kubeconfig.write_text("bounded synthetic credential\n", encoding="utf-8")
         kubeconfig.chmod(0o600)
         value = {
-            "schema_version": "telosieve.evaluation-config/v2",
+            "schema_version": "telosieve.evaluation-config/v5",
             "mode": mode,
             **common,
+            "observation_trust_path": str((ROOT / "evaluation/observation-trust.example.json").resolve()),
+            "observation_sources": [
+                {"executable_path": "/bin/cat", "arguments": [str((ROOT / "evaluation/observation-quorum.example.json").resolve())]},
+                {"executable_path": "/bin/cat", "arguments": [str((ROOT / "evaluation/observation-quorum.example.json").resolve())]},
+            ],
             "kubernetes": {
                 "kubectl_path": str(kubectl.resolve()),
                 "kubeconfig_path": str(kubeconfig.resolve()),

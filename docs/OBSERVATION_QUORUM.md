@@ -32,7 +32,8 @@ Post-M37 makes the control mandatory for stable Kubernetes shadow evaluation
 configuration v4 and binds the verified evidence digest into certificate v9.
 `evaluation/observation-*.example.json` and the fixture generator use published,
 deterministic test keys and must never be treated as operational credentials.
-Live Kubernetes and OpenTofu evaluation are not yet integrated. Configured
+OpenTofu evaluation is not yet integrated. Post-M39 applies the protocol to
+Kubernetes-live through bounded external producer processes. Configured
 domain labels do not establish real organizational independence, protected
 custody, or truth when every participating domain colludes.
 

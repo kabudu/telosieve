@@ -14,12 +14,18 @@ The current registry contains ten threat classes. Nine required classes have
 has no relevant credential or transport boundary. Two cells remain explicitly
 deferred across one research threat:
 
-- compromised live Kubernetes or OpenTofu producers returning internally
-  consistent false observations.
+- compromised Kubernetes control-plane or OpenTofu producers returning
+  internally consistent false observations.
 
 Post-M37 requires a signed multi-domain observation quorum for stable shadow
 evaluation. This closes the project-controlled shadow test cell, but configured
 domain separation does not establish real operational independence.
+
+Post-M39 requires the primary live Kubernetes collector and two bounded external
+producer processes to agree exactly under distinct configured signing domains.
+This detects local collector and envelope faults, but the real-cluster harness
+uses one disposable API server and therefore does not close the compromised
+control-plane cell.
 
 Post-M35 resolves the previously deferred sustained-load cells with 48 bounded
 hostile process cases and eight concurrent real Kubernetes evaluations. See

@@ -97,7 +97,7 @@ configuration directory, unknown schema or mode values refuse, and the
 versioned success report binds the exact certificate digest while declaring
 that the target was not mutated.
 
-Configuration v2 adds a live read-only collector without adding a Kubernetes
+Configuration v5 adds a live read-only collector without adding a Kubernetes
 SDK or mutation boundary. It invokes an absolute, operator-selected `kubectl`
 exactly four times for ConfigMap, StatefulSet, selected Pods, and the same
 StatefulSet. Per-process time and output bounds, exact pre/post controller
@@ -105,6 +105,10 @@ equality, generation/readiness checks, Pod ownership, and existing authenticated
 shadow validation make incoherent or incomplete observations fail closed. The
 binary and kubeconfig are explicit trusted inputs; a namespace-scoped RBAC
 example grants only the reads required by this protocol.
+The primary snapshot must also exactly match two to eight bounded external
+producer envelopes whose signatures satisfy the configured multi-domain trust
+policy. Producer processes hold their own collection credentials and keys;
+Telosieve receives only snapshots and attestations.
 
 The private lifecycle manager stores each binary/configuration pair in an
 immutable digest-named release directory. A single atomic `current` symlink
