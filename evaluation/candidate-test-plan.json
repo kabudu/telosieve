@@ -1,0 +1,24 @@
+{
+  "schema_version": "telosieve.evaluation-candidate-test-plan/v1",
+  "execution_context": "source-checkout-at-bundle-source-commit",
+  "tests": [
+    {
+      "configuration_schema": "telosieve.evaluation-config/v1",
+      "mode": "kubernetes-shadow",
+      "command": "telosieve evaluate evaluation/config.example.json",
+      "expected_target_mutated": false
+    },
+    {
+      "configuration_schema": "telosieve.evaluation-config/v2",
+      "mode": "kubernetes-live",
+      "command": "python3 scripts/run-kubernetes-real-cluster.py",
+      "expected_target_mutated": false
+    },
+    {
+      "configuration_schema": "telosieve.evaluation-config/v3",
+      "mode": "opentofu-plan",
+      "command": "python3 scripts/run-opentofu-plan.py",
+      "expected_target_mutated": false
+    }
+  ]
+}

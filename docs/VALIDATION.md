@@ -255,7 +255,7 @@ material. Unit tests additionally refuse key substitution and context change.
 All signing keys are ephemeral test inputs; operational identity, custody, exact
 candidate signing, and independent assessment remain open gates.
 
-Bundle qualification also builds otherwise identical version 2 bundles with two
+Bundle qualification also builds otherwise identical version 3 bundles with two
 source commits and requires different bundle digests. A malformed commit refuses
 before publication. This proves source-identity binding, not that a supplied
 commit was reviewed or that an operational ceremony occurred.
@@ -367,23 +367,25 @@ independent privacy assessment.
 
 ## Private bundle qualification
 
-The bundle qualification builds the fixed private ZIP twice and requires exact
-byte identity, verifies every entry against its manifest, kills a build before
-publication, confirms no partial output, and recovers the identical digest. It
-records local platform, wall time, peak child RSS, and output size bounds. This
-is local macOS process/filesystem evidence, not signing, power-loss, Linux,
-Kubernetes-load, distribution, or independent qualification.
+The bundle qualification builds the fixed three-mode private ZIP twice and
+requires exact byte identity; verifies every entry, capability, contract,
+configuration, test-plan, and unsigned-profile relationship; refuses four
+capability process faults; kills a build before publication; confirms no partial
+output; and recovers the identical digest. It records local platform, wall time,
+peak child RSS, and output size bounds. This is local macOS process/filesystem
+evidence, not signing, power-loss, Linux, Kubernetes-load, distribution, or
+independent qualification.
 
 ## Compatibility consumer qualification
 
-The independent Python reader and Rust compatibility boundary agree on three
-accepted version vectors and nine refusal classes. The accepted inputs are an
+The independent Python reader and Rust compatibility boundary agree on four
+accepted version vectors and ten refusal classes. The accepted inputs are an
 actual v7 stateless certificate, actual v8 local-actuator certificate, and the
-retained v9 Kubernetes shadow certificate. Future versions, unknown or missing
+retained v9 Kubernetes shadow certificate, and a v10 OpenTofu envelope. Future versions, unknown or missing
 fields, wrong types, out-of-range integers, cross-version extensions, duplicate
 keys, malformed JSON, and oversized input all refuse in both implementations.
 
-The retained `telosieve.reader-qualification/v1` aggregate reports 13 passes and
+The retained `telosieve.reader-qualification/v1` aggregate reports 15 passes and
 zero disagreements within 16-case and 2 MiB bounds. This is implementation
 diversity under project control, not independent assessment. See
 [PROTOCOL_COMPATIBILITY](PROTOCOL_COMPATIBILITY.md).

@@ -482,3 +482,19 @@ Evidence: [EVALUATION_PRODUCT_DECISION](EVALUATION_PRODUCT_DECISION.md) and
 `results/evaluation-contract-validation.json`. Contract v2 reconciles three
 implemented read-only modes and passes six adversarial drift refusals. It does
 not authorize production actuation, credentials, publication, or promotion.
+
+## Post-M33 — complete three-mode private candidate input
+
+- [x] Package all contracted Kubernetes shadow/live and OpenTofu plan
+  configurations plus their operator, threat, example, and test-plan material.
+- [x] Bind the supplied binary's bounded capability inventory, contract, source
+  commit, and fixed contents into deterministic bundle manifest v3.
+- [x] Refuse capability mismatch, malformed or oversized output, and timeout
+  without publication; retain signing and independent assessment as explicit
+  unsatisfied gates.
+
+Evidence: [PRIVATE_BUNDLE](PRIVATE_BUNDLE.md). The deterministic qualification
+reproduces the three-mode unsigned candidate input, validates every relationship,
+survives interruption, binds source substitution, and passes four capability
+refusals. No operational identity, signature, recipient, transfer, or independent
+assessment is manufactured.

@@ -1,43 +1,217 @@
 #!/usr/bin/env python3
-"""Qualify resource shape, interruption safety, and bundle reproducibility."""
-import hashlib, json, os, resource, subprocess, tempfile, time, zipfile
+"""Qualify deterministic three-mode private evaluation bundle assembly."""
+
+import hashlib
+import json
+import os
+import resource
+import subprocess
+import tempfile
+import time
+import zipfile
 from pathlib import Path
+
 
 ROOT = Path(__file__).resolve().parent.parent
 BINARY = (ROOT / "target/debug/telosieve").resolve()
 BUILDER = ROOT / "scripts/build-private-bundle.py"
 SOURCE_COMMIT = "a" * 40
+MAX_BUNDLE_BYTES = 160 * 1024 * 1024
+MAX_BUILD_SECONDS = 15
+EXPECTED_CONFIGURATIONS = (
+    "evaluation/config.example.json",
+    "evaluation/config.live.example.json",
+    "evaluation/config.opentofu.example.json",
+)
 
-def sha(path): return hashlib.sha256(path.read_bytes()).hexdigest()
 
-def main():
-    with tempfile.TemporaryDirectory(prefix="telosieve-bundle-") as tmp:
-        work = Path(tmp); first = work / "one.zip"; second = work / "two.zip"; interrupted = work / "interrupted.zip"; other = work / "other.zip"
-        command = ["python3", str(BUILDER), "--binary", str(BINARY), "--source-commit", SOURCE_COMMIT, "--output"]
+def sha256_bytes(value: bytes) -> str:
+    return hashlib.sha256(value).hexdigest()
+
+
+def sha256_file(path: Path) -> str:
+    return sha256_bytes(path.read_bytes())
+
+
+def command(binary: Path, output: Path, commit: str = SOURCE_COMMIT) -> list[str]:
+    return [
+        "python3", str(BUILDER), "--binary", str(binary),
+        "--source-commit", commit, "--output", str(output),
+    ]
+
+
+def build(binary: Path, output: Path, commit: str = SOURCE_COMMIT) -> None:
+    subprocess.run(
+        command(binary, output, commit), cwd=ROOT, check=True,
+        capture_output=True, timeout=MAX_BUILD_SECONDS,
+    )
+
+
+def assert_bundle(path: Path) -> int:
+    with zipfile.ZipFile(path) as archive:
+        names = archive.namelist()
+        if len(names) != len(set(names)):
+            raise SystemExit("private-bundle-qualification: duplicate archive entry")
+        manifest = json.loads(archive.read("bundle-manifest.json"))
+        if manifest["schema_version"] != "telosieve.private-bundle/v3":
+            raise SystemExit("private-bundle-qualification: bundle schema mismatch")
+        if manifest["source_commit"] != SOURCE_COMMIT:
+            raise SystemExit("private-bundle-qualification: source commit mismatch")
+        recorded = [record["path"] for record in manifest["entries"]]
+        if recorded != names[:-1] or names[-1] != "bundle-manifest.json":
+            raise SystemExit("private-bundle-qualification: unsigned or unrecorded archive entry")
+        for record in manifest["entries"]:
+            data = archive.read(record["path"])
+            if len(data) != record["size"] or sha256_bytes(data) != record["sha256"]:
+                raise SystemExit("private-bundle-qualification: entry digest mismatch")
+
+        capabilities_bytes = archive.read("evaluation/capabilities.json")
+        capabilities = json.loads(capabilities_bytes)
+        contract_bytes = archive.read("evaluation/contract.json")
+        contract = json.loads(contract_bytes)
+        if capabilities["capabilities"] != contract["supported_evaluation_modes"]:
+            raise SystemExit("private-bundle-qualification: capability/contract mismatch")
+        if any(item["target_mutated"] for item in capabilities["capabilities"]):
+            raise SystemExit("private-bundle-qualification: mutation capability included")
+
+        profile = json.loads(archive.read("evaluation/candidate-profile.json"))
+        if (
+            profile["schema_version"] != "telosieve.evaluation-candidate-profile/v1"
+            or profile["source_commit"] != SOURCE_COMMIT
+            or profile["status"] != "unsigned-private-evaluation-candidate-input"
+            or profile["capabilities_sha256"] != sha256_bytes(capabilities_bytes)
+            or profile["contract_sha256"] != sha256_bytes(contract_bytes)
+            or profile["signing_required"] is not True
+            or profile["independent_assessment_required"] is not True
+        ):
+            raise SystemExit("private-bundle-qualification: candidate profile is invalid")
+
+        test_plan = json.loads(archive.read("evaluation/candidate-test-plan.json"))
+        planned = [
+            {
+                "configuration_schema": item["configuration_schema"],
+                "mode": item["mode"],
+                "expected_target_mutated": item["expected_target_mutated"],
+            }
+            for item in test_plan["tests"]
+        ]
+        expected = [
+            {
+                "configuration_schema": item["configuration_schema"],
+                "mode": item["mode"],
+                "expected_target_mutated": False,
+            }
+            for item in capabilities["capabilities"]
+        ]
+        if planned != expected:
+            raise SystemExit("private-bundle-qualification: test plan does not cover capabilities")
+
+        packaged_modes = [
+            {
+                "configuration_schema": (config := json.loads(archive.read(path)))["schema_version"],
+                "mode": config["mode"],
+                "target_mutated": False,
+            }
+            for path in EXPECTED_CONFIGURATIONS
+        ]
+        if packaged_modes != capabilities["capabilities"]:
+            raise SystemExit("private-bundle-qualification: packaged configs do not cover capabilities")
+        required = {
+            "docs/KUBERNETES_SHADOW.md", "docs/OPENTOFU_PLAN.md",
+            "examples/opentofu/main.tf", "scripts/ci-local.sh",
+            "scripts/run-kubernetes-real-cluster.py", "scripts/run-opentofu-plan.py",
+            "evaluation/config.opentofu.example.json", "evaluation/candidate-test-plan.json",
+            "evaluation/candidate-profile.json", "evaluation/capabilities.json",
+        }
+        if not required.issubset(names):
+            raise SystemExit("private-bundle-qualification: required assessor content is absent")
+        return len(capabilities["capabilities"])
+
+
+def write_executable(path: Path, body: str) -> None:
+    path.write_text(f"#!/bin/sh\n{body}\n", encoding="utf-8")
+    path.chmod(0o700)
+
+
+def assert_capability_refusals(work: Path) -> int:
+    fixtures = {
+        "mismatch": "printf '%s\\n' '{\"schema_version\":\"telosieve.evaluation-capabilities/v1\",\"capabilities\":[]}'",
+        "malformed": "printf 'not-json\\n'",
+        "oversized": "dd if=/dev/zero bs=1024 count=65 2>/dev/null",
+        "timeout": "sleep 6",
+    }
+    for name, body in fixtures.items():
+        binary = work / f"fake-{name}"
+        output = work / f"refused-{name}.zip"
+        write_executable(binary, body)
+        result = subprocess.run(
+            command(binary, output), cwd=ROOT, capture_output=True,
+            check=False, timeout=MAX_BUILD_SECONDS,
+        )
+        if result.returncode == 0 or output.exists():
+            raise SystemExit(f"private-bundle-qualification: {name} capability fault accepted")
+    return len(fixtures)
+
+
+def main() -> int:
+    with tempfile.TemporaryDirectory(prefix="telosieve-bundle-") as temporary:
+        work = Path(temporary)
+        first = work / "one.zip"
+        second = work / "two.zip"
+        interrupted = work / "interrupted.zip"
+        other = work / "other.zip"
         started = time.monotonic()
-        subprocess.run([*command, str(first)], check=True, capture_output=True, timeout=15)
+        build(BINARY, first)
         wall_ms = round((time.monotonic() - started) * 1000, 3)
-        subprocess.run([*command, str(second)], check=True, capture_output=True, timeout=15)
-        assert first.read_bytes() == second.read_bytes()
-        process = subprocess.Popen([*command, str(interrupted)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        process.kill(); process.wait(timeout=5)
-        assert not interrupted.exists()
-        subprocess.run([*command, str(interrupted)], check=True, capture_output=True, timeout=15)
-        assert sha(interrupted) == sha(first)
-        subprocess.run(["python3", str(BUILDER), "--binary", str(BINARY), "--source-commit", "b" * 40, "--output", str(other)], check=True, capture_output=True, timeout=15)
-        assert sha(other) != sha(first)
-        malformed = subprocess.run(["python3", str(BUILDER), "--binary", str(BINARY), "--source-commit", "HEAD", "--output", str(work / "invalid.zip")], capture_output=True, timeout=15)
-        assert malformed.returncode != 0 and not (work / "invalid.zip").exists()
-        with zipfile.ZipFile(first) as archive:
-            manifest = json.loads(archive.read("bundle-manifest.json"))
-            assert manifest["schema_version"] == "telosieve.private-bundle/v2"
-            assert manifest["source_commit"] == SOURCE_COMMIT
-            for record in manifest["entries"]:
-                data = archive.read(record["path"])
-                assert len(data) == record["size"] and hashlib.sha256(data).hexdigest() == record["sha256"]
+        build(BINARY, second)
+        if first.read_bytes() != second.read_bytes():
+            raise SystemExit("private-bundle-qualification: repeated bundles differ")
+        modes = assert_bundle(first)
+
+        process = subprocess.Popen(
+            command(BINARY, interrupted), cwd=ROOT,
+            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+        )
+        process.kill()
+        process.wait(timeout=5)
+        if interrupted.exists():
+            raise SystemExit("private-bundle-qualification: interrupted output was published")
+        build(BINARY, interrupted)
+        if sha256_file(interrupted) != sha256_file(first):
+            raise SystemExit("private-bundle-qualification: interruption recovery diverged")
+
+        build(BINARY, other, "b" * 40)
+        if sha256_file(other) == sha256_file(first):
+            raise SystemExit("private-bundle-qualification: source substitution was not bound")
+        malformed = subprocess.run(
+            command(BINARY, work / "invalid.zip", "HEAD"), cwd=ROOT,
+            capture_output=True, check=False, timeout=MAX_BUILD_SECONDS,
+        )
+        if malformed.returncode == 0 or (work / "invalid.zip").exists():
+            raise SystemExit("private-bundle-qualification: malformed source identity accepted")
+        capability_refusals = assert_capability_refusals(work)
+
         peak_rss = resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss
-        assert first.stat().st_size <= 160 * 1024 * 1024 and wall_ms < 15_000
-        bundle_digest = sha(first)
-    print(json.dumps({"schema_version":"telosieve.private-bundle-qualification/v2","platform":os.uname().sysname,"bundle_sha256":bundle_digest,"wall_ms":wall_ms,"peak_child_rss":peak_rss,"reproducible":True,"interruption_recovered":True,"source_commit_bound":True,"status":"passed"}, separators=(",", ":")))
+        if first.stat().st_size > MAX_BUNDLE_BYTES or wall_ms >= MAX_BUILD_SECONDS * 1000:
+            raise SystemExit("private-bundle-qualification: resource bound exceeded")
+        bundle_digest = sha256_file(first)
+
+    print(json.dumps({
+        "schema_version": "telosieve.private-bundle-qualification/v3",
+        "platform": os.uname().sysname,
+        "bundle_sha256": bundle_digest,
+        "wall_ms": wall_ms,
+        "peak_child_rss": peak_rss,
+        "supported_modes": modes,
+        "capability_refusals": capability_refusals,
+        "reproducible": True,
+        "interruption_recovered": True,
+        "source_commit_bound": True,
+        "unsigned_candidate_input": True,
+        "status": "passed",
+    }, separators=(",", ":")))
     return 0
-if __name__ == "__main__": raise SystemExit(main())
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

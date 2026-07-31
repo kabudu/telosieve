@@ -3,9 +3,13 @@
 `scripts/build-private-bundle.py` creates an offline deterministic ZIP from an
 absolute locally validated Telosieve binary and a fixed allowlist of evaluation
 configuration, RBAC, lifecycle, diagnostics, policy, and operator documents.
-The fixed allowlist includes the authenticated offline and real-cluster
-evaluation scenarios referenced by the bundled configuration and qualification.
-Every entry and the canonical full source commit are bound by the version 2
+The fixed allowlist includes all three contracted configurations, the Kubernetes
+and OpenTofu integration material, authenticated offline/real-cluster scenarios,
+the candidate test plan, and the operator/security documents needed to assess
+them. The builder executes the supplied binary's bounded
+`evaluation-capabilities` command and refuses unless it exactly matches contract
+v2, the packaged configurations, and the three-mode test plan. Every entry and
+the canonical full source commit are bound by the version 3
 `bundle-manifest.json`; timestamps,
 ordering, compression, and modes are fixed.
 
@@ -17,11 +21,21 @@ python3 scripts/build-private-bundle.py \
 ```
 
 The output must be an absent absolute path and is published no-clobber with mode
-`0600`. `scripts/run-private-bundle-qualification.py` builds twice and requires
+`0600`. Static inputs are limited to 16 MiB each and 32 MiB total; binary
+capability collection is limited to 64 KiB and five seconds.
+`scripts/run-private-bundle-qualification.py` builds twice and requires
 byte identity, verifies every manifest entry, forcibly terminates a build before
 publication, proves no output appeared, then proves recovery produces the same
-digest. It records wall time, peak child RSS, platform, and a 160 MiB output
-ceiling under a 15-second deadline.
+digest. It validates the exact capability, contract, configuration, test-plan,
+profile, and manifest relationships and refuses mismatched, malformed,
+oversized, or timed-out capability binaries without publication. It records
+wall time, peak child RSS, platform, and a 160 MiB output ceiling under a
+15-second deadline.
+
+`evaluation/candidate-profile.json` inside the ZIP labels the output
+`unsigned-private-evaluation-candidate-input`, binds the exact capability and
+contract digests, and keeps both signing and independent assessment mandatory.
+It is deliberately not a ceremony record or release authorization.
 
 Use [CANDIDATE_SIGNING](CANDIDATE_SIGNING.md) only after the exact commit has
 passed review and authoritative local CI.

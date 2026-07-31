@@ -183,11 +183,13 @@ Digests remain sensitive correlators, and this does not provide telemetry,
 raw-evidence packaging, or independent privacy assessment.
 
 Deterministic private bundle assembly now fixes entry selection, ordering,
-timestamps, modes, and compression and binds every file by SHA-256. Two builds
-are byte-identical; forced pre-publication termination leaves no output and a
-retry recovers the same digest under measured local resource bounds. The bundle
-is not operationally signed or released, and cross-platform plus independent
-qualification remain required.
+timestamps, modes, and compression and binds every file by SHA-256. Manifest v3
+adds all three contracted modes, exact binary capability/contract/config/test
+plan agreement, and an unsigned candidate profile. Two builds are byte-identical;
+four capability faults and forced pre-publication termination leave no output,
+and a retry recovers the same digest under measured local resource bounds. The
+bundle is not operationally signed or released, and cross-platform plus
+independent qualification remain required.
 
 ## CI and delivery policy
 
@@ -214,7 +216,7 @@ keys are ephemeral. Promotion still requires approved operational signing
 identity and custody, a frozen signed candidate, and independent assessment;
 protocol availability must not be described as a signed release.
 
-Candidate bundles use manifest version 2 and bind the canonical full source
+Candidate bundles use manifest version 3 and bind the canonical full source
 commit. Follow [CANDIDATE_SIGNING](CANDIDATE_SIGNING.md); an executed ceremony
 requires explicit operational identity/custody approval and does not waive the
 independent assessment gates.

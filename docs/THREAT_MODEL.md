@@ -217,6 +217,13 @@ clean target directories and later binary substitution. It shares the source
 tree, host, compiler, dependency cache, environment, and build script, so a
 common compromise or deterministic malicious toolchain remains undetected.
 
+Bundle v3 additionally binds the supplied binary's capability output to the
+packaged contract, configurations, and assessor test plan under bounded process
+time/output and source-file sizes. This detects stale or substituted capability
+surfaces during assembly. A binary can still lie consistently about its behavior;
+real Kubernetes/OpenTofu execution and independent assessment remain necessary,
+and the embedded unsigned profile is not authenticity evidence.
+
 The real-cluster harness verifies actual namespace RBAC denial and read-only
 target behavior with a short-lived token. A compromised host, Docker daemon,
 kind image, kubectl binary, cluster administrator, admission chain, or shared

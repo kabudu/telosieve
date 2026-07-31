@@ -157,6 +157,13 @@ verification failures by changing evaluation time, extending windows, replacing
 trust, or resigning unreviewed bytes. The repository tests only ephemeral keys;
 an approved operational custody procedure is required before candidate signing.
 
+Before proposing a candidate ceremony, inspect `evaluation/capabilities.json`,
+`evaluation/candidate-profile.json`, and `evaluation/candidate-test-plan.json`
+inside bundle v3. Require exact agreement with the packaged contract and three
+configuration files. Run every test-plan command from a source checkout at the
+manifest's full commit. Any missing mode, digest mismatch, mutation declaration,
+or non-clean exact-head CI result aborts the proposal; do not edit the ZIP.
+
 Candidate freezing and signing must follow
 [CANDIDATE_SIGNING](CANDIDATE_SIGNING.md). Preserve the exact commit and all
 three artifact digests; source-commit syntax validation alone is not build
