@@ -21,6 +21,7 @@ REQUIRED = (
     "docs/EVALUATION_LIFECYCLE.md",
     "docs/OPERATOR_DIAGNOSTICS.md",
     "docs/PRIVATE_BUNDLE.md",
+    "docs/CANDIDATE_SIGNING.md",
     "docs/IMPLEMENTATION_PLAN.md",
     "docs/RELEASE.md",
     "docs/REQUIREMENTS_TRACEABILITY.md",

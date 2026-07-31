@@ -156,3 +156,8 @@ distribute the public trust record through an independent channel. Do not repair
 verification failures by changing evaluation time, extending windows, replacing
 trust, or resigning unreviewed bytes. The repository tests only ephemeral keys;
 an approved operational custody procedure is required before candidate signing.
+
+Candidate freezing and signing must follow
+[CANDIDATE_SIGNING](CANDIDATE_SIGNING.md). Preserve the exact commit and all
+three artifact digests; source-commit syntax validation alone is not build
+provenance and must not replace the two-custodian correspondence check.

@@ -199,3 +199,8 @@ non-canonical encodings, ambiguous keys, invalid time windows, and oversized
 inputs. Compromised signer hosts, memory disclosure, rollback of independently
 supplied trust/time, key ceremony, revocation distribution, hardware custody,
 and assessor independence remain outside the implemented boundary.
+
+Commit binding prevents silent reuse of one bundle under a different declared
+source identity. It does not prove that the binary was built from that commit;
+reproducible-build provenance, compiler trust, custodian collusion, and ceremony
+execution remain separate controls and assessment targets.

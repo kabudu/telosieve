@@ -412,3 +412,16 @@ qualification, power-loss proof, or independent validation.
 Protocol evidence: [PRIVATE_BUNDLE](PRIVATE_BUNDLE.md). Tests use an ephemeral
 fixture key only. Implementing the signing boundary does not establish custody,
 produce a release signature, or satisfy independent assessment.
+
+## Post-M28 — commit-bound candidate ceremony
+
+- [x] Bind the canonical full source commit into the deterministic bundle.
+- [x] Prove commit substitution changes the bundle and malformed identities
+  refuse without publication.
+- [x] Define a two-custodian-ready offline signing, verification, transfer, and
+  abort procedure without creating operational credentials.
+- [ ] Execute the ceremony with an approved operational identity and custodians.
+
+Evidence: [CANDIDATE_SIGNING](CANDIDATE_SIGNING.md) and
+[PRIVATE_BUNDLE](PRIVATE_BUNDLE.md). Project-controlled qualification proves the
+mechanism only; it does not satisfy the operational or independent gates.

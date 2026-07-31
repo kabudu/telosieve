@@ -247,6 +247,11 @@ material. Unit tests additionally refuse key substitution and context change.
 All signing keys are ephemeral test inputs; operational identity, custody, exact
 candidate signing, and independent assessment remain open gates.
 
+Bundle qualification also builds otherwise identical version 2 bundles with two
+source commits and requires different bundle digests. A malformed commit refuses
+before publication. This proves source-identity binding, not that a supplied
+commit was reviewed or that an operational ceremony occurred.
+
 ## Certificate evidence attestation
 
 Detached certificate attestation binds exact bytes to a context, signer/key,

@@ -3,12 +3,14 @@
 `scripts/build-private-bundle.py` creates an offline deterministic ZIP from an
 absolute locally validated Telosieve binary and a fixed allowlist of evaluation
 configuration, RBAC, lifecycle, diagnostics, policy, and operator documents.
-Every entry is size- and SHA-256-bound by `bundle-manifest.json`; timestamps,
+Every entry and the canonical full source commit are bound by the version 2
+`bundle-manifest.json`; timestamps,
 ordering, compression, and modes are fixed.
 
 ```sh
 python3 scripts/build-private-bundle.py \
   --binary "$(pwd -P)/target/release/telosieve" \
+  --source-commit "$(git rev-parse HEAD)" \
   --output /secure-private/telosieve-evaluation.zip
 ```
 
@@ -18,6 +20,9 @@ byte identity, verifies every manifest entry, forcibly terminates a build before
 publication, proves no output appeared, then proves recovery produces the same
 digest. It records wall time, peak child RSS, platform, and a 160 MiB output
 ceiling under a 15-second deadline.
+
+Use [CANDIDATE_SIGNING](CANDIDATE_SIGNING.md) only after the exact commit has
+passed review and authoritative local CI.
 
 The CLI can sign the exact ZIP with a domain-separated Ed25519 envelope and
 verify it against independently supplied trust and evaluation time:

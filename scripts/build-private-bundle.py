@@ -4,11 +4,12 @@ import argparse, hashlib, json, os, tempfile, zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-SCHEMA = "telosieve.private-bundle/v1"
+SCHEMA = "telosieve.private-bundle/v2"
 FILES = [
     "AGENTS.md", "README.md", "Cargo.lock", "docs/EVALUATION_CLI.md",
     "docs/EVALUATION_LIFECYCLE.md", "docs/OPERATOR_DIAGNOSTICS.md",
-    "docs/OPERATIONS.md", "docs/RELEASE.md",
+    "docs/OPERATIONS.md", "docs/PRIVATE_BUNDLE.md", "docs/RELEASE.md",
+    "docs/CANDIDATE_SIGNING.md",
     "deploy/kubernetes/evaluation-rbac.yaml", "evaluation/config.example.json",
     "evaluation/config.live.example.json", "evaluation/contract.json",
     "scripts/evaluation-lifecycle.py", "scripts/evaluation-diagnostics.py",
@@ -21,9 +22,13 @@ def digest(data): return hashlib.sha256(data).hexdigest()
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--binary", required=True)
+    parser.add_argument("--source-commit", required=True)
     parser.add_argument("--output", required=True)
     args = parser.parse_args()
     binary, output = Path(args.binary), Path(args.output)
+    source_commit = args.source_commit
+    if len(source_commit) != 40 or any(character not in "0123456789abcdef" for character in source_commit):
+        raise SystemExit("private-bundle: source commit must be 40 lowercase hexadecimal characters")
     if not binary.is_absolute() or binary.is_symlink() or not binary.is_file():
         raise SystemExit("private-bundle: binary must be an absolute regular file")
     if binary.stat().st_size > MAX_BINARY or binary.stat().st_mode & 0o111 == 0:
@@ -37,7 +42,7 @@ def main():
             raise SystemExit(f"private-bundle: invalid source {relative}")
         entries.append((relative, path.read_bytes(), 0o400))
     records = [{"path": name, "sha256": digest(data), "size": len(data)} for name, data, _ in entries]
-    manifest = json.dumps({"schema_version": SCHEMA, "entries": records}, sort_keys=True, separators=(",", ":")).encode() + b"\n"
+    manifest = json.dumps({"schema_version": SCHEMA, "source_commit": source_commit, "entries": records}, sort_keys=True, separators=(",", ":")).encode() + b"\n"
     entries.append(("bundle-manifest.json", manifest, 0o400))
     fd, temporary = tempfile.mkstemp(prefix=f".{output.name}.", dir=output.parent)
     os.close(fd)

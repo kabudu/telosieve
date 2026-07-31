@@ -177,3 +177,8 @@ bytes. Signing-key input and signature publication are local CLI concerns;
 verification consumes an independent bounded trust document. No private key,
 network trust discovery, revocation service, or implicit unsigned fallback is
 part of the architecture.
+
+Private-bundle manifest version 2 includes the full source commit in the bytes
+covered by the bundle digest and detached signature. The builder validates its
+canonical shape but deliberately does not contact Git or infer repository state;
+the reviewed ceremony owns correspondence between commit, binary, and approval.
