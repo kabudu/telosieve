@@ -15,7 +15,7 @@ FILES = [
     "docs/KUBERNETES_REAL_CLUSTER.md", "docs/KUBERNETES_SHADOW.md",
     "docs/OPENTOFU_PLAN.md", "docs/EVALUATION_PRODUCT_DECISION.md",
     "docs/THREAT_MODEL.md", "docs/ADVERSARIAL_COVERAGE.md",
-    "docs/SUSTAINED_ADVERSARIAL_LOAD.md",
+    "docs/SUSTAINED_ADVERSARIAL_LOAD.md", "docs/OBSERVATION_QUORUM.md",
     "deploy/kubernetes/evaluation-rbac.yaml", "evaluation/config.example.json",
     "evaluation/config.live.example.json", "evaluation/config.opentofu.example.json",
     "evaluation/observation-trust.example.json", "evaluation/observation-quorum.example.json",

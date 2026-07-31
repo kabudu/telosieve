@@ -35,3 +35,31 @@ deterministic test keys and must never be treated as operational credentials.
 Live Kubernetes and OpenTofu evaluation are not yet integrated. Configured
 domain labels do not establish real organizational independence, protected
 custody, or truth when every participating domain colludes.
+
+## Producer signing commands
+
+Post-M38 adds the producer-side CLI boundary needed for later live integration:
+
+```sh
+telosieve observation-public-key /absolute/private-key.hex
+telosieve observation-sign /absolute/observation.json \
+  /absolute/private-key.hex kv/research kubernetes-live producer-a key-a \
+  api-reader-a 1788000000 1788000300 /absolute/attestation.json
+```
+
+The private key must be a single-link, owner-only regular file containing a
+32-byte hexadecimal Ed25519 seed. Input is an absolute regular file bounded to
+4 MiB. The output must be a new absolute path distinct from input and key; it is
+created through an owner-only temporary file and hard-link publication. The
+command signs the exact input bytes and prints the same compact attestation
+written to the output. Identifiers, supported modes, and the 300-second maximum
+validity window use the verifier's existing bounds.
+
+Each producer must execute this command in its own collection and key-custody
+domain. Central generation of multiple attestations over a single collector's
+bytes does not provide independent observation. The command deliberately emits
+one attestation rather than asserting or assembling a quorum; the evaluator
+must compare independently obtained observations and verify the combined
+quorum. M38 proves CLI/library interoperability plus unsafe-key, oversized-input,
+and output-collision refusal, but does not yet integrate producer processes into
+Kubernetes-live or OpenTofu evaluation.

@@ -111,7 +111,10 @@ fn product_command(args: &[String]) -> Option<ExitCode> {
         }
         Some("bundle-sign") if args.len() == 10 => Some(bundle_sign(args)),
         Some("bundle-verify") if args.len() == 5 => Some(bundle_verify(args)),
-        Some("bundle-public-key") if args.len() == 3 => Some(bundle_public_key(&args[2])),
+        Some("bundle-public-key" | "observation-public-key") if args.len() == 3 => {
+            Some(signing_public_key(&args[2]))
+        }
+        Some("observation-sign") if args.len() == 12 => Some(observation_sign(args)),
         Some("evaluation-capabilities") if args.len() == 2 => {
             println!(
                 "{}",
@@ -124,6 +127,58 @@ fn product_command(args: &[String]) -> Option<ExitCode> {
         }
         _ => None,
     }
+}
+
+fn observation_sign(args: &[String]) -> ExitCode {
+    let result = (|| -> Result<(), String> {
+        let input_path = Path::new(&args[2]);
+        let key_path = Path::new(&args[3]);
+        let output_path = Path::new(&args[11]);
+        if !input_path.is_absolute()
+            || !key_path.is_absolute()
+            || !output_path.is_absolute()
+            || output_path.exists()
+            || output_path == input_path
+            || output_path == key_path
+        {
+            return Err("observation signature paths are invalid or collide".into());
+        }
+        validate_private_key_path(key_path)?;
+        let input = read_bounded(
+            input_path,
+            telosieve::observation_quorum::MAX_INPUT_BYTES,
+            "observation input",
+        )?;
+        let key_hex = fs::read_to_string(key_path).map_err(|error| error.to_string())?;
+        let key: [u8; 32] = hex::decode(key_hex.trim())
+            .ok()
+            .and_then(|value| value.try_into().ok())
+            .ok_or("observation signing key must be 32-byte hexadecimal")?;
+        let issued_at = args[9].parse().map_err(|_| "issued_at is invalid")?;
+        let expires_at = args[10].parse().map_err(|_| "expires_at is invalid")?;
+        let attestation = telosieve::observation_quorum::sign_observation(
+            &input,
+            &telosieve::observation_quorum::ObservationSigningRequest {
+                subject: &args[4],
+                mode: &args[5],
+                producer: &args[6],
+                key_id: &args[7],
+                fault_domain: &args[8],
+                issued_at,
+                expires_at,
+            },
+            &SigningKey::from_bytes(&key),
+        )
+        .map_err(|error| error.to_string())?;
+        let bytes = serde_json::to_vec(&attestation).map_err(|error| error.to_string())?;
+        write_private_new(output_path, &bytes)?;
+        println!(
+            "{}",
+            String::from_utf8(bytes).map_err(|error| error.to_string())?
+        );
+        Ok(())
+    })();
+    result.map_or_else(|error| fail(&error), |()| ExitCode::SUCCESS)
 }
 
 fn evaluate(config_path: &Path) -> ExitCode {
@@ -154,7 +209,11 @@ fn bundle_sign(args: &[String]) -> ExitCode {
             return Err("bundle signature output collision".into());
         }
         validate_private_key_path(key_path)?;
-        let bundle = read_bounded(bundle_path, telosieve::bundle_signature::MAX_BUNDLE_BYTES)?;
+        let bundle = read_bounded(
+            bundle_path,
+            telosieve::bundle_signature::MAX_BUNDLE_BYTES,
+            "bundle input",
+        )?;
         let key_hex = fs::read_to_string(key_path).map_err(|error| error.to_string())?;
         if key_hex.len() > 128 {
             return Err("bundle signing key exceeds bound".into());
@@ -186,7 +245,7 @@ fn bundle_sign(args: &[String]) -> ExitCode {
     result.map_or_else(|error| fail(&error), |()| ExitCode::SUCCESS)
 }
 
-fn bundle_public_key(value: &str) -> ExitCode {
+fn signing_public_key(value: &str) -> ExitCode {
     let result = (|| -> Result<String, String> {
         let path = Path::new(value);
         validate_private_key_path(path)?;
@@ -194,7 +253,7 @@ fn bundle_public_key(value: &str) -> ExitCode {
         let key: [u8; 32] = hex::decode(encoded.trim())
             .ok()
             .and_then(|v| v.try_into().ok())
-            .ok_or("bundle signing key must be 32-byte hexadecimal")?;
+            .ok_or("signing key must be 32-byte hexadecimal")?;
         Ok(hex::encode(
             SigningKey::from_bytes(&key).verifying_key().to_bytes(),
         ))
@@ -210,20 +269,20 @@ fn bundle_public_key(value: &str) -> ExitCode {
 
 fn validate_private_key_path(path: &Path) -> Result<(), String> {
     if !path.is_absolute() || path.is_symlink() || !path.is_file() {
-        return Err("bundle signing key must be an absolute regular file".into());
+        return Err("signing key must be an absolute regular file".into());
     }
     let metadata = fs::metadata(path).map_err(|e| e.to_string())?;
     if metadata.len() == 0 || metadata.len() > 128 {
-        return Err("bundle signing key must contain at most 128 bytes".into());
+        return Err("signing key must contain at most 128 bytes".into());
     }
     #[cfg(unix)]
     {
         use std::os::unix::fs::{MetadataExt, PermissionsExt};
         if metadata.permissions().mode() & 0o077 != 0 {
-            return Err("bundle signing key must be owner-only".into());
+            return Err("signing key must be owner-only".into());
         }
         if metadata.nlink() != 1 {
-            return Err("bundle signing key must not have hard-link aliases".into());
+            return Err("signing key must not have hard-link aliases".into());
         }
     }
     Ok(())
@@ -264,14 +323,17 @@ fn bundle_verify(args: &[String]) -> ExitCode {
         let bundle = read_bounded(
             Path::new(&args[2]),
             telosieve::bundle_signature::MAX_BUNDLE_BYTES,
+            "bundle input",
         )?;
         let signature = read_bounded(
             Path::new(&args[3]),
             telosieve::bundle_signature::MAX_SIGNATURE_BYTES,
+            "bundle signature",
         )?;
         let trust_bytes = read_bounded(
             Path::new(&args[4]),
             telosieve::bundle_signature::MAX_SIGNATURE_BYTES,
+            "bundle trust",
         )?;
         let trust = serde_json::from_slice(&trust_bytes).map_err(|error| error.to_string())?;
         telosieve::bundle_signature::verify_bundle(&bundle, &signature, &trust)
@@ -289,13 +351,13 @@ fn bundle_verify(args: &[String]) -> ExitCode {
     }
 }
 
-fn read_bounded(path: &Path, maximum: usize) -> Result<Vec<u8>, String> {
+fn read_bounded(path: &Path, maximum: usize, label: &str) -> Result<Vec<u8>, String> {
     if !path.is_absolute() || path.is_symlink() || !path.is_file() {
-        return Err("bundle input must be an absolute regular file".into());
+        return Err(format!("{label} must be an absolute regular file"));
     }
     let metadata = fs::metadata(path).map_err(|e| e.to_string())?;
     if metadata.len() > u64::try_from(maximum).map_err(|_| "input bound is unsupported")? {
-        return Err("bundle input exceeds bound".into());
+        return Err(format!("{label} exceeds bound"));
     }
     fs::read(path).map_err(|e| e.to_string())
 }
@@ -308,6 +370,8 @@ fn usage() -> ExitCode {
          telosieve bundle-sign <bundle.zip> <private-key.hex> <context> <signer> <key-id> <issued-at> <expires-at> <signature.json>\n  \
          telosieve bundle-public-key <private-key.hex>\n  \
          telosieve bundle-verify <bundle.zip> <signature.json> <trust.json>\n  \
+         telosieve observation-public-key <private-key.hex>\n  \
+         telosieve observation-sign <input> <private-key.hex> <subject> <mode> <producer> <key-id> <fault-domain> <issued-at> <expires-at> <attestation.json>\n  \
          telosieve local-init <scenario.json> <actuator.json>\n  \
          telosieve local-show <actuator.json>\n  \
          telosieve local-backup <actuator.json> <backup.json>\n  \

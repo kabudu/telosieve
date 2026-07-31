@@ -514,8 +514,8 @@ assessment is manufactured.
 - [x] Resolve sustained-adversarial-load gaps across the applicable modes.
 
 Evidence: [ADVERSARIAL_COVERAGE](ADVERSARIAL_COVERAGE.md) and
-`results/adversarial-coverage-validation.json`. Ten threat classes contain 22
-covered cells, three explicit deferred cells, and five justified non-applicable
+`results/adversarial-coverage-validation.json`. Ten threat classes contain 23
+covered cells, two explicit deferred cells, and five justified non-applicable
 cells; eleven adversarial registry mutations fail closed. This inventory prevents
 coverage overstatement but is not independent validation or a robustness proof.
 
@@ -570,3 +570,20 @@ Evidence: [OBSERVATION_QUORUM](OBSERVATION_QUORUM.md),
 only the shadow-mode compromised-consistent-producer test cell under distinct
 configured signing domains. It does not prove that those domains are genuinely
 independent or truthful in deployment.
+
+## Post-M38 — observation producer signing boundary
+
+- [x] Expose domain-separated observation signing for exact bounded input bytes
+  through a stable CLI command.
+- [x] Require an absolute owner-only, single-link Ed25519 seed file and a new,
+  non-colliding output path with owner-only atomic publication.
+- [x] Expose public-key derivation without disclosing the private seed.
+- [x] Prove two independently invoked CLI attestations interoperate with the
+  quorum verifier and refuse unsafe keys, oversized input, and output collision.
+- [ ] Define and integrate bounded independently collecting producer processes
+  for Kubernetes-live and OpenTofu evaluation.
+
+Evidence: [OBSERVATION_QUORUM](OBSERVATION_QUORUM.md) and
+`tests/observation_signature_cli.rs`. This establishes producer-side signing
+mechanics, not producer independence, truthful collection, or operational key
+custody; no adversarial coverage cell is promoted by M38.

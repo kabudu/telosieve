@@ -127,7 +127,7 @@ def assert_bundle(path: Path) -> int:
             "evaluation/adversarial-coverage.json", "docs/ADVERSARIAL_COVERAGE.md",
             "scripts/validate-adversarial-coverage.py", "results/adversarial-coverage-validation.json",
             "scripts/run-sustained-adversarial-load.py", "results/sustained-adversarial-load.json",
-            "docs/SUSTAINED_ADVERSARIAL_LOAD.md",
+            "docs/SUSTAINED_ADVERSARIAL_LOAD.md", "docs/OBSERVATION_QUORUM.md",
             "evaluation/candidate-profile.json", "evaluation/capabilities.json",
         }
         if not required.issubset(names):
