@@ -290,6 +290,22 @@ fn main() {
         1,
         BTreeSet::from([AuthorityKind::Viability]),
     );
+    let kubernetes_real_cluster = make(
+        "kubernetes-real-cluster",
+        json!({"cluster/epoch": "7", "user/message": "new"}),
+        json!({
+            "replicas": {
+                "research-kv-0": {"cluster/epoch": "7", "user/message": "old"},
+                "research-kv-1": {"cluster/epoch": "7", "user/message": "old"},
+                "research-kv-2": {"cluster/epoch": "7", "user/message": "old"}
+            }
+        }),
+        viability.clone(),
+        viability.clone(),
+        ExpectedDecision::Apply,
+        1,
+        BTreeSet::from([AuthorityKind::Viability]),
+    );
     let lifecycle_root = SigningKey::from_bytes(&[90; 32]);
     let rotated_goal_key = SigningKey::from_bytes(&[91; 32]);
     let mut rotated_key = benign.clone();
@@ -364,6 +380,7 @@ fn main() {
     );
     fs::create_dir_all("scenarios").unwrap();
     write_scenario("benign", &benign);
+    write_scenario("kubernetes-real-cluster", &kubernetes_real_cluster);
     write_scenario("rotated-goal-key", &rotated_key);
     write_scenario("poisoned-goal", &poisoned);
     write_scenario("weakened-viability", &weakened);

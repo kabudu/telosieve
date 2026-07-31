@@ -89,6 +89,9 @@ StatefulSet change. Pod state is read from the JSON object in the
 `telosieve.io/values` annotation and is then checked by the existing
 authenticated shadow evaluator. The controller selector must contain 1–16
 bounded `matchLabels`; `matchExpressions` refuse rather than being approximated.
+Desired ConfigMap values use the same annotation because `/` is valid in
+Telosieve authority keys but not in ConfigMap `data` keys. Legacy `data` remains
+accepted when the annotation is absent; disagreement between both forms refuses.
 
 `evaluation/config.live.example.json` is the versioned example. Its absolute
 binary and credential paths are illustrative and must be replaced with
@@ -101,10 +104,11 @@ and Pod `get/list`; it grants no Secret or mutation access. The supplied
 kubeconfig and `kubectl` binary are trusted operator inputs and may include
 credential plugins, so protect and review both.
 
-The live process harness uses a fake executable to prove command shape,
-success, drift refusal, evidence behavior, and absence of mutation verbs. This
-is not real-cluster permission, network, Kubernetes-version, or availability
-qualification.
+The fake process harness proves command shape and bounded process faults. The
+separate [KUBERNETES_REAL_CLUSTER](KUBERNETES_REAL_CLUSTER.md) harness qualifies
+the complete path against a disposable real API server and real RBAC. Managed
+clusters, sustained load, credential plugins, and independent operation remain
+unqualified.
 
 The separate bounded lifecycle manager installs the CLI and configuration; see
 [EVALUATION_LIFECYCLE](EVALUATION_LIFECYCLE.md). The product does not yet redact

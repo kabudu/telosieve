@@ -10,8 +10,10 @@ FILES = [
     "docs/EVALUATION_LIFECYCLE.md", "docs/OPERATOR_DIAGNOSTICS.md",
     "docs/OPERATIONS.md", "docs/PRIVATE_BUNDLE.md", "docs/RELEASE.md",
     "docs/BUILD_PROVENANCE.md", "docs/CANDIDATE_SIGNING.md",
+    "docs/KUBERNETES_REAL_CLUSTER.md",
     "deploy/kubernetes/evaluation-rbac.yaml", "evaluation/config.example.json",
     "evaluation/config.live.example.json", "evaluation/contract.json",
+    "scenarios/benign.json", "scenarios/kubernetes-real-cluster.json",
     "scripts/evaluation-lifecycle.py", "scripts/evaluation-diagnostics.py",
 ]
 MAX_BINARY = 128 * 1024 * 1024

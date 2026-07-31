@@ -23,6 +23,7 @@ REQUIRED = (
     "docs/PRIVATE_BUNDLE.md",
     "docs/CANDIDATE_SIGNING.md",
     "docs/BUILD_PROVENANCE.md",
+    "docs/KUBERNETES_REAL_CLUSTER.md",
     "docs/IMPLEMENTATION_PLAN.md",
     "docs/RELEASE.md",
     "docs/REQUIREMENTS_TRACEABILITY.md",
@@ -41,6 +42,7 @@ REQUIRED = (
     "scripts/build-private-bundle.py",
     "scripts/run-private-bundle-qualification.py",
     "scripts/run-reproducible-build-qualification.py",
+    "scripts/run-kubernetes-real-cluster.py",
 )
 LINK = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
 PLACEHOLDER = re.compile(r"\b(?:TODO|FIXME|REPLACE_WITH)\b")

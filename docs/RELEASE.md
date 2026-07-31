@@ -154,8 +154,9 @@ configuration and the live read-only v2 configuration, and emits
 Unknown versions, mutation modes, oversized files, invalid paths, and output
 collisions refuse. Live collection performs four bounded `kubectl get` calls,
 checks controller stability plus Pod ownership/readiness, and ships a
-least-privilege example Role. Its fake-process evidence does not qualify a real
-cluster. This completes two candidate-readiness engineering gates, not a
+least-privilege example Role. Its fake-process evidence is now supplemented by
+the Post-M30 disposable real-cluster qualification. This completes candidate
+engineering gates, not a managed or independently operated cluster and not a
 candidate release.
 
 The private lifecycle manager now packages a caller-supplied local binary and
@@ -214,3 +215,8 @@ independent assessment gates.
 Candidate signing additionally requires a clean-tree same-commit reproducible
 build record and exact bundled-binary digest match. Same-host qualification does
 not satisfy the independent rebuild or toolchain-trust gates.
+
+The live Kubernetes evaluator now passes a real disposable v1.36.1 API-server
+and RBAC lifecycle, including authority-mismatch and outage refusal. This does
+not qualify managed clusters, sustained load, production credentials, or
+independent operation.

@@ -102,7 +102,8 @@ cargo run --locked --offline -- evaluate evaluation/config.example.json
 Configuration v2 also supports bounded, read-only live Kubernetes collection
 through an explicitly selected `kubectl` and kubeconfig. See
 [Evaluation CLI](docs/EVALUATION_CLI.md); this remains evaluation software and
-the repository's fake-process evidence is not real-cluster qualification.
+the fake-process suite is supplemented by a disposable real-cluster/RBAC
+qualification; managed and independently operated clusters remain unqualified.
 
 Private macOS/Linux evaluation installations can be managed with the bounded
 local lifecycle tool. It atomically installs, upgrades, and rolls back a

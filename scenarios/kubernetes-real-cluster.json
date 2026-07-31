@@ -1,0 +1,187 @@
+{
+  "scenario_id": "kubernetes-real-cluster",
+  "seed": 7,
+  "evaluation_time": 1750000000,
+  "subject": "kv/research",
+  "expected_decision": "apply",
+  "public_keys": {
+    "deletion-lab": "62a611b472d89b0e5fc93c069b9f700b4c552d55bc0e87b56008ef17b6b2bebe",
+    "deletion-review": "dac31ebca159d283f8341fd90d7fa1cd95bf5eccab657f7952662e67e56afbe3",
+    "goal-lab": "66be7e332c7a453332bd9d0a7f7db055f5c5ef1a06ada66d98b39fb6810c473a",
+    "goal-review": "2152f8d19b791d24453242e15f2eab6cb7cffa7b6a5ed30097960e069881db12",
+    "phenotype-lab": "511c34a1a2cb521df16bb246b8de8e7997ce235c7e76b22a3d7503a24819dd8a",
+    "viability-lab": "884b8857f4eaa1613c61504db34d4beaf346517a0e31de3cddd4d9b4201d9d0b",
+    "viability-peer": "2c848ad8664ee651e4896c13a84a89a2964aca5eb77a8b881e60ded5c81b4e9d",
+    "viability-review": "9475c6cf0eda34057528d8694781ecc92ad639d7e2bd27761ed3ef74924beb07"
+  },
+  "fault_declaration": {
+    "maximum_faults": 1,
+    "suspectable": [
+      "viability"
+    ],
+    "goal_fault_domains": {},
+    "viability_fault_domains": {
+      "viability-lab": "lab-domain",
+      "viability-peer": "lab-domain",
+      "viability-review": "review-domain"
+    },
+    "deletion_fault_domains": {},
+    "maximum_hypotheses": 3
+  },
+  "phenotype_history_anchor": {
+    "issuer": "phenotype-lab",
+    "sequence": 2,
+    "tip_digest": "16455ce5042caa61284eafc0d80ef0645297cbe0bf93ea81836cae4d3db4a6fe"
+  },
+  "phenotype_history": [
+    {
+      "kind": "phenotype",
+      "subject": "kv/research",
+      "schema_version": "telosieve.authority/v0",
+      "issued_at": 1700000000,
+      "expires_at": 1800000000,
+      "issuer": "phenotype-lab",
+      "sequence": 1,
+      "content_digest": "5273bec3696cac86f083190a569719c0694a00713be4b1c52789e12b83a30995",
+      "parent_digests": [],
+      "content": {
+        "replicas": {
+          "replica-a": {
+            "cluster/epoch": "7",
+            "user/message": "stable"
+          },
+          "replica-b": {
+            "cluster/epoch": "7",
+            "user/message": "stable"
+          },
+          "replica-c": {
+            "cluster/epoch": "7",
+            "user/message": "stable"
+          }
+        }
+      },
+      "signature": "327c3fba5dfc1bf6c38a7f6f7b75639384e88c48fd2e4be2c629798fe2179e2329b69143d7cd6003091b70f1765f9291181067e5d16dc3d147f9fa0b5d1ebb01"
+    }
+  ],
+  "authorities": [
+    {
+      "kind": "goal",
+      "subject": "kv/research",
+      "schema_version": "telosieve.authority/v0",
+      "issued_at": 1700000000,
+      "expires_at": 1800000000,
+      "issuer": "goal-lab",
+      "sequence": 1,
+      "content_digest": "fe738338d53f190a21004319c46de8c95146c916657293933f60210e4829ce45",
+      "parent_digests": [],
+      "content": {
+        "cluster/epoch": "7",
+        "user/message": "new"
+      },
+      "signature": "a2b0c0998766d607212dfc6d30b0c60a68495d9e2882e79935589bfde7f4ae0e90fe1f23b7119ccd19f3bc256f20e41cd7e46a2f8e1d505ea1529fb30a8b3706"
+    },
+    {
+      "kind": "goal",
+      "subject": "kv/research",
+      "schema_version": "telosieve.authority/v0",
+      "issued_at": 1700000000,
+      "expires_at": 1800000000,
+      "issuer": "goal-review",
+      "sequence": 1,
+      "content_digest": "fe738338d53f190a21004319c46de8c95146c916657293933f60210e4829ce45",
+      "parent_digests": [],
+      "content": {
+        "cluster/epoch": "7",
+        "user/message": "new"
+      },
+      "signature": "f31c2c7c1415a7fa361b2d59bba3e6cc1bc05e50922ede21fe503a310ea7d27e1689333580b536c8485fbdae61569729c27060b5c02d073369aa483e5e160404"
+    },
+    {
+      "kind": "phenotype",
+      "subject": "kv/research",
+      "schema_version": "telosieve.authority/v0",
+      "issued_at": 1700000000,
+      "expires_at": 1800000000,
+      "issuer": "phenotype-lab",
+      "sequence": 2,
+      "content_digest": "b33a4989587e3f26de4ec0ae0ddc65d313e74c69d694e800f68bc9b8a49476e0",
+      "parent_digests": [
+        "7eb85be26a07901d191e880195405adb6f2740ce3b11b718969f7b41c5952004"
+      ],
+      "content": {
+        "replicas": {
+          "research-kv-0": {
+            "cluster/epoch": "7",
+            "user/message": "old"
+          },
+          "research-kv-1": {
+            "cluster/epoch": "7",
+            "user/message": "old"
+          },
+          "research-kv-2": {
+            "cluster/epoch": "7",
+            "user/message": "old"
+          }
+        }
+      },
+      "signature": "283fb80641401974fa87715bdb83229ec16521e1caccd541cd7e821d268f568c73816f4dbb3495579f875f7ac4a01b9f5a4f4a93a69ff656b474fac9ea8f7a0b"
+    },
+    {
+      "kind": "viability",
+      "subject": "kv/research",
+      "schema_version": "telosieve.authority/v0",
+      "issued_at": 1700000000,
+      "expires_at": 1800000000,
+      "issuer": "viability-peer",
+      "sequence": 1,
+      "content_digest": "e986b557bdc1b57ba5689ce50f8ad64313b3bebcaba2dc79e358c2941faa1af8",
+      "parent_digests": [],
+      "content": {
+        "replica_count": 3,
+        "require_consensus": true,
+        "required_keys": {
+          "cluster/epoch": "7"
+        }
+      },
+      "signature": "e802ccf6c503b25336f2b30cbb3c8d09c3540b3c6f5989551856e8a531cfa3fcf06adbea9f1467c7c1b14fabb7e7b746c3fa2ba9237f84986730a7fce6fb4808"
+    },
+    {
+      "kind": "viability",
+      "subject": "kv/research",
+      "schema_version": "telosieve.authority/v0",
+      "issued_at": 1700000000,
+      "expires_at": 1800000000,
+      "issuer": "viability-lab",
+      "sequence": 1,
+      "content_digest": "e986b557bdc1b57ba5689ce50f8ad64313b3bebcaba2dc79e358c2941faa1af8",
+      "parent_digests": [],
+      "content": {
+        "replica_count": 3,
+        "require_consensus": true,
+        "required_keys": {
+          "cluster/epoch": "7"
+        }
+      },
+      "signature": "3f24c8d9e330c154587b96b99dc4fa56d9e11e17cb0e97fa882e74f37edfba4c916fe089fa678f025271400691cd9fbb5c33af6c979238a06a179fb82da6d304"
+    },
+    {
+      "kind": "viability",
+      "subject": "kv/research",
+      "schema_version": "telosieve.authority/v0",
+      "issued_at": 1700000000,
+      "expires_at": 1800000000,
+      "issuer": "viability-review",
+      "sequence": 1,
+      "content_digest": "e986b557bdc1b57ba5689ce50f8ad64313b3bebcaba2dc79e358c2941faa1af8",
+      "parent_digests": [],
+      "content": {
+        "replica_count": 3,
+        "require_consensus": true,
+        "required_keys": {
+          "cluster/epoch": "7"
+        }
+      },
+      "signature": "6640fb0af95eae31b04bdda1134407c76e6e780a75a09c4e26df610f0221044c487faa204967dc836e6e7f972bcb24a63773c90286936f2f88c3b500c537130a"
+    }
+  ]
+}

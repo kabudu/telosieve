@@ -3,6 +3,8 @@
 `scripts/build-private-bundle.py` creates an offline deterministic ZIP from an
 absolute locally validated Telosieve binary and a fixed allowlist of evaluation
 configuration, RBAC, lifecycle, diagnostics, policy, and operator documents.
+The fixed allowlist includes the authenticated offline and real-cluster
+evaluation scenarios referenced by the bundled configuration and qualification.
 Every entry and the canonical full source commit are bound by the version 2
 `bundle-manifest.json`; timestamps,
 ordering, compression, and modes are fixed.

@@ -217,6 +217,7 @@ pub fn collect(
         return Err(LiveError::Drift);
     }
     validate_desired(&desired, config)?;
+    let desired_data = desired_values(&desired)?;
     validate_pods(&pods, &before)?;
 
     let mut replicas = BTreeMap::new();
@@ -240,7 +241,7 @@ pub fn collect(
         desired: DesiredSnapshot {
             metadata: identity(&desired.api_version, &desired.kind, &desired.metadata),
             target: identity(&before.api_version, &before.kind, &before.metadata),
-            data: desired.data,
+            data: desired_data,
         },
         observed: ObservedSnapshot {
             metadata: identity(&before.api_version, &before.kind, &before.metadata),
@@ -359,12 +360,31 @@ fn validate_desired(value: &ConfigMap, config: &LiveKubernetesConfig) -> Result<
     Ok(())
 }
 
+fn desired_values(value: &ConfigMap) -> Result<Values, LiveError> {
+    let Some(encoded) = value.metadata.annotations.get(VALUES_ANNOTATION) else {
+        return Ok(value.data.clone());
+    };
+    let annotated: Values = serde_json::from_str(encoded)?;
+    if !value.data.is_empty() && value.data != annotated {
+        return Err(LiveError::Observation(
+            "ConfigMap data and telosieve.io/values disagree".into(),
+        ));
+    }
+    Ok(annotated)
+}
+
 fn validate_pods(value: &PodList, controller: &StatefulSet) -> Result<(), LiveError> {
     if value.api_version != "v1"
-        || value.kind != "PodList"
+        || !matches!(value.kind.as_str(), "List" | "PodList")
         || value.items.len() != usize::try_from(controller.spec.replicas).unwrap_or(usize::MAX)
     {
-        return Err(LiveError::Observation("pod list is incomplete".into()));
+        return Err(LiveError::Observation(format!(
+            "pod list is incomplete: apiVersion={} kind={} items={} replicas={}",
+            value.api_version,
+            value.kind,
+            value.items.len(),
+            controller.spec.replicas
+        )));
     }
     for pod in &value.items {
         let owner = pod.metadata.owner_references.iter().any(|owner| {
@@ -461,4 +481,38 @@ fn validate_text(value: &str, field: &str) -> Result<(), LiveError> {
         )));
     }
     Ok(())
+}
+
+#[cfg(test)]
+mod desired_tests {
+    use super::*;
+
+    fn config_map(data: &Values, annotation: Option<&str>) -> ConfigMap {
+        let annotations = annotation
+            .map(|value| BTreeMap::from([(VALUES_ANNOTATION.to_string(), value.to_string())]))
+            .unwrap_or_default();
+        serde_json::from_value(serde_json::json!({
+            "apiVersion": "v1", "kind": "ConfigMap",
+            "metadata": {
+                "name": "repair-goal", "namespace": "telosieve-research",
+                "uid": "uid", "resourceVersion": "1",
+                "annotations": annotations
+            },
+            "data": data
+        }))
+        .unwrap()
+    }
+
+    #[test]
+    fn desired_annotation_supports_kubernetes_illegal_keys_and_refuses_ambiguity() {
+        let values = BTreeMap::from([("user/message".into(), "new".into())]);
+        let encoded = serde_json::to_string(&values).unwrap();
+        assert_eq!(
+            desired_values(&config_map(&Values::new(), Some(&encoded))).unwrap(),
+            values
+        );
+        let legacy = BTreeMap::from([("message".into(), "new".into())]);
+        assert_eq!(desired_values(&config_map(&legacy, None)).unwrap(), legacy);
+        assert!(desired_values(&config_map(&legacy, Some(&encoded))).is_err());
+    }
 }

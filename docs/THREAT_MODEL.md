@@ -209,3 +209,9 @@ Isolated same-host rebuild comparison detects nondeterminism visible across two
 clean target directories and later binary substitution. It shares the source
 tree, host, compiler, dependency cache, environment, and build script, so a
 common compromise or deterministic malicious toolchain remains undetected.
+
+The real-cluster harness verifies actual namespace RBAC denial and read-only
+target behavior with a short-lived token. A compromised host, Docker daemon,
+kind image, kubectl binary, cluster administrator, admission chain, or shared
+control plane can still falsify or alter observations; managed and independent
+environments remain required.

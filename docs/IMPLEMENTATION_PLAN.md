@@ -375,8 +375,8 @@ configuration pass their real process/file lifecycle plus nine fail-closed
 configuration and input-bound cases. The v2 live mode adds a four-read,
 time/response-bounded `kubectl` collector with pre/post controller consistency,
 pod ownership/readiness checks, and a namespace-scoped example RBAC grant. Its
-process harness is project-controlled simulation evidence, not real-cluster
-qualification.
+process harness is project-controlled simulation evidence; Post-M30 later adds
+a separate real local-cluster qualification.
 
 Lifecycle evidence: [EVALUATION_LIFECYCLE](EVALUATION_LIFECYCLE.md). A bounded
 single-host macOS/Linux manager atomically activates digest-bound
@@ -439,3 +439,17 @@ mechanism only; it does not satisfy the operational or independent gates.
 Evidence: [BUILD_PROVENANCE](BUILD_PROVENANCE.md). The qualification is
 same-host and project-controlled; compiler/dependency trust and hermeticity are
 not established.
+
+## Post-M30 — real Kubernetes end-to-end qualification
+
+- [x] Exercise the complete evaluation CLI against a disposable real Kubernetes
+  API server using namespace-scoped service-account credentials.
+- [x] Prove real RBAC permits only required reads and denies mutation and Secret
+  access while the target remains unchanged.
+- [x] Refuse authority mismatch and real API-server outage without evidence,
+  under bounded time/memory and deterministic cluster cleanup.
+- [ ] Qualify managed clusters, sustained load, additional versions, and an
+  independently operated environment.
+
+Evidence: [KUBERNETES_REAL_CLUSTER](KUBERNETES_REAL_CLUSTER.md). This closes the
+real local-cluster gap, not the managed-platform or independent-validation gates.

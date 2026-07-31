@@ -238,6 +238,14 @@ rejected. The two exact vectors pass and are retained in
 `results/compatibility-corpus.json`. See
 [PROTOCOL_COMPATIBILITY](PROTOCOL_COMPATIBILITY.md).
 
+## Real Kubernetes end to end
+
+The disposable kind qualification runs the real evaluation binary, kubectl,
+service-account authentication, Kubernetes API server, RBAC, StatefulSet, and
+Pods. It proves one healthy evidence lifecycle and two no-evidence refusals for
+authority mismatch and API outage, then removes the cluster. The run is local
+project-controlled evidence, not managed-cluster or independent qualification.
+
 ## Private bundle signature boundary
 
 The real CLI derives only the public key, signs exact bundle bytes, and verifies
@@ -330,7 +338,8 @@ report schema, and absence of mutation verbs. Controller drift, unready Pod,
 wrong owner, unsupported selector expression, nonzero process exit, output over
 1 MiB, and a process exceeding five seconds all fail without certificate or
 ledger output. This is a
-project-controlled integration harness, not real-cluster qualification.
+project-controlled integration harness. Post-M30 adds a separate disposable
+real-cluster qualification without claiming managed or independent coverage.
 
 ## Evaluation installation lifecycle
 
