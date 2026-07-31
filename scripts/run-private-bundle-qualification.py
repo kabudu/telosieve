@@ -75,12 +75,14 @@ def assert_bundle(path: Path) -> int:
             raise SystemExit("private-bundle-qualification: mutation capability included")
 
         profile = json.loads(archive.read("evaluation/candidate-profile.json"))
+        coverage_bytes = archive.read("evaluation/adversarial-coverage.json")
         if (
             profile["schema_version"] != "telosieve.evaluation-candidate-profile/v1"
             or profile["source_commit"] != SOURCE_COMMIT
             or profile["status"] != "unsigned-private-evaluation-candidate-input"
             or profile["capabilities_sha256"] != sha256_bytes(capabilities_bytes)
             or profile["contract_sha256"] != sha256_bytes(contract_bytes)
+            or profile["coverage_contract_sha256"] != sha256_bytes(coverage_bytes)
             or profile["signing_required"] is not True
             or profile["independent_assessment_required"] is not True
         ):
@@ -121,6 +123,8 @@ def assert_bundle(path: Path) -> int:
             "examples/opentofu/main.tf", "scripts/ci-local.sh",
             "scripts/run-kubernetes-real-cluster.py", "scripts/run-opentofu-plan.py",
             "evaluation/config.opentofu.example.json", "evaluation/candidate-test-plan.json",
+            "evaluation/adversarial-coverage.json", "docs/ADVERSARIAL_COVERAGE.md",
+            "scripts/validate-adversarial-coverage.py", "results/adversarial-coverage-validation.json",
             "evaluation/candidate-profile.json", "evaluation/capabilities.json",
         }
         if not required.issubset(names):

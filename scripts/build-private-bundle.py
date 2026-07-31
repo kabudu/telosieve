@@ -14,16 +14,18 @@ FILES = [
     "docs/BUILD_PROVENANCE.md", "docs/CANDIDATE_SIGNING.md",
     "docs/KUBERNETES_REAL_CLUSTER.md", "docs/KUBERNETES_SHADOW.md",
     "docs/OPENTOFU_PLAN.md", "docs/EVALUATION_PRODUCT_DECISION.md",
-    "docs/THREAT_MODEL.md",
+    "docs/THREAT_MODEL.md", "docs/ADVERSARIAL_COVERAGE.md",
     "deploy/kubernetes/evaluation-rbac.yaml", "evaluation/config.example.json",
     "evaluation/config.live.example.json", "evaluation/config.opentofu.example.json",
     "evaluation/contract.json", "evaluation/candidate-test-plan.json",
+    "evaluation/adversarial-coverage.json",
     "examples/opentofu/main.tf",
     "scenarios/benign.json", "scenarios/kubernetes-real-cluster.json",
     "snapshots/kubernetes-shadow-benign.json",
     "scripts/evaluation-lifecycle.py", "scripts/evaluation-diagnostics.py",
     "scripts/ci-local.sh", "scripts/run-kubernetes-real-cluster.py",
-    "scripts/run-opentofu-plan.py",
+    "scripts/run-opentofu-plan.py", "scripts/validate-adversarial-coverage.py",
+    "results/adversarial-coverage-validation.json",
 ]
 MAX_BINARY = 128 * 1024 * 1024
 MAX_CAPABILITIES = 64 * 1024
@@ -132,6 +134,7 @@ def validate_test_inputs(capability_document, contract, sources):
         for item in configurations
     ]
     plan = strict_json(sources["evaluation/candidate-test-plan.json"], "candidate test plan")
+    coverage = strict_json(sources["evaluation/adversarial-coverage.json"], "adversarial coverage")
     if not isinstance(plan, dict):
         raise SystemExit("private-bundle: candidate test plan must be an object")
     tests = plan.get("tests")
@@ -148,6 +151,14 @@ def validate_test_inputs(capability_document, contract, sources):
         or planned != capabilities
         or plan.get("schema_version") != "telosieve.evaluation-candidate-test-plan/v1"
         or plan.get("execution_context") != "source-checkout-at-bundle-source-commit"
+        or plan.get("coverage_contract") != {
+            "command": "python3 scripts/validate-adversarial-coverage.py",
+            "registry": "evaluation/adversarial-coverage.json",
+            "retained_result": "results/adversarial-coverage-validation.json",
+        }
+        or coverage.get("schema_version") != "telosieve.adversarial-coverage/v1"
+        or coverage.get("authority_boundary") != "read-only-no-target-mutation"
+        or coverage.get("modes") != [item["mode"] for item in capabilities]
         or contract["supported_evaluation_modes"] != capabilities
     ):
         raise SystemExit("private-bundle: configurations or test plan do not cover capabilities")
@@ -181,6 +192,7 @@ def main():
         "authoritative_ci": "./scripts/ci-local.sh",
         "capabilities_sha256": digest(capabilities),
         "contract_sha256": digest(contract),
+        "coverage_contract_sha256": digest(sources["evaluation/adversarial-coverage.json"]),
         "independent_assessment_required": True,
         "schema_version": PROFILE_SCHEMA,
         "signing_required": True,

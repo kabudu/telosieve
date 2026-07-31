@@ -1,6 +1,11 @@
 {
   "schema_version": "telosieve.evaluation-candidate-test-plan/v1",
   "execution_context": "source-checkout-at-bundle-source-commit",
+  "coverage_contract": {
+    "command": "python3 scripts/validate-adversarial-coverage.py",
+    "registry": "evaluation/adversarial-coverage.json",
+    "retained_result": "results/adversarial-coverage-validation.json"
+  },
   "tests": [
     {
       "configuration_schema": "telosieve.evaluation-config/v1",

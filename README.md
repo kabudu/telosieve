@@ -41,6 +41,9 @@ evaluates its declared hypotheses, applies only one common independently checked
 transition, and otherwise emits a refusal certificate. See
 [VALIDATION](docs/VALIDATION.md) for the falsification plan, [NOVELTY](docs/NOVELTY.md)
 for claim limits, and [IMPLEMENTATION_PLAN](docs/IMPLEMENTATION_PLAN.md) for scope.
+The executable [adversarial coverage contract](docs/ADVERSARIAL_COVERAGE.md)
+tracks evidence and open attack-surface gaps separately for every evaluation
+mode; it currently retains six deferred cells and is not a robustness proof.
 
 Opt-in recovery-root-signed authority lifecycle chains now rotate, expire, and
 revoke operational keys without invalidating historical phenotype signatures.

@@ -1,0 +1,126 @@
+{
+  "schema_version": "telosieve.adversarial-coverage/v1",
+  "authority_boundary": "read-only-no-target-mutation",
+  "modes": [
+    "kubernetes-shadow",
+    "kubernetes-live",
+    "opentofu-plan"
+  ],
+  "limits": {
+    "maximum_threat_classes": 64,
+    "maximum_evidence_per_cell": 4,
+    "maximum_registry_bytes": 262144
+  },
+  "threat_classes": [
+    {
+      "id": "authority-evidence-substitution",
+      "title": "Authority or target evidence is omitted, forged, or substituted",
+      "priority": "required",
+      "applicable_modes": ["kubernetes-shadow", "kubernetes-live", "opentofu-plan"],
+      "coverage": {
+        "kubernetes-shadow": {"status": "covered", "evidence": [{"path": "tests/adversarial.rs", "anchor": "registered_adversarial_fault_classes_fail_closed_or_refuse"}]},
+        "kubernetes-live": {"status": "covered", "evidence": [{"path": "scripts/run-kubernetes-real-cluster.py", "anchor": "authority mismatch did not fail closed"}]},
+        "opentofu-plan": {"status": "covered", "evidence": [{"path": "src/opentofu_plan.rs", "anchor": "unsupported_sensitive_unknown_duplicate_and_mismatched_plans_fail_closed"}]}
+      }
+    },
+    {
+      "id": "malformed-ambiguous-or-oversized-input",
+      "title": "Malformed, ambiguous, unknown, or resource-exhausting input crosses the parser boundary",
+      "priority": "required",
+      "applicable_modes": ["kubernetes-shadow", "kubernetes-live", "opentofu-plan"],
+      "coverage": {
+        "kubernetes-shadow": {"status": "covered", "evidence": [{"path": "tests/evaluation_cli.rs", "anchor": "versioned_evaluation_cli_is_read_only_bounded_and_fail_closed"}]},
+        "kubernetes-live": {"status": "covered", "evidence": [{"path": "tests/kubernetes_live_cli.rs", "anchor": "oversized"}]},
+        "opentofu-plan": {"status": "covered", "evidence": [{"path": "src/opentofu_plan.rs", "anchor": "MAX_RESOURCE_CHANGES"}]}
+      }
+    },
+    {
+      "id": "mutation-attempt",
+      "title": "An input, credential, or requested operation attempts target mutation",
+      "priority": "required",
+      "applicable_modes": ["kubernetes-shadow", "kubernetes-live", "opentofu-plan"],
+      "coverage": {
+        "kubernetes-shadow": {"status": "covered", "evidence": [{"path": "tests/evaluation_cli.rs", "anchor": "mutation-mode.json"}]},
+        "kubernetes-live": {"status": "covered", "evidence": [{"path": "scripts/run-kubernetes-real-cluster.py", "anchor": "(\"patch\", \"configmap/repair-goal\")"}]},
+        "opentofu-plan": {"status": "covered", "evidence": [{"path": "scripts/run-opentofu-plan.py", "anchor": "destructive plan emitted evidence"}]}
+      }
+    },
+    {
+      "id": "incoherent-or-racing-observation",
+      "title": "The observed target changes or becomes incoherent during collection",
+      "priority": "required",
+      "applicable_modes": ["kubernetes-shadow", "kubernetes-live"],
+      "coverage": {
+        "kubernetes-shadow": {"status": "covered", "evidence": [{"path": "src/kubernetes_shadow.rs", "anchor": "drift_partial_stale_identity_schema_and_authority_mismatch_fail_closed"}]},
+        "kubernetes-live": {"status": "covered", "evidence": [{"path": "tests/kubernetes_live_cli.rs", "anchor": "fails_closed_on_drift"}]},
+        "opentofu-plan": {"status": "not-applicable", "reason": "The adapter consumes one immutable saved-plan byte sequence and binds its exact digest."}
+      }
+    },
+    {
+      "id": "credential-scope-abuse",
+      "title": "Evaluation credentials are used beyond the minimum read-only scope",
+      "priority": "required",
+      "applicable_modes": ["kubernetes-live"],
+      "coverage": {
+        "kubernetes-shadow": {"status": "not-applicable", "reason": "The shadow adapter has no target credentials or live client."},
+        "kubernetes-live": {"status": "covered", "evidence": [{"path": "scripts/run-kubernetes-real-cluster.py", "anchor": "must-not-read"}, {"path": "deploy/kubernetes/evaluation-rbac.yaml", "anchor": "resources: [\"configmaps\"]"}]},
+        "opentofu-plan": {"status": "not-applicable", "reason": "The saved-plan adapter has no provider, backend, or cloud credential interface."}
+      }
+    },
+    {
+      "id": "transport-timeout-or-outage",
+      "title": "A live target transport stalls, fails, or disappears",
+      "priority": "required",
+      "applicable_modes": ["kubernetes-live"],
+      "coverage": {
+        "kubernetes-shadow": {"status": "not-applicable", "reason": "The shadow adapter consumes a bounded local export without network transport."},
+        "kubernetes-live": {"status": "covered", "evidence": [{"path": "tests/kubernetes_live_cli.rs", "anchor": "timeout"}, {"path": "scripts/run-kubernetes-real-cluster.py", "anchor": "API outage did not fail closed"}]},
+        "opentofu-plan": {"status": "not-applicable", "reason": "The saved-plan adapter consumes a bounded local file without network transport."}
+      }
+    },
+    {
+      "id": "output-alias-or-partial-evidence",
+      "title": "Evidence output aliases trusted input or persistence fails partway",
+      "priority": "required",
+      "applicable_modes": ["kubernetes-shadow", "kubernetes-live", "opentofu-plan"],
+      "coverage": {
+        "kubernetes-shadow": {"status": "covered", "evidence": [{"path": "tests/evaluation_cli.rs", "anchor": "temporary_collision_config"}]},
+        "kubernetes-live": {"status": "covered", "evidence": [{"path": "src/evaluation.rs", "anchor": "reject_live_path_collisions"}]},
+        "opentofu-plan": {"status": "covered", "evidence": [{"path": "src/engine.rs", "anchor": "OpenTofuError::OutputCollision"}]}
+      }
+    },
+    {
+      "id": "replay-rollback-or-equivocation",
+      "title": "Previously valid, rolled-back, or conflicting authority evidence is replayed",
+      "priority": "required",
+      "applicable_modes": ["kubernetes-shadow", "kubernetes-live", "opentofu-plan"],
+      "coverage": {
+        "kubernetes-shadow": {"status": "covered", "evidence": [{"path": "tests/adversarial.rs", "anchor": "equivocation"}]},
+        "kubernetes-live": {"status": "covered", "evidence": [{"path": "tests/adversarial.rs", "anchor": "stale"}]},
+        "opentofu-plan": {"status": "covered", "evidence": [{"path": "tests/adversarial.rs", "anchor": "replayed"}]}
+      }
+    },
+    {
+      "id": "compromised-consistent-producer",
+      "title": "A compromised producer supplies internally consistent but false observations",
+      "priority": "research-gap",
+      "applicable_modes": ["kubernetes-shadow", "kubernetes-live", "opentofu-plan"],
+      "coverage": {
+        "kubernetes-shadow": {"status": "deferred", "reason": "Requires an independent observation source or target-side witness outside the exported snapshot."},
+        "kubernetes-live": {"status": "deferred", "reason": "Requires an independently trusted API observation path outside the selected cluster control plane."},
+        "opentofu-plan": {"status": "deferred", "reason": "Requires independent provider and state truth; plan JSON alone can lie consistently."}
+      }
+    },
+    {
+      "id": "sustained-adversarial-load",
+      "title": "Repeated hostile evaluations exhaust CPU, memory, process, or target request budgets",
+      "priority": "research-gap",
+      "applicable_modes": ["kubernetes-shadow", "kubernetes-live", "opentofu-plan"],
+      "coverage": {
+        "kubernetes-shadow": {"status": "deferred", "reason": "Per-input bounds exist, but sustained multi-process evaluation load is not qualified."},
+        "kubernetes-live": {"status": "deferred", "reason": "Request count and timeout are bounded, but sustained cluster/API load is not qualified."},
+        "opentofu-plan": {"status": "deferred", "reason": "Plan size is bounded, but repeated large-plan throughput and memory behavior are not qualified."}
+      }
+    }
+  ]
+}

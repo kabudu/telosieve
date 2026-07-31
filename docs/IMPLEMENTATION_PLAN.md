@@ -498,3 +498,23 @@ reproduces the three-mode unsigned candidate input, validates every relationship
 survives interruption, binds source substitution, and passes four capability
 refusals. No operational identity, signature, recipient, transfer, or independent
 assessment is manufactured.
+
+## Post-M34 — executable adversarial integration coverage
+
+- [x] Register a bounded threat-by-mode coverage contract for every supported
+  evaluation integration.
+- [x] Require executable anchored evidence for every applicable required cell
+  and explicit reasons for non-applicable or deferred cells.
+- [x] Refuse omitted or duplicated threats, mode drift, missing required
+  coverage, dishonest evidence references, excessive evidence, and weakened
+  authority boundaries.
+- [x] Bind the registry, validator, retained result, and open gaps into the
+  deterministic private candidate input.
+- [ ] Resolve compromised-consistent-producer and sustained-adversarial-load
+  gaps across the applicable modes.
+
+Evidence: [ADVERSARIAL_COVERAGE](ADVERSARIAL_COVERAGE.md) and
+`results/adversarial-coverage-validation.json`. Ten threat classes contain 19
+covered cells, six explicit deferred cells, and five justified non-applicable
+cells; eleven adversarial registry mutations fail closed. This inventory prevents
+coverage overstatement but is not independent validation or a robustness proof.
