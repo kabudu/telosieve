@@ -18,6 +18,7 @@ REQUIRED = (
     "docs/E2E_TESTING.md",
     "docs/EVALUATION_PRODUCT_DECISION.md",
     "docs/EVALUATION_CLI.md",
+    "docs/EVALUATION_LIFECYCLE.md",
     "docs/IMPLEMENTATION_PLAN.md",
     "docs/RELEASE.md",
     "docs/REQUIREMENTS_TRACEABILITY.md",
@@ -29,6 +30,8 @@ REQUIRED = (
     "assessment/witness-operator-request.json",
     "evaluation/contract.json",
     "evaluation/config.example.json",
+    "scripts/evaluation-lifecycle.py",
+    "scripts/run-evaluation-lifecycle-qualification.py",
 )
 LINK = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
 PLACEHOLDER = re.compile(r"\b(?:TODO|FIXME|REPLACE_WITH)\b")

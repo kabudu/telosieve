@@ -157,6 +157,15 @@ fabricates a self-consistent snapshot remains outside the boundary; exact
 agreement with signed Telosieve authorities is required but does not prove live
 cluster truth.
 
+The lifecycle manager rejects relative or symlinked roots and inputs, concurrent
+operations, unexpected release content, backup symlinks, inventory or digest
+tampering, and incorrectly confirmed uninstall. Atomic activation prevents a
+mixed binary/configuration pair. Root-owner compromise, process termination
+during filesystem operations, local-filesystem durability failure, malicious
+administrators, network filesystems, and evidence changes by a concurrent
+evaluator during backup remain outside this qualification; operators must stop
+writers and protect the root and backup storage.
+
 Incident drills validate deterministic software responses, not operator timing,
 hardware failure, hostile administrators, or multi-host disaster recovery.
 

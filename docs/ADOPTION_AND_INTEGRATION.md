@@ -1,8 +1,8 @@
 # Adoption and Integration
 
 The first supported evaluation shape is a private read-only sidecar. The current
-offline simulator and exported Kubernetes snapshot establish its input and
-decision boundaries; the live least-privilege collector remains roadmap work.
+offline simulator, exported Kubernetes snapshot, and live least-privilege
+collector establish its input and decision boundaries.
 JSON authority envelopes enter through bounded interfaces; decisions leave as
 JSON and an append-only log. Telosieve must not receive mutation credentials.
 
@@ -23,8 +23,9 @@ Compatibility risks include schema drift, clock assumptions, identity/key
 rotation, and semantic mismatch between declared invariants and platform behavior.
 See [KUBERNETES_SHADOW](KUBERNETES_SHADOW.md).
 
-Evaluation adoption requires a versioned CLI/configuration contract, documented
-install and lifecycle operations, bounded diagnostics, reproducible private
-artifacts, and an operator escape hatch. Independent validation targets the exact
+Evaluation adoption now has a versioned CLI/configuration contract plus
+documented and qualified single-host lifecycle operations. Bounded diagnostics,
+reproducible private artifacts, resource/recovery qualification, and an operator
+escape hatch remain candidate work. Independent validation targets the exact
 candidate after these capabilities exist. Production integration remains a
 separate promotion decision.

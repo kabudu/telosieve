@@ -13,6 +13,13 @@ certificate evidence before retrying. Use one writer per certificate/ledger path
 and bind retained reports to their certificate digest. See
 [EVALUATION_CLI](EVALUATION_CLI.md).
 
+Install, back up, upgrade, roll back, and uninstall a private evaluation tree
+only through `scripts/evaluation-lifecycle.py`. Stop evaluation writers before
+backup or lifecycle changes. Rollback changes the binary/configuration pair but
+never rewinds evidence; uninstall requires the canonical root twice and
+preserves evidence. See
+[EVALUATION_LIFECYCLE](EVALUATION_LIFECYCLE.md).
+
 Operational alerts cover signature failure, equivocation, schema mismatch,
 hypothesis-budget exhaustion, checker disagreement, ledger write failure, and
 actuator partial failure. No automatic retry may broaden authority or weaken an

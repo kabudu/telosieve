@@ -93,6 +93,12 @@ shadow validation make incoherent or incomplete observations fail closed. The
 binary and kubeconfig are explicit trusted inputs; a namespace-scoped RBAC
 example grants only the reads required by this protocol.
 
+The private lifecycle manager stores each binary/configuration pair in an
+immutable digest-named release directory. A single atomic `current` symlink
+selects the pair, avoiding mixed-version activation. Its exclusive local lock
+serializes lifecycle operations; bounded checksummed backups include evidence,
+while rollback and uninstall never replace or delete the live evidence tree.
+
 ## Failure behavior
 
 Malformed, stale, equivocal, over-budget, or unverifiable evidence yields refusal.
@@ -112,6 +118,9 @@ exchanges bounded NDJSON requests, avoiding per-hypothesis startup without shari
 planner code. Each response has a two-second timeout; failure aborts the run. The
 checker independently parses and evaluates the service and viability models, and
 differential tests compare it with the Rust reference checker.
+Its Python source is embedded as a process payload in the Rust binary, so an
+installed evaluator retains the separate-language/process boundary without a
+runtime dependency on the source checkout; the host still supplies `python3`.
 
 Certificate v4 makes stable-key continuity intrinsic to both checker
 implementations: every key present on every current replica must remain present

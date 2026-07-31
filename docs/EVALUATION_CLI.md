@@ -106,6 +106,7 @@ success, drift refusal, evidence behavior, and absence of mutation verbs. This
 is not real-cluster permission, network, Kubernetes-version, or availability
 qualification.
 
-The interface does not yet install itself, redact an assessor bundle, or
-qualify production resources. Those remain separate
+The separate bounded lifecycle manager installs the CLI and configuration; see
+[EVALUATION_LIFECYCLE](EVALUATION_LIFECYCLE.md). The product does not yet redact
+an assessor bundle or qualify production resources. Those remain separate
 candidate-readiness milestones.

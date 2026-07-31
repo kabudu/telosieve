@@ -104,6 +104,12 @@ through an explicitly selected `kubectl` and kubeconfig. See
 [Evaluation CLI](docs/EVALUATION_CLI.md); this remains evaluation software and
 the repository's fake-process evidence is not real-cluster qualification.
 
+Private macOS/Linux evaluation installations can be managed with the bounded
+local lifecycle tool. It atomically installs, upgrades, and rolls back a
+digest-bound binary/configuration pair, creates verified backups, and uninstalls
+software while preserving evidence. See
+[Evaluation Installation Lifecycle](docs/EVALUATION_LIFECYCLE.md).
+
 See [Versioned Evaluation CLI](docs/EVALUATION_CLI.md). This mode writes only
 certificate and ledger evidence; it has no target-system mutation authority.
 

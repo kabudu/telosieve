@@ -47,9 +47,10 @@ read-only collection, installation and lifecycle procedures, least privilege,
 diagnostics, recovery/resource qualification, reproducible private packaging,
 and an operator runbook are candidate gates rather than assumed capabilities.
 
-The versioned evaluation CLI and strict configuration now satisfy the stable
-interface gate for exported-snapshot mode. This does not satisfy the separate
-live collection, installation, diagnostics, resource, or packaging gates.
+The versioned evaluation CLI, strict configuration, bounded live collector, and
+single-host lifecycle manager now satisfy the stable-interface, live-read, and
+lifecycle-procedure gates. This does not satisfy the separate diagnostics,
+resource/recovery qualification, or reproducible private-bundle gates.
 
 The transactional local reference actuator is evidence for the required adapter
 contract, not a supported production adapter. Production promotion still

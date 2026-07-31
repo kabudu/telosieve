@@ -311,6 +311,20 @@ wrong owner, unsupported selector expression, nonzero process exit, output over
 ledger output. This is a
 project-controlled integration harness, not real-cluster qualification.
 
+## Evaluation installation lifecycle
+
+`scripts/run-evaluation-lifecycle-qualification.py` uses the real locally built
+debug binary from outside the repository working directory through install,
+version execution, a complete evaluation using the embedded checker, evidence creation, bounded
+backup, configuration upgrade, verified rollback, and exact-confirmation
+uninstall. The active binary/configuration pair changes through one atomic
+symlink, while evidence remains byte-identical. Reinstallation, a tampered
+backup, incorrect uninstall confirmation, a relative root, duplicate config,
+concurrent operation, symlinked input/evidence file or directory, and an in-root backup refuse
+without changing the active release. This is local-filesystem lifecycle
+evidence, not
+power-loss, package-manager, service-manager, or distribution qualification.
+
 ## Compatibility consumer qualification
 
 The independent Python reader and Rust compatibility boundary agree on three

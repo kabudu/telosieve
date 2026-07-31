@@ -359,7 +359,7 @@ No independent record has been returned, so both external gates remain open.
   weakening the private-repository local-CI policy.
 - [x] Stabilize a versioned evaluation CLI and strictly validated configuration.
 - [x] Add a fail-closed, least-privilege live Kubernetes read-only collector.
-- [ ] Package documented install, upgrade, rollback, backup, and uninstall
+- [x] Package documented install, upgrade, rollback, backup, and uninstall
   workflows for supported evaluation platforms.
 - [ ] Add bounded operator diagnostics and privacy-reviewed evidence export.
 - [ ] Qualify platform resources, interruption, recovery, and private bundle
@@ -377,3 +377,10 @@ time/response-bounded `kubectl` collector with pre/post controller consistency,
 pod ownership/readiness checks, and a namespace-scoped example RBAC grant. Its
 process harness is project-controlled simulation evidence, not real-cluster
 qualification.
+
+Lifecycle evidence: [EVALUATION_LIFECYCLE](EVALUATION_LIFECYCLE.md). A bounded
+single-host macOS/Linux manager atomically activates digest-bound
+binary/configuration releases, verifies owner-only backups, preserves evidence
+through rollback and uninstall, and passes the real five-phase lifecycle plus
+ten unsafe/tamper refusals. Package-manager, service, power-loss, and
+reproducible private-bundle qualification remain later gates.

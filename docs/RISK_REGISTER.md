@@ -18,3 +18,4 @@
 | R14 | Evaluation collector gains mutation or excess read privileges | Medium | Critical | Least-privilege manifests; no mutation verbs or credentials; fail-closed permission tests |
 | R15 | Diagnostic or assessor bundles disclose sensitive platform data | Medium | High | Bounded allowlisted export; redaction and privacy review; telemetry off by default |
 | R16 | Private candidate diverges from independently assessed artifacts | Medium | Critical | Commit, checksum, and signature binding; assess exact bundle; reassess material fixes |
+| R17 | Upgrade, rollback, or uninstall mixes versions or loses evaluation evidence | Medium | Critical | Atomic digest-bound release activation; verified bounded backup; exact-root removal confirmation; preserve evidence on rollback/uninstall |

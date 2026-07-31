@@ -158,6 +158,15 @@ least-privilege example Role. Its fake-process evidence does not qualify a real
 cluster. This completes two candidate-readiness engineering gates, not a
 candidate release.
 
+The private lifecycle manager now packages a caller-supplied local binary and
+strict evaluation configuration as an immutable digest-bound release. It
+atomically activates install, upgrade, and verified rollback; creates a bounded
+checksummed backup including evidence; and uninstalls managed software only
+after exact canonical-root confirmation while preserving evidence. The real
+local lifecycle and ten refusal paths pass in authoritative local CI. This
+completes the lifecycle procedure gate, but is not a package, distributed
+artifact, service installation, power-loss qualification, or candidate release.
+
 ## CI and delivery policy
 
 Telosieve is private, so local CI is the sole authoritative quality gate:

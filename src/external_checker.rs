@@ -54,7 +54,7 @@ impl CheckerSession {
     /// Returns an error when Python cannot start or required pipes are absent.
     pub fn start() -> Result<Self, ExternalCheckerError> {
         let mut command = Command::new("python3");
-        command.arg(concat!(env!("CARGO_MANIFEST_DIR"), "/scripts/checker.py"));
+        command.args(["-u", "-c", include_str!("../scripts/checker.py")]);
         Self::start_command(&mut command, Duration::from_secs(2))
     }
 
