@@ -36,6 +36,8 @@ pub enum RunError {
     Actuator(#[from] crate::actuator_store::ActuatorError),
     #[error("Kubernetes shadow adapter failed: {0}")]
     Shadow(#[from] crate::kubernetes_shadow::ShadowError),
+    #[error("OpenTofu plan adapter failed: {0}")]
+    OpenTofu(#[from] crate::opentofu_plan::OpenTofuError),
 }
 
 /// Runs a scenario through the public file boundary and persists its evidence.
@@ -106,6 +108,51 @@ pub(crate) fn run_kubernetes_shadow_snapshot(
     certificate.shadow = Some(shadow);
     persist_evidence(&certificate, certificate_path, ledger_path)?;
     Ok(certificate)
+}
+
+/// Evaluates a bounded `OpenTofu` JSON plan and binds its exact bytes into evidence.
+///
+/// # Errors
+///
+/// Returns [`RunError`] for input, mapping, authority, checking, or persistence failure.
+pub fn run_opentofu_plan_file(
+    scenario_path: &Path,
+    plan_path: &Path,
+    certificate_path: &Path,
+    ledger_path: &Path,
+) -> Result<Certificate, RunError> {
+    reject_adapter_path_collisions(scenario_path, plan_path, certificate_path, ledger_path)?;
+    let scenario = read_scenario(scenario_path)?;
+    let authorities = verify(&scenario)?;
+    let plan = crate::opentofu_plan::read_and_validate(plan_path, &authorities)?;
+    let mut certificate = run_verified_scenario(&scenario, authorities)?;
+    certificate.certificate_version = crate::certificate::CERTIFICATE_VERSION_V10.into();
+    certificate.opentofu = Some(plan);
+    persist_evidence(&certificate, certificate_path, ledger_path)?;
+    Ok(certificate)
+}
+
+fn reject_adapter_path_collisions(
+    scenario_path: &Path,
+    input_path: &Path,
+    certificate_path: &Path,
+    ledger_path: &Path,
+) -> Result<(), RunError> {
+    let scenario = fs::canonicalize(scenario_path)?;
+    let input = fs::canonicalize(input_path)?;
+    let certificate = canonical_output_path(certificate_path)?;
+    let temporary = canonical_output_path(&certificate_temporary_path(certificate_path))?;
+    let ledger = canonical_output_path(ledger_path)?;
+    if certificate == ledger
+        || temporary == certificate
+        || temporary == ledger
+        || [scenario, input]
+            .iter()
+            .any(|path| path == &certificate || path == &temporary || path == &ledger)
+    {
+        return Err(crate::opentofu_plan::OpenTofuError::OutputCollision.into());
+    }
+    Ok(())
 }
 
 fn reject_shadow_path_collisions(
@@ -460,6 +507,7 @@ fn evaluate_preflighted_scenario(
         deletion_authorization_id: authorities.deletion_authorization_id,
         actuation: None,
         shadow: None,
+        opentofu: None,
         phenotype_history_anchor: scenario.phenotype_history_anchor.clone(),
         hypotheses,
         decision,

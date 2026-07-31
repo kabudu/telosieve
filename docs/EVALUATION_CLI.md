@@ -110,6 +110,13 @@ the complete path against a disposable real API server and real RBAC. Managed
 clusters, sustained load, credential plugins, and independent operation remain
 unqualified.
 
+The v3 `opentofu-plan` mode adds a `plan_path` for bounded JSON emitted by
+`tofu show -json` from a saved plan. It accepts only explicit in-place updates
+to built-in `terraform_data` inputs whose before and after states exactly match
+the authenticated phenotype and goal. The exact input bytes are bound into
+certificate v10. Telosieve does not invoke OpenTofu or apply the plan. See
+[OPENTOFU_PLAN](OPENTOFU_PLAN.md).
+
 The separate bounded lifecycle manager installs the CLI and configuration; see
 [EVALUATION_LIFECYCLE](EVALUATION_LIFECYCLE.md). The product does not yet redact
 an assessor bundle or qualify production resources. Those remain separate

@@ -16,11 +16,12 @@ printf '  "bounds":{"maximum_cases":16,"maximum_total_bytes":2097152,"maximum_ce
 printf '  "versions":[\n'
 printf '    {"certificate_version":"telosieve.certificate/v7","source":"actual-stateless-output","status":"accepted"},\n'
 printf '    {"certificate_version":"telosieve.certificate/v8","source":"actual-local-actuator-output","status":"accepted"},\n'
-printf '    {"certificate_version":"telosieve.certificate/v9","source":"retained-kubernetes-shadow-output","status":"accepted"}\n'
+printf '    {"certificate_version":"telosieve.certificate/v9","source":"retained-kubernetes-shadow-output","status":"accepted"},\n'
+printf '    {"certificate_version":"telosieve.certificate/v10","source":"synthetic-opentofu-envelope","status":"accepted"}\n'
 printf '  ],\n'
-printf '  "rejection_classes":["future-version","unknown-field","missing-field","wrong-type","out-of-range-integer","confused-extension","duplicate-field","malformed-json","oversized"],\n'
+printf '  "rejection_classes":["future-version","unknown-field","missing-field","wrong-type","out-of-range-integer","confused-extension","invalid-opentofu-extension","duplicate-field","malformed-json","oversized"],\n'
 printf '  "rust_python_disagreements":0,\n'
-printf '  "passed":13,\n'
+printf '  "passed":15,\n'
 printf '  "failed":0\n'
 printf '}\n'
-echo "reader-qualification: passed 13/13" >&2
+echo "reader-qualification: passed 15/15" >&2

@@ -39,10 +39,16 @@ local rollback/forward mistakes but does not create an independent clock.
 
 Retained certificates cross a separate bounded compatibility boundary.
 Certificate v7 accepts no execution extension, v8 requires actuation only, and
-v9 requires shadow evidence only. Unknown versions, unknown top-level fields,
+v9 requires shadow evidence only, and v10 requires OpenTofu plan evidence only.
+Unknown versions, unknown top-level fields,
 cross-version extension shapes, and inputs over 2 MiB fail closed. Migration
 regenerates evidence from verified authoritative input rather than rewriting an
 existing certificate.
+
+The OpenTofu boundary consumes only saved-plan JSON, requires supported format
+1.2 and bounded `terraform_data` updates, maps exact before/after inputs to
+authenticated phenotype/goal evidence, and binds the original plan-byte digest
+in certificate v10. It has no backend, provider, credential, or apply capability.
 
 The qualified downstream boundary is separately implemented in dependency-free
 Python. It independently rejects duplicate/unknown/missing fields, invalid
@@ -52,7 +58,7 @@ not full nested semantic or organizational independence.
 
 Certificate authenticity is a detached trust boundary. A domain-separated
 Ed25519 envelope signs the exact certificate-byte SHA-256 digest, context,
-signer/key identity, issuance, and expiry without changing certificate v7–v9.
+signer/key identity, issuance, and expiry without changing certificate v7–v10.
 Verification is bounded by certificate/attestation bytes and at most eight
 trusted keys. Both Rust and the independent Python reader implement the envelope
 and signature checks.

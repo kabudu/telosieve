@@ -29,3 +29,8 @@ diagnostics. Reproducible private artifacts, resource/recovery qualification,
 and an operator escape hatch remain candidate work. Independent validation targets the exact
 candidate after these capabilities exist. Production integration remains a
 separate promotion decision.
+
+OpenTofu is the second testable external integration. Its plan-only adapter
+provides a provider-neutral evaluation boundary using `terraform_data`, with the
+exact plan bound into certificate v10. External providers, remote state, and any
+apply workflow remain outside the qualified boundary.

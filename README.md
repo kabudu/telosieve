@@ -158,6 +158,16 @@ cargo run --locked --offline --example state_space -- results/generated-state-sp
 Hosted CI is intentionally disabled until an explicitly approved public-opening
 or research-release gate.
 
+Generate and qualify the credential-free OpenTofu plan integration with:
+
+```sh
+cargo build --locked --offline
+python3 scripts/run-opentofu-plan.py
+```
+
+This uses disposable local `terraform_data` state and never grants Telosieve
+provider, backend, or apply access. See [OpenTofu Plan Evaluation](docs/OPENTOFU_PLAN.md).
+
 M2 results and negative findings are reported in
 [M2 Adversarial Results](docs/M2_RESULTS.md).
 The evidence-to-product comparison is recorded in

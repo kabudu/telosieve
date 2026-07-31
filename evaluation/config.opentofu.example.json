@@ -1,0 +1,8 @@
+{
+  "schema_version": "telosieve.evaluation-config/v3",
+  "mode": "opentofu-plan",
+  "scenario_path": "../scenarios/benign.json",
+  "plan_path": "../out/opentofu-plan.json",
+  "certificate_path": "../out/opentofu-certificate.json",
+  "ledger_path": "../out/opentofu-ledger.jsonl"
+}

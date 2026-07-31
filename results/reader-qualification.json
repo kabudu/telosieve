@@ -6,10 +6,11 @@
   "versions":[
     {"certificate_version":"telosieve.certificate/v7","source":"actual-stateless-output","status":"accepted"},
     {"certificate_version":"telosieve.certificate/v8","source":"actual-local-actuator-output","status":"accepted"},
-    {"certificate_version":"telosieve.certificate/v9","source":"retained-kubernetes-shadow-output","status":"accepted"}
+    {"certificate_version":"telosieve.certificate/v9","source":"retained-kubernetes-shadow-output","status":"accepted"},
+    {"certificate_version":"telosieve.certificate/v10","source":"synthetic-opentofu-envelope","status":"accepted"}
   ],
-  "rejection_classes":["future-version","unknown-field","missing-field","wrong-type","out-of-range-integer","confused-extension","duplicate-field","malformed-json","oversized"],
+  "rejection_classes":["future-version","unknown-field","missing-field","wrong-type","out-of-range-integer","confused-extension","invalid-opentofu-extension","duplicate-field","malformed-json","oversized"],
   "rust_python_disagreements":0,
-  "passed":13,
+  "passed":15,
   "failed":0
 }

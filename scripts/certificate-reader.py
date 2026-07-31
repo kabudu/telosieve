@@ -21,9 +21,10 @@ ATTESTATION_SCHEMA = "telosieve.certificate-attestation/v1"
 TIMESTAMP_SCHEMA = "telosieve.attestation-timestamp/v1"
 REVOCATION_SCHEMA = "telosieve.signer-revocations/v1"
 SUPPORTED = {
-    "telosieve.certificate/v7": (False, False),
-    "telosieve.certificate/v8": (True, False),
-    "telosieve.certificate/v9": (False, True),
+    "telosieve.certificate/v7": (False, False, False),
+    "telosieve.certificate/v8": (True, False, False),
+    "telosieve.certificate/v9": (False, True, False),
+    "telosieve.certificate/v10": (False, False, True),
 }
 REQUIRED_FIELDS = {
     "certificate_version",
@@ -41,7 +42,7 @@ REQUIRED_FIELDS = {
     "baselines",
     "metrics",
 }
-OPTIONAL_FIELDS = {"actuation", "shadow"}
+OPTIONAL_FIELDS = {"actuation", "shadow", "opentofu"}
 ACTUATION_FIELDS = {"adapter", "operation_digest", "before_digest", "after_digest"}
 SHADOW_FIELDS = {
     "adapter",
@@ -50,6 +51,10 @@ SHADOW_FIELDS = {
     "desired_resource_version",
     "observed_resource_version",
     "captured_at",
+}
+OPENTOFU_FIELDS = {
+    "adapter", "plan_sha256", "format_version", "terraform_version",
+    "resource_change_count",
 }
 ATTESTATION_FIELDS = {
     "schema_version",
@@ -281,12 +286,13 @@ def validate_certificate(value: Any) -> dict[str, Any]:
     if not isinstance(value["metrics"], dict):
         raise ReaderError("metrics is invalid")
 
-    requires_actuation, requires_shadow = SUPPORTED[version]
+    requires_actuation, requires_shadow, requires_opentofu = SUPPORTED[version]
     actuation = value.get("actuation")
     shadow = value.get("shadow")
+    opentofu = value.get("opentofu")
     if (actuation is not None) != requires_actuation or (
         shadow is not None
-    ) != requires_shadow:
+    ) != requires_shadow or (opentofu is not None) != requires_opentofu:
         raise ReaderError("certificate extensions do not match its version")
     if requires_actuation:
         record = exact_object(actuation, ACTUATION_FIELDS, "actuation")
@@ -296,6 +302,17 @@ def validate_certificate(value: Any) -> dict[str, Any]:
         require_strings(record, SHADOW_FIELDS - {"captured_at"}, "shadow")
         if not is_unsigned(record["captured_at"]):
             raise ReaderError("shadow captured_at is invalid")
+    if requires_opentofu:
+        record = exact_object(opentofu, OPENTOFU_FIELDS, "opentofu")
+        require_strings(record, OPENTOFU_FIELDS - {"resource_change_count"}, "opentofu")
+        if not canonical_hex(record["plan_sha256"], 32):
+            raise ReaderError("opentofu plan digest is invalid")
+        if record["adapter"] != "telosieve.opentofu-plan/v1" or record["format_version"] != "1.2":
+            raise ReaderError("opentofu schema metadata is invalid")
+        if not valid_text(record["terraform_version"]):
+            raise ReaderError("opentofu version is invalid")
+        if not is_unsigned(record["resource_change_count"]) or not 1 <= record["resource_change_count"] <= 64:
+            raise ReaderError("opentofu resource count is invalid")
     return value
 
 

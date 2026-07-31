@@ -12,6 +12,7 @@ use crate::{
 pub const CERTIFICATE_VERSION_V7: &str = "telosieve.certificate/v7";
 pub const CERTIFICATE_VERSION_V8: &str = "telosieve.certificate/v8";
 pub const CERTIFICATE_VERSION_V9: &str = "telosieve.certificate/v9";
+pub const CERTIFICATE_VERSION_V10: &str = "telosieve.certificate/v10";
 pub const MAX_COMPATIBILITY_CERTIFICATE_BYTES: usize = 2 * 1024 * 1024;
 
 #[derive(Debug, Error)]
@@ -82,6 +83,16 @@ pub struct ShadowRecord {
     pub captured_at: u64,
 }
 
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct OpenTofuRecord {
+    pub adapter: String,
+    pub plan_sha256: String,
+    pub format_version: String,
+    pub terraform_version: String,
+    pub resource_change_count: usize,
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Certificate {
@@ -94,6 +105,8 @@ pub struct Certificate {
     pub actuation: Option<ActuationRecord>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub shadow: Option<ShadowRecord>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub opentofu: Option<OpenTofuRecord>,
     pub phenotype_history_anchor: HistoryAnchor,
     pub hypotheses: Vec<HypothesisRecord>,
     pub decision: Decision,
@@ -107,7 +120,7 @@ pub struct Certificate {
 
 /// Parses a retained certificate through the supported compatibility boundary.
 ///
-/// Versions 7–9 share one additive serialized shape. Their extension fields
+/// Versions 7–10 share one additive serialized shape. Their extension fields
 /// remain version-specific so an artifact cannot be relabelled across execution
 /// modes.
 ///
@@ -122,9 +135,29 @@ pub fn parse_supported_certificate(
     }
     let certificate: Certificate = serde_json::from_slice(bytes)?;
     let valid_shape = match certificate.certificate_version.as_str() {
-        CERTIFICATE_VERSION_V7 => certificate.actuation.is_none() && certificate.shadow.is_none(),
-        CERTIFICATE_VERSION_V8 => certificate.actuation.is_some() && certificate.shadow.is_none(),
-        CERTIFICATE_VERSION_V9 => certificate.actuation.is_none() && certificate.shadow.is_some(),
+        CERTIFICATE_VERSION_V7 => {
+            certificate.actuation.is_none()
+                && certificate.shadow.is_none()
+                && certificate.opentofu.is_none()
+        }
+        CERTIFICATE_VERSION_V8 => {
+            certificate.actuation.is_some()
+                && certificate.shadow.is_none()
+                && certificate.opentofu.is_none()
+        }
+        CERTIFICATE_VERSION_V9 => {
+            certificate.actuation.is_none()
+                && certificate.shadow.is_some()
+                && certificate.opentofu.is_none()
+        }
+        CERTIFICATE_VERSION_V10 => {
+            certificate.actuation.is_none()
+                && certificate.shadow.is_none()
+                && certificate
+                    .opentofu
+                    .as_ref()
+                    .is_some_and(valid_opentofu_record)
+        }
         version => {
             return Err(CertificateCompatibilityError::UnsupportedVersion(
                 version.into(),
@@ -137,4 +170,24 @@ pub fn parse_supported_certificate(
         ));
     }
     Ok(certificate)
+}
+
+fn valid_opentofu_record(record: &OpenTofuRecord) -> bool {
+    record.adapter == "telosieve.opentofu-plan/v1"
+        && record.plan_sha256.len() == 64
+        && record
+            .plan_sha256
+            .bytes()
+            .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
+        && record.format_version == "1.2"
+        && valid_version_text(&record.terraform_version)
+        && (1..=64).contains(&record.resource_change_count)
+}
+
+fn valid_version_text(value: &str) -> bool {
+    !value.is_empty()
+        && value.len() <= 64
+        && value
+            .bytes()
+            .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'.' | b'-' | b'+'))
 }

@@ -157,6 +157,13 @@ fabricates a self-consistent snapshot remains outside the boundary; exact
 agreement with signed Telosieve authorities is required but does not prove live
 cluster truth.
 
+The OpenTofu adapter has no backend, provider, state, credential, or apply
+capability. It rejects unsupported format versions, non-update or non-built-in
+resources, sensitive/unknown inputs, structural excess, and exact authority
+disagreement. A malicious producer can lie in plan JSON, and provider behavior
+after evaluation is outside the boundary; operators must retain and verify the
+digest-bound saved plan and separately control any apply step.
+
 The lifecycle manager rejects relative or symlinked roots and inputs, concurrent
 operations, unexpected release content, backup symlinks, inventory or digest
 tampering, and incorrectly confirmed uninstall. Atomic activation prevents a

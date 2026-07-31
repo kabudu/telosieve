@@ -12,8 +12,8 @@ use telosieve::{
     actuator_store::LocalActuatorStore,
     certificate::{
         CERTIFICATE_VERSION_V7, CERTIFICATE_VERSION_V8, CERTIFICATE_VERSION_V9,
-        CertificateCompatibilityError, MAX_COMPATIBILITY_CERTIFICATE_BYTES,
-        parse_supported_certificate,
+        CERTIFICATE_VERSION_V10, CertificateCompatibilityError,
+        MAX_COMPATIBILITY_CERTIFICATE_BYTES, OpenTofuRecord, parse_supported_certificate,
     },
     engine::{run_scenario, run_scenario_actuated},
     protocol::{ProtocolError, Scenario, verify},
@@ -141,7 +141,7 @@ fn scenario_migration_vectors_preserve_legacy_and_fail_closed() {
 }
 
 #[test]
-fn certificate_vectors_accept_v7_to_v9_and_reject_future_or_confused_shapes() {
+fn certificate_vectors_accept_v7_to_v10_and_reject_future_or_confused_shapes() {
     let legacy = scenario("scenarios/benign.json");
     let certificate_v7 = run_scenario(&legacy).unwrap();
     assert_eq!(certificate_v7.certificate_version, CERTIFICATE_VERSION_V7);
@@ -164,6 +164,18 @@ fn certificate_vectors_accept_v7_to_v9_and_reject_future_or_confused_shapes() {
     let bytes_v9 = fixture("results/kubernetes-shadow-certificate.json");
     let certificate_v9 = parse_supported_certificate(&bytes_v9).unwrap();
     assert_eq!(certificate_v9.certificate_version, CERTIFICATE_VERSION_V9);
+
+    let mut certificate_v10 = certificate_v7.clone();
+    certificate_v10.certificate_version = CERTIFICATE_VERSION_V10.into();
+    certificate_v10.opentofu = Some(OpenTofuRecord {
+        adapter: "telosieve.opentofu-plan/v1".into(),
+        plan_sha256: "ab".repeat(32),
+        format_version: "1.2".into(),
+        terraform_version: "1.12.5".into(),
+        resource_change_count: 3,
+    });
+    let bytes_v10 = serde_json::to_vec(&certificate_v10).unwrap();
+    parse_supported_certificate(&bytes_v10).unwrap();
 
     let mut future = serde_json::to_value(&certificate_v7).unwrap();
     future["certificate_version"] = json!("telosieve.certificate/v99");
@@ -197,6 +209,7 @@ fn certificate_vectors_accept_v7_to_v9_and_reject_future_or_confused_shapes() {
         bytes_v7,
         bytes_v8,
         bytes_v9,
+        bytes_v10,
         future_bytes,
         unknown_field_bytes,
         confused_bytes,
@@ -206,6 +219,7 @@ fn certificate_vectors_accept_v7_to_v9_and_reject_future_or_confused_shapes() {
 }
 
 #[test]
+#[allow(clippy::too_many_lines)]
 fn independent_reader_agrees_on_supported_versions_and_failure_matrix() {
     let legacy = scenario("scenarios/benign.json");
     let certificate_v7 = run_scenario(&legacy).unwrap();
@@ -222,11 +236,22 @@ fn independent_reader_agrees_on_supported_versions_and_failure_matrix() {
         .unwrap();
     let bytes_v8 = serde_json::to_vec(&run_scenario_actuated(&legacy, &path).unwrap()).unwrap();
     let bytes_v9 = fixture("results/kubernetes-shadow-certificate.json");
+    let mut certificate_v10 = certificate_v7.clone();
+    certificate_v10.certificate_version = CERTIFICATE_VERSION_V10.into();
+    certificate_v10.opentofu = Some(OpenTofuRecord {
+        adapter: "telosieve.opentofu-plan/v1".into(),
+        plan_sha256: "ab".repeat(32),
+        format_version: "1.2".into(),
+        terraform_version: "1.12.5".into(),
+        resource_change_count: 3,
+    });
+    let bytes_v10 = serde_json::to_vec(&certificate_v10).unwrap();
 
     for (version, bytes) in [
         (CERTIFICATE_VERSION_V7, &bytes_v7),
         (CERTIFICATE_VERSION_V8, &bytes_v8),
         (CERTIFICATE_VERSION_V9, &bytes_v9),
+        (CERTIFICATE_VERSION_V10, &bytes_v10),
     ] {
         parse_supported_certificate(bytes).unwrap();
         let (output, timed_out) = read_downstream(bytes);
@@ -259,6 +284,8 @@ fn independent_reader_agrees_on_supported_versions_and_failure_matrix() {
     out_of_range["seed"] = serde_json::from_str("18446744073709551616").unwrap();
     let mut confused = serde_json::to_value(&certificate_v7).unwrap();
     confused["certificate_version"] = json!(CERTIFICATE_VERSION_V8);
+    let mut invalid_opentofu = serde_json::to_value(&certificate_v10).unwrap();
+    invalid_opentofu["opentofu"]["plan_sha256"] = json!("00");
     let duplicate = bytes_v7
         .strip_prefix(b"{")
         .map(|tail| {
@@ -277,14 +304,16 @@ fn independent_reader_agrees_on_supported_versions_and_failure_matrix() {
         serde_json::to_vec(&wrong_type).unwrap(),
         serde_json::to_vec(&out_of_range).unwrap(),
         serde_json::to_vec(&confused).unwrap(),
+        serde_json::to_vec(&invalid_opentofu).unwrap(),
         duplicate,
         b"{".to_vec(),
     ];
-    assert!(3 + rejected.len() <= MAX_COMPATIBILITY_CASES);
+    assert!(4 + rejected.len() <= MAX_COMPATIBILITY_CASES);
     assert!(
         bytes_v7.len()
             + bytes_v8.len()
             + bytes_v9.len()
+            + bytes_v10.len()
             + rejected.iter().map(Vec::len).sum::<usize>()
             <= MAX_COMPATIBILITY_CORPUS_BYTES
     );

@@ -453,3 +453,18 @@ not established.
 
 Evidence: [KUBERNETES_REAL_CLUSTER](KUBERNETES_REAL_CLUSTER.md). This closes the
 real local-cluster gap, not the managed-platform or independent-validation gates.
+
+## Post-M31 — OpenTofu plan evaluation integration
+
+- [x] Evaluate a real saved OpenTofu plan through the stable read-only CLI
+  without cloud credentials, external providers, or target mutation.
+- [x] Bind the exact bounded plan bytes and version/resource metadata into a
+  version-specific certificate extension.
+- [x] Refuse destructive, sensitive, unknown, duplicate-replica, malformed,
+  oversized, or authority-mismatched plan inputs before evidence persistence.
+- [ ] Qualify external providers, remote state, large plans, additional OpenTofu
+  versions, and an independently operated environment.
+
+Evidence: [OPENTOFU_PLAN](OPENTOFU_PLAN.md). The real local lifecycle uses only
+the built-in `terraform_data` resource and disposable local state. It establishes
+plan parsing and evidence binding, not provider correctness or apply safety.

@@ -11,7 +11,7 @@ use crate::{
     certificate::Decision,
     engine::{
         RunError, certificate_temporary_path, read_scenario, run_kubernetes_shadow_file,
-        run_kubernetes_shadow_snapshot,
+        run_kubernetes_shadow_snapshot, run_opentofu_plan_file,
     },
     kubernetes_live::{LiveError, LiveKubernetesConfig},
     model::digest,
@@ -19,6 +19,7 @@ use crate::{
 
 pub const CONFIG_SCHEMA_VERSION: &str = "telosieve.evaluation-config/v1";
 pub const LIVE_CONFIG_SCHEMA_VERSION: &str = "telosieve.evaluation-config/v2";
+pub const OPENTOFU_CONFIG_SCHEMA_VERSION: &str = "telosieve.evaluation-config/v3";
 pub const REPORT_SCHEMA_VERSION: &str = "telosieve.evaluation-report/v1";
 pub const MAX_CONFIG_BYTES: u64 = 64 * 1024;
 const MAX_PATH_BYTES: usize = 4096;
@@ -44,6 +45,17 @@ struct EvaluationConfigV2 {
     certificate_path: String,
     ledger_path: String,
     kubernetes: LiveKubernetesConfig,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct EvaluationConfigV3 {
+    schema_version: String,
+    mode: String,
+    scenario_path: String,
+    plan_path: String,
+    certificate_path: String,
+    ledger_path: String,
 }
 
 #[derive(Debug, PartialEq, Eq, Serialize)]
@@ -128,6 +140,26 @@ pub fn run_config_file(config_path: &Path) -> Result<EvaluationReport, Evaluatio
         return Ok(report(
             CONFIG_SCHEMA_VERSION,
             KUBERNETES_SHADOW_MODE,
+            &certificate_value,
+        ));
+    }
+    if schema == OPENTOFU_CONFIG_SCHEMA_VERSION {
+        let config: EvaluationConfigV3 = serde_json::from_value(value)?;
+        if config.schema_version != OPENTOFU_CONFIG_SCHEMA_VERSION {
+            return Err(EvaluationError::Schema);
+        }
+        if config.mode != "opentofu-plan" {
+            return Err(EvaluationError::Mode);
+        }
+        let scenario = resolve_path(base, &config.scenario_path, "scenario_path")?;
+        let plan = resolve_path(base, &config.plan_path, "plan_path")?;
+        let certificate = resolve_path(base, &config.certificate_path, "certificate_path")?;
+        let ledger = resolve_path(base, &config.ledger_path, "ledger_path")?;
+        reject_config_collision(&canonical_config, &certificate, &ledger)?;
+        let certificate_value = run_opentofu_plan_file(&scenario, &plan, &certificate, &ledger)?;
+        return Ok(report(
+            OPENTOFU_CONFIG_SCHEMA_VERSION,
+            "opentofu-plan",
             &certificate_value,
         ));
     }

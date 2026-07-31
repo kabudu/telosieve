@@ -17,11 +17,11 @@ printf '{\n'
 printf '  "schema_version":"telosieve.compatibility-corpus/v1",\n'
 printf '  "migration_policy":"validate-then-regenerate-no-automatic-rewrite",\n'
 printf '  "bounds":{"maximum_cases":16,"maximum_total_bytes":2097152,"maximum_certificate_bytes":2097152},\n'
-printf '  "supported_certificate_versions":["telosieve.certificate/v7","telosieve.certificate/v8","telosieve.certificate/v9"],\n'
+printf '  "supported_certificate_versions":["telosieve.certificate/v7","telosieve.certificate/v8","telosieve.certificate/v9","telosieve.certificate/v10"],\n'
 printf '  "vectors":[\n'
 run_vector "scenario-old-new-and-migration" "scenario_migration_vectors_preserve_legacy_and_fail_closed"
 printf ',\n'
-run_vector "certificate-v7-v8-v9-and-future" "certificate_vectors_accept_v7_to_v9_and_reject_future_or_confused_shapes"
+run_vector "certificate-v7-v8-v9-v10-and-future" "certificate_vectors_accept_v7_to_v10_and_reject_future_or_confused_shapes"
 printf '\n  ],\n'
 printf '  "passed":2,\n'
 printf '  "failed":0\n'

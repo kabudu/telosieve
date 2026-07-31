@@ -20,6 +20,7 @@ BACKUP_SCHEMA = "telosieve.evaluation-backup/v1"
 CONFIG_SCHEMAS = {
     "telosieve.evaluation-config/v1",
     "telosieve.evaluation-config/v2",
+    "telosieve.evaluation-config/v3",
 }
 MAX_BINARY_BYTES = 128 * 1024 * 1024
 MAX_CONFIG_BYTES = 64 * 1024
@@ -94,10 +95,15 @@ def validated_inputs(binary_value: str, config_value: str) -> tuple[bytes, bytes
             "schema_version", "mode", "scenario_path", "certificate_path",
             "ledger_path", "kubernetes",
         },
+        "telosieve.evaluation-config/v3": {
+            "schema_version", "mode", "scenario_path", "plan_path",
+            "certificate_path", "ledger_path",
+        },
     }[parsed["schema_version"]]
     expected_mode = {
         "telosieve.evaluation-config/v1": "kubernetes-shadow",
         "telosieve.evaluation-config/v2": "kubernetes-live",
+        "telosieve.evaluation-config/v3": "opentofu-plan",
     }[parsed["schema_version"]]
     if set(parsed) != expected or parsed.get("mode") != expected_mode:
         raise LifecycleError("configuration fields or mode do not match its schema")

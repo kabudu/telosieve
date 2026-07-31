@@ -93,20 +93,20 @@ They therefore do not remove the independent-assessment or production-identity
 release gates.
 
 The compatibility corpus defines fail-closed support for legacy/current
-scenarios and certificates v7–v9, with validate-then-regenerate migration.
+scenarios and certificates v7–v10, with validate-then-regenerate migration.
 Unknown future semantics remain intentionally unsupported, and no independent
 downstream consumer has yet been qualified. This reduces accidental migration
 ambiguity but does not change the release decision.
 
-A separately implemented Python reader now agrees on v7–v9 acceptance and nine
-bounded refusal classes. All three versions remain active. Deprecation requires
+A separately implemented Python reader now agrees on v7–v10 acceptance and nine
+bounded refusal classes. All four versions remain active. Deprecation requires
 an evidenced successor, measured consumer usage, validated migration, two later
 completed milestone windows, and explicit approval; removal additionally
 requires zero registered consumers and a separately approved major
 research-protocol compatibility change. This local qualification is not
 third-party assessment and does not authenticate certificate origin.
 
-Detached certificate attestation now authenticates exact v7–v9 evidence bytes
+Detached certificate attestation now authenticates exact v7–v10 evidence bytes
 under bounded Ed25519 signer windows, and the Rust/Python qualification has zero
 disagreements across rotation and five refusal paths. This removes the purely
 unauthenticated-file limitation only when callers explicitly require and verify
