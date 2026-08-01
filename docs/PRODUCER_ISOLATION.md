@@ -76,14 +76,22 @@ proves non-sensitive readiness, exact authenticated relay output, stale-socket
 restart, socket mode `0660`, token and symlink refusal,
 producer failure/timeout/output bounds,
 unsafe-token/configuration refusal, cleanup, and systemd hardening drift. It
-runs under one local UID and does not execute
-systemd, Linux user separation, real credential isolation, host separation, or
-independent administration. Those require a Linux operator exercise and remain
-external promotion gates. Tokens authenticate local requests; they do not make
+runs under one local UID and does not execute systemd. The authoritative CI also
+runs `scripts/qualify-linux-producer-isolation.sh` in a pinned, offline,
+read-only Linux container. That qualification starts both relays under distinct
+non-root kernel UIDs and client groups, runs an evaluator with only the two
+client groups, and refuses an unrelated UID, wrong token, peer token/config
+reads, and peer relay access. The container has a 256 MiB memory limit, 64 PID
+limit, 40 MiB total temporary-filesystem limit, and no network.
+
+This is real Linux discretionary-access-control evidence, but it is still one
+project-controlled container on one host. It does not execute systemd, isolate
+real platform credentials, establish separate hosts or administrators, or make
 producer observations truthful or organizationally independent.
 
 `scripts/run-opentofu-plan.py` additionally routes the real two-producer
 OpenTofu success lifecycle through two live relays and the stable evaluation
 CLI. Kubernetes relay operation uses the same envelope transport, but the real
-cluster harness still invokes its producer processes directly; real systemd and
-multi-UID Kubernetes qualification remains open.
+cluster harness still invokes its producer processes directly. Kubernetes
+qualification through the relay remains open, as do real systemd, multi-host,
+credential-custody, and independent-operation exercises.

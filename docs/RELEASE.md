@@ -243,3 +243,9 @@ The live Kubernetes evaluator now passes a real disposable v1.36.1 API-server
 and RBAC lifecycle, including authority-mismatch and outage refusal. This does
 not qualify managed clusters, production-scale load, production credentials, or
 independent operation.
+
+The observation relay now passes a pinned offline Linux qualification with two
+real non-root producer UIDs, distinct client groups, authorized evaluator
+access, and cross-identity refusal. This closes the local kernel-identity gap,
+not the systemd, multi-host, credential-custody, producer-truth, or independent
+operation gates.

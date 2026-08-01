@@ -130,6 +130,8 @@ def assert_bundle(path: Path) -> int:
             "scripts/opentofu-observation-producer.py",
             "scripts/observation-source-relay.py", "scripts/observation-source-client.py",
             "scripts/run-producer-isolation-qualification.py",
+            "scripts/qualify-linux-producer-isolation.sh",
+            "scripts/run-linux-producer-isolation.py",
             "deploy/systemd/telosieve-observation@.service",
             "deploy/systemd/observation-kubernetes-a.example.json",
             "deploy/systemd/observation-opentofu-a.example.json",
@@ -147,6 +149,8 @@ def assert_bundle(path: Path) -> int:
             "scripts/opentofu-observation-producer.py",
             "scripts/observation-source-relay.py",
             "scripts/observation-source-client.py",
+            "scripts/qualify-linux-producer-isolation.sh",
+            "scripts/run-linux-producer-isolation.py",
         ):
             mode = archive.getinfo(producer).external_attr >> 16
             if mode & 0o777 != 0o555:

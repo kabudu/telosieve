@@ -38,6 +38,8 @@ FILES = [
     "scripts/opentofu-observation-producer.py",
     "scripts/observation-source-relay.py", "scripts/observation-source-client.py",
     "scripts/run-producer-isolation-qualification.py",
+    "scripts/qualify-linux-producer-isolation.sh",
+    "scripts/run-linux-producer-isolation.py",
     "results/adversarial-coverage-validation.json",
     "results/sustained-adversarial-load.json",
 ]
@@ -48,11 +50,13 @@ MAX_SOURCE_FILE = 16 * 1024 * 1024
 MAX_SOURCE_TOTAL = 32 * 1024 * 1024
 MUTATION_TOKENS = ("actuate", "apply", "create", "delete", "mutate", "patch", "update", "write")
 FIXED_TIME = (2026, 1, 1, 0, 0, 0)
-PRODUCER_EXECUTABLES = {
+RUNTIME_EXECUTABLES = {
     "scripts/kubernetes-observation-producer.py",
     "scripts/opentofu-observation-producer.py",
     "scripts/observation-source-relay.py",
     "scripts/observation-source-client.py",
+    "scripts/qualify-linux-producer-isolation.sh",
+    "scripts/run-linux-producer-isolation.py",
 }
 
 def digest(data): return hashlib.sha256(data).hexdigest()
@@ -229,7 +233,7 @@ def main():
         ("evaluation/candidate-profile.json", profile, 0o400),
     ]
     for relative, data in sources.items():
-        mode = 0o555 if relative in PRODUCER_EXECUTABLES else 0o400
+        mode = 0o555 if relative in RUNTIME_EXECUTABLES else 0o400
         entries.append((relative, data, mode))
     records = [{"path": name, "sha256": digest(data), "size": len(data)} for name, data, _ in entries]
     manifest = json.dumps({"schema_version": SCHEMA, "source_commit": source_commit, "entries": records}, sort_keys=True, separators=(",", ":")).encode() + b"\n"

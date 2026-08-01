@@ -676,3 +676,23 @@ Evidence: [PRODUCER_ISOLATION](PRODUCER_ISOLATION.md), [OPERATIONS](OPERATIONS.m
 `scripts/run-producer-isolation-qualification.py`. M42 establishes a usable
 deployment boundary but the local harness uses one UID and one host, so no
 independence or compromised-consistent-producer claim is promoted.
+
+## Post-M43 — Linux producer identity qualification
+
+- [x] Run two producer relays under distinct non-root Linux kernel UIDs and
+  distinct client groups in a pinned offline container.
+- [x] Give the evaluator access through only the two client groups and verify
+  exact observations from both relays.
+- [x] Refuse an unrelated UID, a wrong token, peer token/configuration reads,
+  and peer relay access while verifying socket ownership, mode, and cleanup.
+- [x] Bound the container to 256 MiB memory, 64 PIDs, 40 MiB total temporary
+  filesystems, a read-only repository, and no network.
+- [ ] Exercise systemd and Kubernetes through the relay on separately
+  administered hosts with real credentials, clocks, keys, and platform truth.
+
+Evidence: [PRODUCER_ISOLATION](PRODUCER_ISOLATION.md),
+`scripts/qualify-linux-producer-isolation.sh`, and
+`scripts/run-linux-producer-isolation.py`. This establishes real kernel-enforced
+UID/GID separation on Linux. The container and host remain project-controlled,
+so organizational independence and compromised-consistent-producer coverage
+remain unclaimed.

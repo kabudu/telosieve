@@ -16,14 +16,15 @@ v2, the packaged configurations, and the three-mode test plan. Every entry and
 the canonical full source commit are bound by the version 3
 `bundle-manifest.json`; timestamps,
 ordering, compression, and modes are fixed.
-Only the Telosieve binary and the Kubernetes/OpenTofu observation producers are
-executable in the archive; other allowlisted source material is read-only. The
-producer programs still require operator-supplied platform executables,
-configuration, saved plans or credentials, and signing keys.
+Only the Telosieve binary, Kubernetes/OpenTofu observation producers, relay and
+client, and Linux identity-qualification tools are executable in the archive;
+other allowlisted source material is read-only. The producer programs still
+require operator-supplied platform executables, configuration, saved plans or
+credentials, and signing keys.
 The bundle also carries the authenticated Unix relay/client, hardened systemd
-template, example relay profiles, and local qualification used to prepare
-separate Linux producer identities; it does not create accounts or install
-services automatically.
+template, example relay profiles, local qualification, and pinned offline Linux
+multi-UID qualification used to prepare and test separate producer identities;
+it does not create host accounts or install services automatically.
 
 ```sh
 python3 scripts/build-private-bundle.py \
@@ -74,7 +75,7 @@ mode `0600`. Never place a private key in the bundle or trust file.
 
 This bundle is private candidate input, not a release. The protocol test uses
 an ephemeral key, not an operational release identity. Current measurements
-cover the local macOS host, not Linux, Kubernetes runtime load, power loss,
-hostile storage, or
-multi-host rollout. Independent assessment of the exact eventual signed bundle
+cover the local macOS host and a project-controlled Linux container, not real
+systemd, managed-platform load, power loss, hostile storage, or multi-host
+rollout. Independent assessment of the exact eventual signed bundle
 remains mandatory before stronger safety or production claims.

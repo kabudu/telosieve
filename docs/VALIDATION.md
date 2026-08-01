@@ -319,6 +319,13 @@ the repository-owned handoff boundary. See
 [WITNESS_OPERATOR_HANDOFF](WITNESS_OPERATOR_HANDOFF.md).
 The retained aggregate explicitly sets `independent_evidence` to false.
 
+The producer-isolation lane additionally runs two relays under distinct
+non-root Linux UIDs and client groups in a pinned offline container. It verifies
+authorized evaluator access and kernel-enforced refusal of unrelated and peer
+producer identities. This is single-host, project-controlled evidence and does
+not qualify systemd, real credentials, separate administration, or producer
+truth.
+
 ## Versioned evaluation CLI
 
 The real binary accepts one v1 configuration, validates a bounded exported
