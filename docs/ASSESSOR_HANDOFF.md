@@ -2,6 +2,10 @@
 
 Date: 2026-07-29
 
+> **Historical handoff:** this document reproduces the Post-M15 research state
+> only. It does not apply to `v0.2.0-rc.1`. Assess the signed release candidate
+> using the current [External Assessment Guide](EXTERNAL_ASSESSMENT.md).
+
 The machine-readable handoff at `assessment/manifest.json` freezes source commit
 `17ec5e04bc05ca16b322ec6e436b9979972a0ba5`. That commit is the Post-M15 source
 head; Post-M16 adds only the manifest, verification tooling, retained result, and

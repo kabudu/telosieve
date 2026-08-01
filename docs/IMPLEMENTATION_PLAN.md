@@ -727,7 +727,7 @@ shared control plane.
   absent-evidence, substituted-evidence, and weakened-authority manifests.
 - [x] Package the readiness manifest, validator, retained result, and claim
   boundary in the private evaluator bundle.
-- [ ] Freeze and sign the reviewed exact candidate bytes and emit the final
+- [x] Freeze and sign the reviewed exact candidate bytes and emit the final
   evaluator handoff manifest.
 
 Evidence: [CANDIDATE_READINESS](CANDIDATE_READINESS.md),
@@ -745,7 +745,7 @@ drift; it does not itself create or sign a release candidate.
   public trust, artifact inventory, checksums, and candidate status metadata.
 - [x] Publish the seven-file handoff atomically without clobbering and provide a bound
   offline verifier for checksums, embedded commit/binary, version, and signature.
-- [ ] Execute the freeze at the final reviewed master commit and publish the
+- [x] Execute the freeze at the final reviewed master commit and publish the
   private annotated release-candidate tag.
 
 Evidence: [CANDIDATE_SIGNING](CANDIDATE_SIGNING.md),
@@ -753,3 +753,29 @@ Evidence: [CANDIDATE_SIGNING](CANDIDATE_SIGNING.md),
 `scripts/{build,verify}-release-candidate.py`. Project-controlled signing
 authenticates evaluator bytes but does not establish independent custody,
 assessment, public release, or production promotion.
+
+## Post-M47 — external assessor journey
+
+- [x] Make one current guide the canonical entrypoint for assessment of the
+  exact signed `v0.2.0-rc.1` handoff.
+- [x] Require independent authentication of candidate identity and public trust
+  before using the source-built verifier or handling candidate contents.
+- [x] Separate handoff verification, full local-CI reproduction, and the three
+  environment-dependent evaluation modes with explicit prerequisites and claim
+  bounds.
+- [x] Distinguish direct execution of the signed candidate binary from
+  source-built Kubernetes and OpenTofu harness evidence.
+- [x] Define a findings record that captures identity, environment, commands,
+  missing coverage, severity, reproduction, mutation observations, and
+  reassessment.
+- [x] Mark the Post-M15 assessor handoff as historical and route README users to
+  the release-candidate procedure.
+- [x] Report bounded witness-endpoint startup failures with the child-process
+  diagnostic instead of an opaque readiness parse failure.
+- [ ] Obtain an assessment record from an independent operator for the exact
+  signed candidate bytes.
+
+Evidence: [EXTERNAL_ASSESSMENT](EXTERNAL_ASSESSMENT.md),
+[README](../README.md), and [ASSESSOR_HANDOFF](ASSESSOR_HANDOFF.md). This closes
+the repository-navigation and safe-verification guidance gap; it does not create
+independent evidence or authorize production promotion.

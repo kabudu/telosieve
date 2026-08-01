@@ -78,7 +78,14 @@ impl Endpoint {
                 panic!("witness endpoint readiness timed out");
             })
             .unwrap();
-        let ready: Value = serde_json::from_str(&line).unwrap();
+        let ready: Value = serde_json::from_str(&line).unwrap_or_else(|error| {
+            let _ = child.wait();
+            let mut stderr = String::new();
+            if let Some(mut stream) = child.stderr.take() {
+                let _ = stream.read_to_string(&mut stderr);
+            }
+            panic!("witness endpoint emitted invalid readiness ({error}): {stderr}");
+        });
         let port = u16::try_from(ready["port"].as_u64().unwrap()).unwrap();
         Self {
             child,

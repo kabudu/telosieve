@@ -261,6 +261,10 @@ Version `0.2.0-rc.1` adds an atomic private freeze workflow that requires clean
 reviewed `master`, an exact reproducible binary digest, an owner-only external
 key, and a maximum 30-day signature window. It emits a seven-file handoff with
 bundle, detached signature, public trust, release notes, candidate manifest, and
-checksums plus a checksum-bound offline verifier. Until the final reviewed commit is frozen
-and tagged, this is qualified release machinery rather than a released
-candidate.
+checksums plus a checksum-bound offline verifier. The reviewed commit
+`ae5bfbffe96510f64026aed02e3a25b2f81cc59c` was frozen and tagged
+`v0.2.0-rc.1` as a signed private evaluation candidate. This authenticates the
+candidate bytes but does not satisfy independent assessment, production
+promotion, public release, or operational identity-custody gates. Assessors must
+follow [EXTERNAL_ASSESSMENT](EXTERNAL_ASSESSMENT.md), including independent
+authentication of the trust record before signature verification.

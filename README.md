@@ -22,8 +22,8 @@ and refuse repair when surviving evidence cannot distinguish safe outcomes.
 The original M3 decision narrowed Telosieve to private research. After the
 registered unsafe approval was removed and the bounded evidence base expanded,
 the project authorized a private, production-shaped evaluation product on
-2026-07-30. Version `0.2.0-rc.1` is being prepared as the first signed private
-evaluation candidate for external assessment. Public release, autonomous production actuation, and
+2026-07-30. Version `0.2.0-rc.1` is the first signed private evaluation
+candidate for external assessment. Public release, autonomous production actuation, and
 general safety claims remain blocked pending their separate explicit decisions;
 production promotion additionally requires independent validation of the exact
 candidate. Certificate v4's
@@ -47,6 +47,20 @@ mode; it currently retains three deferred cells and is not a robustness proof.
 An authenticated [observation-quorum primitive](docs/OBSERVATION_QUORUM.md) now
 provides the cross-mode cryptographic foundation for those remaining cells, but
 evaluation does not yet require it and the cells remain deferred.
+
+## External assessment
+
+External assessors should start with the
+[External Assessment Guide](docs/EXTERNAL_ASSESSMENT.md). It identifies the
+exact `v0.2.0-rc.1` source and handoff, requires an independently authenticated
+trust-record digest and independently built verifier, separates mandatory
+integrity checks from environment-dependent integration tests, and defines the
+requested findings record. Do not execute the bundled binary before the signed
+handoff has been verified.
+
+The older [Independent-Assessment Handoff](docs/ASSESSOR_HANDOFF.md) is retained
+only to reproduce the historical Post-M15 evidence; it is not the release-
+candidate assessment procedure.
 
 Opt-in recovery-root-signed authority lifecycle chains now rotate, expire, and
 revoke operational keys without invalidating historical phenotype signatures.

@@ -14,6 +14,7 @@ REQUIRED = (
     "AGENTS.md",
     "docs/ARCHITECTURE.md",
     "docs/ASSESSOR_HANDOFF.md",
+    "docs/EXTERNAL_ASSESSMENT.md",
     "docs/AUTHORITY_PROTOCOL.md",
     "docs/E2E_TESTING.md",
     "docs/EVALUATION_PRODUCT_DECISION.md",
