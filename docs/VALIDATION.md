@@ -42,6 +42,11 @@ Cargo metadata, repository-owned documentation validation, diff hygiene,
 placeholder markers, and the absence of hosted CI workflow files. Pull requests
 record the command and result; no hosted check is expected or implied.
 
+Product contract v3 binds all four compiled evaluation capabilities to mandatory
+observation quorum verification and exact compatible certificate schemas. The
+contract validator also inspects all packaged example configurations and refuses
+eight drift mutations, including optional quorum and certificate confusion.
+
 M1 certificates include conventional convergence, signed-history rollback to the
 authenticated observed consensus, and invariant-gated convergence baselines. Each
 records its decision, proposed transition, checker verdict, and unsafe-approval

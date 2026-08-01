@@ -5,7 +5,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 SCHEMA = "telosieve.private-bundle/v3"
-CAPABILITY_SCHEMA = "telosieve.evaluation-capabilities/v1"
+CAPABILITY_SCHEMA = "telosieve.evaluation-capabilities/v2"
 PROFILE_SCHEMA = "telosieve.evaluation-candidate-profile/v1"
 FILES = [
     "AGENTS.md", "README.md", "Cargo.lock", "docs/EVALUATION_CLI.md",
@@ -185,14 +185,16 @@ def collect_capabilities(binary, contract_bytes):
         raise SystemExit("private-bundle: binary capabilities do not match the product contract")
     capabilities = value.get("capabilities")
     if (
-        contract.get("schema_version") != "telosieve.evaluation-product-contract/v2"
+        contract.get("schema_version") != "telosieve.evaluation-product-contract/v3"
         or contract.get("evaluation_authority_boundary") != "read-only-no-target-mutation"
         or not isinstance(capabilities, list)
         or not 1 <= len(capabilities) <= 16
         or any(
             not isinstance(item, dict)
-            or set(item) != {"configuration_schema", "mode", "target_mutated"}
+            or set(item) != {"configuration_schema", "mode", "target_mutated", "observation_quorum_required", "certificate_schema"}
             or item["target_mutated"] is not False
+            or item["observation_quorum_required"] is not True
+            or item["certificate_schema"] not in {"telosieve.certificate/v9", "telosieve.certificate/v10", "telosieve.certificate/v11"}
             or not isinstance(item["mode"], str)
             or any(token in item["mode"].lower() for token in MUTATION_TOKENS)
             for item in capabilities
@@ -212,8 +214,12 @@ def validate_test_inputs(capability_document, contract, sources):
         )
     ]
     packaged = [
-        {"configuration_schema": item.get("schema_version"), "mode": item.get("mode"), "target_mutated": False}
-        for item in configurations
+        {"configuration_schema": item.get("schema_version"), "mode": item.get("mode"), "target_mutated": False,
+         "observation_quorum_required": True, "certificate_schema": certificate_schema}
+        for item, certificate_schema in zip(configurations, (
+            "telosieve.certificate/v9", "telosieve.certificate/v9",
+            "telosieve.certificate/v10", "telosieve.certificate/v11",
+        ), strict=True)
     ]
     plan = strict_json(sources["evaluation/candidate-test-plan.json"], "candidate test plan")
     coverage = strict_json(sources["evaluation/adversarial-coverage.json"], "adversarial coverage")
@@ -225,6 +231,8 @@ def validate_test_inputs(capability_document, contract, sources):
             "configuration_schema": item.get("configuration_schema"),
             "mode": item.get("mode"),
             "target_mutated": item.get("expected_target_mutated"),
+            "observation_quorum_required": item.get("expected_observation_quorum_required"),
+            "certificate_schema": item.get("expected_certificate_schema"),
         }
         for item in tests
     ] if isinstance(tests, list) and all(isinstance(item, dict) for item in tests) else None

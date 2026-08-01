@@ -308,3 +308,7 @@ It does not claim an independently operated alerting destination.
 
 Post-M56 packages a fail-closed Prometheus textfile publication boundary. It
 does not claim independently operated scraping, routing, retention or response.
+
+Post-M57 makes mandatory quorum and compatible certificate bindings explicit in
+compiled capabilities and product contract v3. It preserves historical
+certificate readability and does not claim independent producer operation.

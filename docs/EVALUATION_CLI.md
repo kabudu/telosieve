@@ -10,9 +10,10 @@ cargo run --locked --offline -- evaluate evaluation/config.example.json
 ```
 
 `telosieve evaluation-capabilities` emits the bounded compiled
-`telosieve.evaluation-capabilities/v1` inventory. Its schema/mode records must
-exactly equal contract v2's `supported_evaluation_modes`, and every record must
-declare `target_mutated: false`.
+`telosieve.evaluation-capabilities/v2` inventory. Its schema/mode records must
+exactly equal product contract v3's `supported_evaluation_modes`. Every record
+must declare `target_mutated: false`, mandatory observation quorum verification,
+and the compatible certificate schema that receives the verified digest.
 
 `telosieve --version` prints the binary package version. The `evaluate` command,
 the supported v4–v7 configurations, and

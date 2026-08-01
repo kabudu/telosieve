@@ -119,7 +119,7 @@ fn product_command(args: &[String]) -> Option<ExitCode> {
             println!(
                 "{}",
                 serde_json::json!({
-                    "schema_version": "telosieve.evaluation-capabilities/v1",
+                    "schema_version": "telosieve.evaluation-capabilities/v2",
                     "capabilities": telosieve::evaluation::SUPPORTED_EVALUATION_CAPABILITIES,
                 })
             );

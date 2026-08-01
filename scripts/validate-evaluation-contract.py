@@ -13,6 +13,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 CONTRACT = ROOT / "evaluation/contract.json"
 RESULT = ROOT / "results/evaluation-contract-validation.json"
+CONFIGURATIONS = (
+    ROOT / "evaluation/config.example.json",
+    ROOT / "evaluation/config.live.example.json",
+    ROOT / "evaluation/config.opentofu.example.json",
+    ROOT / "evaluation/config.integration.example.json",
+)
 MAX_CAPABILITY_BYTES = 64 * 1024
 MAX_CAPABILITIES = 16
 MUTATION_TOKENS = ("actuate", "apply", "create", "delete", "mutate", "patch", "update", "write")
@@ -51,14 +57,20 @@ EXPECTED_PROMOTION = {
     "named-production-adapter-concurrency-and-recovery-proof",
     "production-identity-key-clock-and-custody-design",
 }
+EXPECTED_CAPABILITY_BINDINGS = {
+    ("telosieve.evaluation-config/v4", "kubernetes-shadow"): "telosieve.certificate/v9",
+    ("telosieve.evaluation-config/v5", "kubernetes-live"): "telosieve.certificate/v9",
+    ("telosieve.evaluation-config/v6", "opentofu-plan"): "telosieve.certificate/v10",
+    ("telosieve.evaluation-config/v7", "external-read-only"): "telosieve.certificate/v11",
+}
 EXPECTED_RESULT = {
-    "schema_version": "telosieve.evaluation-contract-validation/v2",
+    "schema_version": "telosieve.evaluation-contract-validation/v3",
     "supported_modes": 4,
     "authorized_work": len(EXPECTED_AUTHORIZED),
     "prohibited_actions": len(EXPECTED_PROHIBITED),
     "candidate_readiness_gates": len(EXPECTED_READINESS),
     "production_promotion_gates": len(EXPECTED_PROMOTION),
-    "adversarial_refusals": 6,
+    "adversarial_refusals": 8,
     "status": "passed",
 }
 
@@ -105,7 +117,7 @@ def configuration_version(value: object) -> int:
 def validate_capabilities(value: object) -> list[dict[str, object]]:
     if not isinstance(value, dict) or set(value) != {"schema_version", "capabilities"}:
         fail("capability inventory fields are invalid")
-    if value["schema_version"] != "telosieve.evaluation-capabilities/v1":
+    if value["schema_version"] != "telosieve.evaluation-capabilities/v2":
         fail("capability inventory schema is unsupported")
     capabilities = value["capabilities"]
     if not isinstance(capabilities, list) or not 1 <= len(capabilities) <= MAX_CAPABILITIES:
@@ -114,7 +126,8 @@ def validate_capabilities(value: object) -> list[dict[str, object]]:
     modes: set[str] = set()
     for capability in capabilities:
         if not isinstance(capability, dict) or set(capability) != {
-            "configuration_schema", "mode", "target_mutated"
+            "configuration_schema", "mode", "target_mutated",
+            "observation_quorum_required", "certificate_schema",
         }:
             fail("capability fields are invalid")
         schema = capability["configuration_schema"]
@@ -124,6 +137,8 @@ def validate_capabilities(value: object) -> list[dict[str, object]]:
             not isinstance(mode, str) or not mode or len(mode) > 128
             or not mode.isascii()
             or capability["target_mutated"] is not False
+            or capability["observation_quorum_required"] is not True
+            or EXPECTED_CAPABILITY_BINDINGS.get((schema, mode)) != capability["certificate_schema"]
             or any(token in mode.lower() for token in MUTATION_TOKENS)
             or schema in schemas or mode in modes
         ):
@@ -137,14 +152,14 @@ def validate_capabilities(value: object) -> list[dict[str, object]]:
 
 def validate(contract: object, emitted: object) -> None:
     if not isinstance(contract, dict) or set(contract) != EXPECTED_KEYS:
-        fail("contract fields do not exactly match the v2 schema")
-    if contract["schema_version"] != "telosieve.evaluation-product-contract/v2":
+        fail("contract fields do not exactly match the v3 schema")
+    if contract["schema_version"] != "telosieve.evaluation-product-contract/v3":
         fail("unsupported contract schema")
     if contract["decision"] != "private-evaluation-product-authorized":
         fail("private evaluation product is not explicitly authorized")
     if contract["decision_date"] != "2026-07-30":
         fail("decision date changed")
-    if contract["contract_revision_date"] != "2026-07-31":
+    if contract["contract_revision_date"] != "2026-08-02":
         fail("contract revision date changed")
     if contract["repository_visibility"] != "private":
         fail("evaluation contract must preserve private repository status")
@@ -161,10 +176,31 @@ def validate(contract: object, emitted: object) -> None:
     exact_string_set(contract["production_promotion_gates"], EXPECTED_PROMOTION, "production_promotion_gates")
 
 
+def validate_configurations(capabilities: list[dict[str, object]]) -> None:
+    configurations = [strict_json(path.read_text(encoding="utf-8"), path.name) for path in CONFIGURATIONS]
+    expected = {(item["configuration_schema"], item["mode"]) for item in capabilities}
+    actual: set[tuple[object, object]] = set()
+    for config in configurations:
+        if not isinstance(config, dict):
+            fail("evaluation example configuration is not an object")
+        actual.add((config.get("schema_version"), config.get("mode")))
+        if "observation_trust_path" not in config:
+            fail("evaluation example omits mandatory observation trust")
+        if config.get("mode") == "kubernetes-shadow":
+            if "observation_quorum_path" not in config:
+                fail("shadow example omits mandatory observation quorum")
+        else:
+            sources = config.get("observation_sources")
+            if not isinstance(sources, list) or not 2 <= len(sources) <= 8:
+                fail("evaluation example omits mandatory corroborated sources")
+    if actual != expected:
+        fail("evaluation examples do not exactly cover compiled capabilities")
+
+
 def adversarial_refusals(contract: dict[str, object], emitted: dict[str, object]) -> int:
     cases: list[tuple[dict[str, object], dict[str, object]]] = []
     extra = copy.deepcopy(emitted)
-    extra["capabilities"].append({"configuration_schema": "telosieve.evaluation-config/v4", "mode": "future-read", "target_mutated": False})
+    extra["capabilities"].append({"configuration_schema": "telosieve.evaluation-config/v8", "mode": "future-read", "target_mutated": False, "observation_quorum_required": True, "certificate_schema": "telosieve.certificate/v11"})
     cases.append((copy.deepcopy(contract), extra))
     missing = copy.deepcopy(contract)
     missing["supported_evaluation_modes"] = missing["supported_evaluation_modes"][:-1]
@@ -181,6 +217,12 @@ def adversarial_refusals(contract: dict[str, object], emitted: dict[str, object]
     weakened = copy.deepcopy(contract)
     weakened["evaluation_authority_boundary"] = "read-write"
     cases.append((weakened, copy.deepcopy(emitted)))
+    optional_quorum = copy.deepcopy(emitted)
+    optional_quorum["capabilities"][0]["observation_quorum_required"] = False
+    cases.append((copy.deepcopy(contract), optional_quorum))
+    confused_certificate = copy.deepcopy(emitted)
+    confused_certificate["capabilities"][0]["certificate_schema"] = "telosieve.certificate/v10"
+    cases.append((copy.deepcopy(contract), confused_certificate))
     for mutated_contract, mutated_emitted in cases:
         try:
             validate(mutated_contract, mutated_emitted)
@@ -201,6 +243,7 @@ def main() -> int:
             fail(f"compiled capability inventory failed: {process.stderr.strip()}")
         emitted = strict_json(process.stdout, "capability inventory")
         validate(contract, emitted)
+        validate_configurations(emitted["capabilities"])
         refusals = adversarial_refusals(contract, emitted)
         decision = (ROOT / "docs/EVALUATION_PRODUCT_DECISION.md").read_text(encoding="utf-8")
         for phrase in (

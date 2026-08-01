@@ -543,13 +543,14 @@ or independent validation.
   authenticated producer domains.
 - [x] Exercise all three modes plus substitution, forgery, domain, time,
   identity, canonical-shape, and resource refusals.
-- [ ] Make quorum verification mandatory in versioned evaluation schemas and
+- [x] Make quorum verification mandatory in versioned evaluation schemas and
   bind the verified evidence digest into compatible certificates.
 - [ ] Establish independently operated producer domains and key custody.
 
-Evidence: [OBSERVATION_QUORUM](OBSERVATION_QUORUM.md) and focused tests in
-`src/observation_quorum.rs`. This is a qualified protocol primitive; M37 applies
-it to shadow evaluation while live and OpenTofu integration remain open.
+Evidence: [OBSERVATION_QUORUM](OBSERVATION_QUORUM.md), compiled evaluation
+capabilities, the product contract v3 validator, and focused tests in
+`src/observation_quorum.rs`. M37, M39, M40 and M42 apply the primitive to every
+supported evaluation mode; operational independence remains open.
 
 ## Post-M37 — corroborated Kubernetes shadow evaluation
 

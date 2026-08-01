@@ -32,6 +32,8 @@ pub struct EvaluationCapability {
     pub configuration_schema: &'static str,
     pub mode: &'static str,
     pub target_mutated: bool,
+    pub observation_quorum_required: bool,
+    pub certificate_schema: &'static str,
 }
 
 pub const SUPPORTED_EVALUATION_CAPABILITIES: &[EvaluationCapability] = &[
@@ -39,21 +41,29 @@ pub const SUPPORTED_EVALUATION_CAPABILITIES: &[EvaluationCapability] = &[
         configuration_schema: CONFIG_SCHEMA_VERSION,
         mode: KUBERNETES_SHADOW_MODE,
         target_mutated: false,
+        observation_quorum_required: true,
+        certificate_schema: crate::certificate::CERTIFICATE_VERSION_V9,
     },
     EvaluationCapability {
         configuration_schema: LIVE_CONFIG_SCHEMA_VERSION,
         mode: "kubernetes-live",
         target_mutated: false,
+        observation_quorum_required: true,
+        certificate_schema: crate::certificate::CERTIFICATE_VERSION_V9,
     },
     EvaluationCapability {
         configuration_schema: OPENTOFU_CONFIG_SCHEMA_VERSION,
         mode: "opentofu-plan",
         target_mutated: false,
+        observation_quorum_required: true,
+        certificate_schema: crate::certificate::CERTIFICATE_VERSION_V10,
     },
     EvaluationCapability {
         configuration_schema: INTEGRATION_CONFIG_SCHEMA_VERSION,
         mode: crate::integration::MODE,
         target_mutated: false,
+        observation_quorum_required: true,
+        certificate_schema: crate::certificate::CERTIFICATE_VERSION_V11,
     },
 ];
 

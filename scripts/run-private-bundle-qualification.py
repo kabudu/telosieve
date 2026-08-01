@@ -95,6 +95,8 @@ def assert_bundle(path: Path) -> int:
                 "configuration_schema": item["configuration_schema"],
                 "mode": item["mode"],
                 "expected_target_mutated": item["expected_target_mutated"],
+                "observation_quorum_required": item["expected_observation_quorum_required"],
+                "certificate_schema": item["expected_certificate_schema"],
             }
             for item in test_plan["tests"]
         ]
@@ -103,6 +105,8 @@ def assert_bundle(path: Path) -> int:
                 "configuration_schema": item["configuration_schema"],
                 "mode": item["mode"],
                 "expected_target_mutated": False,
+                "observation_quorum_required": item["observation_quorum_required"],
+                "certificate_schema": item["certificate_schema"],
             }
             for item in capabilities["capabilities"]
         ]
@@ -256,8 +260,13 @@ def assert_bundle(path: Path) -> int:
                 "configuration_schema": (config := json.loads(archive.read(path)))["schema_version"],
                 "mode": config["mode"],
                 "target_mutated": False,
+                "observation_quorum_required": True,
+                "certificate_schema": certificate_schema,
             }
-            for path in EXPECTED_CONFIGURATIONS
+            for path, certificate_schema in zip(EXPECTED_CONFIGURATIONS, (
+                "telosieve.certificate/v9", "telosieve.certificate/v9",
+                "telosieve.certificate/v10", "telosieve.certificate/v11",
+            ), strict=True)
         ]
         if packaged_modes != capabilities["capabilities"]:
             raise SystemExit("private-bundle-qualification: packaged configs do not cover capabilities")
@@ -355,7 +364,7 @@ def write_executable(path: Path, body: str) -> None:
 
 def assert_capability_refusals(work: Path) -> int:
     fixtures = {
-        "mismatch": "printf '%s\\n' '{\"schema_version\":\"telosieve.evaluation-capabilities/v1\",\"capabilities\":[]}'",
+        "mismatch": "printf '%s\\n' '{\"schema_version\":\"telosieve.evaluation-capabilities/v2\",\"capabilities\":[]}'",
         "malformed": "printf 'not-json\\n'",
         "oversized": "dd if=/dev/zero bs=1024 count=65 2>/dev/null",
         "timeout": "sleep 6",

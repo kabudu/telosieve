@@ -40,6 +40,12 @@ The first supported mode is read-only shadow evaluation:
 - every input, retry, wait, response, artifact, and retained-history path must
   remain explicitly bounded and fail closed.
 
+Product contract v3 additionally requires every compiled evaluation capability
+to declare mandatory observation quorum verification and the exact compatible
+certificate schema that receives the verified evidence digest. Contract,
+compiled capability, packaged configuration and assessor test-plan drift fail
+the authoritative local gate.
+
 The file-backed reference actuator remains a protocol and recovery test backend.
 It is not a supported production integration.
 

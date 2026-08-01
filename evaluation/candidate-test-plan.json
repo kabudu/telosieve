@@ -15,25 +15,33 @@
       "configuration_schema": "telosieve.evaluation-config/v4",
       "mode": "kubernetes-shadow",
       "command": "telosieve evaluate evaluation/config.example.json",
-      "expected_target_mutated": false
+      "expected_target_mutated": false,
+      "expected_observation_quorum_required": true,
+      "expected_certificate_schema": "telosieve.certificate/v9"
     },
     {
       "configuration_schema": "telosieve.evaluation-config/v5",
       "mode": "kubernetes-live",
       "command": "python3 scripts/run-kubernetes-real-cluster.py",
-      "expected_target_mutated": false
+      "expected_target_mutated": false,
+      "expected_observation_quorum_required": true,
+      "expected_certificate_schema": "telosieve.certificate/v9"
     },
     {
       "configuration_schema": "telosieve.evaluation-config/v6",
       "mode": "opentofu-plan",
       "command": "python3 scripts/run-opentofu-plan.py",
-      "expected_target_mutated": false
+      "expected_target_mutated": false,
+      "expected_observation_quorum_required": true,
+      "expected_certificate_schema": "telosieve.certificate/v10"
     },
     {
       "configuration_schema": "telosieve.evaluation-config/v7",
       "mode": "external-read-only",
       "command": "python3 scripts/run-redis-integration.py && python3 scripts/run-postgresql-integration.py && python3 scripts/run-http-json-integration.py",
-      "expected_target_mutated": false
+      "expected_target_mutated": false,
+      "expected_observation_quorum_required": true,
+      "expected_certificate_schema": "telosieve.certificate/v11"
     }
   ]
 }

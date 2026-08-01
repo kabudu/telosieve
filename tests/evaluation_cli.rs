@@ -37,7 +37,7 @@ fn compiled_capabilities_exactly_match_the_product_contract() {
     let emitted: Value = serde_json::from_slice(&output.stdout).unwrap();
     assert_eq!(
         emitted["schema_version"],
-        "telosieve.evaluation-capabilities/v1"
+        "telosieve.evaluation-capabilities/v2"
     );
     assert_eq!(
         emitted["capabilities"],
@@ -47,7 +47,7 @@ fn compiled_capabilities_exactly_match_the_product_contract() {
         serde_json::from_slice(include_bytes!("../evaluation/contract.json")).unwrap();
     assert_eq!(
         contract["schema_version"],
-        "telosieve.evaluation-product-contract/v2"
+        "telosieve.evaluation-product-contract/v3"
     );
     assert_eq!(
         contract["evaluation_authority_boundary"],
@@ -63,6 +63,18 @@ fn compiled_capabilities_exactly_match_the_product_contract() {
             .unwrap()
             .iter()
             .all(|capability| capability["target_mutated"] == false)
+    );
+    assert!(
+        emitted["capabilities"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .all(|capability| {
+                capability["observation_quorum_required"] == true
+                    && capability["certificate_schema"]
+                        .as_str()
+                        .is_some_and(|schema| schema.starts_with("telosieve.certificate/v"))
+            })
     );
 }
 
