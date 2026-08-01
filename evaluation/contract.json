@@ -21,6 +21,11 @@
       "configuration_schema": "telosieve.evaluation-config/v6",
       "mode": "opentofu-plan",
       "target_mutated": false
+    },
+    {
+      "configuration_schema": "telosieve.evaluation-config/v7",
+      "mode": "external-read-only",
+      "target_mutated": false
     }
   ],
   "authorized_work": [

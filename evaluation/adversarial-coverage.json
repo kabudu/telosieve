@@ -4,7 +4,8 @@
   "modes": [
     "kubernetes-shadow",
     "kubernetes-live",
-    "opentofu-plan"
+    "opentofu-plan",
+    "external-read-only"
   ],
   "limits": {
     "maximum_threat_classes": 64,
@@ -16,110 +17,120 @@
       "id": "authority-evidence-substitution",
       "title": "Authority or target evidence is omitted, forged, or substituted",
       "priority": "required",
-      "applicable_modes": ["kubernetes-shadow", "kubernetes-live", "opentofu-plan"],
+      "applicable_modes": ["kubernetes-shadow", "kubernetes-live", "opentofu-plan", "external-read-only"],
       "coverage": {
         "kubernetes-shadow": {"status": "covered", "evidence": [{"path": "tests/adversarial.rs", "anchor": "registered_adversarial_fault_classes_fail_closed_or_refuse"}]},
         "kubernetes-live": {"status": "covered", "evidence": [{"path": "scripts/run-kubernetes-real-cluster.py", "anchor": "authority mismatch did not fail closed"}]},
-        "opentofu-plan": {"status": "covered", "evidence": [{"path": "src/opentofu_plan.rs", "anchor": "unsupported_sensitive_unknown_duplicate_and_mismatched_plans_fail_closed"}]}
+        "opentofu-plan": {"status": "covered", "evidence": [{"path": "src/opentofu_plan.rs", "anchor": "unsupported_sensitive_unknown_duplicate_and_mismatched_plans_fail_closed"}]},
+        "external-read-only": {"status": "covered", "evidence": [{"path": "tests/integration_contract.rs", "anchor": "authority"}]}
       }
     },
     {
       "id": "malformed-ambiguous-or-oversized-input",
       "title": "Malformed, ambiguous, unknown, or resource-exhausting input crosses the parser boundary",
       "priority": "required",
-      "applicable_modes": ["kubernetes-shadow", "kubernetes-live", "opentofu-plan"],
+      "applicable_modes": ["kubernetes-shadow", "kubernetes-live", "opentofu-plan", "external-read-only"],
       "coverage": {
         "kubernetes-shadow": {"status": "covered", "evidence": [{"path": "tests/evaluation_cli.rs", "anchor": "versioned_evaluation_cli_is_read_only_bounded_and_fail_closed"}]},
         "kubernetes-live": {"status": "covered", "evidence": [{"path": "tests/kubernetes_live_cli.rs", "anchor": "oversized"}]},
-        "opentofu-plan": {"status": "covered", "evidence": [{"path": "src/opentofu_plan.rs", "anchor": "MAX_RESOURCE_CHANGES"}]}
+        "opentofu-plan": {"status": "covered", "evidence": [{"path": "src/opentofu_plan.rs", "anchor": "MAX_RESOURCE_CHANGES"}]},
+        "external-read-only": {"status": "covered", "evidence": [{"path": "src/integration.rs", "anchor": "MAX_RESPONSE_BYTES"}]}
       }
     },
     {
       "id": "mutation-attempt",
       "title": "An input, credential, or requested operation attempts target mutation",
       "priority": "required",
-      "applicable_modes": ["kubernetes-shadow", "kubernetes-live", "opentofu-plan"],
+      "applicable_modes": ["kubernetes-shadow", "kubernetes-live", "opentofu-plan", "external-read-only"],
       "coverage": {
         "kubernetes-shadow": {"status": "covered", "evidence": [{"path": "tests/evaluation_cli.rs", "anchor": "mutation-mode.json"}]},
         "kubernetes-live": {"status": "covered", "evidence": [{"path": "scripts/run-kubernetes-real-cluster.py", "anchor": "(\"patch\", \"configmap/repair-goal\")"}]},
-        "opentofu-plan": {"status": "covered", "evidence": [{"path": "scripts/run-opentofu-plan.py", "anchor": "destructive plan emitted evidence"}]}
+        "opentofu-plan": {"status": "covered", "evidence": [{"path": "scripts/run-opentofu-plan.py", "anchor": "destructive plan emitted evidence"}]},
+        "external-read-only": {"status": "covered", "evidence": [{"path": "tests/integration_contract.rs", "anchor": "mutation-capability"}]}
       }
     },
     {
       "id": "incoherent-or-racing-observation",
       "title": "The observed target changes or becomes incoherent during collection",
       "priority": "required",
-      "applicable_modes": ["kubernetes-shadow", "kubernetes-live"],
+      "applicable_modes": ["kubernetes-shadow", "kubernetes-live", "external-read-only"],
       "coverage": {
         "kubernetes-shadow": {"status": "covered", "evidence": [{"path": "src/kubernetes_shadow.rs", "anchor": "drift_partial_stale_identity_schema_and_authority_mismatch_fail_closed"}]},
         "kubernetes-live": {"status": "covered", "evidence": [{"path": "tests/kubernetes_live_cli.rs", "anchor": "fails_closed_on_drift"}]},
-        "opentofu-plan": {"status": "not-applicable", "reason": "The adapter consumes one immutable saved-plan byte sequence and binds its exact digest."}
+        "opentofu-plan": {"status": "not-applicable", "reason": "The adapter consumes one immutable saved-plan byte sequence and binds its exact digest."},
+        "external-read-only": {"status": "covered", "evidence": [{"path": "tests/integration_contract.rs", "anchor": "incomplete"}]}
       }
     },
     {
       "id": "credential-scope-abuse",
       "title": "Evaluation credentials are used beyond the minimum read-only scope",
       "priority": "required",
-      "applicable_modes": ["kubernetes-live"],
+      "applicable_modes": ["kubernetes-live", "external-read-only"],
       "coverage": {
         "kubernetes-shadow": {"status": "not-applicable", "reason": "The shadow adapter has no target credentials or live client."},
         "kubernetes-live": {"status": "covered", "evidence": [{"path": "scripts/run-kubernetes-real-cluster.py", "anchor": "must-not-read"}, {"path": "deploy/kubernetes/evaluation-rbac.yaml", "anchor": "resources: [\"configmaps\"]"}]},
-        "opentofu-plan": {"status": "not-applicable", "reason": "The saved-plan adapter has no provider, backend, or cloud credential interface."}
+        "opentofu-plan": {"status": "not-applicable", "reason": "The saved-plan adapter has no provider, backend, or cloud credential interface."},
+        "external-read-only": {"status": "covered", "evidence": [{"path": "tests/integration_contract.rs", "anchor": "mutation-capability"}]}
       }
     },
     {
       "id": "transport-timeout-or-outage",
       "title": "A live target transport stalls, fails, or disappears",
       "priority": "required",
-      "applicable_modes": ["kubernetes-live"],
+      "applicable_modes": ["kubernetes-live", "external-read-only"],
       "coverage": {
         "kubernetes-shadow": {"status": "not-applicable", "reason": "The shadow adapter consumes a bounded local export without network transport."},
         "kubernetes-live": {"status": "covered", "evidence": [{"path": "tests/kubernetes_live_cli.rs", "anchor": "timeout"}, {"path": "scripts/run-kubernetes-real-cluster.py", "anchor": "API outage did not fail closed"}]},
-        "opentofu-plan": {"status": "not-applicable", "reason": "The saved-plan adapter consumes a bounded local file without network transport."}
+        "opentofu-plan": {"status": "not-applicable", "reason": "The saved-plan adapter consumes a bounded local file without network transport."},
+        "external-read-only": {"status": "covered", "evidence": [{"path": "tests/integration_contract.rs", "anchor": "timed_out_adapter"}]}
       }
     },
     {
       "id": "output-alias-or-partial-evidence",
       "title": "Evidence output aliases trusted input or persistence fails partway",
       "priority": "required",
-      "applicable_modes": ["kubernetes-shadow", "kubernetes-live", "opentofu-plan"],
+      "applicable_modes": ["kubernetes-shadow", "kubernetes-live", "opentofu-plan", "external-read-only"],
       "coverage": {
         "kubernetes-shadow": {"status": "covered", "evidence": [{"path": "tests/evaluation_cli.rs", "anchor": "temporary_collision_config"}]},
         "kubernetes-live": {"status": "covered", "evidence": [{"path": "src/evaluation.rs", "anchor": "reject_live_path_collisions"}]},
-        "opentofu-plan": {"status": "covered", "evidence": [{"path": "src/engine.rs", "anchor": "OpenTofuError::OutputCollision"}]}
+        "opentofu-plan": {"status": "covered", "evidence": [{"path": "src/engine.rs", "anchor": "OpenTofuError::OutputCollision"}]},
+        "external-read-only": {"status": "covered", "evidence": [{"path": "tests/integration_contract.rs", "anchor": "alias_refused"}]}
       }
     },
     {
       "id": "replay-rollback-or-equivocation",
       "title": "Previously valid, rolled-back, or conflicting authority evidence is replayed",
       "priority": "required",
-      "applicable_modes": ["kubernetes-shadow", "kubernetes-live", "opentofu-plan"],
+      "applicable_modes": ["kubernetes-shadow", "kubernetes-live", "opentofu-plan", "external-read-only"],
       "coverage": {
         "kubernetes-shadow": {"status": "covered", "evidence": [{"path": "tests/adversarial.rs", "anchor": "equivocation"}]},
         "kubernetes-live": {"status": "covered", "evidence": [{"path": "tests/adversarial.rs", "anchor": "stale"}]},
-        "opentofu-plan": {"status": "covered", "evidence": [{"path": "tests/adversarial.rs", "anchor": "replayed"}]}
+        "opentofu-plan": {"status": "covered", "evidence": [{"path": "tests/adversarial.rs", "anchor": "replayed"}]},
+        "external-read-only": {"status": "covered", "evidence": [{"path": "src/integration.rs", "anchor": "captured_at != scenario.evaluation_time"}]}
       }
     },
     {
       "id": "compromised-consistent-producer",
       "title": "A compromised producer supplies internally consistent but false observations",
       "priority": "research-gap",
-      "applicable_modes": ["kubernetes-shadow", "kubernetes-live", "opentofu-plan"],
+      "applicable_modes": ["kubernetes-shadow", "kubernetes-live", "opentofu-plan", "external-read-only"],
       "coverage": {
         "kubernetes-shadow": {"status": "covered", "evidence": [{"path": "tests/evaluation_cli.rs", "anchor": "forged_quorum"}]},
         "kubernetes-live": {"status": "deferred", "reason": "Separate signed producer processes now detect local collector faults, but all qualified producers still trust one project-controlled Kubernetes API server."},
-        "opentofu-plan": {"status": "deferred", "reason": "Requires independent provider and state truth; plan JSON alone can lie consistently."}
+        "opentofu-plan": {"status": "deferred", "reason": "Requires independent provider and state truth; plan JSON alone can lie consistently."},
+        "external-read-only": {"status": "deferred", "reason": "Exact-byte quorum detects disagreement but cannot prove independently administered adapters or truthful platform observations."}
       }
     },
     {
       "id": "sustained-adversarial-load",
       "title": "Repeated hostile evaluations exhaust CPU, memory, process, or target request budgets",
       "priority": "required",
-      "applicable_modes": ["kubernetes-shadow", "kubernetes-live", "opentofu-plan"],
+      "applicable_modes": ["kubernetes-shadow", "kubernetes-live", "opentofu-plan", "external-read-only"],
       "coverage": {
         "kubernetes-shadow": {"status": "covered", "evidence": [{"path": "scripts/run-sustained-adversarial-load.py", "anchor": "SHADOW_ATTACK_BYTES = 1024 * 1024 + 1"}]},
         "kubernetes-live": {"status": "covered", "evidence": [{"path": "scripts/run-sustained-adversarial-load.py", "anchor": "LIVE_RESPONSE_ATTACK_BYTES = 1024 * 1024 + 1"}, {"path": "scripts/run-kubernetes-real-cluster.py", "anchor": "LOAD_EVALUATIONS = 8"}]},
-        "opentofu-plan": {"status": "covered", "evidence": [{"path": "scripts/run-sustained-adversarial-load.py", "anchor": "OPENTOFU_ATTACK_BYTES = 2 * 1024 * 1024 + 1"}]}
+        "opentofu-plan": {"status": "covered", "evidence": [{"path": "scripts/run-sustained-adversarial-load.py", "anchor": "OPENTOFU_ATTACK_BYTES = 2 * 1024 * 1024 + 1"}]},
+        "external-read-only": {"status": "covered", "evidence": [{"path": "tests/integration_contract.rs", "anchor": "for _ in 0..4"}]}
       }
     }
   ]

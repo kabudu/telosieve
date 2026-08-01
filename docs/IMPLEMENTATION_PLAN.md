@@ -779,3 +779,27 @@ Evidence: [EXTERNAL_ASSESSMENT](EXTERNAL_ASSESSMENT.md),
 [README](../README.md), and [ASSESSOR_HANDOFF](ASSESSOR_HANDOFF.md). This closes
 the repository-navigation and safe-verification guidance gap; it does not create
 independent evidence or authorize production promotion.
+
+## Post-M48 — standardized read-only integration contract
+
+- [x] Define a versioned platform-neutral request, response, capability and
+  stable refusal taxonomy for external read-only adapters.
+- [x] Execute adapters through bounded stdin/stdout subprocesses without loading
+  integration code into the evaluator.
+- [x] Add strict evaluation configuration v7 and compiled
+  `external-read-only` capability under the existing no-mutation boundary.
+- [x] Require exact desired/observed authority equality and a separately signed
+  multi-domain quorum over the canonical adapter response.
+- [x] Bind integration, target, response and quorum identities into compatible
+  certificate v11 evidence and both Rust and Python readers.
+- [x] Provide a packaged example, reference conformance adapter and real-CLI
+  qualification covering success, mutation declaration, partial/context/
+  authority faults, timeout, output collision and repeated hostile cases.
+- [ ] Qualify each future concrete platform adapter against a disposable real
+  system with independently controlled read-only credentials and producers.
+
+Evidence: [INTEGRATION_CONTRACT](INTEGRATION_CONTRACT.md),
+`src/integration.rs`, `tests/integration_contract.rs`, and
+`evaluation/config.integration.example.json`. This standardizes integration
+mechanics; it does not qualify an unnamed platform, prove producer truth or
+independence, or authorize actuation.

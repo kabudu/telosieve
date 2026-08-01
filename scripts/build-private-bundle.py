@@ -19,14 +19,18 @@ FILES = [
     "docs/THREAT_MODEL.md", "docs/ADVERSARIAL_COVERAGE.md",
     "docs/SUSTAINED_ADVERSARIAL_LOAD.md", "docs/OBSERVATION_QUORUM.md",
     "docs/PRODUCER_ISOLATION.md",
+    "docs/INTEGRATION_CONTRACT.md",
     "deploy/kubernetes/evaluation-rbac.yaml", "evaluation/config.example.json",
     "deploy/systemd/telosieve-observation@.service",
     "deploy/systemd/observation-kubernetes-a.example.json",
     "deploy/systemd/observation-opentofu-a.example.json",
     "evaluation/config.live.example.json", "evaluation/config.opentofu.example.json",
+    "evaluation/config.integration.example.json",
     "evaluation/observation-trust.example.json", "evaluation/observation-quorum.example.json",
     "evaluation/observation-trust.live.example.json",
     "evaluation/observation-trust.opentofu.example.json",
+    "evaluation/observation-trust.integration.example.json",
+    "evaluation/integration-response.example.json",
     "evaluation/contract.json", "evaluation/candidate-test-plan.json",
     "evaluation/candidate-readiness.json",
     "evaluation/adversarial-coverage.json",
@@ -41,6 +45,7 @@ FILES = [
     "scripts/build-release-candidate.py", "scripts/verify-release-candidate.py",
     "scripts/kubernetes-observation-producer.py",
     "scripts/opentofu-observation-producer.py",
+    "scripts/reference-integration-adapter.py",
     "scripts/observation-source-relay.py", "scripts/observation-source-client.py",
     "scripts/run-producer-isolation-qualification.py",
     "scripts/qualify-linux-producer-isolation.sh",
@@ -64,6 +69,7 @@ RUNTIME_EXECUTABLES = {
     "scripts/qualify-linux-producer-isolation.sh",
     "scripts/run-linux-producer-isolation.py",
     "scripts/verify-release-candidate.py",
+    "scripts/reference-integration-adapter.py",
 }
 
 def digest(data): return hashlib.sha256(data).hexdigest()
@@ -158,6 +164,7 @@ def validate_test_inputs(capability_document, contract, sources):
         for path in (
             "evaluation/config.example.json", "evaluation/config.live.example.json",
             "evaluation/config.opentofu.example.json",
+            "evaluation/config.integration.example.json",
         )
     ]
     packaged = [

@@ -7,7 +7,7 @@ versioned evaluation configuration/report boundary. The current product
 capabilities are configuration v4 (corroborated Kubernetes shadow), v5
 (corroborated Kubernetes live), and v6 (corroborated OpenTofu plan).
 Unknown configuration versions and modes refuse, and no automatic migration is
-performed. Existing research CLI commands and certificate v7–v10 support remain
+performed. Existing research CLI commands and certificate v7–v11 support remain
 unchanged. See [EVALUATION_CLI](EVALUATION_CLI.md).
 
 ## Support matrix
@@ -24,10 +24,11 @@ research artifacts:
 | Certificate v8 | Actuation extension only | Parse through the supported-certificate boundary |
 | Certificate v9 | Shadow extension; optional quorum digest | Parse historical and corroborated forms through the supported-certificate boundary |
 | Certificate v10 | OpenTofu plan extension; optional quorum digest | Parse historical and corroborated forms through the supported-certificate boundary |
+| Certificate v11 | Integration Contract v1 extension with required response and quorum digests | Parse only the exact integration extension shape |
 
 Scenario objects reject unknown top-level fields. Authority and lifecycle
 verification rejects unknown schema versions. The certificate compatibility
-boundary rejects unknown top-level fields, versions other than v7–v10, and
+boundary rejects unknown top-level fields, versions other than v7–v11, and
 extension shapes that do not match their version. A certificate is limited to
 2 MiB before parsing.
 
@@ -98,7 +99,7 @@ Run:
 ```
 
 The differential test passes actual v7 stateless, v8 local-actuator, and retained
-v9 shadow and v10 OpenTofu certificates through both readers. It also requires agreement on
+v9 shadow, v10 OpenTofu and v11 integration certificates through both readers. It also requires agreement on
 future-version, unknown-field, missing-field, wrong-type, out-of-range integer,
 confused-extension, duplicate-field, malformed-JSON, and oversized refusals. The
 bounded aggregate is retained in `results/reader-qualification.json`.
@@ -108,7 +109,7 @@ third-party or organizational independence. The Python reader validates the
 compatibility envelope and execution extension, not every nested semantic
 invariant. When an attestation and trust file are explicitly supplied together,
 v3 also independently verifies the detached
-`telosieve.certificate-attestation/v1` envelope. Unsigned v7–v10 reading remains
+`telosieve.certificate-attestation/v1` envelope. Unsigned v7–v11 reading remains
 available for historical compatibility and is never silently promoted to
 authenticated evidence.
 
@@ -119,7 +120,7 @@ falls back when any witness input fails.
 
 ## Deprecation and removal policy
 
-Versions v7, v8, v9, and v10 are **active**; none is deprecated. A version may become
+Versions v7, v8, v9, v10, and v11 are **active**; none is deprecated. A version may become
 deprecated only in a reviewed milestone that satisfies all of:
 
 1. a supported successor exists with Rust and independent-reader vectors;

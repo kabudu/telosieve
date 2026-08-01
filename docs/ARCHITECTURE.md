@@ -39,7 +39,8 @@ local rollback/forward mistakes but does not create an independent clock.
 
 Retained certificates cross a separate bounded compatibility boundary.
 Certificate v7 accepts no execution extension, v8 requires actuation only, and
-v9 requires shadow evidence only, and v10 requires OpenTofu plan evidence only.
+v9 requires shadow evidence only, v10 requires OpenTofu plan evidence only, and
+v11 requires Integration Contract v1 evidence only.
 Unknown versions, unknown top-level fields,
 cross-version extension shapes, and inputs over 2 MiB fail closed. Migration
 regenerates evidence from verified authoritative input rather than rewriting an
@@ -50,6 +51,12 @@ The OpenTofu boundary consumes only saved-plan JSON, requires supported format
 authenticated phenotype/goal evidence, requires an authenticated multi-domain
 quorum over the original plan bytes, and binds both plan and quorum digests in
 certificate v10. It has no backend, provider, credential, or apply capability.
+
+Additional read-only platforms cross an executable stdin/stdout boundary rather
+than linking platform code into the evaluator. The v1 integration response maps
+bounded desired and replicated observed state into the existing authenticated
+authority/checker core; exact response bytes and producer quorum are bound into
+certificate v11. This is not an actuator plug-in interface.
 
 The observation-quorum module verifies canonical, bounded Ed25519 attestations
 from distinct configured producer domains over exact platform input bytes. It
@@ -65,7 +72,7 @@ not full nested semantic or organizational independence.
 
 Certificate authenticity is a detached trust boundary. A domain-separated
 Ed25519 envelope signs the exact certificate-byte SHA-256 digest, context,
-signer/key identity, issuance, and expiry without changing certificate v7–v10.
+signer/key identity, issuance, and expiry without changing certificate v7–v11.
 Verification is bounded by certificate/attestation bytes and at most eight
 trusted keys. Both Rust and the independent Python reader implement the envelope
 and signature checks.

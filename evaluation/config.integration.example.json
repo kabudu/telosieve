@@ -1,0 +1,19 @@
+{
+  "schema_version": "telosieve.evaluation-config/v7",
+  "mode": "external-read-only",
+  "scenario_path": "../scenarios/benign.json",
+  "certificate_path": "../out/integration-certificate.json",
+  "ledger_path": "../out/integration-ledger.jsonl",
+  "observation_trust_path": "observation-trust.integration.example.json",
+  "observation_sources": [
+    {"executable_path": "/opt/telosieve/scripts/observation-source-client.py", "arguments": ["--socket", "/run/telosieve-observation-integration-a/relay.sock", "--token", "/etc/telosieve/tokens/integration-a.token"]},
+    {"executable_path": "/opt/telosieve/scripts/observation-source-client.py", "arguments": ["--socket", "/run/telosieve-observation-integration-b/relay.sock", "--token", "/etc/telosieve/tokens/integration-b.token"]}
+  ],
+  "adapter": {
+    "executable_path": "/opt/telosieve/integrations/example-service",
+    "arguments": ["--configuration", "/etc/telosieve/example-service.json"],
+    "integration_id": "example-service",
+    "resource_kind": "replicated-key-value",
+    "target_id": "example/service-a"
+  }
+}

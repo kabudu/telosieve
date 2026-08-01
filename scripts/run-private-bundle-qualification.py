@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Qualify deterministic three-mode private evaluation bundle assembly."""
+"""Qualify deterministic four-mode private evaluation bundle assembly."""
 
 import hashlib
 import json
@@ -22,6 +22,7 @@ EXPECTED_CONFIGURATIONS = (
     "evaluation/config.example.json",
     "evaluation/config.live.example.json",
     "evaluation/config.opentofu.example.json",
+    "evaluation/config.integration.example.json",
 )
 
 
@@ -123,6 +124,10 @@ def assert_bundle(path: Path) -> int:
             "examples/opentofu/main.tf", "scripts/ci-local.sh",
             "scripts/run-kubernetes-real-cluster.py", "scripts/run-opentofu-plan.py",
             "evaluation/config.opentofu.example.json", "evaluation/candidate-test-plan.json",
+            "evaluation/config.integration.example.json",
+            "evaluation/observation-trust.integration.example.json",
+            "evaluation/integration-response.example.json",
+            "docs/INTEGRATION_CONTRACT.md", "scripts/reference-integration-adapter.py",
             "evaluation/candidate-readiness.json",
             "evaluation/observation-trust.example.json", "evaluation/observation-quorum.example.json",
             "evaluation/observation-trust.live.example.json",
@@ -158,6 +163,7 @@ def assert_bundle(path: Path) -> int:
             "scripts/qualify-linux-producer-isolation.sh",
             "scripts/run-linux-producer-isolation.py",
             "scripts/verify-release-candidate.py",
+            "scripts/reference-integration-adapter.py",
         ):
             mode = archive.getinfo(producer).external_attr >> 16
             if mode & 0o777 != 0o555:

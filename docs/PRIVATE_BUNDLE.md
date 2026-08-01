@@ -3,7 +3,7 @@
 `scripts/build-private-bundle.py` creates an offline deterministic ZIP from an
 absolute locally validated Telosieve binary and a fixed allowlist of evaluation
 configuration, RBAC, lifecycle, diagnostics, policy, and operator documents.
-The fixed allowlist includes all three contracted configurations, the Kubernetes
+The fixed allowlist includes all four contracted configurations, the Kubernetes
 and OpenTofu integration material, authenticated offline/real-cluster scenarios,
 the candidate test plan, and the operator/security documents needed to assess
 them. It also includes and digest-binds the adversarial coverage contract,
@@ -15,7 +15,7 @@ The fixed contents also carry the bounded sustained-load harness and its retaine
 qualification contract.
 The builder executes the supplied binary's bounded
 `evaluation-capabilities` command and refuses unless it exactly matches contract
-v2, the packaged configurations, and the three-mode test plan. Every entry and
+v2, the packaged configurations, and the four-mode test plan. Every entry and
 the canonical full source commit are bound by the version 3
 `bundle-manifest.json`; timestamps,
 ordering, compression, and modes are fixed.

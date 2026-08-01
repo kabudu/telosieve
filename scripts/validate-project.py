@@ -20,6 +20,7 @@ REQUIRED = (
     "docs/EVALUATION_PRODUCT_DECISION.md",
     "docs/EVALUATION_CLI.md",
     "docs/EVALUATION_LIFECYCLE.md",
+    "docs/INTEGRATION_CONTRACT.md",
     "docs/OPERATOR_DIAGNOSTICS.md",
     "docs/PRIVATE_BUNDLE.md",
     "docs/CANDIDATE_SIGNING.md",

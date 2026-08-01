@@ -11,7 +11,12 @@ pub const MAX_INPUT_BYTES: usize = 4 * 1024 * 1024;
 pub const MAX_DOCUMENT_BYTES: usize = 64 * 1024;
 pub const MAX_PARTICIPANTS: usize = 8;
 pub const MAX_LIFETIME_SECONDS: u64 = 300;
-const SUPPORTED_MODES: [&str; 3] = ["kubernetes-shadow", "kubernetes-live", "opentofu-plan"];
+const SUPPORTED_MODES: [&str; 4] = [
+    "kubernetes-shadow",
+    "kubernetes-live",
+    "opentofu-plan",
+    "external-read-only",
+];
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]

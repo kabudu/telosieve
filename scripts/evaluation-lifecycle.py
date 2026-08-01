@@ -21,6 +21,7 @@ CONFIG_SCHEMAS = {
     "telosieve.evaluation-config/v5",
     "telosieve.evaluation-config/v6",
     "telosieve.evaluation-config/v4",
+    "telosieve.evaluation-config/v7",
 }
 MAX_BINARY_BYTES = 128 * 1024 * 1024
 MAX_CONFIG_BYTES = 64 * 1024
@@ -102,15 +103,23 @@ def validated_inputs(binary_value: str, config_value: str) -> tuple[bytes, bytes
             "certificate_path", "ledger_path", "observation_trust_path",
             "observation_sources",
         },
+        "telosieve.evaluation-config/v7": {
+            "schema_version", "mode", "scenario_path", "certificate_path",
+            "ledger_path", "observation_trust_path", "observation_sources",
+            "adapter",
+        },
     }[parsed["schema_version"]]
     expected_mode = {
         "telosieve.evaluation-config/v4": "kubernetes-shadow",
         "telosieve.evaluation-config/v5": "kubernetes-live",
         "telosieve.evaluation-config/v6": "opentofu-plan",
+        "telosieve.evaluation-config/v7": "external-read-only",
     }[parsed["schema_version"]]
     if set(parsed) != expected or parsed.get("mode") != expected_mode:
         raise LifecycleError("configuration fields or mode do not match its schema")
-    string_fields = expected - {"schema_version", "mode", "kubernetes", "observation_sources"}
+    string_fields = expected - {
+        "schema_version", "mode", "kubernetes", "observation_sources", "adapter"
+    }
     if any(not isinstance(parsed.get(field), str) or not parsed[field] for field in string_fields):
         raise LifecycleError("configuration path fields must be nonempty strings")
     if any(
@@ -139,7 +148,7 @@ def validated_inputs(binary_value: str, config_value: str) -> tuple[bytes, bytes
             kubernetes["kubeconfig_path"]
         ).is_absolute():
             raise LifecycleError("live Kubernetes file paths must be absolute")
-    if parsed["schema_version"] in {"telosieve.evaluation-config/v5", "telosieve.evaluation-config/v6"}:
+    if parsed["schema_version"] in {"telosieve.evaluation-config/v5", "telosieve.evaluation-config/v6", "telosieve.evaluation-config/v7"}:
         sources = parsed.get("observation_sources")
         if (
             not isinstance(sources, list) or not 2 <= len(sources) <= 8
@@ -158,6 +167,38 @@ def validated_inputs(binary_value: str, config_value: str) -> tuple[bytes, bytes
             )
         ):
             raise LifecycleError("observation sources are invalid")
+    if parsed["schema_version"] == "telosieve.evaluation-config/v7":
+        adapter = parsed.get("adapter")
+        identifier_fields = ("integration_id", "resource_kind", "target_id")
+        if (
+            not isinstance(adapter, dict)
+            or set(adapter) != {
+                "executable_path", "arguments", "integration_id",
+                "resource_kind", "target_id",
+            }
+            or not isinstance(adapter["executable_path"], str)
+            or not Path(adapter["executable_path"]).is_absolute()
+            or not isinstance(adapter["arguments"], list)
+            or len(adapter["arguments"]) > 32
+            or any(
+                not isinstance(argument, str)
+                or not argument
+                or len(argument) > 4096
+                or any(ord(character) < 32 or ord(character) == 127 for character in argument)
+                for argument in adapter["arguments"]
+            )
+            or any(
+                not isinstance(adapter[field], str)
+                or not adapter[field]
+                or len(adapter[field]) > 128
+                or any(
+                    not (character.isascii() and (character.isalnum() or character in "._:/-"))
+                    for character in adapter[field]
+                )
+                for field in identifier_fields
+            )
+        ):
+            raise LifecycleError("integration adapter configuration is invalid")
     return binary, config
 
 

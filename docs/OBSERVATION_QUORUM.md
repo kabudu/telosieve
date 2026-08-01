@@ -24,7 +24,7 @@ duplicate producers, ambiguous keys, shared or insufficient domains, stale or
 future time, forgery, input/context substitution, unsupported modes,
 non-canonical JSON, unknown fields, and resource excess fail closed.
 
-Focused Rust tests accept two-domain corroboration for all three modes and refuse
+Focused Rust tests accept two-domain corroboration for all four modes and refuse
 input/subject substitution, signature tampering, domain relabelling, stale time,
 unknown and duplicate identities, non-canonical documents, and oversized input.
 

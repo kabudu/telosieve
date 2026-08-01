@@ -17,6 +17,7 @@ fi
 run cargo fmt --all --check
 run cargo clippy --locked --offline --all-targets --all-features -- -D warnings
 run cargo test --locked --offline --all-targets --all-features
+run cargo test --locked --offline --test integration_contract
 run env RUSTDOCFLAGS=-Dwarnings cargo doc --locked --offline --no-deps
 printf 'local-ci: cargo metadata --locked --offline --no-deps --format-version 1\n'
 cargo metadata --locked --offline --no-deps --format-version 1 >/dev/null

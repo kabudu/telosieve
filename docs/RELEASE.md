@@ -93,20 +93,20 @@ They therefore do not remove the independent-assessment or production-identity
 release gates.
 
 The compatibility corpus defines fail-closed support for legacy/current
-scenarios and certificates v7–v10, with validate-then-regenerate migration.
+scenarios and certificates v7–v11, with validate-then-regenerate migration.
 Unknown future semantics remain intentionally unsupported, and no independent
 downstream consumer has yet been qualified. This reduces accidental migration
 ambiguity but does not change the release decision.
 
-A separately implemented Python reader now agrees on v7–v10 acceptance and nine
-bounded refusal classes. All four versions remain active. Deprecation requires
+A separately implemented Python reader now agrees on v7–v11 acceptance and
+bounded refusal classes. All five versions remain active. Deprecation requires
 an evidenced successor, measured consumer usage, validated migration, two later
 completed milestone windows, and explicit approval; removal additionally
 requires zero registered consumers and a separately approved major
 research-protocol compatibility change. This local qualification is not
 third-party assessment and does not authenticate certificate origin.
 
-Detached certificate attestation now authenticates exact v7–v10 evidence bytes
+Detached certificate attestation now authenticates exact v7–v11 evidence bytes
 under bounded Ed25519 signer windows, and the Rust/Python qualification has zero
 disagreements across rotation and five refusal paths. This removes the purely
 unauthenticated-file limitation only when callers explicitly require and verify
@@ -198,7 +198,7 @@ raw-evidence packaging, or independent privacy assessment.
 
 Deterministic private bundle assembly now fixes entry selection, ordering,
 timestamps, modes, and compression and binds every file by SHA-256. Manifest v3
-adds all three contracted modes, exact binary capability/contract/config/test
+adds all four contracted modes, exact binary capability/contract/config/test
 plan agreement, and an unsigned candidate profile. Two builds are byte-identical;
 four capability faults and forced pre-publication termination leave no output,
 and a retry recovers the same digest under measured local resource bounds. The
@@ -268,3 +268,10 @@ candidate bytes but does not satisfy independent assessment, production
 promotion, public release, or operational identity-custody gates. Assessors must
 follow [EXTERNAL_ASSESSMENT](EXTERNAL_ASSESSMENT.md), including independent
 authentication of the trust record before signature verification.
+
+Post-candidate development adds `telosieve.integration-contract/v1`, evaluation
+configuration v7 and certificate v11 as a standardized read-only external
+adapter boundary. These changes are not part of the immutable signed
+`v0.2.0-rc.1` handoff and require a separately frozen future candidate before
+external candidate assessment. The generic conformance suite does not qualify a
+concrete platform integration or authorize actuation.

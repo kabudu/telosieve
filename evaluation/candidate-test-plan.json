@@ -28,6 +28,12 @@
       "mode": "opentofu-plan",
       "command": "python3 scripts/run-opentofu-plan.py",
       "expected_target_mutated": false
+    },
+    {
+      "configuration_schema": "telosieve.evaluation-config/v7",
+      "mode": "external-read-only",
+      "command": "cargo test --locked --offline --test integration_contract",
+      "expected_target_mutated": false
     }
   ]
 }

@@ -202,6 +202,13 @@ a bounded authenticated Unix relay running as its own systemd identity; see
 [Observation Producer Isolation](docs/PRODUCER_ISOLATION.md). The local harness
 qualifies transport mechanics, not real multi-user or organizational isolation.
 
+Implement additional read-only systems through the versioned executable
+[Integration Contract v1](docs/INTEGRATION_CONTRACT.md). Configuration v7 sends
+one bounded request to an absolute adapter executable, requires a canonical
+platform-neutral response plus an exact-byte multi-domain producer quorum, and
+binds the result into certificate v11. The generic conformance suite qualifies
+the contract, not any new platform or its credential scope.
+
 M2 results and negative findings are reported in
 [M2 Adversarial Results](docs/M2_RESULTS.md).
 The evidence-to-product comparison is recorded in

@@ -12,8 +12,9 @@ use telosieve::{
     actuator_store::LocalActuatorStore,
     certificate::{
         CERTIFICATE_VERSION_V7, CERTIFICATE_VERSION_V8, CERTIFICATE_VERSION_V9,
-        CERTIFICATE_VERSION_V10, CertificateCompatibilityError,
-        MAX_COMPATIBILITY_CERTIFICATE_BYTES, OpenTofuRecord, parse_supported_certificate,
+        CERTIFICATE_VERSION_V10, CERTIFICATE_VERSION_V11, CertificateCompatibilityError,
+        IntegrationRecord, MAX_COMPATIBILITY_CERTIFICATE_BYTES, OpenTofuRecord,
+        parse_supported_certificate,
     },
     engine::{run_scenario, run_scenario_actuated},
     protocol::{ProtocolError, Scenario, verify},
@@ -141,7 +142,7 @@ fn scenario_migration_vectors_preserve_legacy_and_fail_closed() {
 }
 
 #[test]
-fn certificate_vectors_accept_v7_to_v10_and_reject_future_or_confused_shapes() {
+fn certificate_vectors_accept_v7_to_v11_and_reject_future_or_confused_shapes() {
     let legacy = scenario("scenarios/benign.json");
     let certificate_v7 = run_scenario(&legacy).unwrap();
     assert_eq!(certificate_v7.certificate_version, CERTIFICATE_VERSION_V7);
@@ -178,6 +179,20 @@ fn certificate_vectors_accept_v7_to_v10_and_reject_future_or_confused_shapes() {
     let bytes_v10 = serde_json::to_vec(&certificate_v10).unwrap();
     parse_supported_certificate(&bytes_v10).unwrap();
 
+    let mut certificate_v11 = certificate_v7.clone();
+    certificate_v11.certificate_version = CERTIFICATE_VERSION_V11.into();
+    certificate_v11.integration = Some(IntegrationRecord {
+        contract: "telosieve.integration-contract/v1".into(),
+        integration_id: "example-service".into(),
+        resource_kind: "replicated-key-value".into(),
+        target_id: "example/service-a".into(),
+        target_revision: "revision-73".into(),
+        response_sha256: "ef".repeat(32),
+        observation_quorum_digest: "ab".repeat(32),
+    });
+    let bytes_v11 = serde_json::to_vec(&certificate_v11).unwrap();
+    parse_supported_certificate(&bytes_v11).unwrap();
+
     let mut future = serde_json::to_value(&certificate_v7).unwrap();
     future["certificate_version"] = json!("telosieve.certificate/v99");
     let future_bytes = serde_json::to_vec(&future).unwrap();
@@ -211,6 +226,7 @@ fn certificate_vectors_accept_v7_to_v10_and_reject_future_or_confused_shapes() {
         bytes_v8,
         bytes_v9,
         bytes_v10,
+        bytes_v11,
         future_bytes,
         unknown_field_bytes,
         confused_bytes,
@@ -248,12 +264,25 @@ fn independent_reader_agrees_on_supported_versions_and_failure_matrix() {
         observation_quorum_digest: Some("cd".repeat(32)),
     });
     let bytes_v10 = serde_json::to_vec(&certificate_v10).unwrap();
+    let mut certificate_v11 = certificate_v7.clone();
+    certificate_v11.certificate_version = CERTIFICATE_VERSION_V11.into();
+    certificate_v11.integration = Some(IntegrationRecord {
+        contract: "telosieve.integration-contract/v1".into(),
+        integration_id: "example-service".into(),
+        resource_kind: "replicated-key-value".into(),
+        target_id: "example/service-a".into(),
+        target_revision: "revision-73".into(),
+        response_sha256: "ef".repeat(32),
+        observation_quorum_digest: "ab".repeat(32),
+    });
+    let bytes_v11 = serde_json::to_vec(&certificate_v11).unwrap();
 
     for (version, bytes) in [
         (CERTIFICATE_VERSION_V7, &bytes_v7),
         (CERTIFICATE_VERSION_V8, &bytes_v8),
         (CERTIFICATE_VERSION_V9, &bytes_v9),
         (CERTIFICATE_VERSION_V10, &bytes_v10),
+        (CERTIFICATE_VERSION_V11, &bytes_v11),
     ] {
         parse_supported_certificate(bytes).unwrap();
         let (output, timed_out) = read_downstream(bytes);
@@ -313,12 +342,13 @@ fn independent_reader_agrees_on_supported_versions_and_failure_matrix() {
         duplicate,
         b"{".to_vec(),
     ];
-    assert!(4 + rejected.len() <= MAX_COMPATIBILITY_CASES);
+    assert!(5 + rejected.len() <= MAX_COMPATIBILITY_CASES);
     assert!(
         bytes_v7.len()
             + bytes_v8.len()
             + bytes_v9.len()
             + bytes_v10.len()
+            + bytes_v11.len()
             + rejected.iter().map(Vec::len).sum::<usize>()
             <= MAX_COMPATIBILITY_CORPUS_BYTES
     );

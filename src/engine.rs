@@ -38,8 +38,12 @@ pub enum RunError {
     Shadow(#[from] crate::kubernetes_shadow::ShadowError),
     #[error("OpenTofu plan adapter failed: {0}")]
     OpenTofu(#[from] crate::opentofu_plan::OpenTofuError),
+    #[error("integration adapter failed: {0}")]
+    Integration(#[from] crate::integration::IntegrationError),
     #[error("observation quorum failed: {0}")]
     ObservationQuorum(#[from] crate::observation_quorum::ObservationQuorumError),
+    #[error("observation source failed: {0}")]
+    ObservationSource(#[from] crate::observation_source::ObservationSourceError),
 }
 
 /// Runs a scenario through the public file boundary and persists its evidence.
@@ -265,6 +269,32 @@ pub(crate) fn run_opentofu_plan_bytes_corroborated(
     let mut certificate = run_verified_scenario(scenario, authorities)?;
     certificate.certificate_version = crate::certificate::CERTIFICATE_VERSION_V10.into();
     certificate.opentofu = Some(plan);
+    persist_evidence(&certificate, certificate_path, ledger_path)?;
+    Ok(certificate)
+}
+
+pub(crate) fn run_integration_corroborated(
+    scenario: &Scenario,
+    config: &crate::integration::IntegrationAdapterConfig,
+    trust_bytes: &[u8],
+    observation_sources: &[crate::observation_source::ObservationSourceConfig],
+    certificate_path: &Path,
+    ledger_path: &Path,
+) -> Result<Certificate, RunError> {
+    let authorities = verify(scenario)?;
+    let (_response, response_bytes, mut record) =
+        crate::integration::collect_and_validate(scenario, &authorities, config)?;
+    let verified = crate::observation_source::corroborate_bytes(
+        &response_bytes,
+        &scenario.subject,
+        crate::integration::MODE,
+        trust_bytes,
+        observation_sources,
+    )?;
+    record.observation_quorum_digest = verified.evidence_digest;
+    let mut certificate = run_verified_scenario(scenario, authorities)?;
+    certificate.certificate_version = crate::certificate::CERTIFICATE_VERSION_V11.into();
+    certificate.integration = Some(record);
     persist_evidence(&certificate, certificate_path, ledger_path)?;
     Ok(certificate)
 }
@@ -645,6 +675,7 @@ fn evaluate_preflighted_scenario(
         actuation: None,
         shadow: None,
         opentofu: None,
+        integration: None,
         phenotype_history_anchor: scenario.phenotype_history_anchor.clone(),
         hypotheses,
         decision,

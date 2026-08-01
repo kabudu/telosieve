@@ -15,7 +15,7 @@ exactly equal contract v2's `supported_evaluation_modes`, and every record must
 declare `target_mutated: false`.
 
 `telosieve --version` prints the binary package version. The `evaluate` command,
-the supported v3–v5 configurations, and
+the supported v4–v7 configurations, and
 `telosieve.evaluation-report/v1` success report are the supported evaluation
 surface. Other commands remain research, recovery, or reference-backend
 interfaces unless a later compatibility decision promotes them.
@@ -151,6 +151,15 @@ processes. Each v1 envelope carries lowercase hexadecimal exact plan bytes plus
 an attestation. Every producer must match the primary file byte-for-byte and
 satisfy the multi-domain quorum before parsing or certificate persistence. The
 verified quorum digest is bound into certificate v10.
+
+The v7 `external-read-only` mode is the standardized extension boundary for
+additional systems. It accepts the common scenario, evidence, trust and
+observation-source fields plus one external adapter declaration. The adapter
+receives `telosieve.integration-request/v1` on stdin and returns canonical
+`telosieve.integration-response/v1` JSON on stdout within five seconds and
+2 MiB. Telosieve verifies its no-mutation capability, context, completeness,
+structural bounds, authority equality and exact-byte multi-domain quorum before
+certificate v11 persistence. See [Integration Contract v1](INTEGRATION_CONTRACT.md).
 
 The separate bounded lifecycle manager installs the CLI and configuration; see
 [EVALUATION_LIFECYCLE](EVALUATION_LIFECYCLE.md). The product does not yet redact

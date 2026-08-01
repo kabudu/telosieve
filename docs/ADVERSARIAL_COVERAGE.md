@@ -3,7 +3,7 @@
 Date: 2026-07-31
 
 `evaluation/adversarial-coverage.json` is the executable coverage contract for
-Telosieve's three read-only evaluation modes. It distinguishes evidence-backed
+Telosieve's four read-only evaluation modes. It distinguishes evidence-backed
 coverage from justified non-applicability and unresolved research gaps; a prose
 claim cannot satisfy a covered cell. Each evidence reference is a bounded
 repository-relative regular file plus an exact anchor that the validator must
@@ -39,7 +39,7 @@ python3 scripts/validate-adversarial-coverage.py
 
 The validator caps the registry at 256 KiB, 64 threat classes, four evidence
 references per cell, and 4 MiB per referenced text file. It requires exact
-agreement with the three ordered product modes and the read-only authority
+agreement with the four ordered product modes and the read-only authority
 boundary. Required applicable cells must be covered; only registered research
 gaps may be deferred. Evidence paths cannot be absolute, traverse the repository,
 use symlinks, point outside executable/retained-evidence roots, or cite a missing

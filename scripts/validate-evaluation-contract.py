@@ -53,7 +53,7 @@ EXPECTED_PROMOTION = {
 }
 EXPECTED_RESULT = {
     "schema_version": "telosieve.evaluation-contract-validation/v2",
-    "supported_modes": 3,
+    "supported_modes": 4,
     "authorized_work": len(EXPECTED_AUTHORIZED),
     "prohibited_actions": len(EXPECTED_PROHIBITED),
     "candidate_readiness_gates": len(EXPECTED_READINESS),

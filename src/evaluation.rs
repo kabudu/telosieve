@@ -21,6 +21,7 @@ use crate::{
 pub const CONFIG_SCHEMA_VERSION: &str = "telosieve.evaluation-config/v4";
 pub const LIVE_CONFIG_SCHEMA_VERSION: &str = "telosieve.evaluation-config/v5";
 pub const OPENTOFU_CONFIG_SCHEMA_VERSION: &str = "telosieve.evaluation-config/v6";
+pub const INTEGRATION_CONFIG_SCHEMA_VERSION: &str = "telosieve.evaluation-config/v7";
 pub const REPORT_SCHEMA_VERSION: &str = "telosieve.evaluation-report/v1";
 pub const MAX_CONFIG_BYTES: u64 = 64 * 1024;
 const MAX_PATH_BYTES: usize = 4096;
@@ -47,6 +48,11 @@ pub const SUPPORTED_EVALUATION_CAPABILITIES: &[EvaluationCapability] = &[
     EvaluationCapability {
         configuration_schema: OPENTOFU_CONFIG_SCHEMA_VERSION,
         mode: "opentofu-plan",
+        target_mutated: false,
+    },
+    EvaluationCapability {
+        configuration_schema: INTEGRATION_CONFIG_SCHEMA_VERSION,
+        mode: crate::integration::MODE,
         target_mutated: false,
     },
 ];
@@ -88,6 +94,19 @@ struct EvaluationConfigV6 {
     ledger_path: String,
     observation_trust_path: String,
     observation_sources: Vec<crate::observation_source::ObservationSourceConfig>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct EvaluationConfigV7 {
+    schema_version: String,
+    mode: String,
+    scenario_path: String,
+    certificate_path: String,
+    ledger_path: String,
+    observation_trust_path: String,
+    observation_sources: Vec<crate::observation_source::ObservationSourceConfig>,
+    adapter: crate::integration::IntegrationAdapterConfig,
 }
 
 #[derive(Debug, PartialEq, Eq, Serialize)]
@@ -219,10 +238,64 @@ pub fn run_config_file(config_path: &Path) -> Result<EvaluationReport, Evaluatio
             &certificate_value,
         ));
     }
+    if schema == INTEGRATION_CONFIG_SCHEMA_VERSION {
+        return run_integration_config(value, base, &canonical_config, capability);
+    }
     if schema != LIVE_CONFIG_SCHEMA_VERSION {
         return Err(EvaluationError::Schema);
     }
     run_live_config(value, base, &canonical_config, capability)
+}
+
+fn run_integration_config(
+    value: serde_json::Value,
+    base: &Path,
+    canonical_config: &Path,
+    capability: &EvaluationCapability,
+) -> Result<EvaluationReport, EvaluationError> {
+    let config: EvaluationConfigV7 = serde_json::from_value(value)?;
+    if config.schema_version != INTEGRATION_CONFIG_SCHEMA_VERSION {
+        return Err(EvaluationError::Schema);
+    }
+    if config.mode != capability.mode {
+        return Err(EvaluationError::Mode);
+    }
+    let scenario = resolve_path(base, &config.scenario_path, "scenario_path")?;
+    let certificate = resolve_path(base, &config.certificate_path, "certificate_path")?;
+    let ledger = resolve_path(base, &config.ledger_path, "ledger_path")?;
+    let trust = resolve_path(
+        base,
+        &config.observation_trust_path,
+        "observation_trust_path",
+    )?;
+    reject_config_collision(canonical_config, &certificate, &ledger)?;
+    let mut executables = config
+        .observation_sources
+        .iter()
+        .map(|source| Path::new(&source.executable_path))
+        .collect::<Vec<_>>();
+    executables.push(Path::new(&config.adapter.executable_path));
+    reject_external_path_collisions(
+        &[scenario.as_path(), trust.as_path()],
+        &executables,
+        &certificate,
+        &ledger,
+    )?;
+    let scenario_value = read_scenario(&scenario)?;
+    let trust_bytes = crate::observation_source::read_trust(&trust)?;
+    let certificate_value = crate::engine::run_integration_corroborated(
+        &scenario_value,
+        &config.adapter,
+        &trust_bytes,
+        &config.observation_sources,
+        &certificate,
+        &ledger,
+    )?;
+    Ok(report(
+        capability.configuration_schema,
+        capability.mode,
+        &certificate_value,
+    ))
 }
 
 fn reject_external_path_collisions(

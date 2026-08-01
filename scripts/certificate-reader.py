@@ -21,10 +21,11 @@ ATTESTATION_SCHEMA = "telosieve.certificate-attestation/v1"
 TIMESTAMP_SCHEMA = "telosieve.attestation-timestamp/v1"
 REVOCATION_SCHEMA = "telosieve.signer-revocations/v1"
 SUPPORTED = {
-    "telosieve.certificate/v7": (False, False, False),
-    "telosieve.certificate/v8": (True, False, False),
-    "telosieve.certificate/v9": (False, True, False),
-    "telosieve.certificate/v10": (False, False, True),
+    "telosieve.certificate/v7": (False, False, False, False),
+    "telosieve.certificate/v8": (True, False, False, False),
+    "telosieve.certificate/v9": (False, True, False, False),
+    "telosieve.certificate/v10": (False, False, True, False),
+    "telosieve.certificate/v11": (False, False, False, True),
 }
 REQUIRED_FIELDS = {
     "certificate_version",
@@ -42,7 +43,7 @@ REQUIRED_FIELDS = {
     "baselines",
     "metrics",
 }
-OPTIONAL_FIELDS = {"actuation", "shadow", "opentofu"}
+OPTIONAL_FIELDS = {"actuation", "shadow", "opentofu", "integration"}
 ACTUATION_FIELDS = {"adapter", "operation_digest", "before_digest", "after_digest"}
 SHADOW_FIELDS = {
     "adapter",
@@ -58,6 +59,10 @@ OPENTOFU_FIELDS = {
     "resource_change_count",
 }
 OPENTOFU_OPTIONAL_FIELDS = {"observation_quorum_digest"}
+INTEGRATION_FIELDS = {
+    "contract", "integration_id", "resource_kind", "target_id",
+    "target_revision", "response_sha256", "observation_quorum_digest",
+}
 ATTESTATION_FIELDS = {
     "schema_version",
     "context",
@@ -288,13 +293,16 @@ def validate_certificate(value: Any) -> dict[str, Any]:
     if not isinstance(value["metrics"], dict):
         raise ReaderError("metrics is invalid")
 
-    requires_actuation, requires_shadow, requires_opentofu = SUPPORTED[version]
+    requires_actuation, requires_shadow, requires_opentofu, requires_integration = SUPPORTED[version]
     actuation = value.get("actuation")
     shadow = value.get("shadow")
     opentofu = value.get("opentofu")
+    integration = value.get("integration")
     if (actuation is not None) != requires_actuation or (
         shadow is not None
-    ) != requires_shadow or (opentofu is not None) != requires_opentofu:
+    ) != requires_shadow or (opentofu is not None) != requires_opentofu or (
+        integration is not None
+    ) != requires_integration:
         raise ReaderError("certificate extensions do not match its version")
     if requires_actuation:
         record = exact_object(actuation, ACTUATION_FIELDS, "actuation")
@@ -323,6 +331,18 @@ def validate_certificate(value: Any) -> dict[str, Any]:
             raise ReaderError("opentofu version is invalid")
         if not is_unsigned(record["resource_change_count"]) or not 1 <= record["resource_change_count"] <= 64:
             raise ReaderError("opentofu resource count is invalid")
+    if requires_integration:
+        record = exact_object(integration, INTEGRATION_FIELDS, "integration")
+        require_strings(record, INTEGRATION_FIELDS, "integration")
+        if (
+            record["contract"] != "telosieve.integration-contract/v1"
+            or not all(valid_text(record[field]) for field in (
+                "integration_id", "resource_kind", "target_id", "target_revision"
+            ))
+            or not canonical_hex(record["response_sha256"], 32)
+            or not canonical_hex(record["observation_quorum_digest"], 32)
+        ):
+            raise ReaderError("integration record is invalid")
     return value
 
 

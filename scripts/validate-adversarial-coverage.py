@@ -38,11 +38,11 @@ EXPECTED_THREAT_IDS = {
 }
 EXPECTED_RESULT = {
     "schema_version": "telosieve.adversarial-coverage-validation/v1",
-    "modes": 3,
+    "modes": 4,
     "threat_classes": 10,
     "required_classes": 9,
-    "covered_cells": 23,
-    "deferred_cells": 2,
+    "covered_cells": 32,
+    "deferred_cells": 3,
     "not_applicable_cells": 5,
     "adversarial_refusals": 11,
     "status": "passed-with-registered-research-gaps",
@@ -109,7 +109,7 @@ def validate(registry: object, *, inspect_files: bool = True) -> dict[str, int]:
     if registry["authority_boundary"] != "read-only-no-target-mutation":
         fail("registry weakens the evaluation authority boundary")
     modes = registry["modes"]
-    if modes != ["kubernetes-shadow", "kubernetes-live", "opentofu-plan"]:
+    if modes != ["kubernetes-shadow", "kubernetes-live", "opentofu-plan", "external-read-only"]:
         fail("registry modes must exactly match the ordered evaluation contract")
     if registry["limits"] != {
         "maximum_threat_classes": MAX_THREAT_CLASSES,

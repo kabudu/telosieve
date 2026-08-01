@@ -8,6 +8,7 @@ pub mod checker;
 pub mod engine;
 pub mod evaluation;
 pub mod external_checker;
+pub mod integration;
 pub mod kubernetes_live;
 pub mod kubernetes_shadow;
 pub mod model;

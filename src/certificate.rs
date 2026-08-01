@@ -13,6 +13,7 @@ pub const CERTIFICATE_VERSION_V7: &str = "telosieve.certificate/v7";
 pub const CERTIFICATE_VERSION_V8: &str = "telosieve.certificate/v8";
 pub const CERTIFICATE_VERSION_V9: &str = "telosieve.certificate/v9";
 pub const CERTIFICATE_VERSION_V10: &str = "telosieve.certificate/v10";
+pub const CERTIFICATE_VERSION_V11: &str = "telosieve.certificate/v11";
 pub const MAX_COMPATIBILITY_CERTIFICATE_BYTES: usize = 2 * 1024 * 1024;
 
 #[derive(Debug, Error)]
@@ -97,6 +98,18 @@ pub struct OpenTofuRecord {
     pub observation_quorum_digest: Option<String>,
 }
 
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct IntegrationRecord {
+    pub contract: String,
+    pub integration_id: String,
+    pub resource_kind: String,
+    pub target_id: String,
+    pub target_revision: String,
+    pub response_sha256: String,
+    pub observation_quorum_digest: String,
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Certificate {
@@ -111,6 +124,8 @@ pub struct Certificate {
     pub shadow: Option<ShadowRecord>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub opentofu: Option<OpenTofuRecord>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub integration: Option<IntegrationRecord>,
     pub phenotype_history_anchor: HistoryAnchor,
     pub hypotheses: Vec<HypothesisRecord>,
     pub decision: Decision,
@@ -124,7 +139,7 @@ pub struct Certificate {
 
 /// Parses a retained certificate through the supported compatibility boundary.
 ///
-/// Versions 7–10 share one additive serialized shape. Their extension fields
+/// Versions 7–11 share one additive serialized shape. Their extension fields
 /// remain version-specific so an artifact cannot be relabelled across execution
 /// modes.
 ///
@@ -143,24 +158,37 @@ pub fn parse_supported_certificate(
             certificate.actuation.is_none()
                 && certificate.shadow.is_none()
                 && certificate.opentofu.is_none()
+                && certificate.integration.is_none()
         }
         CERTIFICATE_VERSION_V8 => {
             certificate.actuation.is_some()
                 && certificate.shadow.is_none()
                 && certificate.opentofu.is_none()
+                && certificate.integration.is_none()
         }
         CERTIFICATE_VERSION_V9 => {
             certificate.actuation.is_none()
                 && certificate.shadow.as_ref().is_some_and(valid_shadow_record)
                 && certificate.opentofu.is_none()
+                && certificate.integration.is_none()
         }
         CERTIFICATE_VERSION_V10 => {
             certificate.actuation.is_none()
                 && certificate.shadow.is_none()
+                && certificate.integration.is_none()
                 && certificate
                     .opentofu
                     .as_ref()
                     .is_some_and(valid_opentofu_record)
+        }
+        CERTIFICATE_VERSION_V11 => {
+            certificate.actuation.is_none()
+                && certificate.shadow.is_none()
+                && certificate.opentofu.is_none()
+                && certificate
+                    .integration
+                    .as_ref()
+                    .is_some_and(valid_integration_record)
         }
         version => {
             return Err(CertificateCompatibilityError::UnsupportedVersion(
@@ -174,6 +202,31 @@ pub fn parse_supported_certificate(
         ));
     }
     Ok(certificate)
+}
+
+fn valid_integration_record(record: &IntegrationRecord) -> bool {
+    record.contract == "telosieve.integration-contract/v1"
+        && valid_integration_text(&record.integration_id)
+        && valid_integration_text(&record.resource_kind)
+        && valid_integration_text(&record.target_id)
+        && valid_integration_text(&record.target_revision)
+        && canonical_digest(&record.response_sha256)
+        && canonical_digest(&record.observation_quorum_digest)
+}
+
+fn canonical_digest(value: &str) -> bool {
+    value.len() == 64
+        && value
+            .bytes()
+            .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
+}
+
+fn valid_integration_text(value: &str) -> bool {
+    !value.is_empty()
+        && value.len() <= 128
+        && value.bytes().all(|byte| {
+            byte.is_ascii_alphanumeric() || matches!(byte, b'.' | b'_' | b':' | b'/' | b'-')
+        })
 }
 
 fn valid_shadow_record(record: &ShadowRecord) -> bool {

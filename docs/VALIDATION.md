@@ -379,7 +379,7 @@ independent privacy assessment.
 
 ## Private bundle qualification
 
-The bundle qualification builds the fixed three-mode private ZIP twice and
+The bundle qualification builds the fixed four-mode private ZIP twice and
 requires exact byte identity; verifies every entry, capability, contract,
 configuration, test-plan, and unsigned-profile relationship; refuses four
 capability process faults; kills a build before publication; confirms no partial
