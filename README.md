@@ -191,6 +191,11 @@ signed producers, concurrent-writer/load campaigns, and explicit mutation,
 scope, lock and outage refusals. See
 [PostgreSQL Read-Only Integration](docs/POSTGRESQL_INTEGRATION.md).
 
+HTTP/JSON is the third concrete contract implementation. It provides a fixed,
+bounded GET-only snapshot protocol with owner-only bearer credentials, two
+signed producers, concurrent load, mutation-method denial, and fail-closed
+transport faults. See [HTTP/JSON Read-Only Integration](docs/HTTP_JSON_INTEGRATION.md).
+
 Inspect the exact machine-checked read-only evaluation surface with:
 
 ```sh

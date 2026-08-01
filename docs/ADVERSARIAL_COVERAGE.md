@@ -44,6 +44,12 @@ and outage refusal, two-producer disagreement detection, and eight evaluations
 at concurrency four. All readers still share one project-controlled database,
 so this evidence does not close the compromised-consistent-producer cell.
 
+Post-M51 adds a fixed-GET HTTP/JSON path with four refused mutation methods,
+strict body and credential parsing, transport timeout/outage behavior, two
+signed producers and eight evaluations at concurrency four. Its endpoints are
+orchestrated on one host, so TLS/public-network and compromised-consistent-
+producer gaps remain open.
+
 Run the contract directly with:
 
 ```sh

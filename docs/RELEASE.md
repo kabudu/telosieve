@@ -288,3 +288,7 @@ Post-candidate PostgreSQL integration adds a bounded `psql` collector, pinned
 real PostgreSQL 18.4 qualification, three SELECT-only roles, atomic read-only
 snapshots and concurrent-writer evidence. It is not part of `v0.2.0-rc.1`; all
 qualified readers share one project-controlled database and host.
+
+Post-candidate HTTP/JSON integration adds a fixed-GET adapter and an orchestrated
+loopback endpoint qualification. It is not part of `v0.2.0-rc.1`, does not
+qualify TLS or public-network deployment, and is not independent evidence.

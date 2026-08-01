@@ -46,3 +46,8 @@ PostgreSQL adds a relational test of the same contract through one bounded
 repeatable-read, read-only transaction over four fixed tables. Database roles
 are limited to schema usage and table selection; independent administration,
 remote transport and topology/failover operation remain open.
+
+HTTP/JSON adds a broadly implementable fixed-GET snapshot boundary for services
+that cannot expose Redis or relational schemas. Its current loopback harness is
+appropriate for adapter development and assessor replay; production deployment
+requires a separately reviewed TLS/mTLS or authenticated-local-proxy boundary.

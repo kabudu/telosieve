@@ -145,3 +145,6 @@ retaining the independent-control-plane gate.
 The second application is the transactionally coherent
 [PostgreSQL Read-Only Integration](POSTGRESQL_INTEGRATION.md), with the same
 independent-control-plane gate retained.
+The third application is the fixed-GET
+[HTTP/JSON Read-Only Integration](HTTP_JSON_INTEGRATION.md). Its local endpoint
+qualification retains explicit TLS and independent-endpoint gates.

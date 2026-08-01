@@ -853,3 +853,27 @@ Evidence: [POSTGRESQL_INTEGRATION](POSTGRESQL_INTEGRATION.md),
 `results/postgresql-integration-qualification.json`. This qualifies local
 transaction and privilege mechanics, not independent database truth or
 production readiness.
+
+## Post-M51 — concrete HTTP/JSON read-only integration
+
+- [x] Map one strict versioned HTTP JSON snapshot into Integration Contract v1
+  through a dependency-free fixed-GET adapter.
+- [x] Bound loopback endpoint, path, authentication, socket time, response size,
+  content type, JSON shape, maps, values and replicas.
+- [x] Keep bearer tokens in owner-only single-link files and out of arguments,
+  diagnostics and evidence.
+- [x] Qualify three bearer identities, two signed producers, eight concurrent
+  evaluations and explicit denial of POST, PUT, PATCH and DELETE.
+- [x] Prove no-evidence refusal for redirect, malformed, oversized, incomplete,
+  timeout, authentication, producer-disagreement and outage faults.
+- [x] Package the implementation, tests, harness, retained result and assessor
+  guidance without displacing Redis or PostgreSQL coverage.
+- [ ] Qualify audited TLS/mTLS transport, external independently administered
+  endpoints, credential custody, rotation, rate limits and production topology.
+
+Evidence: [HTTP_JSON_INTEGRATION](HTTP_JSON_INTEGRATION.md),
+`scripts/http_json_integration_common.py`,
+`scripts/run-http-json-integration.py`, and
+`results/http-json-integration-qualification.json`. This qualifies local HTTP
+protocol mechanics and failure bounds, not public-network security, external
+truth, operational independence or production readiness.

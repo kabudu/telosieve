@@ -4,7 +4,7 @@
 absolute locally validated Telosieve binary and a fixed allowlist of evaluation
 configuration, RBAC, lifecycle, diagnostics, policy, and operator documents.
 The fixed allowlist includes all four contracted configurations, the Kubernetes,
-OpenTofu, Redis and PostgreSQL integration material, authenticated offline/real-system scenarios,
+OpenTofu, Redis, PostgreSQL and HTTP/JSON integration material, authenticated offline/real-system scenarios,
 the candidate test plan, and the operator/security documents needed to assess
 them. It also includes and digest-binds the adversarial coverage contract,
 validator, and retained result so open research gaps travel with the candidate.

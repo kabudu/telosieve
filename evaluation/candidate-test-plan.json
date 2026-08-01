@@ -32,7 +32,7 @@
     {
       "configuration_schema": "telosieve.evaluation-config/v7",
       "mode": "external-read-only",
-      "command": "python3 scripts/run-redis-integration.py && python3 scripts/run-postgresql-integration.py",
+      "command": "python3 scripts/run-redis-integration.py && python3 scripts/run-postgresql-integration.py && python3 scripts/run-http-json-integration.py",
       "expected_target_mutated": false
     }
   ]

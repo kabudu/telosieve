@@ -279,3 +279,8 @@ separately trusted producer in a distinct configured domain signs different
 exact bytes. It is not yet mandatory in evaluation, and labels do not prove
 organizational independence. Colluding domains, compromised trust distribution,
 key theft, and consistently false agreement remain outside its protection.
+
+The HTTP/JSON adapter issues only GET to a bounded loopback path, refuses
+redirects and lengthless or non-JSON responses, and keeps bearer tokens in
+owner-only files. The loopback restriction deliberately avoids pretending that
+the current implementation secures DNS, TLS, proxies or public networks.

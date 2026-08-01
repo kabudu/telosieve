@@ -427,3 +427,14 @@ The retained `telosieve.reader-qualification/v1` aggregate reports 16 passes and
 zero disagreements within 16-case and 2 MiB bounds. This is implementation
 diversity under project control, not independent assessment. See
 [PROTOCOL_COMPATIBILITY](PROTOCOL_COMPATIBILITY.md).
+
+## HTTP/JSON Integration Contract qualification
+
+`python3 scripts/test-http-json-integration.py` covers credential ownership,
+hard-link refusal, strict snapshot shapes and structural bounds.
+`python3 scripts/run-http-json-integration.py` drives the real CLI against an
+orchestrated HTTP/1.1 server, three bearer identities and two signed producers.
+It retains one success, eight concurrent evaluations, four denied mutation
+methods and eight no-evidence faults. This is local protocol qualification;
+`external_endpoints`, separate control planes and independent evidence remain
+false.
