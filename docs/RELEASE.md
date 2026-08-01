@@ -292,3 +292,7 @@ qualified readers share one project-controlled database and host.
 Post-candidate HTTP/JSON integration adds a fixed-GET adapter and an orchestrated
 loopback endpoint qualification. It is not part of `v0.2.0-rc.1`, does not
 qualify TLS or public-network deployment, and is not independent evidence.
+
+Post-M52 extends that post-candidate integration with locally qualified TLS 1.3
+mutual authentication and downgrade refusal. It does not change or re-sign the
+frozen candidate and does not claim operational PKI or external endpoints.

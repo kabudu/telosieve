@@ -7,9 +7,10 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--host", required=True); parser.add_argument("--port", required=True, type=int)
     parser.add_argument("--path", required=True); parser.add_argument("--credentials", required=True)
+    parser.add_argument("--transport", choices=("http", "https"), default="http")
     args = parser.parse_args(); raw = sys.stdin.buffer.read(MAX_REQUEST_BYTES + 1)
     if len(raw) > MAX_REQUEST_BYTES: raise HTTPJSONIntegrationError("integration request exceeds bound")
-    sys.stdout.buffer.write(collect(strict_json(raw, "integration request"), args.host, args.port, args.path, args.credentials))
+    sys.stdout.buffer.write(collect(strict_json(raw, "integration request"), args.host, args.port, args.path, args.credentials, args.transport))
     return 0
 
 if __name__ == "__main__":

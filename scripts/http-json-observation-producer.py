@@ -4,7 +4,7 @@ import argparse, json, os, stat, subprocess, tempfile
 from pathlib import Path
 from http_json_integration_common import CONTRACT, REQUEST_SCHEMA, HTTPJSONIntegrationError, collect, strict_json
 
-FIELDS = {"host", "port", "path", "credentials", "integration_id", "resource_kind", "target_id",
+FIELDS = {"host", "port", "path", "transport", "credentials", "integration_id", "resource_kind", "target_id",
           "subject", "evaluation_time", "telosieve", "key", "producer", "key_id", "domain", "issued", "expires"}
 
 def regular(value, maximum, label, executable=False):
@@ -29,7 +29,7 @@ def main():
     request = {"schema_version": REQUEST_SCHEMA, "contract": CONTRACT, "operation": "observe",
         "integration_id": config["integration_id"], "resource_kind": config["resource_kind"],
         "target_id": config["target_id"], "subject": config["subject"], "evaluation_time": config["evaluation_time"]}
-    response = collect(request, config["host"], config["port"], config["path"], config["credentials"])
+    response = collect(request, config["host"], config["port"], config["path"], config["credentials"], config["transport"])
     descriptor, raw = tempfile.mkstemp(prefix="telosieve-http-json-observation-"); os.fchmod(descriptor, stat.S_IRUSR | stat.S_IWUSR)
     with os.fdopen(descriptor, "wb") as stream: stream.write(response)
     response_path = Path(raw); attestation_path = response_path.with_suffix(".attestation")

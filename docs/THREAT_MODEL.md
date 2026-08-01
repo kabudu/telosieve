@@ -284,3 +284,7 @@ The HTTP/JSON adapter issues only GET to a bounded loopback path, refuses
 redirects and lengthless or non-JSON responses, and keeps bearer tokens in
 owner-only files. The loopback restriction deliberately avoids pretending that
 the current implementation secures DNS, TLS, proxies or public networks.
+Post-M52 pins a configured CA, requires TLS 1.3, hostname/IP verification and
+distinct client certificates, and refuses plaintext downgrade. Ephemeral
+project-generated certificates do not establish operational PKI, revocation,
+custody, rotation or independent endpoint administration.

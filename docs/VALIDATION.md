@@ -438,3 +438,7 @@ It retains one success, eight concurrent evaluations, four denied mutation
 methods and eight no-evidence faults. This is local protocol qualification;
 `external_endpoints`, separate control planes and independent evidence remain
 false.
+The harness also exercises TLS 1.3 mutual authentication with a pinned CA,
+three client identities and eight denied mutation methods across both transport
+phases. Wrong CA, missing/untrusted client material, plaintext downgrade,
+producer disagreement, timeout and outage refuse without evidence.

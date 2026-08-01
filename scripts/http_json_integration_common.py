@@ -5,6 +5,7 @@ from __future__ import annotations
 import http.client
 import json
 import os
+import ssl
 import stat
 from pathlib import Path
 
@@ -12,6 +13,7 @@ CONTRACT = "telosieve.integration-contract/v1"
 REQUEST_SCHEMA = "telosieve.integration-request/v1"
 RESPONSE_SCHEMA = "telosieve.integration-response/v1"
 CREDENTIAL_SCHEMA = "telosieve.http-json-credentials/v1"
+TLS_CREDENTIAL_SCHEMA = "telosieve.http-json-mtls-credentials/v1"
 SNAPSHOT_SCHEMA = "telosieve.http-json-snapshot/v1"
 MAX_REQUEST_BYTES = 64 * 1024
 MAX_CREDENTIAL_BYTES = 4096
@@ -46,6 +48,10 @@ def valid_text(value: object, maximum: int = MAX_TEXT_BYTES) -> bool:
 
 
 def credential(path_value: str) -> str:
+    return credential_value(path_value, False)["bearer_token"]
+
+
+def private_json(path_value: str, maximum: int = MAX_CREDENTIAL_BYTES) -> dict:
     path = Path(path_value)
     if not path.is_absolute():
         raise HTTPJSONIntegrationError("credential path must be absolute")
@@ -56,23 +62,53 @@ def credential(path_value: str) -> str:
     try:
         metadata = os.fstat(descriptor)
         if (not stat.S_ISREG(metadata.st_mode) or metadata.st_nlink != 1
-                or metadata.st_size > MAX_CREDENTIAL_BYTES or metadata.st_mode & 0o077):
+                or metadata.st_size > maximum or metadata.st_mode & 0o077):
             raise HTTPJSONIntegrationError("credential file ownership boundary is unsafe")
         with os.fdopen(descriptor, "rb", closefd=False) as stream:
-            raw = stream.read(MAX_CREDENTIAL_BYTES + 1)
+            raw = stream.read(maximum + 1)
     finally:
         os.close(descriptor)
-    if len(raw) > MAX_CREDENTIAL_BYTES:
+    if len(raw) > maximum:
         raise HTTPJSONIntegrationError("credential file exceeds bound")
     value = strict_json(raw, "credential file")
-    if not isinstance(value, dict) or set(value) != {"schema_version", "bearer_token"}:
+    if not isinstance(value, dict):
+        raise HTTPJSONIntegrationError("credential file shape is invalid")
+    return value
+
+
+def safe_tls_file(path_value: object, label: str, private: bool) -> str:
+    if not isinstance(path_value, str): raise HTTPJSONIntegrationError(f"{label} path is invalid")
+    path = Path(path_value)
+    if not path.is_absolute(): raise HTTPJSONIntegrationError(f"{label} path must be absolute")
+    try: descriptor = os.open(path, os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0))
+    except OSError as error: raise HTTPJSONIntegrationError(f"{label} cannot be opened safely") from error
+    try:
+        metadata = os.fstat(descriptor)
+        unsafe = (not stat.S_ISREG(metadata.st_mode) or metadata.st_nlink != 1
+                  or metadata.st_size > 64 * 1024 or metadata.st_mode & 0o022)
+        if private: unsafe = unsafe or bool(metadata.st_mode & 0o077)
+        if unsafe: raise HTTPJSONIntegrationError(f"{label} boundary is unsafe")
+    finally: os.close(descriptor)
+    return str(path)
+
+
+def credential_value(path_value: str, tls: bool) -> dict:
+    value = private_json(path_value)
+    expected = ({"schema_version", "bearer_token", "ca_certificate", "client_certificate", "client_key"}
+                if tls else {"schema_version", "bearer_token"})
+    schema = TLS_CREDENTIAL_SCHEMA if tls else CREDENTIAL_SCHEMA
+    if set(value) != expected:
         raise HTTPJSONIntegrationError("credential file shape is invalid")
     token = value.get("bearer_token")
-    if (value.get("schema_version") != CREDENTIAL_SCHEMA or not isinstance(token, str)
+    if (value.get("schema_version") != schema or not isinstance(token, str)
             or not 24 <= len(token) <= 256 or not token.isascii()
             or any(not (c.isalnum() or c in "._~+-") for c in token)):
         raise HTTPJSONIntegrationError("credential token is invalid")
-    return token
+    if tls:
+        value["ca_certificate"] = safe_tls_file(value["ca_certificate"], "CA certificate", False)
+        value["client_certificate"] = safe_tls_file(value["client_certificate"], "client certificate", False)
+        value["client_key"] = safe_tls_file(value["client_key"], "client key", True)
+    return value
 
 
 def bounded_map(value: object, label: str) -> dict[str, str]:
@@ -105,14 +141,23 @@ def snapshot(value: object) -> tuple[str, dict[str, str], dict[str, dict[str, st
     return value["revision"], desired, dict(sorted(replicas.items()))
 
 
-def get_snapshot(host: str, port: int, path: str, credential_path: str):
+def get_snapshot(host: str, port: int, path: str, credential_path: str, transport: str = "http"):
     if host not in {"127.0.0.1", "::1"} or not 1 <= port <= 65535:
         raise HTTPJSONIntegrationError("only a bounded loopback HTTP endpoint is supported")
     if (not isinstance(path, str) or not path.startswith("/") or len(path) > 256
             or "?" in path or "#" in path or any(ord(c) < 33 or ord(c) > 126 for c in path)):
         raise HTTPJSONIntegrationError("HTTP path is invalid")
-    token = credential(credential_path)
-    connection = http.client.HTTPConnection(host, port, timeout=SOCKET_TIMEOUT_SECONDS)
+    if transport not in {"http", "https"}: raise HTTPJSONIntegrationError("HTTP transport is invalid")
+    material = credential_value(credential_path, transport == "https"); token = material["bearer_token"]
+    if transport == "https":
+        try:
+            context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT); context.minimum_version = ssl.TLSVersion.TLSv1_3
+            context.maximum_version = ssl.TLSVersion.TLSv1_3; context.verify_mode = ssl.CERT_REQUIRED; context.check_hostname = True
+            context.load_verify_locations(cafile=material["ca_certificate"])
+            context.load_cert_chain(material["client_certificate"], material["client_key"])
+        except (OSError, ssl.SSLError) as error: raise HTTPJSONIntegrationError("TLS credential setup failed") from error
+        connection = http.client.HTTPSConnection(host, port, timeout=SOCKET_TIMEOUT_SECONDS, context=context)
+    else: connection = http.client.HTTPConnection(host, port, timeout=SOCKET_TIMEOUT_SECONDS)
     try:
         connection.request("GET", path, headers={"Authorization": f"Bearer {token}",
                            "Accept": "application/json", "Connection": "close",
@@ -137,7 +182,7 @@ def get_snapshot(host: str, port: int, path: str, credential_path: str):
     return snapshot(strict_json(body, "HTTP snapshot"))
 
 
-def collect(request: object, host: str, port: int, path: str, credential_path: str) -> bytes:
+def collect(request: object, host: str, port: int, path: str, credential_path: str, transport: str = "http") -> bytes:
     fields = {"schema_version", "contract", "operation", "integration_id", "resource_kind",
               "target_id", "subject", "evaluation_time"}
     if not isinstance(request, dict) or set(request) != fields:
@@ -151,7 +196,7 @@ def collect(request: object, host: str, port: int, path: str, credential_path: s
             or isinstance(request.get("evaluation_time"), bool)
             or not 0 <= request["evaluation_time"] <= 2**63 - 1):
         raise HTTPJSONIntegrationError("integration request time is invalid")
-    revision, desired, replicas = get_snapshot(host, port, path, credential_path)
+    revision, desired, replicas = get_snapshot(host, port, path, credential_path, transport)
     response = {"schema_version": RESPONSE_SCHEMA, "integration_id": request["integration_id"],
         "resource_kind": request["resource_kind"], "subject": request["subject"],
         "captured_at": request["evaluation_time"],

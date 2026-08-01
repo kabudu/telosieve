@@ -877,3 +877,22 @@ Evidence: [HTTP_JSON_INTEGRATION](HTTP_JSON_INTEGRATION.md),
 `results/http-json-integration-qualification.json`. This qualifies local HTTP
 protocol mechanics and failure bounds, not public-network security, external
 truth, operational independence or production readiness.
+
+## Post-M52 — HTTP/JSON mutual-TLS transport qualification
+
+- [x] Add explicit HTTPS without weakening loopback HTTP compatibility or
+  permitting opportunistic plaintext downgrade.
+- [x] Require TLS 1.3, pinned CA trust, hostname/IP verification, mutual client
+  authentication and distinct adapter/producer identities.
+- [x] Keep client keys owner-only, regular and single-link and keep key/token
+  bytes out of arguments, diagnostics and evidence.
+- [x] Qualify GET-only success and mutation-method denial through the public CLI
+  and signed producer processes over an ephemeral real TLS endpoint.
+- [x] Fail without evidence on wrong CA, missing/untrusted client identity,
+  plaintext downgrade, disagreement, timeout and outage.
+- [ ] Establish operational PKI custody, revocation checking, certificate
+  rotation, external endpoints and independent assessment.
+
+Evidence: [HTTP_JSON_INTEGRATION](HTTP_JSON_INTEGRATION.md) and
+`results/http-json-integration-qualification.json`. This establishes local TLS
+mechanics and downgrade refusal, not operational PKI or independent transport.
