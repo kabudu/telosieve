@@ -442,3 +442,6 @@ The harness also exercises TLS 1.3 mutual authentication with a pinned CA,
 three client identities and eight denied mutation methods across both transport
 phases. Wrong CA, missing/untrusted client material, plaintext downgrade,
 producer disagreement, timeout and outage refuse without evidence.
+The v3 retained qualification also records one successful client-certificate
+rotation and refusal of a revoked server certificate. Missing and malformed CRL
+inputs fail before evidence persistence.

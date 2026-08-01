@@ -896,3 +896,19 @@ truth, operational independence or production readiness.
 Evidence: [HTTP_JSON_INTEGRATION](HTTP_JSON_INTEGRATION.md) and
 `results/http-json-integration-qualification.json`. This establishes local TLS
 mechanics and downgrade refusal, not operational PKI or independent transport.
+
+## Post-M53 — HTTP/JSON certificate lifecycle and revocation
+
+- [x] Version mutual-TLS credentials to require an explicit bounded CRL.
+- [x] Enable leaf revocation checks in both client and server TLS contexts.
+- [x] Prove a newly issued client identity can replace the original identity
+  through the unchanged public evaluation CLI and signed-producer boundary.
+- [x] Revoke the active server certificate and prove all readers refuse without
+  certificate or ledger evidence.
+- [x] Refuse missing and malformed CRL material before evidence persistence.
+- [ ] Establish independently operated issuing authorities, protected custody,
+  online revocation distribution, expiry monitoring and production rotation.
+
+Evidence: `scripts/run-http-json-integration.py` and
+`results/http-json-integration-qualification.json`. The qualification exercises
+real OpenSSL CA state and CRLs locally; it is not operational PKI evidence.

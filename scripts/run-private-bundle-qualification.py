@@ -202,11 +202,11 @@ def assert_bundle(path: Path) -> int:
         if (
             set(http_result) != {"schema_version", "transports", "orchestrated_endpoints", "external_endpoints",
                 "loopback_only", "bearer_identities", "mtls_client_identities", "mutation_methods_refused", "observation_producers",
-                "separate_control_planes", "successful_evaluations", "load_evaluations", "load_concurrency",
+                "separate_control_planes", "successful_evaluations", "client_rotations", "revocations_refused", "load_evaluations", "load_concurrency",
                 "load_elapsed_seconds", "fail_closed_evaluations", "target_mutated", "elapsed_seconds",
                 "peak_child_rss_bytes", "independent_evidence", "status"}
-            or http_result["schema_version"] != "telosieve.http-json-integration-qualification/v2"
-            or http_result["transports"] != ["http/1.1", "https-tls1.3-mtls"]
+            or http_result["schema_version"] != "telosieve.http-json-integration-qualification/v3"
+            or http_result["transports"] != ["http/1.1", "https-tls1.3-mtls-crl"]
             or http_result["orchestrated_endpoints"] is not True
             or http_result["external_endpoints"] is not False
             or http_result["loopback_only"] is not True
@@ -215,12 +215,13 @@ def assert_bundle(path: Path) -> int:
             or http_result["mutation_methods_refused"] != 8
             or http_result["observation_producers"] != 2
             or http_result["separate_control_planes"] is not False
-            or http_result["successful_evaluations"] != 2
+            or http_result["successful_evaluations"] != 3
+            or http_result["client_rotations"] != 1 or http_result["revocations_refused"] != 1
             or http_result["load_evaluations"] != 8 or http_result["load_concurrency"] != 4
             or not isinstance(http_result["load_elapsed_seconds"], (int, float))
             or isinstance(http_result["load_elapsed_seconds"], bool)
             or not 0 <= http_result["load_elapsed_seconds"] <= 20
-            or http_result["fail_closed_evaluations"] != 16
+            or http_result["fail_closed_evaluations"] != 19
             or http_result["target_mutated"] is not False
             or not isinstance(http_result["elapsed_seconds"], (int, float))
             or isinstance(http_result["elapsed_seconds"], bool)

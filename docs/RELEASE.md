@@ -296,3 +296,6 @@ qualify TLS or public-network deployment, and is not independent evidence.
 Post-M52 extends that post-candidate integration with locally qualified TLS 1.3
 mutual authentication and downgrade refusal. It does not change or re-sign the
 frozen candidate and does not claim operational PKI or external endpoints.
+
+Post-M53 adds post-candidate CRL enforcement plus local certificate rotation and
+revocation qualification. It remains project-controlled PKI evidence only.

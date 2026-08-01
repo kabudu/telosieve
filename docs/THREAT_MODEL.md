@@ -288,3 +288,6 @@ Post-M52 pins a configured CA, requires TLS 1.3, hostname/IP verification and
 distinct client certificates, and refuses plaintext downgrade. Ephemeral
 project-generated certificates do not establish operational PKI, revocation,
 custody, rotation or independent endpoint administration.
+Post-M53 requires a CRL and enables leaf checks on both sides of the mTLS
+connection. Local issuance, rotation and revocation prove enforcement mechanics,
+not CRL distribution freshness, CA compromise resistance or protected custody.

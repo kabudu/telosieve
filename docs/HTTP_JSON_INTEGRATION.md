@@ -6,7 +6,8 @@ general-purpose REST client and has no mutation or redirect behavior.
 
 Post-M52 adds explicit HTTPS with mutual TLS. HTTPS pins one configured CA,
 requires hostname/IP verification and a client certificate, and fixes both the
-minimum and maximum protocol version to TLS 1.3. Each reader uses a distinct
+minimum and maximum protocol version to TLS 1.3. Credential schema v2 also
+requires an explicit CRL and enables leaf revocation checking. Each reader uses a distinct
 client identity; there is no fallback to plaintext or the system trust store.
 
 The endpoint returns `telosieve.http-json-snapshot/v1`:
@@ -43,10 +44,11 @@ The harness starts a real loopback HTTP server and exercises the public v7 CLI,
 one primary adapter, two separately signed producer processes, three bearer
 identities, eight evaluations at concurrency four, and denial of POST, PUT,
 PATCH and DELETE over both HTTP and mutual TLS. The HTTPS phase uses an
-ephemeral CA, server identity and three client identities with TLS 1.3. Sixteen
+ephemeral CA, server identity and three client identities with TLS 1.3. Nineteen
 combined faults cover the original protocol cases plus wrong CA, missing or
 untrusted client identity, plaintext downgrade, producer disagreement, timeout
-and outage. The retained result is
+and outage. It additionally proves a client-identity rotation succeeds, a
+revoked server is refused, and missing or malformed CRLs fail closed. The retained result is
 [`http-json-integration-qualification.json`](../results/http-json-integration-qualification.json).
 
 This is an orchestrated endpoint qualification, not external evidence. It

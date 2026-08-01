@@ -13,7 +13,7 @@ CONTRACT = "telosieve.integration-contract/v1"
 REQUEST_SCHEMA = "telosieve.integration-request/v1"
 RESPONSE_SCHEMA = "telosieve.integration-response/v1"
 CREDENTIAL_SCHEMA = "telosieve.http-json-credentials/v1"
-TLS_CREDENTIAL_SCHEMA = "telosieve.http-json-mtls-credentials/v1"
+TLS_CREDENTIAL_SCHEMA = "telosieve.http-json-mtls-credentials/v2"
 SNAPSHOT_SCHEMA = "telosieve.http-json-snapshot/v1"
 MAX_REQUEST_BYTES = 64 * 1024
 MAX_CREDENTIAL_BYTES = 4096
@@ -94,7 +94,7 @@ def safe_tls_file(path_value: object, label: str, private: bool) -> str:
 
 def credential_value(path_value: str, tls: bool) -> dict:
     value = private_json(path_value)
-    expected = ({"schema_version", "bearer_token", "ca_certificate", "client_certificate", "client_key"}
+    expected = ({"schema_version", "bearer_token", "ca_certificate", "certificate_revocation_list", "client_certificate", "client_key"}
                 if tls else {"schema_version", "bearer_token"})
     schema = TLS_CREDENTIAL_SCHEMA if tls else CREDENTIAL_SCHEMA
     if set(value) != expected:
@@ -106,6 +106,7 @@ def credential_value(path_value: str, tls: bool) -> dict:
         raise HTTPJSONIntegrationError("credential token is invalid")
     if tls:
         value["ca_certificate"] = safe_tls_file(value["ca_certificate"], "CA certificate", False)
+        value["certificate_revocation_list"] = safe_tls_file(value["certificate_revocation_list"], "certificate revocation list", False)
         value["client_certificate"] = safe_tls_file(value["client_certificate"], "client certificate", False)
         value["client_key"] = safe_tls_file(value["client_key"], "client key", True)
     return value
@@ -154,6 +155,8 @@ def get_snapshot(host: str, port: int, path: str, credential_path: str, transpor
             context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT); context.minimum_version = ssl.TLSVersion.TLSv1_3
             context.maximum_version = ssl.TLSVersion.TLSv1_3; context.verify_mode = ssl.CERT_REQUIRED; context.check_hostname = True
             context.load_verify_locations(cafile=material["ca_certificate"])
+            context.load_verify_locations(cafile=material["certificate_revocation_list"])
+            context.verify_flags |= ssl.VERIFY_CRL_CHECK_LEAF
             context.load_cert_chain(material["client_certificate"], material["client_key"])
         except (OSError, ssl.SSLError) as error: raise HTTPJSONIntegrationError("TLS credential setup failed") from error
         connection = http.client.HTTPSConnection(host, port, timeout=SOCKET_TIMEOUT_SECONDS, context=context)

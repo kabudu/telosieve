@@ -94,23 +94,31 @@ def certificates(work):
     ca_key=work/"ca.key"; ca=work/"ca.pem"; rogue_key=work/"rogue-ca.key"; rogue_ca=work/"rogue-ca.pem"
     command("req","-x509","-newkey","rsa:2048","-nodes","-subj","/CN=Telosieve Qualification CA","-days","1","-keyout",str(ca_key),"-out",str(ca))
     command("req","-x509","-newkey","rsa:2048","-nodes","-subj","/CN=Rogue Qualification CA","-days","1","-keyout",str(rogue_key),"-out",str(rogue_ca))
-    extensions=work/"server.ext"; extensions.write_text("subjectAltName=IP:127.0.0.1\nextendedKeyUsage=serverAuth\n")
-    def signed(name,authority,authority_key,usage):
+    (work/"newcerts").mkdir(); (work/"index.txt").write_text(""); (work/"serial").write_text("1000\n"); (work/"crlnumber").write_text("1000\n")
+    config=work/"ca.cnf"; config.write_text(f"""[ca]\ndefault_ca=main\n[main]\ndir={work}\ndatabase=$dir/index.txt\nnew_certs_dir=$dir/newcerts\ncertificate=$dir/ca.pem\nprivate_key=$dir/ca.key\nserial=$dir/serial\ncrlnumber=$dir/crlnumber\ndefault_md=sha256\ndefault_days=1\ndefault_crl_days=1\npolicy=policy\n[policy]\ncommonName=supplied\n[server]\nbasicConstraints=CA:FALSE\nkeyUsage=digitalSignature,keyEncipherment\nextendedKeyUsage=serverAuth\nsubjectAltName=IP:127.0.0.1\n[client]\nbasicConstraints=CA:FALSE\nkeyUsage=digitalSignature,keyEncipherment\nextendedKeyUsage=clientAuth\n""")
+    def signed(name,usage):
         key=work/f"{name}.key"; csr=work/f"{name}.csr"; certificate=work/f"{name}.pem"
         command("req","-new","-newkey","rsa:2048","-nodes","-subj",f"/CN={name}","-keyout",str(key),"-out",str(csr))
-        ext=extensions if usage=="serverAuth" else work/f"{name}.ext"
-        if usage!="serverAuth": ext.write_text("extendedKeyUsage=clientAuth\n")
-        command("x509","-req","-in",str(csr),"-CA",str(authority),"-CAkey",str(authority_key),"-CAcreateserial","-days","1","-extfile",str(ext),"-out",str(certificate))
+        command("ca","-batch","-config",str(config),"-extensions",usage,"-in",str(csr),"-out",str(certificate))
         key.chmod(0o600); return certificate,key
-    server_pair=signed("server",ca,ca_key,"serverAuth")
-    clients={name:signed(f"mtls-client-{name}",ca,ca_key,"clientAuth") for name in TOKENS}
-    clients["rogue"]=signed("mtls-client-rogue",rogue_ca,rogue_key,"clientAuth")
+    server_pair=signed("server","server")
+    clients={name:signed(f"mtls-client-{name}","client") for name in TOKENS}
+    clients["rotated-adapter"]=signed("mtls-client-rotated-adapter","client")
+    rogue_keypair=work/"mtls-client-rogue.key",work/"mtls-client-rogue.csr",work/"mtls-client-rogue.pem"
+    command("req","-new","-newkey","rsa:2048","-nodes","-subj","/CN=rogue","-keyout",str(rogue_keypair[0]),"-out",str(rogue_keypair[1]))
+    command("x509","-req","-in",str(rogue_keypair[1]),"-CA",str(rogue_ca),"-CAkey",str(rogue_key),"-CAcreateserial","-days","1","-out",str(rogue_keypair[2])); rogue_keypair[0].chmod(0o600)
+    clients["rogue"]=(rogue_keypair[2],rogue_keypair[0])
+    crl=work/"ca.crl.pem"; command("ca","-gencrl","-config",str(config),"-out",str(crl))
     ca_key.chmod(0o600); rogue_key.chmod(0o600)
-    return ca,rogue_ca,server_pair,clients
+    return ca,crl,rogue_ca,server_pair,clients,config
 
-def tls_credential(path,token,ca,certificate,key):
-    path.write_text(json.dumps({"schema_version":"telosieve.http-json-mtls-credentials/v1","bearer_token":token,
-        "ca_certificate":str(ca),"client_certificate":str(certificate),"client_key":str(key)},separators=(",",":"))); path.chmod(0o600)
+def revoke(certificate,config,crl):
+    run(["openssl","ca","-batch","-config",str(config),"-revoke",str(certificate)],timeout=10)
+    run(["openssl","ca","-gencrl","-config",str(config),"-out",str(crl)],timeout=10)
+
+def tls_credential(path,token,ca,crl,certificate,key):
+    path.write_text(json.dumps({"schema_version":"telosieve.http-json-mtls-credentials/v2","bearer_token":token,
+        "ca_certificate":str(ca),"certificate_revocation_list":str(crl),"client_certificate":str(certificate),"client_key":str(key)},separators=(",",":"))); path.chmod(0o600)
 
 def main():
     binary=(ROOT/"target/debug/telosieve").resolve()
@@ -158,21 +166,23 @@ def main():
         fault("producer-disagreement",TOKENS["producer-a"],"disagreement")
         server.shutdown(); server.server_close(); thread.join(timeout=3)
         fault("outage")
-        ca,rogue_ca,(server_cert,server_key),clients=certificates(work)
+        ca,crl,rogue_ca,(server_cert,server_key),clients,ca_config=certificates(work)
         state=State(); server=QualificationHTTPServer(("127.0.0.1",0),Handler); server.state=state; server.daemon_threads=True
         server_context=ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER); server_context.minimum_version=ssl.TLSVersion.TLSv1_3
         server_context.maximum_version=ssl.TLSVersion.TLSv1_3; server_context.verify_mode=ssl.CERT_REQUIRED
-        server_context.load_cert_chain(server_cert,server_key); server_context.load_verify_locations(cafile=ca)
+        server_context.load_cert_chain(server_cert,server_key); server_context.load_verify_locations(cafile=ca); server_context.load_verify_locations(cafile=crl)
+        server_context.verify_flags |= ssl.VERIFY_CRL_CHECK_LEAF
         server.socket=server_context.wrap_socket(server.socket,server_side=True)
         thread=threading.Thread(target=server.serve_forever); thread.start()
         tls_credentials=[]
         for name in ("adapter","producer-a","producer-b"):
-            path=work/f"mtls-{name}-credential.json"; tls_credential(path,TOKENS[name],ca,*clients[name]); tls_credentials.append(path)
+            path=work/f"mtls-{name}-credential.json"; tls_credential(path,TOKENS[name],ca,crl,*clients[name]); tls_credentials.append(path)
         tls_path,tls_base,tls_producer_configs=make_config(work,binary,server.server_port,tls_credentials,"mtls-valid","https")
         tls_report=json.loads(run([str(binary),"evaluate",str(tls_path)]).stdout)
         if tls_report["target_mutated"]: raise RuntimeError("http-json-e2e: mTLS success reported mutation")
         client_context=ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT); client_context.minimum_version=ssl.TLSVersion.TLSv1_3
-        client_context.maximum_version=ssl.TLSVersion.TLSv1_3; client_context.load_verify_locations(cafile=ca)
+        client_context.maximum_version=ssl.TLSVersion.TLSv1_3; client_context.load_verify_locations(cafile=ca); client_context.load_verify_locations(cafile=crl)
+        client_context.verify_flags |= ssl.VERIFY_CRL_CHECK_LEAF
         client_context.load_cert_chain(*clients["adapter"])
         tls_denied=0
         for method in ("POST","PUT","PATCH","DELETE"):
@@ -197,14 +207,24 @@ def main():
         arguments[arguments.index("https")]="http"; fault("mtls-plaintext-downgrade",config=downgrade)
         fault("mtls-producer-disagreement",TOKENS["producer-a"],"disagreement",tls_base)
         fault("mtls-timeout",TOKENS["adapter"],"timeout",tls_base)
+        bad=json.loads(original); bad["certificate_revocation_list"]=str(work/"missing.crl"); tls_credentials[0].write_text(json.dumps(bad))
+        try: fault("mtls-missing-crl",config=tls_base)
+        finally: tls_credentials[0].write_text(original)
+        malformed_crl=work/"malformed.crl"; malformed_crl.write_text("not-a-crl\n"); bad=json.loads(original); bad["certificate_revocation_list"]=str(malformed_crl); tls_credentials[0].write_text(json.dumps(bad))
+        try: fault("mtls-malformed-crl",config=tls_base)
+        finally: tls_credentials[0].write_text(original)
+        rotated=json.loads(original); rotated["client_certificate"]=str(clients["rotated-adapter"][0]); rotated["client_key"]=str(clients["rotated-adapter"][1]); tls_credentials[0].write_text(json.dumps(rotated))
+        rotation=json.loads(json.dumps(tls_base)); rotation["certificate_path"]=str(work/"mtls-rotation-certificate.json"); rotation["ledger_path"]=str(work/"mtls-rotation-ledger.jsonl")
+        rotation_path=work/"mtls-rotation-evaluation.json"; rotation_path.write_text(json.dumps(rotation)); run([str(binary),"evaluate",str(rotation_path)])
+        tls_credentials[0].write_text(original); revoke(server_cert,ca_config,crl); fault("mtls-revoked-server",config=tls_base)
         server.shutdown(); server.server_close(); thread.join(timeout=3); fault("mtls-outage",config=tls_base)
         elapsed=time.monotonic()-started; peak=resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss
         if os.uname().sysname=="Linux": peak*=1024
         if elapsed>60 or load_elapsed>20 or thread.is_alive(): raise RuntimeError("http-json-e2e: resource or cleanup bound exceeded")
-        print(json.dumps({"schema_version":"telosieve.http-json-integration-qualification/v2","transports":["http/1.1","https-tls1.3-mtls"],
+        print(json.dumps({"schema_version":"telosieve.http-json-integration-qualification/v3","transports":["http/1.1","https-tls1.3-mtls-crl"],
           "orchestrated_endpoints":True,"external_endpoints":False,"loopback_only":True,"bearer_identities":3,
           "mtls_client_identities":3,"mutation_methods_refused":denied+tls_denied,"observation_producers":2,"separate_control_planes":False,
-          "successful_evaluations":2,"load_evaluations":LOAD_EVALUATIONS,"load_concurrency":LOAD_CONCURRENCY,
+          "successful_evaluations":3,"client_rotations":1,"revocations_refused":1,"load_evaluations":LOAD_EVALUATIONS,"load_concurrency":LOAD_CONCURRENCY,
           "load_elapsed_seconds":round(load_elapsed,3),"fail_closed_evaluations":failures,"target_mutated":False,
           "elapsed_seconds":round(elapsed,3),"peak_child_rss_bytes":peak,"independent_evidence":False,"status":"passed"},separators=(",",":")))
     finally:
