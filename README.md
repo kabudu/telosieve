@@ -185,6 +185,12 @@ distinct read-only ACL users, proves mutation denial, exercises two signed
 producers and bounded concurrent load, and retains the shared-control-plane
 limitation. See [Redis Read-Only Integration](docs/REDIS_INTEGRATION.md).
 
+PostgreSQL 18.4 is the second concrete contract implementation. It uses a
+bounded repeatable-read, read-only transaction, three SELECT-only roles, two
+signed producers, concurrent-writer/load campaigns, and explicit mutation,
+scope, lock and outage refusals. See
+[PostgreSQL Read-Only Integration](docs/POSTGRESQL_INTEGRATION.md).
+
 Inspect the exact machine-checked read-only evaluation surface with:
 
 ```sh

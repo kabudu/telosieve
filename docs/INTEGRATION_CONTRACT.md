@@ -142,3 +142,6 @@ The first concrete conformance application is the bounded
 [Redis Read-Only Integration](REDIS_INTEGRATION.md). Its real local ACL and
 server qualification satisfies the platform-mechanics requirements while
 retaining the independent-control-plane gate.
+The second application is the transactionally coherent
+[PostgreSQL Read-Only Integration](POSTGRESQL_INTEGRATION.md), with the same
+independent-control-plane gate retained.

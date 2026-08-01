@@ -401,6 +401,18 @@ oversized bulk values and arrays. All processes share one host and Redis control
 plane, so this is concrete integration and credential-scope evidence, not
 independent observation truth. See [REDIS_INTEGRATION](REDIS_INTEGRATION.md).
 
+## PostgreSQL Integration Contract qualification
+
+The pinned PostgreSQL 18.4 harness exercises the public v7 CLI through one
+primary and two signed producer transactions. Six prohibited SQL operations are
+denied for the SELECT-only role; success, eight-way bounded load and four
+committed-writer races never report target mutation or partial evidence. Unsafe
+and revoked credentials, 65 replicas, producer disagreement, stale timing,
+exclusive-lock timeout and outage refuse without evidence. Focused tests cover
+fixed read-only SQL, unsafe schema names, credential permissions/linking and
+malformed/multiline/null client output. See
+[POSTGRESQL_INTEGRATION](POSTGRESQL_INTEGRATION.md).
+
 ## Compatibility consumer qualification
 
 The independent Python reader and Rust compatibility boundary agree on five

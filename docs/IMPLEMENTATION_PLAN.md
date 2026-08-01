@@ -829,3 +829,27 @@ Evidence: [REDIS_INTEGRATION](REDIS_INTEGRATION.md),
 `results/redis-integration-qualification.json`. This qualifies a concrete local
 Redis integration and real ACL enforcement; one project-controlled server does
 not establish independent observation truth or production readiness.
+
+## Post-M50 — concrete PostgreSQL read-only integration
+
+- [x] Map four fixed schema tables into Integration Contract v1 through a
+  dependency-free bounded `psql` subprocess.
+- [x] Collect one coherent `REPEATABLE READ READ ONLY` transaction with row,
+  byte, statement, lock and process bounds.
+- [x] Keep credentials out of arguments/environment values through owner-only
+  source files and an ephemeral owner-only pgpass file.
+- [x] Qualify three SELECT-only roles and prove six mutation/out-of-scope SQL
+  operations are denied against pinned PostgreSQL 18.4.
+- [x] Exercise a primary adapter, two signed producers, bounded concurrent load,
+  committed-writer races and seven no-evidence platform faults.
+- [x] Package implementation, tests, real-system harness, retained result and
+  assessor/operator guidance without displacing Redis coverage.
+- [ ] Repeat across independently administered PostgreSQL control planes,
+  credential custody, producer keys and production topology/failover paths.
+
+Evidence: [POSTGRESQL_INTEGRATION](POSTGRESQL_INTEGRATION.md),
+`scripts/postgresql_integration_common.py`,
+`scripts/run-postgresql-integration.py`, and
+`results/postgresql-integration-qualification.json`. This qualifies local
+transaction and privilege mechanics, not independent database truth or
+production readiness.

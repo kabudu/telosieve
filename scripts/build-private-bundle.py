@@ -21,6 +21,7 @@ FILES = [
     "docs/PRODUCER_ISOLATION.md",
     "docs/INTEGRATION_CONTRACT.md",
     "docs/REDIS_INTEGRATION.md",
+    "docs/POSTGRESQL_INTEGRATION.md",
     "deploy/kubernetes/evaluation-rbac.yaml", "evaluation/config.example.json",
     "deploy/systemd/telosieve-observation@.service",
     "deploy/systemd/observation-kubernetes-a.example.json",
@@ -52,6 +53,11 @@ FILES = [
     "scripts/redis-observation-producer.py",
     "scripts/test-redis-integration.py",
     "scripts/run-redis-integration.py",
+    "scripts/postgresql_integration_common.py",
+    "scripts/postgresql-integration-adapter.py",
+    "scripts/postgresql-observation-producer.py",
+    "scripts/test-postgresql-integration.py",
+    "scripts/run-postgresql-integration.py",
     "scripts/observation-source-relay.py", "scripts/observation-source-client.py",
     "scripts/run-producer-isolation-qualification.py",
     "scripts/qualify-linux-producer-isolation.sh",
@@ -59,6 +65,7 @@ FILES = [
     "results/adversarial-coverage-validation.json",
     "results/sustained-adversarial-load.json",
     "results/redis-integration-qualification.json",
+    "results/postgresql-integration-qualification.json",
     "results/candidate-readiness-validation.json",
 ]
 MAX_BINARY = 128 * 1024 * 1024
@@ -81,6 +88,10 @@ RUNTIME_EXECUTABLES = {
     "scripts/redis-observation-producer.py",
     "scripts/test-redis-integration.py",
     "scripts/run-redis-integration.py",
+    "scripts/postgresql-integration-adapter.py",
+    "scripts/postgresql-observation-producer.py",
+    "scripts/test-postgresql-integration.py",
+    "scripts/run-postgresql-integration.py",
 }
 
 def digest(data): return hashlib.sha256(data).hexdigest()

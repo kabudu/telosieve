@@ -183,6 +183,15 @@ administrator and harness; server compromise, consistent false replies,
 credential theft, TLS/remote transport, cluster failover and independently
 administered custody remain outside this local evidence.
 
+The PostgreSQL adapter executes fixed SQL inside one repeatable-read, read-only
+transaction with row, payload, statement, lock and process bounds. Credential
+files are owner-only and passwords enter `psql` only through a temporary
+owner-only pgpass file. The real qualification denies mutation, DDL and secret-
+schema reads, and refuses racing disagreement, revoked credentials, excess
+topology, stale producers, lock timeout and outage. All readers still share one
+database administrator, server and host; consistent server lies, custody,
+remote transport, failover and production topology remain outside this evidence.
+
 The optional Linux producer relay separates evaluator and producer filesystem
 identities through per-producer systemd users, client groups, tokens, sockets,
 and hardening. Compromise of the evaluator can request observations but should

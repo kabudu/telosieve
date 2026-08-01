@@ -151,6 +151,53 @@ def assert_bundle(path: Path) -> int:
         ):
             raise SystemExit("private-bundle-qualification: Redis result is invalid")
 
+        postgresql_result = json.loads(
+            archive.read("results/postgresql-integration-qualification.json")
+        )
+        if (
+            set(postgresql_result) != {
+                "schema_version", "postgresql_version", "libpq_version", "image",
+                "real_database", "loopback_only", "read_only_roles",
+                "forbidden_operations_refused", "observation_producers",
+                "separate_control_planes", "successful_evaluations",
+                "load_evaluations", "load_concurrency", "load_elapsed_seconds",
+                "race_evaluations", "race_refusals", "fail_closed_evaluations",
+                "target_mutated", "elapsed_seconds", "peak_child_rss_bytes",
+                "independent_evidence", "status",
+            }
+            or postgresql_result["schema_version"]
+            != "telosieve.postgresql-integration-qualification/v1"
+            or postgresql_result["postgresql_version"] != "18.4"
+            or postgresql_result["libpq_version"] != "18.1"
+            or postgresql_result["image"]
+            != "postgres@sha256:9a8afca54e7861fd90fab5fdf4c42477a6b1cb7d293595148e674e0a3181de15"
+            or postgresql_result["real_database"] is not True
+            or postgresql_result["loopback_only"] is not True
+            or postgresql_result["read_only_roles"] != 3
+            or postgresql_result["forbidden_operations_refused"] != 6
+            or postgresql_result["observation_producers"] != 2
+            or postgresql_result["separate_control_planes"] is not False
+            or postgresql_result["successful_evaluations"] != 1
+            or postgresql_result["load_evaluations"] != 8
+            or postgresql_result["load_concurrency"] != 4
+            or not isinstance(postgresql_result["load_elapsed_seconds"], (int, float))
+            or isinstance(postgresql_result["load_elapsed_seconds"], bool)
+            or not 0 <= postgresql_result["load_elapsed_seconds"] <= 30
+            or postgresql_result["race_evaluations"] != 4
+            or not 0 <= postgresql_result["race_refusals"] <= 4
+            or postgresql_result["fail_closed_evaluations"] != 7
+            or postgresql_result["target_mutated"] is not False
+            or not isinstance(postgresql_result["elapsed_seconds"], (int, float))
+            or isinstance(postgresql_result["elapsed_seconds"], bool)
+            or not 0 <= postgresql_result["elapsed_seconds"] <= 90
+            or not isinstance(postgresql_result["peak_child_rss_bytes"], int)
+            or isinstance(postgresql_result["peak_child_rss_bytes"], bool)
+            or not 0 < postgresql_result["peak_child_rss_bytes"] <= 512 * 1024 * 1024
+            or postgresql_result["independent_evidence"] is not False
+            or postgresql_result["status"] != "passed"
+        ):
+            raise SystemExit("private-bundle-qualification: PostgreSQL result is invalid")
+
         packaged_modes = [
             {
                 "configuration_schema": (config := json.loads(archive.read(path)))["schema_version"],
@@ -174,6 +221,11 @@ def assert_bundle(path: Path) -> int:
             "scripts/redis-integration-adapter.py", "scripts/redis-observation-producer.py",
             "scripts/test-redis-integration.py", "scripts/run-redis-integration.py",
             "results/redis-integration-qualification.json",
+            "docs/POSTGRESQL_INTEGRATION.md", "scripts/postgresql_integration_common.py",
+            "scripts/postgresql-integration-adapter.py",
+            "scripts/postgresql-observation-producer.py",
+            "scripts/test-postgresql-integration.py", "scripts/run-postgresql-integration.py",
+            "results/postgresql-integration-qualification.json",
             "evaluation/candidate-readiness.json",
             "evaluation/observation-trust.example.json", "evaluation/observation-quorum.example.json",
             "evaluation/observation-trust.live.example.json",
@@ -214,6 +266,10 @@ def assert_bundle(path: Path) -> int:
             "scripts/redis-observation-producer.py",
             "scripts/test-redis-integration.py",
             "scripts/run-redis-integration.py",
+            "scripts/postgresql-integration-adapter.py",
+            "scripts/postgresql-observation-producer.py",
+            "scripts/test-postgresql-integration.py",
+            "scripts/run-postgresql-integration.py",
         ):
             mode = archive.getinfo(producer).external_attr >> 16
             if mode & 0o777 != 0o555:

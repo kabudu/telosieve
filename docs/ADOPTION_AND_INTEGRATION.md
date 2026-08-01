@@ -41,3 +41,8 @@ key/value model, while separate Redis ACL users constrain the primary adapter
 and two signed producers to read commands. The local qualification proves
 technical mutation denial but shares one host and server; remote transport,
 cluster topology, independent custody and production operation remain open.
+
+PostgreSQL adds a relational test of the same contract through one bounded
+repeatable-read, read-only transaction over four fixed tables. Database roles
+are limited to schema usage and table selection; independent administration,
+remote transport and topology/failover operation remain open.

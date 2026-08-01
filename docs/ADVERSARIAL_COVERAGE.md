@@ -37,6 +37,13 @@ run at concurrency four, and oversized topology, disagreement and outage fail
 without evidence. Because every reader still shares one project-controlled
 Redis server, the compromised-consistent-producer cell remains deferred.
 
+Post-M50 adds a relational `external-read-only` path against pinned PostgreSQL
+18.4. The harness proves repeatable-read snapshot collection during committed
+writer races, denial of six mutation or out-of-scope operations, bounded lock
+and outage refusal, two-producer disagreement detection, and eight evaluations
+at concurrency four. All readers still share one project-controlled database,
+so this evidence does not close the compromised-consistent-producer cell.
+
 Run the contract directly with:
 
 ```sh

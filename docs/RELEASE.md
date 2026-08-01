@@ -283,3 +283,8 @@ attempts, and two producers corroborate the primary response under bounded
 concurrent load. All identities still share one project-controlled Redis server
 and host; this is not independent evidence, production credential custody, or a
 new signed candidate.
+
+Post-candidate PostgreSQL integration adds a bounded `psql` collector, pinned
+real PostgreSQL 18.4 qualification, three SELECT-only roles, atomic read-only
+snapshots and concurrent-writer evidence. It is not part of `v0.2.0-rc.1`; all
+qualified readers share one project-controlled database and host.

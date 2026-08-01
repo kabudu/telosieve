@@ -4,7 +4,7 @@
 absolute locally validated Telosieve binary and a fixed allowlist of evaluation
 configuration, RBAC, lifecycle, diagnostics, policy, and operator documents.
 The fixed allowlist includes all four contracted configurations, the Kubernetes,
-OpenTofu and Redis integration material, authenticated offline/real-system scenarios,
+OpenTofu, Redis and PostgreSQL integration material, authenticated offline/real-system scenarios,
 the candidate test plan, and the operator/security documents needed to assess
 them. It also includes and digest-binds the adversarial coverage contract,
 validator, and retained result so open research gaps travel with the candidate.
@@ -19,8 +19,8 @@ v2, the packaged configurations, and the four-mode test plan. Every entry and
 the canonical full source commit are bound by the version 3
 `bundle-manifest.json`; timestamps,
 ordering, compression, and modes are fixed.
-Only the Telosieve binary, Kubernetes/OpenTofu/Redis observation producers and
-Redis adapter/harnesses, relay and client, and Linux identity-qualification tools are executable in the archive;
+Only the Telosieve binary, integration producers/adapters/harnesses, relay and
+client, and Linux identity-qualification tools are executable in the archive;
 other allowlisted source material is read-only. The producer programs still
 require operator-supplied platform executables, configuration, saved plans or
 credentials, and signing keys.

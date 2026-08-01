@@ -19,6 +19,7 @@ run cargo clippy --locked --offline --all-targets --all-features -- -D warnings
 run cargo test --locked --offline --all-targets --all-features
 run cargo test --locked --offline --test integration_contract
 run python3 scripts/test-redis-integration.py
+run python3 scripts/test-postgresql-integration.py
 run env RUSTDOCFLAGS=-Dwarnings cargo doc --locked --offline --no-deps
 printf 'local-ci: cargo metadata --locked --offline --no-deps --format-version 1\n'
 cargo metadata --locked --offline --no-deps --format-version 1 >/dev/null
@@ -40,6 +41,7 @@ run python3 scripts/run-sustained-adversarial-load.py
 run python3 scripts/run-kubernetes-real-cluster.py
 run python3 scripts/run-opentofu-plan.py
 run python3 scripts/run-redis-integration.py
+run python3 scripts/run-postgresql-integration.py
 run git diff --check
 
 if rg -n '\b(TODO|FIXME|REPLACE_WITH)\b' \
