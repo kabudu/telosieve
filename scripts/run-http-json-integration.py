@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """Qualify Telosieve against orchestrated real HTTP endpoints."""
 from __future__ import annotations
-import http.client, json, os, pathlib, resource, ssl, subprocess, tempfile, threading, time
+import http.client, json, os, pathlib, resource, shutil, ssl, subprocess, tempfile, threading, time
 from concurrent.futures import ThreadPoolExecutor
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 ADAPTER = (ROOT / "scripts/http-json-integration-adapter.py").resolve()
 PRODUCER = (ROOT / "scripts/http-json-observation-producer.py").resolve()
+PKI_CHECK = (ROOT / "scripts/http-json-pki-check.py").resolve()
 PATH = "/v1/telosieve/snapshot"
 LOAD_EVALUATIONS, LOAD_CONCURRENCY = 8, 4
 TOKENS = {"adapter":"A"*32,"producer-a":"B"*32,"producer-b":"C"*32}
@@ -177,6 +178,13 @@ def main():
         tls_credentials=[]
         for name in ("adapter","producer-a","producer-b"):
             path=work/f"mtls-{name}-credential.json"; tls_credential(path,TOKENS[name],ca,crl,*clients[name]); tls_credentials.append(path)
+        openssl=pathlib.Path(shutil.which("openssl") or "").resolve()
+        for path in tls_credentials: run([str(PKI_CHECK),"--openssl",str(openssl),"--credentials",str(path),"--renew-before-seconds","3600"])
+        pki_refusals=0
+        run([str(PKI_CHECK),"--openssl",str(openssl),"--credentials",str(tls_credentials[0]),"--renew-before-seconds","172800"],success=False); pki_refusals+=1
+        pki_original=tls_credentials[0].read_text(); pki_bad=json.loads(pki_original); pki_bad["client_key"]=str(clients["producer-a"][1]); tls_credentials[0].write_text(json.dumps(pki_bad))
+        try: run([str(PKI_CHECK),"--openssl",str(openssl),"--credentials",str(tls_credentials[0]),"--renew-before-seconds","3600"],success=False); pki_refusals+=1
+        finally: tls_credentials[0].write_text(pki_original)
         tls_path,tls_base,tls_producer_configs=make_config(work,binary,server.server_port,tls_credentials,"mtls-valid","https")
         tls_report=json.loads(run([str(binary),"evaluate",str(tls_path)]).stdout)
         if tls_report["target_mutated"]: raise RuntimeError("http-json-e2e: mTLS success reported mutation")
@@ -217,14 +225,16 @@ def main():
         rotation=json.loads(json.dumps(tls_base)); rotation["certificate_path"]=str(work/"mtls-rotation-certificate.json"); rotation["ledger_path"]=str(work/"mtls-rotation-ledger.jsonl")
         rotation_path=work/"mtls-rotation-evaluation.json"; rotation_path.write_text(json.dumps(rotation)); run([str(binary),"evaluate",str(rotation_path)])
         tls_credentials[0].write_text(original); revoke(server_cert,ca_config,crl); fault("mtls-revoked-server",config=tls_base)
+        revoke(clients["adapter"][0],ca_config,crl)
+        run([str(PKI_CHECK),"--openssl",str(openssl),"--credentials",str(tls_credentials[0]),"--renew-before-seconds","3600"],success=False); pki_refusals+=1
         server.shutdown(); server.server_close(); thread.join(timeout=3); fault("mtls-outage",config=tls_base)
         elapsed=time.monotonic()-started; peak=resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss
         if os.uname().sysname=="Linux": peak*=1024
         if elapsed>60 or load_elapsed>20 or thread.is_alive(): raise RuntimeError("http-json-e2e: resource or cleanup bound exceeded")
-        print(json.dumps({"schema_version":"telosieve.http-json-integration-qualification/v3","transports":["http/1.1","https-tls1.3-mtls-crl"],
+        print(json.dumps({"schema_version":"telosieve.http-json-integration-qualification/v4","transports":["http/1.1","https-tls1.3-mtls-crl"],
           "orchestrated_endpoints":True,"external_endpoints":False,"loopback_only":True,"bearer_identities":3,
           "mtls_client_identities":3,"mutation_methods_refused":denied+tls_denied,"observation_producers":2,"separate_control_planes":False,
-          "successful_evaluations":3,"client_rotations":1,"revocations_refused":1,"load_evaluations":LOAD_EVALUATIONS,"load_concurrency":LOAD_CONCURRENCY,
+          "successful_evaluations":3,"client_rotations":1,"revocations_refused":1,"pki_preflights":3,"pki_preflight_refusals":pki_refusals,"load_evaluations":LOAD_EVALUATIONS,"load_concurrency":LOAD_CONCURRENCY,
           "load_elapsed_seconds":round(load_elapsed,3),"fail_closed_evaluations":failures,"target_mutated":False,
           "elapsed_seconds":round(elapsed,3),"peak_child_rss_bytes":peak,"independent_evidence":False,"status":"passed"},separators=(",",":")))
     finally:

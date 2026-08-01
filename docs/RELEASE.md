@@ -299,3 +299,6 @@ frozen candidate and does not claim operational PKI or external endpoints.
 
 Post-M53 adds post-candidate CRL enforcement plus local certificate rotation and
 revocation qualification. It remains project-controlled PKI evidence only.
+
+Post-M54 adds a post-candidate offline PKI readiness command; it does not alter
+the frozen candidate or establish external monitoring.

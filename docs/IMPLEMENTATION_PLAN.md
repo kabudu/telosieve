@@ -912,3 +912,16 @@ mechanics and downgrade refusal, not operational PKI or independent transport.
 Evidence: `scripts/run-http-json-integration.py` and
 `results/http-json-integration-qualification.json`. The qualification exercises
 real OpenSSL CA state and CRLs locally; it is not operational PKI evidence.
+
+## Post-M54 — offline HTTP/mTLS PKI readiness
+
+- [x] Add a bounded offline readiness command for CA, CRL, client certificate
+  and private-key material.
+- [x] Verify trust, CRL signature/freshness, client purpose/revocation,
+  certificate renewal horizon and exact certificate/key pairing.
+- [x] Emit only aggregate readiness fields without paths or secret material.
+- [x] Qualify three valid identities and refuse near-expiry, mismatched-key and
+  revoked-client cases.
+- [ ] Connect readiness output to independently operated PKI monitoring.
+
+Evidence: `scripts/http-json-pki-check.py` and the v4 retained HTTP result.

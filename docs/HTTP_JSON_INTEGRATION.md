@@ -38,6 +38,7 @@ Run:
 cargo build --locked --offline
 python3 scripts/test-http-json-integration.py
 python3 scripts/run-http-json-integration.py
+python3 scripts/http-json-pki-check.py --openssl /absolute/path/to/openssl --credentials /absolute/path/to/credentials.json
 ```
 
 The harness starts a real loopback HTTP server and exercises the public v7 CLI,
@@ -50,6 +51,10 @@ untrusted client identity, plaintext downgrade, producer disagreement, timeout
 and outage. It additionally proves a client-identity rotation succeeds, a
 revoked server is refused, and missing or malformed CRLs fail closed. The retained result is
 [`http-json-integration-qualification.json`](../results/http-json-integration-qualification.json).
+
+The offline PKI readiness command verifies CA trust, CRL signature and renewal
+horizon, client purpose/revocation, certificate expiry and key pairing. Its JSON
+report contains no paths, certificate contents, tokens or private-key material.
 
 This is an orchestrated endpoint qualification, not external evidence. It
 qualifies local TLS 1.3/mTLS mechanics but not DNS, proxies, service meshes,

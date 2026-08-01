@@ -64,6 +64,7 @@ FILES = [
     "scripts/http-json-observation-producer.py",
     "scripts/test-http-json-integration.py",
     "scripts/run-http-json-integration.py",
+    "scripts/http-json-pki-check.py",
     "scripts/observation-source-relay.py", "scripts/observation-source-client.py",
     "scripts/run-producer-isolation-qualification.py",
     "scripts/qualify-linux-producer-isolation.sh",
@@ -103,6 +104,7 @@ RUNTIME_EXECUTABLES = {
     "scripts/http-json-observation-producer.py",
     "scripts/test-http-json-integration.py",
     "scripts/run-http-json-integration.py",
+    "scripts/http-json-pki-check.py",
 }
 
 def digest(data): return hashlib.sha256(data).hexdigest()
