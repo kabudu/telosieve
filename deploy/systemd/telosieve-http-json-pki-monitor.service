@@ -1,0 +1,18 @@
+[Unit]
+Description=Telosieve HTTP JSON PKI readiness monitor
+After=local-fs.target
+
+[Service]
+Type=oneshot
+User=telosieve-pki-monitor
+Group=telosieve-pki-monitor
+ExecStart=/usr/local/lib/telosieve/http-json-pki-monitor.py --config /etc/telosieve/http-json-pki-monitor.json --status /var/lib/telosieve/pki-status.json
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/var/lib/telosieve
+RestrictAddressFamilies=AF_UNIX
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+SystemCallArchitectures=native

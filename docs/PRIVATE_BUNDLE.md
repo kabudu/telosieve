@@ -24,6 +24,8 @@ client, and Linux identity-qualification tools are executable in the archive;
 other allowlisted source material is read-only. The producer programs still
 require operator-supplied platform executables, configuration, saved plans or
 credentials, and signing keys.
+The HTTP PKI checker, aggregate monitor and systemd timer are included; alerting
+destinations and operational PKI material remain operator supplied.
 The bundle also carries the authenticated Unix relay/client, hardened systemd
 template, example relay profiles, local qualification, and pinned offline Linux
 multi-UID qualification used to prepare and test separate producer identities;

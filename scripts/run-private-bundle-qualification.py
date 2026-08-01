@@ -202,10 +202,10 @@ def assert_bundle(path: Path) -> int:
         if (
             set(http_result) != {"schema_version", "transports", "orchestrated_endpoints", "external_endpoints",
                 "loopback_only", "bearer_identities", "mtls_client_identities", "mutation_methods_refused", "observation_producers",
-                "separate_control_planes", "successful_evaluations", "client_rotations", "revocations_refused", "pki_preflights", "pki_preflight_refusals", "load_evaluations", "load_concurrency",
+                "separate_control_planes", "successful_evaluations", "client_rotations", "revocations_refused", "pki_preflights", "pki_preflight_refusals", "pki_monitor_runs", "pki_monitor_transitions", "pki_monitor_stale_replacements", "load_evaluations", "load_concurrency",
                 "load_elapsed_seconds", "fail_closed_evaluations", "target_mutated", "elapsed_seconds",
                 "peak_child_rss_bytes", "independent_evidence", "status"}
-            or http_result["schema_version"] != "telosieve.http-json-integration-qualification/v4"
+            or http_result["schema_version"] != "telosieve.http-json-integration-qualification/v5"
             or http_result["transports"] != ["http/1.1", "https-tls1.3-mtls-crl"]
             or http_result["orchestrated_endpoints"] is not True
             or http_result["external_endpoints"] is not False
@@ -218,6 +218,7 @@ def assert_bundle(path: Path) -> int:
             or http_result["successful_evaluations"] != 3
             or http_result["client_rotations"] != 1 or http_result["revocations_refused"] != 1
             or http_result["pki_preflights"] != 3 or http_result["pki_preflight_refusals"] != 3
+            or http_result["pki_monitor_runs"] != 2 or http_result["pki_monitor_transitions"] != 1 or http_result["pki_monitor_stale_replacements"] != 1
             or http_result["load_evaluations"] != 8 or http_result["load_concurrency"] != 4
             or not isinstance(http_result["load_elapsed_seconds"], (int, float))
             or isinstance(http_result["load_elapsed_seconds"], bool)
@@ -266,6 +267,8 @@ def assert_bundle(path: Path) -> int:
             "scripts/http-json-integration-adapter.py", "scripts/http-json-observation-producer.py",
             "scripts/test-http-json-integration.py", "scripts/run-http-json-integration.py",
             "scripts/http-json-pki-check.py",
+            "scripts/http-json-pki-monitor.py", "deploy/systemd/telosieve-http-json-pki-monitor.service",
+            "deploy/systemd/telosieve-http-json-pki-monitor.timer",
             "results/http-json-integration-qualification.json",
             "evaluation/candidate-readiness.json",
             "evaluation/observation-trust.example.json", "evaluation/observation-quorum.example.json",
@@ -316,6 +319,7 @@ def assert_bundle(path: Path) -> int:
             "scripts/test-http-json-integration.py",
             "scripts/run-http-json-integration.py",
             "scripts/http-json-pki-check.py",
+            "scripts/http-json-pki-monitor.py",
         ):
             mode = archive.getinfo(producer).external_attr >> 16
             if mode & 0o777 != 0o555:

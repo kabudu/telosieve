@@ -302,3 +302,6 @@ revocation qualification. It remains project-controlled PKI evidence only.
 
 Post-M54 adds a post-candidate offline PKI readiness command; it does not alter
 the frozen candidate or establish external monitoring.
+
+Post-M55 packages scheduler-neutral PKI monitoring and hardened systemd units.
+It does not claim an independently operated alerting destination.

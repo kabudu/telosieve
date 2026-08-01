@@ -1,0 +1,12 @@
+[Unit]
+Description=Run Telosieve HTTP JSON PKI readiness monitoring
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=15min
+RandomizedDelaySec=60
+Persistent=true
+Unit=telosieve-http-json-pki-monitor.service
+
+[Install]
+WantedBy=timers.target

@@ -56,6 +56,28 @@ The offline PKI readiness command verifies CA trust, CRL signature and renewal
 horizon, client purpose/revocation, certificate expiry and key pairing. Its JSON
 report contains no paths, certificate contents, tokens or private-key material.
 
+`http-json-pki-monitor.py` runs one to four readiness checks, publishes one
+owner-only aggregate status atomically, returns nonzero when any identity is not
+ready, and never copies checker diagnostics into the status. The packaged
+systemd service and timer run it every 15 minutes under a dedicated user with
+network access disabled. Kubernetes operators can run the same scheduler-neutral
+command from their privately built evaluator image; no nonexistent public image
+is claimed here.
+
+The monitor configuration is a non-secret regular JSON file that is not writable
+by group or other users:
+
+```json
+{"schema_version":"telosieve.http-json-pki-monitor/v1","checker":"/usr/local/lib/telosieve/http-json-pki-check.py","openssl":"/usr/bin/openssl","credentials":["/etc/telosieve/adapter-mtls.json","/etc/telosieve/producer-a-mtls.json","/etc/telosieve/producer-b-mtls.json"],"renew_before_seconds":604800}
+```
+
+Install the common module, checker and monitor together under
+`/usr/local/lib/telosieve`, create the `telosieve-pki-monitor` system user and
+an owner-only `/var/lib/telosieve`, install both packaged units under
+`/etc/systemd/system`, then run `systemd-analyze verify` and enable
+`telosieve-http-json-pki-monitor.timer`. The monitor user needs read access to
+the credentials and PKI files but no network access or target mutation authority.
+
 This is an orchestrated endpoint qualification, not external evidence. It
 qualifies local TLS 1.3/mTLS mechanics but not DNS, proxies, service meshes,
 OAuth refresh, public networks,

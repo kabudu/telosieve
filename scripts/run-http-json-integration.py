@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Qualify Telosieve against orchestrated real HTTP endpoints."""
 from __future__ import annotations
-import http.client, json, os, pathlib, resource, shutil, ssl, subprocess, tempfile, threading, time
+import http.client, json, os, pathlib, resource, shutil, ssl, stat, subprocess, tempfile, threading, time
 from concurrent.futures import ThreadPoolExecutor
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
@@ -9,6 +9,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 ADAPTER = (ROOT / "scripts/http-json-integration-adapter.py").resolve()
 PRODUCER = (ROOT / "scripts/http-json-observation-producer.py").resolve()
 PKI_CHECK = (ROOT / "scripts/http-json-pki-check.py").resolve()
+PKI_MONITOR = (ROOT / "scripts/http-json-pki-monitor.py").resolve()
 PATH = "/v1/telosieve/snapshot"
 LOAD_EVALUATIONS, LOAD_CONCURRENCY = 8, 4
 TOKENS = {"adapter":"A"*32,"producer-a":"B"*32,"producer-b":"C"*32}
@@ -185,6 +186,12 @@ def main():
         pki_original=tls_credentials[0].read_text(); pki_bad=json.loads(pki_original); pki_bad["client_key"]=str(clients["producer-a"][1]); tls_credentials[0].write_text(json.dumps(pki_bad))
         try: run([str(PKI_CHECK),"--openssl",str(openssl),"--credentials",str(tls_credentials[0]),"--renew-before-seconds","3600"],success=False); pki_refusals+=1
         finally: tls_credentials[0].write_text(pki_original)
+        monitor_config=work/"pki-monitor.json"; monitor_status=work/"pki-monitor-status.json"
+        monitor_config.write_text(json.dumps({"schema_version":"telosieve.http-json-pki-monitor/v1","checker":str(PKI_CHECK),
+            "openssl":str(openssl),"credentials":[str(path) for path in tls_credentials],"renew_before_seconds":3600},separators=(",",":")))
+        monitor_status.write_text(json.dumps({"checked_at":1,"status":"stale"},separators=(",",":"))); monitor_status.chmod(0o600)
+        monitored=json.loads(run([str(PKI_MONITOR),"--config",str(monitor_config),"--status",str(monitor_status)]).stdout)
+        if monitored["status"]!="ready" or monitored["checked_at"]<=1 or stat.S_IMODE(monitor_status.stat().st_mode)!=0o600: raise RuntimeError("http-json-e2e: PKI monitor ready publication is invalid")
         tls_path,tls_base,tls_producer_configs=make_config(work,binary,server.server_port,tls_credentials,"mtls-valid","https")
         tls_report=json.loads(run([str(binary),"evaluate",str(tls_path)]).stdout)
         if tls_report["target_mutated"]: raise RuntimeError("http-json-e2e: mTLS success reported mutation")
@@ -227,14 +234,18 @@ def main():
         tls_credentials[0].write_text(original); revoke(server_cert,ca_config,crl); fault("mtls-revoked-server",config=tls_base)
         revoke(clients["adapter"][0],ca_config,crl)
         run([str(PKI_CHECK),"--openssl",str(openssl),"--credentials",str(tls_credentials[0]),"--renew-before-seconds","3600"],success=False); pki_refusals+=1
+        run([str(PKI_MONITOR),"--config",str(monitor_config),"--status",str(monitor_status)],success=False)
+        monitored_bytes=monitor_status.read_bytes(); monitored=json.loads(monitored_bytes)
+        if monitored["status"]!="not-ready" or monitored["not_ready"]!=1 or any(str(path).encode() in monitored_bytes for path in tls_credentials):
+            raise RuntimeError("http-json-e2e: PKI monitor refusal publication is invalid")
         server.shutdown(); server.server_close(); thread.join(timeout=3); fault("mtls-outage",config=tls_base)
         elapsed=time.monotonic()-started; peak=resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss
         if os.uname().sysname=="Linux": peak*=1024
         if elapsed>60 or load_elapsed>20 or thread.is_alive(): raise RuntimeError("http-json-e2e: resource or cleanup bound exceeded")
-        print(json.dumps({"schema_version":"telosieve.http-json-integration-qualification/v4","transports":["http/1.1","https-tls1.3-mtls-crl"],
+        print(json.dumps({"schema_version":"telosieve.http-json-integration-qualification/v5","transports":["http/1.1","https-tls1.3-mtls-crl"],
           "orchestrated_endpoints":True,"external_endpoints":False,"loopback_only":True,"bearer_identities":3,
           "mtls_client_identities":3,"mutation_methods_refused":denied+tls_denied,"observation_producers":2,"separate_control_planes":False,
-          "successful_evaluations":3,"client_rotations":1,"revocations_refused":1,"pki_preflights":3,"pki_preflight_refusals":pki_refusals,"load_evaluations":LOAD_EVALUATIONS,"load_concurrency":LOAD_CONCURRENCY,
+          "successful_evaluations":3,"client_rotations":1,"revocations_refused":1,"pki_preflights":3,"pki_preflight_refusals":pki_refusals,"pki_monitor_runs":2,"pki_monitor_transitions":1,"pki_monitor_stale_replacements":1,"load_evaluations":LOAD_EVALUATIONS,"load_concurrency":LOAD_CONCURRENCY,
           "load_elapsed_seconds":round(load_elapsed,3),"fail_closed_evaluations":failures,"target_mutated":False,
           "elapsed_seconds":round(elapsed,3),"peak_child_rss_bytes":peak,"independent_evidence":False,"status":"passed"},separators=(",",":")))
     finally:

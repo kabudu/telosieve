@@ -925,3 +925,16 @@ real OpenSSL CA state and CRLs locally; it is not operational PKI evidence.
 - [ ] Connect readiness output to independently operated PKI monitoring.
 
 Evidence: `scripts/http-json-pki-check.py` and the v4 retained HTTP result.
+
+## Post-M55 - PKI readiness monitoring publication
+
+- [x] Aggregate one to four offline PKI checks with stable ready/not-ready exit
+  semantics and no propagated credential diagnostics.
+- [x] Atomically publish an owner-only versioned status file with bounded fields.
+- [x] Qualify ready to not-ready transition after certificate revocation and
+  prove status output contains no credential paths.
+- [x] Package a hardened systemd oneshot service and persistent timer.
+- [ ] Connect the scheduler-neutral status to independently operated alerting.
+
+Evidence: `scripts/http-json-pki-monitor.py`, the systemd units, and the v5 HTTP
+qualification result.

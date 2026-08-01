@@ -27,6 +27,8 @@ FILES = [
     "deploy/systemd/telosieve-observation@.service",
     "deploy/systemd/observation-kubernetes-a.example.json",
     "deploy/systemd/observation-opentofu-a.example.json",
+    "deploy/systemd/telosieve-http-json-pki-monitor.service",
+    "deploy/systemd/telosieve-http-json-pki-monitor.timer",
     "evaluation/config.live.example.json", "evaluation/config.opentofu.example.json",
     "evaluation/config.integration.example.json",
     "evaluation/observation-trust.example.json", "evaluation/observation-quorum.example.json",
@@ -65,6 +67,7 @@ FILES = [
     "scripts/test-http-json-integration.py",
     "scripts/run-http-json-integration.py",
     "scripts/http-json-pki-check.py",
+    "scripts/http-json-pki-monitor.py",
     "scripts/observation-source-relay.py", "scripts/observation-source-client.py",
     "scripts/run-producer-isolation-qualification.py",
     "scripts/qualify-linux-producer-isolation.sh",
@@ -105,6 +108,7 @@ RUNTIME_EXECUTABLES = {
     "scripts/test-http-json-integration.py",
     "scripts/run-http-json-integration.py",
     "scripts/http-json-pki-check.py",
+    "scripts/http-json-pki-monitor.py",
 }
 
 def digest(data): return hashlib.sha256(data).hexdigest()
