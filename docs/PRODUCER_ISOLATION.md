@@ -91,7 +91,7 @@ producer observations truthful or organizationally independent.
 
 `scripts/run-opentofu-plan.py` additionally routes the real two-producer
 OpenTofu success lifecycle through two live relays and the stable evaluation
-CLI. Kubernetes relay operation uses the same envelope transport, but the real
-cluster harness still invokes its producer processes directly. Kubernetes
-qualification through the relay remains open, as do real systemd, multi-host,
-credential-custody, and independent-operation exercises.
+CLI. `scripts/run-kubernetes-real-cluster.py` likewise routes both real-cluster
+producer processes and its concurrent evaluation load through two live relays,
+and proves a relay outage fails closed without evidence. Real systemd,
+multi-host, credential-custody, and independent-operation exercises remain open.

@@ -241,9 +241,11 @@ rejected. The two exact vectors pass and are retained in
 ## Real Kubernetes end to end
 
 The disposable kind qualification runs the real evaluation binary, kubectl,
-service-account authentication, Kubernetes API server, RBAC, StatefulSet, and
-Pods. It proves one healthy evidence lifecycle and two no-evidence refusals for
-authority mismatch and API outage, then removes the cluster. The run is local
+service-account authentication, Kubernetes API server, RBAC, StatefulSet, Pods,
+and two authenticated observation relays. It proves one healthy evidence
+lifecycle, eight concurrent relay-path evaluations, and three no-evidence
+refusals for authority mismatch, API outage, and relay outage, then removes the
+relays and cluster. The run is local
 project-controlled evidence, not managed-cluster or independent qualification.
 
 ## Private bundle signature boundary

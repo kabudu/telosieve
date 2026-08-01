@@ -4,6 +4,7 @@ import json
 import os
 import resource
 import shutil
+import socket
 import subprocess
 import sys
 import tempfile
@@ -21,6 +22,8 @@ LOAD_CONCURRENCY = 4
 MAX_LOAD_SECONDS = 30
 LOAD_CASE_TIMEOUT_SECONDS = 5
 PRODUCER = (ROOT / "scripts/kubernetes-observation-producer.py").resolve()
+RELAY = (ROOT / "scripts/observation-source-relay.py").resolve()
+RELAY_CLIENT = (ROOT / "scripts/observation-source-client.py").resolve()
 
 
 def run(arguments, *, input_bytes=None, timeout=30, check=True, env=None):
@@ -114,6 +117,80 @@ def observation_material(binary, work, restricted, scenario):
     return trust, sources
 
 
+def relay_sources(work, sources):
+    relayed, processes = [], []
+    for index, source in enumerate(sources):
+        token = work / f"relay-{index}.token"
+        token.write_bytes(bytes([65 + index]) * 32)
+        token.chmod(0o440)
+        socket_path = work / f"relay-{index}.sock"
+        relay_config = work / f"relay-{index}.json"
+        relay_config.write_text(json.dumps({
+            "schema_version": "telosieve.observation-relay/v1",
+            "socket_path": str(socket_path),
+            "token_path": str(token),
+            "producer": source,
+        }, separators=(",", ":")), encoding="utf-8")
+        process = subprocess.Popen(
+            [str(RELAY), "--config", str(relay_config)], cwd=ROOT,
+            stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
+            stderr=subprocess.PIPE,
+        )
+        processes.append(process)
+        deadline = time.monotonic() + 2
+        while time.monotonic() < deadline:
+            if socket_path.exists():
+                probe = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+                try:
+                    probe.settimeout(0.05)
+                    probe.connect(str(socket_path))
+                    break
+                except (ConnectionRefusedError, FileNotFoundError):
+                    pass
+                finally:
+                    probe.close()
+            if process.poll() is not None:
+                _, error = process.communicate()
+                stop_relays(processes)
+                raise SystemExit(
+                    "kubernetes-e2e: observation relay failed: "
+                    + error.decode(errors="replace")[-1024:]
+                )
+            time.sleep(0.01)
+        else:
+            stop_relays(processes)
+            raise SystemExit("kubernetes-e2e: observation relay readiness timed out")
+        try:
+            health = run([
+                str(RELAY_CLIENT), "--socket", str(socket_path),
+                "--token", str(token), "--check",
+            ], timeout=3)
+            health_ready = json.loads(health.stdout).get("status") == "ready"
+        except BaseException:
+            stop_relays(processes)
+            raise
+        if not health_ready:
+            stop_relays(processes)
+            raise SystemExit("kubernetes-e2e: observation relay health failed")
+        relayed.append({
+            "executable_path": str(RELAY_CLIENT),
+            "arguments": ["--socket", str(socket_path), "--token", str(token)],
+        })
+    return relayed, processes
+
+
+def stop_relays(processes):
+    for process in processes:
+        if process.poll() is None:
+            process.terminate()
+    for process in processes:
+        try:
+            process.wait(timeout=2)
+        except subprocess.TimeoutExpired:
+            process.kill()
+            process.wait(timeout=2)
+
+
 def evaluate_load(binary, work, restricted, trust, sources):
     def one(index):
         case = work / f"load-{index}"
@@ -170,49 +247,63 @@ def main():
             restricted_config(admin_config, restricted)
             binary = (ROOT / "target/debug/telosieve").resolve()
             scenario = (ROOT / "scenarios/kubernetes-real-cluster.json").resolve()
-            trust, sources = observation_material(binary, work, restricted, scenario)
+            trust, direct_sources = observation_material(binary, work, restricted, scenario)
             access = lambda *args: run(["kubectl", f"--kubeconfig={restricted}", "--context=evaluation", *args], check=False).stdout.decode().strip()
             if access("auth", "can-i", "get", "configmap/repair-goal", f"--namespace={NAMESPACE}") != "yes":
                 raise SystemExit("kubernetes-e2e: required ConfigMap read denied")
             for request in (("patch", "configmap/repair-goal"), ("get", "secret/must-not-read"), ("delete", "statefulset/research-kv")):
                 if access("auth", "can-i", *request, f"--namespace={NAMESPACE}") != "no":
                     raise SystemExit(f"kubernetes-e2e: unsafe permission granted: {request}")
-            config_path = work / "evaluation.json"
-            config_path.write_text(json.dumps({
-                "schema_version": "telosieve.evaluation-config/v5", "mode": "kubernetes-live",
-                "scenario_path": str(scenario),
-                "certificate_path": str(work / "certificate.json"), "ledger_path": str(work / "ledger.jsonl"),
-                "observation_trust_path": str(trust), "observation_sources": sources,
-                "kubernetes": {"kubectl_path": str(Path("/usr/local/bin/kubectl").resolve()), "kubeconfig_path": str(restricted.resolve()), "context": "evaluation", "namespace": NAMESPACE, "desired_config_map": "repair-goal", "observed_stateful_set": "research-kv"}
-            }), encoding="utf-8")
-            before = json.loads(kubectl(admin_config, "get", "statefulset/research-kv", f"--namespace={NAMESPACE}", "-o", "json").stdout)
-            evaluation = run([str(binary), "evaluate", str(config_path)], timeout=30)
-            report = json.loads(evaluation.stdout)
-            if report["target_mutated"] or report["mode"] != "kubernetes-live":
-                raise SystemExit("kubernetes-e2e: invalid success report")
-            load_elapsed = evaluate_load(binary, work, restricted, trust, sources)
-            after = json.loads(kubectl(admin_config, "get", "statefulset/research-kv", f"--namespace={NAMESPACE}", "-o", "json").stdout)
-            for field in ("uid", "resourceVersion", "generation"):
-                if before["metadata"].get(field) != after["metadata"].get(field):
-                    raise SystemExit(f"kubernetes-e2e: target changed during evaluation: {field}")
-            altered = json.dumps({"metadata": {"annotations": {"telosieve.io/values": json.dumps({"cluster/epoch": "7", "user/message": "untrusted"}, separators=(",", ":"))}}})
-            kubectl(admin_config, "patch", "configmap/repair-goal", f"--namespace={NAMESPACE}", "--type=merge", "-p", altered)
-            (work / "certificate.json").unlink()
-            (work / "ledger.jsonl").unlink()
-            refusal = run([str(binary), "evaluate", str(config_path)], timeout=30, check=False)
-            if refusal.returncode == 0 or (work / "certificate.json").exists() or (work / "ledger.jsonl").exists():
-                raise SystemExit("kubernetes-e2e: authority mismatch did not fail closed")
-            paused = False
+            sources, relay_processes = relay_sources(work, direct_sources)
             try:
-                run(["docker", "pause", f"{cluster_name}-control-plane"])
-                paused = True
-                outage = run([str(binary), "evaluate", str(config_path)], timeout=30, check=False)
+                config_path = work / "evaluation.json"
+                config_path.write_text(json.dumps({
+                    "schema_version": "telosieve.evaluation-config/v5", "mode": "kubernetes-live",
+                    "scenario_path": str(scenario),
+                    "certificate_path": str(work / "certificate.json"), "ledger_path": str(work / "ledger.jsonl"),
+                    "observation_trust_path": str(trust), "observation_sources": sources,
+                    "kubernetes": {"kubectl_path": str(Path("/usr/local/bin/kubectl").resolve()), "kubeconfig_path": str(restricted.resolve()), "context": "evaluation", "namespace": NAMESPACE, "desired_config_map": "repair-goal", "observed_stateful_set": "research-kv"}
+                }), encoding="utf-8")
+                before = json.loads(kubectl(admin_config, "get", "statefulset/research-kv", f"--namespace={NAMESPACE}", "-o", "json").stdout)
+                evaluation = run([str(binary), "evaluate", str(config_path)], timeout=30)
+                report = json.loads(evaluation.stdout)
+                if report["target_mutated"] or report["mode"] != "kubernetes-live":
+                    raise SystemExit("kubernetes-e2e: invalid success report")
+                load_elapsed = evaluate_load(binary, work, restricted, trust, sources)
+                after = json.loads(kubectl(admin_config, "get", "statefulset/research-kv", f"--namespace={NAMESPACE}", "-o", "json").stdout)
+                for field in ("uid", "resourceVersion", "generation"):
+                    if before["metadata"].get(field) != after["metadata"].get(field):
+                        raise SystemExit(f"kubernetes-e2e: target changed during evaluation: {field}")
+                altered = json.dumps({"metadata": {"annotations": {"telosieve.io/values": json.dumps({"cluster/epoch": "7", "user/message": "untrusted"}, separators=(",", ":"))}}})
+                kubectl(admin_config, "patch", "configmap/repair-goal", f"--namespace={NAMESPACE}", "--type=merge", "-p", altered)
+                (work / "certificate.json").unlink()
+                (work / "ledger.jsonl").unlink()
+                refusal = run([str(binary), "evaluate", str(config_path)], timeout=30, check=False)
+                if refusal.returncode == 0 or (work / "certificate.json").exists() or (work / "ledger.jsonl").exists():
+                    raise SystemExit("kubernetes-e2e: authority mismatch did not fail closed")
+                paused = False
+                try:
+                    run(["docker", "pause", f"{cluster_name}-control-plane"])
+                    paused = True
+                    outage = run([str(binary), "evaluate", str(config_path)], timeout=30, check=False)
+                finally:
+                    if paused:
+                        run(["docker", "unpause", f"{cluster_name}-control-plane"])
+                if outage.returncode == 0 or (work / "certificate.json").exists() or (work / "ledger.jsonl").exists():
+                    raise SystemExit("kubernetes-e2e: API outage did not fail closed")
+                relay_processes[0].terminate()
+                relay_processes[0].wait(timeout=2)
+                relay_outage = run(
+                    [str(binary), "evaluate", str(config_path)],
+                    timeout=30, check=False,
+                )
+                if relay_outage.returncode == 0 or (work / "certificate.json").exists() or (work / "ledger.jsonl").exists():
+                    raise SystemExit("kubernetes-e2e: relay outage did not fail closed")
+                server = json.loads(kubectl(admin_config, "version", "-o", "json").stdout)["serverVersion"]["gitVersion"]
             finally:
-                if paused:
-                    run(["docker", "unpause", f"{cluster_name}-control-plane"])
-            if outage.returncode == 0 or (work / "certificate.json").exists() or (work / "ledger.jsonl").exists():
-                raise SystemExit("kubernetes-e2e: API outage did not fail closed")
-            server = json.loads(kubectl(admin_config, "version", "-o", "json").stdout)["serverVersion"]["gitVersion"]
+                stop_relays(relay_processes)
+                if any(work.glob("relay-*.sock")):
+                    raise SystemExit("kubernetes-e2e: observation relay socket cleanup failed")
     finally:
         if created:
             cleanup = run(["kind", "delete", "cluster", "--name", cluster_name], timeout=60, check=False)
@@ -226,7 +317,7 @@ def main():
     peak_rss_bytes = peak_rss if sys.platform == "darwin" else peak_rss * 1024
     if peak_rss_bytes > MAX_PEAK_RSS_BYTES:
         raise SystemExit("kubernetes-e2e: peak child RSS exceeds bound")
-    result = {"schema_version": "telosieve.kubernetes-real-cluster-qualification/v1", "server_version": server, "cluster_kind": "kind", "read_only_rbac": True, "real_api_server": True, "observation_source_processes": 2, "configured_fault_domains": 2, "successful_evaluations": 1 + LOAD_EVALUATIONS, "load_evaluations": LOAD_EVALUATIONS, "load_concurrency": LOAD_CONCURRENCY, "load_case_timeout_seconds": LOAD_CASE_TIMEOUT_SECONDS, "load_elapsed_seconds": load_elapsed, "fail_closed_evaluations": 2, "target_mutated": False, "elapsed_seconds": elapsed, "peak_child_rss_bytes": peak_rss_bytes, "independent_evidence": False, "status": "passed"}
+    result = {"schema_version": "telosieve.kubernetes-real-cluster-qualification/v1", "server_version": server, "cluster_kind": "kind", "read_only_rbac": True, "real_api_server": True, "observation_source_processes": 2, "observation_transport": "authenticated-unix-relay", "observation_relays": 2, "configured_fault_domains": 2, "successful_evaluations": 1 + LOAD_EVALUATIONS, "load_evaluations": LOAD_EVALUATIONS, "load_concurrency": LOAD_CONCURRENCY, "load_case_timeout_seconds": LOAD_CASE_TIMEOUT_SECONDS, "load_elapsed_seconds": load_elapsed, "fail_closed_evaluations": 3, "relay_outage_refused": True, "target_mutated": False, "elapsed_seconds": elapsed, "peak_child_rss_bytes": peak_rss_bytes, "independent_evidence": False, "status": "passed"}
     print(json.dumps(result, separators=(",", ":")))
     return 0
 

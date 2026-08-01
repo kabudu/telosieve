@@ -696,3 +696,23 @@ Evidence: [PRODUCER_ISOLATION](PRODUCER_ISOLATION.md),
 UID/GID separation on Linux. The container and host remain project-controlled,
 so organizational independence and compromised-consistent-producer coverage
 remain unclaimed.
+
+## Post-M44 — real Kubernetes relay lifecycle
+
+- [x] Route both real-cluster Kubernetes observation producers through separate
+  authenticated Unix relays and expose only relay clients to the evaluator.
+- [x] Exercise the stable live CLI and eight four-way concurrent evaluations
+  through the relays while preserving exact evidence and target identity.
+- [x] Retain least-privilege RBAC and fail-closed authority/API outage checks,
+  and add relay-outage refusal without certificate or ledger persistence.
+- [x] Verify bounded relay readiness, serialization/backlog behavior, process
+  termination, socket cleanup, overall time, per-case time, and child memory.
+- [ ] Repeat on managed and separately administered clusters with independent
+  credentials, hosts, keys, clocks, and platform truth.
+
+Evidence: [KUBERNETES_REAL_CLUSTER](KUBERNETES_REAL_CLUSTER.md),
+[PRODUCER_ISOLATION](PRODUCER_ISOLATION.md), and
+`scripts/run-kubernetes-real-cluster.py`. This closes the local Kubernetes
+relay-path mismatch. It does not establish managed-platform behavior,
+organizational independence, or truthful observations under a compromised
+shared control plane.

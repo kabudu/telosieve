@@ -6,16 +6,18 @@ three-replica StatefulSet, desired ConfigMap, forbidden Secret, and the
 namespace-scoped evaluation Role. Telosieve receives only a ten-minute
 service-account token and the real `kubectl` and API-server boundaries.
 
-Post-M39 invokes two additional producer processes per evaluation. Each process
-performs its own four Kubernetes reads, canonicalizes the snapshot, and signs it
-with a separate synthetic owner-only key in a distinct configured fault domain.
-The primary collector and both producer snapshots must agree exactly before
-certificate persistence. Keys remain in the disposable harness directory and
-never enter Telosieve evaluation configuration or evidence.
+Post-M44 invokes two producer processes through separate authenticated Unix
+relays per evaluation. Each relay serializes and bounds requests to a producer;
+each producer performs its own four Kubernetes reads, canonicalizes the
+snapshot, and signs it with a separate synthetic owner-only key in a distinct
+configured fault domain. The evaluator receives only relay client paths and
+tokens. The primary collector and both producer snapshots must agree exactly
+before certificate persistence. Producer keys remain in the disposable harness
+directory and never enter Telosieve evaluation configuration or evidence.
 
 The harness requires successful evidence generation, an unchanged StatefulSet,
 the documented read permissions, denial of mutation and Secret access,
-fail-closed authority mismatch and API outage, completion within 120 seconds,
+fail-closed authority mismatch, API outage, and relay outage, completion within 120 seconds,
 peak child RSS below 512 MiB, and unconditional cluster/credential cleanup.
 
 Docker, kind, kubectl, and the pinned `kindest/node` image must already be
@@ -34,7 +36,8 @@ it does not prove independent control planes or organizations.
 
 Post-M35 adds eight evaluations at four-way concurrency against the same real
 API server under a five-second per-evaluation timeout and 30-second load-phase
-bound. All use distinct evidence outputs, the least-privilege credential, and
+bound. Post-M44 routes all of them through the two serial, backlog-bounded
+relays. All use distinct evidence outputs, the least-privilege credential, and
 preserve the target UID, resource version, and generation. This bounded sample
 is not a capacity or managed-cluster claim;
 see [SUSTAINED_ADVERSARIAL_LOAD](SUSTAINED_ADVERSARIAL_LOAD.md).

@@ -240,7 +240,8 @@ build record and exact bundled-binary digest match. Same-host qualification does
 not satisfy the independent rebuild or toolchain-trust gates.
 
 The live Kubernetes evaluator now passes a real disposable v1.36.1 API-server
-and RBAC lifecycle, including authority-mismatch and outage refusal. This does
+and RBAC lifecycle through two authenticated producer relays, including
+authority-mismatch, API-outage, and relay-outage refusal. This does
 not qualify managed clusters, production-scale load, production credentials, or
 independent operation.
 
