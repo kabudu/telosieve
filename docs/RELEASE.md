@@ -312,3 +312,7 @@ does not claim independently operated scraping, routing, retention or response.
 Post-M57 makes mandatory quorum and compatible certificate bindings explicit in
 compiled capabilities and product contract v3. It preserves historical
 certificate readability and does not claim independent producer operation.
+
+Post-M58 explicitly qualifies quorum digest binding in every successful real
+Kubernetes certificate and in direct and relayed OpenTofu certificates. It does
+not establish independent producer administration or platform truth.

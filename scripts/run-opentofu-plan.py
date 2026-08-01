@@ -20,6 +20,22 @@ SPECIFICATIONS = (("producer-a", "key-a", "plan-reader-a", "0d" * 32),
                   ("producer-b", "key-b", "plan-reader-b", "0e" * 32))
 
 
+def canonical_digest(value):
+    return isinstance(value, str) and len(value) == 64 and all(character in "0123456789abcdef" for character in value)
+
+
+def quorum_record(path, shown):
+    certificate = json.loads(path.read_bytes())
+    record = certificate.get("opentofu")
+    if (certificate.get("certificate_version") != "telosieve.certificate/v10"
+            or not isinstance(record, dict)
+            or record.get("plan_sha256") != hashlib.sha256(shown).hexdigest()
+            or record.get("resource_change_count") != 3
+            or not canonical_digest(record.get("observation_quorum_digest"))):
+        raise SystemExit("opentofu-e2e: certificate lacks exact plan/quorum binding")
+    return record
+
+
 def run(command: list[str], cwd: pathlib.Path, *, success: bool = True) -> subprocess.CompletedProcess[bytes]:
     result = subprocess.run(command, cwd=cwd, capture_output=True, check=False)
     if (result.returncode == 0) != success:
@@ -157,6 +173,11 @@ def main() -> None:
         saved_plan = directory / "update.tfplan"
         direct_config = config(directory, binary, plan_path, "direct-valid", saved_plan)
         direct_value = json.loads(direct_config.read_bytes())
+        direct_evaluation = run([str(binary), "evaluate", str(direct_config)], directory)
+        direct_report = json.loads(direct_evaluation.stdout)
+        if direct_report["mode"] != "opentofu-plan" or direct_report["target_mutated"] is not False:
+            raise SystemExit("opentofu-e2e: direct evaluation report is invalid")
+        quorum_record(directory / "direct-valid-certificate.json", shown)
         relayed, relay_processes = relay_sources(
             directory, direct_value["observation_sources"], "valid"
         )
@@ -170,14 +191,9 @@ def main() -> None:
         finally:
             stop_relays(relay_processes)
         report = json.loads(evaluation.stdout)
-        certificate = json.loads((directory / "valid-certificate.json").read_bytes())
-        record = certificate["opentofu"]
         if report["mode"] != "opentofu-plan" or report["target_mutated"] is not False:
             raise SystemExit("opentofu-e2e: evaluation report is invalid")
-        if record["plan_sha256"] != hashlib.sha256(shown).hexdigest() or record["resource_change_count"] != 3:
-            raise SystemExit("opentofu-e2e: certificate does not bind the exact three-resource plan")
-        if not isinstance(record.get("observation_quorum_digest"), str):
-            raise SystemExit("opentofu-e2e: certificate lacks observation quorum binding")
+        record = quorum_record(directory / "valid-certificate.json", shown)
 
         valid_value = json.loads(direct_config.read_bytes())
         renderer_faults = (
@@ -243,7 +259,15 @@ def main() -> None:
         if (directory / "tampered-certificate.json").exists():
             raise SystemExit("opentofu-e2e: authority-mismatched plan emitted evidence")
 
-        print(f"opentofu-e2e: passed tofu={record['terraform_version']} plan_sha256={record['plan_sha256']}")
+        print(json.dumps({"schema_version": "telosieve.opentofu-plan-qualification/v1",
+                          "tofu_version": record["terraform_version"],
+                          "plan_sha256": record["plan_sha256"], "real_plan": True,
+                          "observation_source_processes": 2, "observation_relays": 2,
+                          "configured_fault_domains": 2,
+                          "certificate_schema": "telosieve.certificate/v10",
+                          "successful_evaluations": 2, "quorum_digests_bound": 2,
+                          "target_mutated": False, "independent_evidence": False,
+                          "status": "passed"}, separators=(",", ":")))
 
 
 if __name__ == "__main__":

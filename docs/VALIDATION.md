@@ -357,6 +357,11 @@ real-cluster qualification without claiming managed or independent coverage.
 Post-M39 additionally refuses forged, disagreeing, malformed, oversized, or
 timed-out producer envelopes and exercises two signed producer processes
 against the real local cluster.
+The real-cluster qualification v2 inspects all nine successful certificate v9
+artifacts and requires nine canonical quorum digests. The OpenTofu qualification
+inspects both direct-producer and authenticated-relay certificate v10 artifacts,
+requires two canonical quorum digests over the exact real plan bytes, and retains
+the existing no-evidence producer and plan fault matrix.
 
 ## Evaluation installation lifecycle
 

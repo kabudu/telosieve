@@ -562,15 +562,15 @@ supported evaluation mode; operational independence remains open.
   retaining readability of historical v9 certificates without the extension.
 - [x] Package deterministic synthetic examples and a fixture generator, and
   prove forged quorum refusal without certificate or ledger output.
-- [ ] Apply corroborated collection to Kubernetes live and OpenTofu evaluation.
+- [x] Apply corroborated collection to Kubernetes live and OpenTofu evaluation.
 - [ ] Establish independently operated producer domains and operational key
   custody; bundled fixture keys are public test material only.
 
 Evidence: [OBSERVATION_QUORUM](OBSERVATION_QUORUM.md),
 [EVALUATION_CLI](EVALUATION_CLI.md), and `tests/evaluation_cli.rs`. This closes
-only the shadow-mode compromised-consistent-producer test cell under distinct
-configured signing domains. It does not prove that those domains are genuinely
-independent or truthful in deployment.
+the configured multi-domain path for shadow, with M39 and M40 extending it to
+Kubernetes live and OpenTofu. It does not prove that configured domains are
+genuinely independent or truthful in deployment.
 
 ## Post-M38 — observation producer signing boundary
 

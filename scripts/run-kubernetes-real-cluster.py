@@ -26,6 +26,19 @@ RELAY = (ROOT / "scripts/observation-source-relay.py").resolve()
 RELAY_CLIENT = (ROOT / "scripts/observation-source-client.py").resolve()
 
 
+def canonical_digest(value):
+    return isinstance(value, str) and len(value) == 64 and all(character in "0123456789abcdef" for character in value)
+
+
+def assert_quorum_certificate(path):
+    certificate = json.loads(path.read_bytes())
+    record = certificate.get("shadow")
+    if (certificate.get("certificate_version") != "telosieve.certificate/v9"
+            or not isinstance(record, dict)
+            or not canonical_digest(record.get("observation_quorum_digest"))):
+        raise RuntimeError("kubernetes-e2e: certificate lacks canonical quorum binding")
+
+
 def run(arguments, *, input_bytes=None, timeout=30, check=True, env=None):
     result = subprocess.run(
         arguments, cwd=ROOT, input=input_bytes, capture_output=True, check=False,
@@ -212,16 +225,17 @@ def evaluate_load(binary, work, restricted, trust, sources):
             raise RuntimeError(f"kubernetes load evaluation {index} returned an invalid report")
         if not (case / "certificate.json").is_file() or len((case / "ledger.jsonl").read_text().splitlines()) != 1:
             raise RuntimeError(f"kubernetes load evaluation {index} did not persist exact evidence")
+        assert_quorum_certificate(case / "certificate.json")
+        return 1
 
     started = time.monotonic()
     with ThreadPoolExecutor(max_workers=LOAD_CONCURRENCY) as pool:
         futures = [pool.submit(one, index) for index in range(LOAD_EVALUATIONS)]
-        for future in futures:
-            future.result(timeout=MAX_LOAD_SECONDS)
+        bound = sum(future.result(timeout=MAX_LOAD_SECONDS) for future in futures)
     elapsed = time.monotonic() - started
     if elapsed > MAX_LOAD_SECONDS:
         raise SystemExit("kubernetes-e2e: sustained load exceeded its time bound")
-    return round(elapsed, 3)
+    return round(elapsed, 3), bound
 
 
 def main():
@@ -269,7 +283,8 @@ def main():
                 report = json.loads(evaluation.stdout)
                 if report["target_mutated"] or report["mode"] != "kubernetes-live":
                     raise SystemExit("kubernetes-e2e: invalid success report")
-                load_elapsed = evaluate_load(binary, work, restricted, trust, sources)
+                assert_quorum_certificate(work / "certificate.json")
+                load_elapsed, load_quorum_digests = evaluate_load(binary, work, restricted, trust, sources)
                 after = json.loads(kubectl(admin_config, "get", "statefulset/research-kv", f"--namespace={NAMESPACE}", "-o", "json").stdout)
                 for field in ("uid", "resourceVersion", "generation"):
                     if before["metadata"].get(field) != after["metadata"].get(field):
@@ -317,7 +332,7 @@ def main():
     peak_rss_bytes = peak_rss if sys.platform == "darwin" else peak_rss * 1024
     if peak_rss_bytes > MAX_PEAK_RSS_BYTES:
         raise SystemExit("kubernetes-e2e: peak child RSS exceeds bound")
-    result = {"schema_version": "telosieve.kubernetes-real-cluster-qualification/v1", "server_version": server, "cluster_kind": "kind", "read_only_rbac": True, "real_api_server": True, "observation_source_processes": 2, "observation_transport": "authenticated-unix-relay", "observation_relays": 2, "configured_fault_domains": 2, "successful_evaluations": 1 + LOAD_EVALUATIONS, "load_evaluations": LOAD_EVALUATIONS, "load_concurrency": LOAD_CONCURRENCY, "load_case_timeout_seconds": LOAD_CASE_TIMEOUT_SECONDS, "load_elapsed_seconds": load_elapsed, "fail_closed_evaluations": 3, "relay_outage_refused": True, "target_mutated": False, "elapsed_seconds": elapsed, "peak_child_rss_bytes": peak_rss_bytes, "independent_evidence": False, "status": "passed"}
+    result = {"schema_version": "telosieve.kubernetes-real-cluster-qualification/v2", "server_version": server, "cluster_kind": "kind", "read_only_rbac": True, "real_api_server": True, "observation_source_processes": 2, "observation_transport": "authenticated-unix-relay", "observation_relays": 2, "configured_fault_domains": 2, "certificate_schema": "telosieve.certificate/v9", "successful_evaluations": 1 + LOAD_EVALUATIONS, "quorum_digests_bound": 1 + load_quorum_digests, "load_evaluations": LOAD_EVALUATIONS, "load_concurrency": LOAD_CONCURRENCY, "load_case_timeout_seconds": LOAD_CASE_TIMEOUT_SECONDS, "load_elapsed_seconds": load_elapsed, "fail_closed_evaluations": 3, "relay_outage_refused": True, "target_mutated": False, "elapsed_seconds": elapsed, "peak_child_rss_bytes": peak_rss_bytes, "independent_evidence": False, "status": "passed"}
     print(json.dumps(result, separators=(",", ":")))
     return 0
 
