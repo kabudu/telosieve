@@ -716,3 +716,21 @@ Evidence: [KUBERNETES_REAL_CLUSTER](KUBERNETES_REAL_CLUSTER.md),
 relay-path mismatch. It does not establish managed-platform behavior,
 organizational independence, or truthful observations under a compromised
 shared control plane.
+
+## Post-M45 — candidate pre-freeze readiness evidence
+
+- [x] Map all eight private candidate-readiness gates to exact repository files
+  and authoritative local-CI commands in a strict machine-readable manifest.
+- [x] Require seven implementation gates to be locally verified while keeping
+  exact-byte bundle signing pending until candidate freeze.
+- [x] Refuse missing, duplicate, reordered, prematurely signed,
+  absent-evidence, substituted-evidence, and weakened-authority manifests.
+- [x] Package the readiness manifest, validator, retained result, and claim
+  boundary in the private evaluator bundle.
+- [ ] Freeze and sign the reviewed exact candidate bytes and emit the final
+  evaluator handoff manifest.
+
+Evidence: [CANDIDATE_READINESS](CANDIDATE_READINESS.md),
+`evaluation/candidate-readiness.json`, and
+`scripts/validate-candidate-readiness.py`. This closes narrative-only readiness
+drift; it does not itself create or sign a release candidate.

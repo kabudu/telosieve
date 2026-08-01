@@ -250,3 +250,9 @@ real non-root producer UIDs, distinct client groups, authorized evaluator
 access, and cross-identity refusal. This closes the local kernel-identity gap,
 not the systemd, multi-host, credential-custody, producer-truth, or independent
 operation gates.
+
+The candidate pre-freeze manifest now binds all eight readiness gates to
+concrete packaged evidence and authoritative local-CI commands. Seven gates are
+locally verified; exact-byte signing remains explicitly pending candidate
+freeze. The manifest cannot be used to claim that an unsigned bundle is a
+release candidate.

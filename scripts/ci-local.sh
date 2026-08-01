@@ -25,6 +25,7 @@ run python3 scripts/validate-assessor-manifest.py
 run python3 scripts/validate-supply-chain.py
 run python3 scripts/qualify-witness-operator-record.py
 run python3 scripts/validate-evaluation-contract.py
+run python3 scripts/validate-candidate-readiness.py
 run python3 scripts/validate-adversarial-coverage.py
 run python3 scripts/run-evaluation-lifecycle-qualification.py
 run python3 scripts/run-diagnostics-qualification.py

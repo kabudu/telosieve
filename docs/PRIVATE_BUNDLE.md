@@ -8,6 +8,9 @@ and OpenTofu integration material, authenticated offline/real-cluster scenarios,
 the candidate test plan, and the operator/security documents needed to assess
 them. It also includes and digest-binds the adversarial coverage contract,
 validator, and retained result so open research gaps travel with the candidate.
+The strict pre-freeze readiness map, validator, and retained result distinguish
+seven locally verified gates from the exact-byte signing gate that closes only
+during candidate freeze.
 The fixed contents also carry the bounded sustained-load harness and its retained
 qualification contract.
 The builder executes the supplied binary's bounded

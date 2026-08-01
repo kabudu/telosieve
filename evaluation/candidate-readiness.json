@@ -1,0 +1,56 @@
+{
+  "schema_version": "telosieve.candidate-prefreeze-readiness/v1",
+  "authority_boundary": "read-only-no-target-mutation",
+  "repository_visibility": "private",
+  "authoritative_ci": "./scripts/ci-local.sh",
+  "gates": [
+    {
+      "gate": "bounded-and-versioned-cli-configuration",
+      "status": "locally-verified",
+      "evidence_paths": ["docs/EVALUATION_CLI.md", "tests/evaluation_cli.rs"],
+      "validation_commands": ["cargo test --locked --offline --all-targets --all-features"]
+    },
+    {
+      "gate": "fail-closed-live-read-only-integration",
+      "status": "locally-verified",
+      "evidence_paths": ["deploy/kubernetes/evaluation-rbac.yaml", "docs/KUBERNETES_REAL_CLUSTER.md", "scripts/run-kubernetes-real-cluster.py"],
+      "validation_commands": ["python3 scripts/run-kubernetes-real-cluster.py"]
+    },
+    {
+      "gate": "install-upgrade-rollback-and-uninstall-procedure",
+      "status": "locally-verified",
+      "evidence_paths": ["docs/EVALUATION_LIFECYCLE.md", "scripts/evaluation-lifecycle.py", "scripts/run-evaluation-lifecycle-qualification.py"],
+      "validation_commands": ["python3 scripts/run-evaluation-lifecycle-qualification.py"]
+    },
+    {
+      "gate": "least-privilege-and-secret-free-defaults",
+      "status": "locally-verified",
+      "evidence_paths": ["deploy/kubernetes/evaluation-rbac.yaml", "docs/PRODUCER_ISOLATION.md", "evaluation/config.live.example.json", "scripts/qualify-linux-producer-isolation.sh"],
+      "validation_commands": ["./scripts/qualify-linux-producer-isolation.sh", "python3 scripts/run-kubernetes-real-cluster.py"]
+    },
+    {
+      "gate": "operator-diagnostics-and-evidence-export",
+      "status": "locally-verified",
+      "evidence_paths": ["docs/OPERATOR_DIAGNOSTICS.md", "scripts/evaluation-diagnostics.py", "scripts/run-diagnostics-qualification.py"],
+      "validation_commands": ["python3 scripts/run-diagnostics-qualification.py"]
+    },
+    {
+      "gate": "platform-resource-and-recovery-qualification",
+      "status": "locally-verified",
+      "evidence_paths": ["docs/BUILD_PROVENANCE.md", "docs/SUSTAINED_ADVERSARIAL_LOAD.md", "scripts/run-reproducible-build-qualification.py", "scripts/run-sustained-adversarial-load.py"],
+      "validation_commands": ["python3 scripts/run-reproducible-build-qualification.py", "python3 scripts/run-sustained-adversarial-load.py"]
+    },
+    {
+      "gate": "signed-checksummed-reproducible-private-bundle",
+      "status": "pending-freeze",
+      "evidence_paths": ["docs/CANDIDATE_SIGNING.md", "docs/PRIVATE_BUNDLE.md", "scripts/build-private-bundle.py", "scripts/run-private-bundle-qualification.py"],
+      "validation_commands": ["python3 scripts/run-private-bundle-qualification.py"]
+    },
+    {
+      "gate": "threat-model-runbook-and-known-limitations",
+      "status": "locally-verified",
+      "evidence_paths": ["docs/OPERATIONS.md", "docs/RISK_REGISTER.md", "docs/THREAT_MODEL.md"],
+      "validation_commands": ["python3 scripts/validate-project.py"]
+    }
+  ]
+}

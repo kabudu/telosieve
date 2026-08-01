@@ -12,6 +12,7 @@ FILES = [
     "docs/EVALUATION_LIFECYCLE.md", "docs/OPERATOR_DIAGNOSTICS.md",
     "docs/OPERATIONS.md", "docs/PRIVATE_BUNDLE.md", "docs/RELEASE.md",
     "docs/BUILD_PROVENANCE.md", "docs/CANDIDATE_SIGNING.md",
+    "docs/CANDIDATE_READINESS.md",
     "docs/KUBERNETES_REAL_CLUSTER.md", "docs/KUBERNETES_SHADOW.md",
     "docs/OPENTOFU_PLAN.md", "docs/EVALUATION_PRODUCT_DECISION.md",
     "docs/THREAT_MODEL.md", "docs/ADVERSARIAL_COVERAGE.md",
@@ -26,6 +27,7 @@ FILES = [
     "evaluation/observation-trust.live.example.json",
     "evaluation/observation-trust.opentofu.example.json",
     "evaluation/contract.json", "evaluation/candidate-test-plan.json",
+    "evaluation/candidate-readiness.json",
     "evaluation/adversarial-coverage.json",
     "examples/opentofu/main.tf",
     "scenarios/benign.json", "scenarios/kubernetes-real-cluster.json",
@@ -34,6 +36,7 @@ FILES = [
     "scripts/ci-local.sh", "scripts/run-kubernetes-real-cluster.py",
     "scripts/run-opentofu-plan.py", "scripts/validate-adversarial-coverage.py",
     "scripts/run-sustained-adversarial-load.py",
+    "scripts/validate-candidate-readiness.py",
     "scripts/kubernetes-observation-producer.py",
     "scripts/opentofu-observation-producer.py",
     "scripts/observation-source-relay.py", "scripts/observation-source-client.py",
@@ -42,6 +45,7 @@ FILES = [
     "scripts/run-linux-producer-isolation.py",
     "results/adversarial-coverage-validation.json",
     "results/sustained-adversarial-load.json",
+    "results/candidate-readiness-validation.json",
 ]
 MAX_BINARY = 128 * 1024 * 1024
 MAX_CAPABILITIES = 64 * 1024

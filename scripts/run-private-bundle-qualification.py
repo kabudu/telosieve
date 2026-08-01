@@ -123,6 +123,7 @@ def assert_bundle(path: Path) -> int:
             "examples/opentofu/main.tf", "scripts/ci-local.sh",
             "scripts/run-kubernetes-real-cluster.py", "scripts/run-opentofu-plan.py",
             "evaluation/config.opentofu.example.json", "evaluation/candidate-test-plan.json",
+            "evaluation/candidate-readiness.json",
             "evaluation/observation-trust.example.json", "evaluation/observation-quorum.example.json",
             "evaluation/observation-trust.live.example.json",
             "evaluation/observation-trust.opentofu.example.json",
@@ -139,6 +140,9 @@ def assert_bundle(path: Path) -> int:
             "evaluation/adversarial-coverage.json", "docs/ADVERSARIAL_COVERAGE.md",
             "scripts/validate-adversarial-coverage.py", "results/adversarial-coverage-validation.json",
             "scripts/run-sustained-adversarial-load.py", "results/sustained-adversarial-load.json",
+            "scripts/validate-candidate-readiness.py",
+            "results/candidate-readiness-validation.json",
+            "docs/CANDIDATE_READINESS.md",
             "docs/SUSTAINED_ADVERSARIAL_LOAD.md", "docs/OBSERVATION_QUORUM.md",
             "evaluation/candidate-profile.json", "evaluation/capabilities.json",
         }
