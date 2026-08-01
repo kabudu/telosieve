@@ -166,6 +166,13 @@ the Post-M30 disposable real-cluster qualification. This completes candidate
 engineering gates, not a managed or independently operated cluster and not a
 candidate release.
 
+OpenTofu v6 now packages a bounded reference producer that separately invokes
+`tofu show -json` for a saved binary plan and signs the exact rendered bytes.
+The real local harness exercises two producer processes and fail-closed renderer,
+timeout, unsafe-key, symlink, forgery, and disagreement faults. Both processes
+still share one host and saved plan, so this is integration evidence rather than
+independent provider/state/backend or signing-custody evidence.
+
 The private lifecycle manager now packages a caller-supplied local binary and
 strict evaluation configuration as an immutable digest-bound release. It
 atomically activates install, upgrade, and verified rollback; creates a bounded

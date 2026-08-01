@@ -34,7 +34,8 @@ configuration v4 and binds the verified evidence digest into certificate v9.
 deterministic test keys and must never be treated as operational credentials.
 Post-M39 applies the protocol to Kubernetes-live through bounded external
 producer processes, and Post-M40 applies exact-byte producer envelopes to
-OpenTofu plans. Configured
+OpenTofu plans. Post-M41 packages the bounded producer that renders a saved
+binary plan through OpenTofu before signing. Configured
 domain labels do not establish real organizational independence, protected
 custody, or truth when every participating domain colludes.
 

@@ -10,6 +10,10 @@ import tempfile
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 TOFU = shutil.which("tofu")
+TOFU_REAL = str(pathlib.Path(TOFU).resolve()) if TOFU else None
+PRODUCER = (ROOT / "scripts/opentofu-observation-producer.py").resolve()
+SPECIFICATIONS = (("producer-a", "key-a", "plan-reader-a", "0d" * 32),
+                  ("producer-b", "key-b", "plan-reader-b", "0e" * 32))
 
 
 def run(command: list[str], cwd: pathlib.Path, *, success: bool = True) -> subprocess.CompletedProcess[bytes]:
@@ -22,23 +26,30 @@ def run(command: list[str], cwd: pathlib.Path, *, success: bool = True) -> subpr
     return result
 
 
-def observation_material(directory, binary, plan, stem):
-    specifications = (("producer-a", "key-a", "plan-reader-a", "0d" * 32),
-                      ("producer-b", "key-b", "plan-reader-b", "0e" * 32))
+def observation_material(directory, binary, plan, stem, saved_plan=None):
     keys, sources = [], []
-    for producer, key_id, domain, seed in specifications:
+    for producer, key_id, domain, seed in SPECIFICATIONS:
         key = directory / f"{stem}-{producer}.key"
         key.write_text(seed); key.chmod(0o600)
         public = run([str(binary), "observation-public-key", str(key)], directory).stdout.decode().strip()
-        attestation = directory / f"{stem}-{producer}.attestation.json"
-        run([str(binary), "observation-sign", str(plan.resolve()), str(key), "kv/research",
-             "opentofu-plan", producer, key_id, domain, "1788000000", "1788000300",
-             str(attestation)], directory)
-        envelope = directory / f"{stem}-{producer}.envelope.json"
-        envelope.write_text(json.dumps({"schema_version": "telosieve.observation-source/v1",
-            "input_hex": plan.read_bytes().hex(), "attestation": json.loads(attestation.read_bytes())},
-            separators=(",", ":")))
-        sources.append({"executable_path": "/bin/cat", "arguments": [str(envelope)]})
+        if saved_plan is not None:
+            sources.append({"executable_path": str(PRODUCER), "arguments": [
+                "--tofu", TOFU_REAL, "--plan", str(saved_plan.resolve()),
+                "--telosieve", str(binary.resolve()), "--key", str(key.resolve()),
+                "--subject", "kv/research", "--producer", producer,
+                "--key-id", key_id, "--domain", domain,
+                "--issued", "1788000000", "--expires", "1788000300",
+            ]})
+        else:
+            attestation = directory / f"{stem}-{producer}.attestation.json"
+            run([str(binary), "observation-sign", str(plan.resolve()), str(key), "kv/research",
+                 "opentofu-plan", producer, key_id, domain, "1788000000", "1788000300",
+                 str(attestation)], directory)
+            envelope = directory / f"{stem}-{producer}.envelope.json"
+            envelope.write_text(json.dumps({"schema_version": "telosieve.observation-source/v1",
+                "input_hex": plan.read_bytes().hex(), "attestation": json.loads(attestation.read_bytes())},
+                separators=(",", ":")))
+            sources.append({"executable_path": "/bin/cat", "arguments": [str(envelope)]})
         keys.append({"producer": producer, "key_id": key_id, "fault_domain": domain,
                      "public_key": public, "not_before": 1788000000, "not_after": 1800000000})
     trust = directory / f"{stem}-trust.json"
@@ -48,8 +59,9 @@ def observation_material(directory, binary, plan, stem):
     return trust, sources
 
 
-def config(directory: pathlib.Path, binary: pathlib.Path, plan: pathlib.Path, stem: str) -> pathlib.Path:
-    trust, sources = observation_material(directory, binary, plan, stem)
+def config(directory: pathlib.Path, binary: pathlib.Path, plan: pathlib.Path, stem: str,
+           saved_plan: pathlib.Path | None = None) -> pathlib.Path:
+    trust, sources = observation_material(directory, binary, plan, stem, saved_plan)
     path = directory / f"{stem}-evaluation.json"
     path.write_text(json.dumps({
         "schema_version": "telosieve.evaluation-config/v6",
@@ -62,6 +74,14 @@ def config(directory: pathlib.Path, binary: pathlib.Path, plan: pathlib.Path, st
         "observation_sources": sources,
     }))
     return path
+
+
+def assert_no_evidence(directory: pathlib.Path, binary: pathlib.Path,
+                       configuration: pathlib.Path, stem: str) -> None:
+    run([str(binary), "evaluate", str(configuration)], directory, success=False)
+    if ((directory / f"{stem}-certificate.json").exists()
+            or (directory / f"{stem}-ledger.jsonl").exists()):
+        raise SystemExit(f"opentofu-e2e: {stem} producer fault emitted evidence")
 
 
 def main() -> None:
@@ -80,7 +100,8 @@ def main() -> None:
         plan_path = directory / "update.json"
         plan_path.write_bytes(shown)
 
-        valid_config = config(directory, binary, plan_path, "valid")
+        saved_plan = directory / "update.tfplan"
+        valid_config = config(directory, binary, plan_path, "valid", saved_plan)
         evaluation = run([str(binary), "evaluate", str(valid_config)], directory)
         report = json.loads(evaluation.stdout)
         certificate = json.loads((directory / "valid-certificate.json").read_bytes())
@@ -92,7 +113,43 @@ def main() -> None:
         if not isinstance(record.get("observation_quorum_digest"), str):
             raise SystemExit("opentofu-e2e: certificate lacks observation quorum binding")
 
-        envelope_path = directory / "valid-producer-a.envelope.json"
+        valid_value = json.loads(valid_config.read_bytes())
+        renderer_faults = (
+            ("renderer-failure", "#!/bin/sh\nexit 9\n"),
+            ("renderer-timeout", "#!/bin/sh\nsleep 4\n"),
+            ("renderer-malformed", "#!/bin/sh\nprintf '[]'\n"),
+            ("renderer-oversized", "#!/bin/sh\ndd if=/dev/zero bs=1048576 count=3 2>/dev/null\n"),
+        )
+        for fault, body in renderer_faults:
+            fake_tofu = directory / fault
+            fake_tofu.write_text(body); fake_tofu.chmod(0o700)
+            fault_value = json.loads(json.dumps(valid_value))
+            arguments = fault_value["observation_sources"][0]["arguments"]
+            arguments[arguments.index("--tofu") + 1] = str(fake_tofu)
+            fault_config = directory / f"{fault}-evaluation.json"
+            fault_value["certificate_path"] = str((directory / f"{fault}-certificate.json").resolve())
+            fault_value["ledger_path"] = str((directory / f"{fault}-ledger.jsonl").resolve())
+            fault_config.write_text(json.dumps(fault_value))
+            assert_no_evidence(directory, binary, fault_config, fault)
+
+        unsafe_config = config(directory, binary, plan_path, "unsafe", saved_plan)
+        unsafe_key = directory / "unsafe-producer-a.key"
+        unsafe_key.chmod(0o644)
+        assert_no_evidence(directory, binary, unsafe_config, "unsafe")
+
+        linked_plan = directory / "linked.tfplan"
+        linked_plan.symlink_to(saved_plan)
+        linked_value = json.loads(json.dumps(valid_value))
+        linked_arguments = linked_value["observation_sources"][0]["arguments"]
+        linked_arguments[linked_arguments.index("--plan") + 1] = str(linked_plan)
+        linked_value["certificate_path"] = str((directory / "linked-certificate.json").resolve())
+        linked_value["ledger_path"] = str((directory / "linked-ledger.jsonl").resolve())
+        linked_config = directory / "linked-evaluation.json"
+        linked_config.write_text(json.dumps(linked_value))
+        assert_no_evidence(directory, binary, linked_config, "linked")
+
+        forged_config = config(directory, binary, plan_path, "forged")
+        envelope_path = directory / "forged-producer-a.envelope.json"
         original_envelope = envelope_path.read_bytes()
         for fault in ("forged", "disagreement"):
             envelope = json.loads(original_envelope)
@@ -101,11 +158,7 @@ def main() -> None:
             else:
                 envelope["input_hex"] = (shown + b" ").hex()
             envelope_path.write_text(json.dumps(envelope, separators=(",", ":")))
-            (directory / "valid-certificate.json").unlink(missing_ok=True)
-            (directory / "valid-ledger.jsonl").unlink(missing_ok=True)
-            run([str(binary), "evaluate", str(valid_config)], directory, success=False)
-            if (directory / "valid-certificate.json").exists() or (directory / "valid-ledger.jsonl").exists():
-                raise SystemExit(f"opentofu-e2e: {fault} producer emitted evidence")
+            assert_no_evidence(directory, binary, forged_config, "forged")
         envelope_path.write_bytes(original_envelope)
 
         destructive = json.loads(shown)

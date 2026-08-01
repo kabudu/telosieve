@@ -166,6 +166,13 @@ custody fault can still corroborate a consistent lie. Provider behavior after
 evaluation is outside the boundary; operators must retain and verify the
 digest-bound saved plan and separately control any apply step.
 
+The reference OpenTofu producer refuses symlinked/non-regular tools, saved
+plans, and keys; single-link and size bounds apply before rendering. Renderer
+and signing subprocesses have fixed deadlines and output limits. The configured
+OpenTofu and Telosieve executables, host, filesystem, environment, saved binary
+plan, and administrators remain trusted; process separation alone does not
+isolate those faults or prevent plan contents from reaching producer memory.
+
 The lifecycle manager rejects relative or symlinked roots and inputs, concurrent
 operations, unexpected release content, backup symlinks, inventory or digest
 tampering, and incorrectly confirmed uninstall. Atomic activation prevents a

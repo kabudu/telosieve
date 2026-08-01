@@ -582,12 +582,14 @@ independent or truthful in deployment.
   quorum verifier and refuse unsafe keys, oversized input, and output collision.
 - [x] Define and integrate bounded independently collecting producer processes
   for Kubernetes-live evaluation.
-- [ ] Integrate independently collecting producers for OpenTofu evaluation.
+- [x] Integrate separately invoked bounded renderer/signing producers for
+  OpenTofu evaluation; operational independence remains a later gate.
 
 Evidence: [OBSERVATION_QUORUM](OBSERVATION_QUORUM.md) and
 `tests/observation_signature_cli.rs`. This establishes producer-side signing
 mechanics, not producer independence, truthful collection, or operational key
-custody; no adversarial coverage cell is promoted by M38.
+custody; M41 completes the OpenTofu process integration without promoting an
+adversarial coverage cell.
 
 ## Post-M39 — corroborated Kubernetes-live producer processes
 
@@ -630,3 +632,24 @@ Evidence: [OPENTOFU_PLAN](OPENTOFU_PLAN.md),
 configured producer processes; because the qualified producers consume the same
 locally generated plan, the compromised-consistent-producer cell remains
 deferred.
+
+## Post-M41 — bounded OpenTofu producer process
+
+- [x] Package a reference producer that independently invokes `tofu show -json`
+  on an absolute regular single-link saved plan and signs the exact bytes.
+- [x] Bound saved-plan, rendered-plan, attestation, stderr, and subprocess paths
+  and refuse unsafe executable, plan, and key shapes.
+- [x] Exercise two separately invoked producers through stable evaluation v6 and
+  refuse renderer failure/timeout/malformed/oversized output, unsafe keys,
+  symlinked plans, forgery, and byte disagreement without evidence publication.
+- [x] Include the producer and production-shaped example arguments in the
+  private evaluator bundle.
+- [ ] Establish separately operated plan generation, provider/state/backend
+  access, hosts, clocks, administrators, and operational signing custody.
+
+Evidence: [OPENTOFU_PLAN](OPENTOFU_PLAN.md), [OPERATIONS](OPERATIONS.md),
+`scripts/opentofu-observation-producer.py`, and
+`scripts/run-opentofu-plan.py`. M41 replaces static success fixtures with real
+renderer/signing processes. The local qualification still shares one saved
+binary plan and host, so it does not promote the compromised-consistent-producer
+coverage cell or satisfy independent validation.

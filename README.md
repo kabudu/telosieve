@@ -179,8 +179,9 @@ python3 scripts/run-opentofu-plan.py
 ```
 
 This uses disposable local `terraform_data` state, corroborates the exact plan
-bytes through two fixture producer domains, and never grants Telosieve provider,
-backend, or apply access. See [OpenTofu Plan Evaluation](docs/OPENTOFU_PLAN.md).
+bytes through two separately invoked renderer/signing producer processes, and
+never grants Telosieve provider, backend, or apply access. See
+[OpenTofu Plan Evaluation](docs/OPENTOFU_PLAN.md).
 
 M2 results and negative findings are reported in
 [M2 Adversarial Results](docs/M2_RESULTS.md).

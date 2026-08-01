@@ -16,6 +16,10 @@ v2, the packaged configurations, and the three-mode test plan. Every entry and
 the canonical full source commit are bound by the version 3
 `bundle-manifest.json`; timestamps,
 ordering, compression, and modes are fixed.
+Only the Telosieve binary and the Kubernetes/OpenTofu observation producers are
+executable in the archive; other allowlisted source material is read-only. The
+producer programs still require operator-supplied platform executables,
+configuration, saved plans or credentials, and signing keys.
 
 ```sh
 python3 scripts/build-private-bundle.py \

@@ -34,6 +34,18 @@ invariant. Recovery is replay from the last complete ledger record.
 Secrets are test keys stored outside fixtures. Logs must not include application
 values. Retention and deletion policy must be defined before real traces are used.
 
+For OpenTofu v6 evaluation, configure each
+`scripts/opentofu-observation-producer.py` instance with canonical absolute
+OpenTofu, saved-plan, Telosieve, and owner-only key paths. Run producers under
+separate least-privilege accounts or hosts when those boundaries are available;
+protect saved plans because they may contain sensitive provider data. A timeout,
+renderer error, unsafe path/key, malformed output, invalid signature, or byte
+disagreement is a refusal: preserve diagnostics, do not strip or normalize JSON,
+and do not retry with fewer producers. The envelope contains the complete plan;
+do not invoke the producer from a terminal or supervisor that retains stdout.
+Separate process labels on one host do not establish independent provider,
+state, backend, clock, or key custody.
+
 For `apply-local`, durable service commit occurs before certificate and ledger
 persistence. An evidence-output failure is therefore an applied-but-unreported
 incident: do not retry the stale scenario. Preserve the actuator file, lock or

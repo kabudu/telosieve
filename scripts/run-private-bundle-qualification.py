@@ -127,6 +127,7 @@ def assert_bundle(path: Path) -> int:
             "evaluation/observation-trust.live.example.json",
             "evaluation/observation-trust.opentofu.example.json",
             "scripts/kubernetes-observation-producer.py",
+            "scripts/opentofu-observation-producer.py",
             "evaluation/adversarial-coverage.json", "docs/ADVERSARIAL_COVERAGE.md",
             "scripts/validate-adversarial-coverage.py", "results/adversarial-coverage-validation.json",
             "scripts/run-sustained-adversarial-load.py", "results/sustained-adversarial-load.json",
@@ -135,6 +136,13 @@ def assert_bundle(path: Path) -> int:
         }
         if not required.issubset(names):
             raise SystemExit("private-bundle-qualification: required assessor content is absent")
+        for producer in (
+            "scripts/kubernetes-observation-producer.py",
+            "scripts/opentofu-observation-producer.py",
+        ):
+            mode = archive.getinfo(producer).external_attr >> 16
+            if mode & 0o777 != 0o500:
+                raise SystemExit("private-bundle-qualification: producer mode is unsafe")
         return len(capabilities["capabilities"])
 
 
