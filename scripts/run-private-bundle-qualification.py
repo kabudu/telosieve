@@ -235,6 +235,22 @@ def assert_bundle(path: Path) -> int:
         ):
             raise SystemExit("private-bundle-qualification: HTTP/JSON result is invalid")
 
+        prometheus_result = json.loads(archive.read("results/http-json-pki-prometheus-qualification.json"))
+        if (
+            set(prometheus_result) != {"schema_version", "ready_publications", "refusals",
+                "atomic_publication", "fixed_cardinality_metrics", "path_disclosures",
+                "independent_evidence", "status"}
+            or prometheus_result["schema_version"] != "telosieve.http-json-pki-prometheus-qualification/v1"
+            or prometheus_result["ready_publications"] != 1
+            or prometheus_result["refusals"] != 8
+            or prometheus_result["atomic_publication"] is not True
+            or prometheus_result["fixed_cardinality_metrics"] != 6
+            or prometheus_result["path_disclosures"] != 0
+            or prometheus_result["independent_evidence"] is not False
+            or prometheus_result["status"] != "passed"
+        ):
+            raise SystemExit("private-bundle-qualification: PKI Prometheus result is invalid")
+
         packaged_modes = [
             {
                 "configuration_schema": (config := json.loads(archive.read(path)))["schema_version"],
@@ -270,6 +286,9 @@ def assert_bundle(path: Path) -> int:
             "scripts/http-json-pki-monitor.py", "deploy/systemd/telosieve-http-json-pki-monitor.service",
             "deploy/systemd/telosieve-http-json-pki-monitor.timer",
             "results/http-json-integration-qualification.json",
+            "scripts/http-json-pki-prometheus.py",
+            "scripts/run-http-json-pki-prometheus-qualification.py",
+            "results/http-json-pki-prometheus-qualification.json",
             "evaluation/candidate-readiness.json",
             "evaluation/observation-trust.example.json", "evaluation/observation-quorum.example.json",
             "evaluation/observation-trust.live.example.json",
@@ -320,6 +339,8 @@ def assert_bundle(path: Path) -> int:
             "scripts/run-http-json-integration.py",
             "scripts/http-json-pki-check.py",
             "scripts/http-json-pki-monitor.py",
+            "scripts/http-json-pki-prometheus.py",
+            "scripts/run-http-json-pki-prometheus-qualification.py",
         ):
             mode = archive.getinfo(producer).external_attr >> 16
             if mode & 0o777 != 0o555:

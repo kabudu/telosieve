@@ -274,6 +274,11 @@ It does not establish production capacity, denial-of-service resistance,
 host-wide resource isolation, hostile scheduling, or managed control-plane
 behavior.
 
+The PKI Prometheus publisher rejects unsafe, malformed, inconsistent, stale and
+future monitor status and replaces prior metrics atomically with fixed-cardinality
+fail-closed gauges. It does not authenticate Prometheus, secure the scrape path,
+deliver alerts, prove retention, or establish independent operational response.
+
 The observation-quorum primitive can detect one false producer only when a
 separately trusted producer in a distinct configured domain signs different
 exact bytes. It is not yet mandatory in evaluation, and labels do not prove

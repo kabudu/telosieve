@@ -24,7 +24,8 @@ client, and Linux identity-qualification tools are executable in the archive;
 other allowlisted source material is read-only. The producer programs still
 require operator-supplied platform executables, configuration, saved plans or
 credentials, and signing keys.
-The HTTP PKI checker, aggregate monitor and systemd timer are included; alerting
+The HTTP PKI checker, aggregate monitor, Prometheus textfile publisher,
+qualification and systemd timer are included; scraping, alert routing,
 destinations and operational PKI material remain operator supplied.
 The bundle also carries the authenticated Unix relay/client, hardened systemd
 template, example relay profiles, local qualification, and pinned offline Linux

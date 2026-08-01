@@ -450,3 +450,12 @@ refuses near-expiry, mismatched-key and revoked-client preflights.
 The v5 qualification additionally verifies replacement of a stale prior record
 and atomic `0600` ready/not-ready status publication across a revocation
 transition without credential paths in output.
+
+## PKI Prometheus publication qualification
+
+`python3 scripts/run-http-json-pki-prometheus-qualification.py` proves atomic
+owner-writable `0644` replacement of stale metrics, one ready publication and
+eight fail-closed cases: not-ready, stale, future, negative-time, malformed,
+inconsistent, unsafe and missing status. The six gauges contain no
+source/output paths. This is local publisher evidence, not independently
+operated monitoring.

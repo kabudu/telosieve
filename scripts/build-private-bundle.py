@@ -68,6 +68,8 @@ FILES = [
     "scripts/run-http-json-integration.py",
     "scripts/http-json-pki-check.py",
     "scripts/http-json-pki-monitor.py",
+    "scripts/http-json-pki-prometheus.py",
+    "scripts/run-http-json-pki-prometheus-qualification.py",
     "scripts/observation-source-relay.py", "scripts/observation-source-client.py",
     "scripts/run-producer-isolation-qualification.py",
     "scripts/qualify-linux-producer-isolation.sh",
@@ -77,6 +79,7 @@ FILES = [
     "results/redis-integration-qualification.json",
     "results/postgresql-integration-qualification.json",
     "results/http-json-integration-qualification.json",
+    "results/http-json-pki-prometheus-qualification.json",
     "results/candidate-readiness-validation.json",
 ]
 MAX_BINARY = 128 * 1024 * 1024
@@ -109,6 +112,8 @@ RUNTIME_EXECUTABLES = {
     "scripts/run-http-json-integration.py",
     "scripts/http-json-pki-check.py",
     "scripts/http-json-pki-monitor.py",
+    "scripts/http-json-pki-prometheus.py",
+    "scripts/run-http-json-pki-prometheus-qualification.py",
 }
 
 def digest(data): return hashlib.sha256(data).hexdigest()

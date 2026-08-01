@@ -177,6 +177,17 @@ verification failures by changing evaluation time, extending windows, replacing
 trust, or resigning unreviewed bytes. The repository tests only ephemeral keys;
 an approved operational custody procedure is required before candidate signing.
 
+For HTTP/mTLS PKI monitoring, configure Node Exporter's textfile collector to
+read the owner-only `/var/lib/telosieve/prometheus` directory. Alert unless
+`telosieve_http_json_pki_source_valid`, `telosieve_http_json_pki_fresh` and
+`telosieve_http_json_pki_ready` are all one and the checked-at timestamp remains
+within the configured freshness/future-skew window. This timestamp comparison
+also detects a stopped publisher that leaves an old green textfile behind.
+Preserve the status and metric files on alert, then inspect certificate lifecycle
+state offline. Do not silence an invalid or stale source by alerting only on the
+ready gauge. Independent scraping, routing, retention and response ownership
+remain deployment gates.
+
 Before proposing a candidate ceremony, inspect `evaluation/capabilities.json`,
 `evaluation/candidate-profile.json`, and `evaluation/candidate-test-plan.json`
 inside bundle v3. Require exact agreement with the packaged contract and three

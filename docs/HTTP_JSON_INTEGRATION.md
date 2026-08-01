@@ -78,6 +78,26 @@ an owner-only `/var/lib/telosieve`, install both packaged units under
 `telosieve-http-json-pki-monitor.timer`. The monitor user needs read access to
 the credentials and PKI files but no network access or target mutation authority.
 
+Create owner-writable `/var/lib/telosieve/prometheus` for the monitor user and
+configure Prometheus Node Exporter's textfile collector to read that directory.
+Published metrics are non-secret `0644` files and reject group/other writes. The service
+runs `http-json-pki-prometheus.py` after every monitor attempt. It publishes six
+fixed-cardinality gauges, rejects status older than 20 minutes or more than 60
+seconds in the future, and exits nonzero unless the source is valid, fresh and
+fully ready. Monitor failure is deliberately ignored only until the publisher
+converts missing, stale or malformed status into non-ready metrics and a failed
+unit. Alert when any validity gauge differs from one or the timestamp leaves the
+same freshness window:
+
+```promql
+telosieve_http_json_pki_source_valid != 1 or telosieve_http_json_pki_fresh != 1 or telosieve_http_json_pki_ready != 1 or time() - telosieve_http_json_pki_status_checked_unixtime_seconds > 1200 or time() - telosieve_http_json_pki_status_checked_unixtime_seconds < -60
+```
+
+The metrics contain no labels, paths, certificate values or checker diagnostics.
+The operator must independently configure Prometheus scraping, alert routing,
+retention and on-call ownership; packaging the publisher is not evidence that
+those controls exist.
+
 This is an orchestrated endpoint qualification, not external evidence. It
 qualifies local TLS 1.3/mTLS mechanics but not DNS, proxies, service meshes,
 OAuth refresh, public networks,

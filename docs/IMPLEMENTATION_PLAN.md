@@ -938,3 +938,20 @@ Evidence: `scripts/http-json-pki-check.py` and the v4 retained HTTP result.
 
 Evidence: `scripts/http-json-pki-monitor.py`, the systemd units, and the v5 HTTP
 qualification result.
+
+## Post-M56 - Prometheus PKI alerting boundary
+
+- [x] Validate exact owner-only monitor status with bounded age, future skew,
+  identity counts and internal readiness consistency.
+- [x] Publish six fixed-cardinality, owner-writable Prometheus gauges atomically
+  without labels, paths, certificate material or checker diagnostics.
+- [x] Fail closed for not-ready, stale, future, negative-time, malformed,
+  inconsistent, unsafe and missing status while replacing stale green metrics.
+- [x] Chain publication after every systemd monitor attempt and package the
+  implementation, qualification, retained evidence and operator guidance.
+- [ ] Obtain independently operated Prometheus scraping, alert routing,
+  retention, on-call response and evidence.
+
+Evidence: `scripts/http-json-pki-prometheus.py`,
+`scripts/run-http-json-pki-prometheus-qualification.py`, and
+`results/http-json-pki-prometheus-qualification.json`.

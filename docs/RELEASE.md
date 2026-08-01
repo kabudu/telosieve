@@ -305,3 +305,6 @@ the frozen candidate or establish external monitoring.
 
 Post-M55 packages scheduler-neutral PKI monitoring and hardened systemd units.
 It does not claim an independently operated alerting destination.
+
+Post-M56 packages a fail-closed Prometheus textfile publication boundary. It
+does not claim independently operated scraping, routing, retention or response.
