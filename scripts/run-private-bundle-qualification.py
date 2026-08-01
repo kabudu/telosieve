@@ -109,6 +109,48 @@ def assert_bundle(path: Path) -> int:
         if planned != expected:
             raise SystemExit("private-bundle-qualification: test plan does not cover capabilities")
 
+        redis_result = json.loads(
+            archive.read("results/redis-integration-qualification.json")
+        )
+        if (
+            set(redis_result) != {
+                "schema_version", "redis_version", "image", "real_server",
+                "loopback_only", "read_only_acl_users",
+                "mutation_attempts_refused", "observation_producers",
+                "separate_control_planes", "successful_evaluations",
+                "load_evaluations", "load_concurrency", "load_elapsed_seconds",
+                "fail_closed_evaluations", "target_mutated", "elapsed_seconds",
+                "peak_child_rss_bytes", "independent_evidence", "status",
+            }
+            or redis_result["schema_version"]
+            != "telosieve.redis-integration-qualification/v1"
+            or redis_result["image"]
+            != "redis@sha256:9d317178eceac8454a2284a9e6df2466b93c745529947f0cd42a0fa9609d7005"
+            or redis_result["real_server"] is not True
+            or redis_result["loopback_only"] is not True
+            or redis_result["read_only_acl_users"] != 3
+            or redis_result["mutation_attempts_refused"] != 3
+            or redis_result["observation_producers"] != 2
+            or redis_result["separate_control_planes"] is not False
+            or redis_result["successful_evaluations"] != 1
+            or redis_result["load_evaluations"] != 8
+            or redis_result["load_concurrency"] != 4
+            or not isinstance(redis_result["load_elapsed_seconds"], (int, float))
+            or isinstance(redis_result["load_elapsed_seconds"], bool)
+            or not 0 <= redis_result["load_elapsed_seconds"] <= 30
+            or redis_result["fail_closed_evaluations"] != 5
+            or redis_result["target_mutated"] is not False
+            or not isinstance(redis_result["elapsed_seconds"], (int, float))
+            or isinstance(redis_result["elapsed_seconds"], bool)
+            or not 0 <= redis_result["elapsed_seconds"] <= 90
+            or not isinstance(redis_result["peak_child_rss_bytes"], int)
+            or isinstance(redis_result["peak_child_rss_bytes"], bool)
+            or not 0 < redis_result["peak_child_rss_bytes"] <= 512 * 1024 * 1024
+            or redis_result["independent_evidence"] is not False
+            or redis_result["status"] != "passed"
+        ):
+            raise SystemExit("private-bundle-qualification: Redis result is invalid")
+
         packaged_modes = [
             {
                 "configuration_schema": (config := json.loads(archive.read(path)))["schema_version"],
@@ -128,6 +170,10 @@ def assert_bundle(path: Path) -> int:
             "evaluation/observation-trust.integration.example.json",
             "evaluation/integration-response.example.json",
             "docs/INTEGRATION_CONTRACT.md", "scripts/reference-integration-adapter.py",
+            "docs/REDIS_INTEGRATION.md", "scripts/redis_integration_common.py",
+            "scripts/redis-integration-adapter.py", "scripts/redis-observation-producer.py",
+            "scripts/test-redis-integration.py", "scripts/run-redis-integration.py",
+            "results/redis-integration-qualification.json",
             "evaluation/candidate-readiness.json",
             "evaluation/observation-trust.example.json", "evaluation/observation-quorum.example.json",
             "evaluation/observation-trust.live.example.json",
@@ -164,6 +210,10 @@ def assert_bundle(path: Path) -> int:
             "scripts/run-linux-producer-isolation.py",
             "scripts/verify-release-candidate.py",
             "scripts/reference-integration-adapter.py",
+            "scripts/redis-integration-adapter.py",
+            "scripts/redis-observation-producer.py",
+            "scripts/test-redis-integration.py",
+            "scripts/run-redis-integration.py",
         ):
             mode = archive.getinfo(producer).external_attr >> 16
             if mode & 0o777 != 0o555:

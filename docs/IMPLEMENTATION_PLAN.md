@@ -803,3 +803,29 @@ Evidence: [INTEGRATION_CONTRACT](INTEGRATION_CONTRACT.md),
 `evaluation/config.integration.example.json`. This standardizes integration
 mechanics; it does not qualify an unnamed platform, prove producer truth or
 independence, or authorize actuation.
+
+## Post-M49 — concrete Redis read-only integration
+
+- [x] Map one bounded Redis namespace into Integration Contract v1 without
+  adding Redis client dependencies or mutation commands.
+- [x] Load credentials only from owner-only, regular, single-link files and
+  restrict this adapter version to literal loopback endpoints.
+- [x] Qualify a pinned disposable real Redis 8.8 server with distinct read-only
+  ACL users for the primary adapter and two signed observation producers.
+- [x] Prove `SET` is denied for every evaluation credential and retain
+  `target_mutated: false` through success and bounded concurrent load.
+- [x] Fail closed without evidence on RESP/resource excess, 65 replicas,
+  producer disagreement, stale producer timing, credential faults and complete
+  server outage.
+- [x] Package the adapter, producer, parser tests, real-system harness, retained
+  result and operator documentation in future private evaluation bundles.
+- [ ] Repeat with independently administered Redis control planes, credential
+  custody and producer signing domains.
+
+Evidence: [REDIS_INTEGRATION](REDIS_INTEGRATION.md),
+`scripts/redis-integration-adapter.py`,
+`scripts/redis-observation-producer.py`,
+`scripts/test-redis-integration.py`, and
+`results/redis-integration-qualification.json`. This qualifies a concrete local
+Redis integration and real ACL enforcement; one project-controlled server does
+not establish independent observation truth or production readiness.

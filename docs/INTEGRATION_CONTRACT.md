@@ -137,3 +137,8 @@ resource measurements, compromised-consistent-producer analysis, a disposable
 real-system end-to-end qualification, and adversarial coverage entries. Passing
 the generic fixture alone does not qualify a platform or establish truthful or
 independent observations.
+
+The first concrete conformance application is the bounded
+[Redis Read-Only Integration](REDIS_INTEGRATION.md). Its real local ACL and
+server qualification satisfies the platform-mechanics requirements while
+retaining the independent-control-plane gate.

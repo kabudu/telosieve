@@ -34,3 +34,10 @@ OpenTofu is the second testable external integration. Its plan-only adapter
 provides a provider-neutral evaluation boundary using `terraform_data`, with the
 exact plan bound into certificate v10. External providers, remote state, and any
 apply workflow remain outside the qualified boundary.
+
+Redis is the first concrete implementation of the standardized external
+read-only contract. A bounded namespace maps into the current replicated
+key/value model, while separate Redis ACL users constrain the primary adapter
+and two signed producers to read commands. The local qualification proves
+technical mutation denial but shares one host and server; remote transport,
+cluster topology, independent custody and production operation remain open.

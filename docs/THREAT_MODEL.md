@@ -173,6 +173,16 @@ OpenTofu and Telosieve executables, host, filesystem, environment, saved binary
 plan, and administrators remain trusted; process separation alone does not
 isolate those faults or prevent plan contents from reaching producer memory.
 
+The Redis Contract v1 adapter accepts only loopback endpoints, owner-only
+single-link credential files, bounded RESP2 shapes and an atomic read-only
+`MULTI`/`EXEC` collection over one configured namespace. The real Redis
+qualification proves three distinct ACL
+users cannot execute `SET`, and detects oversized topology, producer
+disagreement and outage without evidence. All readers share one server, host,
+administrator and harness; server compromise, consistent false replies,
+credential theft, TLS/remote transport, cluster failover and independently
+administered custody remain outside this local evidence.
+
 The optional Linux producer relay separates evaluator and producer filesystem
 identities through per-producer systemd users, client groups, tokens, sockets,
 and hardening. Compromise of the evaluator can request observations but should

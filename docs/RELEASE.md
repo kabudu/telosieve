@@ -275,3 +275,11 @@ adapter boundary. These changes are not part of the immutable signed
 `v0.2.0-rc.1` handoff and require a separately frozen future candidate before
 external candidate assessment. The generic conformance suite does not qualify a
 concrete platform integration or authorize actuation.
+
+Post-candidate Redis integration now supplies the first concrete Contract v1
+collector and a pinned disposable Redis 8.8 qualification. Three distinct ACL
+users are technically restricted to reads, including explicit denied mutation
+attempts, and two producers corroborate the primary response under bounded
+concurrent load. All identities still share one project-controlled Redis server
+and host; this is not independent evidence, production credential custody, or a
+new signed candidate.

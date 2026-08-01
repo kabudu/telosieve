@@ -10,9 +10,9 @@ repository-relative regular file plus an exact anchor that the validator must
 find.
 
 The current registry contains ten threat classes. Nine required classes have
-23 applicable, executable cells. Five cells are inapplicable because the mode
-has no relevant credential or transport boundary. Two cells remain explicitly
-deferred across one research threat:
+32 covered cells. Five cells are inapplicable because the mode has no relevant
+credential or transport boundary. Three cells remain explicitly deferred
+across one research threat:
 
 - compromised Kubernetes control-plane or OpenTofu producers returning
   internally consistent false observations.
@@ -30,6 +30,12 @@ control-plane cell.
 Post-M35 resolves the previously deferred sustained-load cells with 48 bounded
 hostile process cases and eight concurrent real Kubernetes evaluations. See
 [SUSTAINED_ADVERSARIAL_LOAD](SUSTAINED_ADVERSARIAL_LOAD.md).
+
+Post-M49 adds a real Redis 8.8 path for `external-read-only`: three ACL users
+refuse mutation, two signed producers corroborate the adapter, eight evaluations
+run at concurrency four, and oversized topology, disagreement and outage fail
+without evidence. Because every reader still shares one project-controlled
+Redis server, the compromised-consistent-producer cell remains deferred.
 
 Run the contract directly with:
 

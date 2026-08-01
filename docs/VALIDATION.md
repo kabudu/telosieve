@@ -388,16 +388,30 @@ peak child RSS, and output size bounds. This is local macOS process/filesystem
 evidence, not signing, power-loss, Linux, Kubernetes-load, distribution, or
 independent qualification.
 
+## Redis Integration Contract qualification
+
+The pinned disposable Redis 8.8 harness uses the public v7 evaluation CLI, one
+primary adapter and two independently credentialed signed producer processes.
+Three namespace-scoped ACL users are proven unable to execute `SET`; one valid
+evaluation and eight concurrent evaluations produce certificate v11 evidence
+with `target_mutated: false`. Unsafe credential permissions, 65 replicas,
+producer disagreement, stale producer timing and complete server outage fail
+without certificate or ledger output. Focused socket-pair tests reject Redis errors, unsupported RESP,
+oversized bulk values and arrays. All processes share one host and Redis control
+plane, so this is concrete integration and credential-scope evidence, not
+independent observation truth. See [REDIS_INTEGRATION](REDIS_INTEGRATION.md).
+
 ## Compatibility consumer qualification
 
-The independent Python reader and Rust compatibility boundary agree on four
+The independent Python reader and Rust compatibility boundary agree on five
 accepted version vectors and ten refusal classes. The accepted inputs are an
 actual v7 stateless certificate, actual v8 local-actuator certificate, and the
-retained v9 Kubernetes shadow certificate, and a v10 OpenTofu envelope. Future versions, unknown or missing
+retained v9 Kubernetes shadow certificate, a v10 OpenTofu envelope, and a v11
+Integration Contract envelope. Future versions, unknown or missing
 fields, wrong types, out-of-range integers, cross-version extensions, duplicate
 keys, malformed JSON, and oversized input all refuse in both implementations.
 
-The retained `telosieve.reader-qualification/v1` aggregate reports 15 passes and
+The retained `telosieve.reader-qualification/v1` aggregate reports 16 passes and
 zero disagreements within 16-case and 2 MiB bounds. This is implementation
 diversity under project control, not independent assessment. See
 [PROTOCOL_COMPATIBILITY](PROTOCOL_COMPATIBILITY.md).

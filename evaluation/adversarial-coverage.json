@@ -34,7 +34,7 @@
         "kubernetes-shadow": {"status": "covered", "evidence": [{"path": "tests/evaluation_cli.rs", "anchor": "versioned_evaluation_cli_is_read_only_bounded_and_fail_closed"}]},
         "kubernetes-live": {"status": "covered", "evidence": [{"path": "tests/kubernetes_live_cli.rs", "anchor": "oversized"}]},
         "opentofu-plan": {"status": "covered", "evidence": [{"path": "src/opentofu_plan.rs", "anchor": "MAX_RESOURCE_CHANGES"}]},
-        "external-read-only": {"status": "covered", "evidence": [{"path": "src/integration.rs", "anchor": "MAX_RESPONSE_BYTES"}]}
+        "external-read-only": {"status": "covered", "evidence": [{"path": "src/integration.rs", "anchor": "MAX_RESPONSE_BYTES"}, {"path": "scripts/test-redis-integration.py", "anchor": "test_resp_types_and_bounds"}]}
       }
     },
     {
@@ -46,7 +46,7 @@
         "kubernetes-shadow": {"status": "covered", "evidence": [{"path": "tests/evaluation_cli.rs", "anchor": "mutation-mode.json"}]},
         "kubernetes-live": {"status": "covered", "evidence": [{"path": "scripts/run-kubernetes-real-cluster.py", "anchor": "(\"patch\", \"configmap/repair-goal\")"}]},
         "opentofu-plan": {"status": "covered", "evidence": [{"path": "scripts/run-opentofu-plan.py", "anchor": "destructive plan emitted evidence"}]},
-        "external-read-only": {"status": "covered", "evidence": [{"path": "tests/integration_contract.rs", "anchor": "mutation-capability"}]}
+        "external-read-only": {"status": "covered", "evidence": [{"path": "tests/integration_contract.rs", "anchor": "mutation-capability"}, {"path": "scripts/run-redis-integration.py", "anchor": "unexpectedly has mutation authority"}]}
       }
     },
     {
@@ -70,7 +70,7 @@
         "kubernetes-shadow": {"status": "not-applicable", "reason": "The shadow adapter has no target credentials or live client."},
         "kubernetes-live": {"status": "covered", "evidence": [{"path": "scripts/run-kubernetes-real-cluster.py", "anchor": "must-not-read"}, {"path": "deploy/kubernetes/evaluation-rbac.yaml", "anchor": "resources: [\"configmaps\"]"}]},
         "opentofu-plan": {"status": "not-applicable", "reason": "The saved-plan adapter has no provider, backend, or cloud credential interface."},
-        "external-read-only": {"status": "covered", "evidence": [{"path": "tests/integration_contract.rs", "anchor": "mutation-capability"}]}
+        "external-read-only": {"status": "covered", "evidence": [{"path": "scripts/run-redis-integration.py", "anchor": "mutation_attempts_refused"}]}
       }
     },
     {
@@ -82,7 +82,7 @@
         "kubernetes-shadow": {"status": "not-applicable", "reason": "The shadow adapter consumes a bounded local export without network transport."},
         "kubernetes-live": {"status": "covered", "evidence": [{"path": "tests/kubernetes_live_cli.rs", "anchor": "timeout"}, {"path": "scripts/run-kubernetes-real-cluster.py", "anchor": "API outage did not fail closed"}]},
         "opentofu-plan": {"status": "not-applicable", "reason": "The saved-plan adapter consumes a bounded local file without network transport."},
-        "external-read-only": {"status": "covered", "evidence": [{"path": "tests/integration_contract.rs", "anchor": "timed_out_adapter"}]}
+        "external-read-only": {"status": "covered", "evidence": [{"path": "tests/integration_contract.rs", "anchor": "timed_out_adapter"}, {"path": "scripts/run-redis-integration.py", "anchor": "outage-evaluation.json"}]}
       }
     },
     {
@@ -130,7 +130,7 @@
         "kubernetes-shadow": {"status": "covered", "evidence": [{"path": "scripts/run-sustained-adversarial-load.py", "anchor": "SHADOW_ATTACK_BYTES = 1024 * 1024 + 1"}]},
         "kubernetes-live": {"status": "covered", "evidence": [{"path": "scripts/run-sustained-adversarial-load.py", "anchor": "LIVE_RESPONSE_ATTACK_BYTES = 1024 * 1024 + 1"}, {"path": "scripts/run-kubernetes-real-cluster.py", "anchor": "LOAD_EVALUATIONS = 8"}]},
         "opentofu-plan": {"status": "covered", "evidence": [{"path": "scripts/run-sustained-adversarial-load.py", "anchor": "OPENTOFU_ATTACK_BYTES = 2 * 1024 * 1024 + 1"}]},
-        "external-read-only": {"status": "covered", "evidence": [{"path": "tests/integration_contract.rs", "anchor": "for _ in 0..4"}]}
+        "external-read-only": {"status": "covered", "evidence": [{"path": "tests/integration_contract.rs", "anchor": "for _ in 0..4"}, {"path": "scripts/run-redis-integration.py", "anchor": "LOAD_EVALUATIONS = 8"}]}
       }
     }
   ]

@@ -179,6 +179,12 @@ cargo run --locked --offline --example state_space -- results/generated-state-sp
 Hosted CI is intentionally disabled until an explicitly approved public-opening
 or research-release gate.
 
+The first concrete Integration Contract v1 implementation targets a bounded
+Redis key namespace. Its pinned disposable Redis 8.8 qualification uses three
+distinct read-only ACL users, proves mutation denial, exercises two signed
+producers and bounded concurrent load, and retains the shared-control-plane
+limitation. See [Redis Read-Only Integration](docs/REDIS_INTEGRATION.md).
+
 Inspect the exact machine-checked read-only evaluation surface with:
 
 ```sh
