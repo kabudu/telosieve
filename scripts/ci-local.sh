@@ -30,6 +30,7 @@ run python3 scripts/validate-adversarial-coverage.py
 run python3 scripts/run-evaluation-lifecycle-qualification.py
 run python3 scripts/run-diagnostics-qualification.py
 run python3 scripts/run-private-bundle-qualification.py
+run python3 scripts/run-release-candidate-qualification.py
 run python3 scripts/run-producer-isolation-qualification.py
 run ./scripts/qualify-linux-producer-isolation.sh
 run python3 scripts/run-reproducible-build-qualification.py

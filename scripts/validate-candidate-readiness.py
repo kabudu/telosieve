@@ -42,8 +42,8 @@ EXPECTED_EVIDENCE = {
         ["python3 scripts/run-reproducible-build-qualification.py", "python3 scripts/run-sustained-adversarial-load.py"],
     ),
     "signed-checksummed-reproducible-private-bundle": (
-        ["docs/CANDIDATE_SIGNING.md", "docs/PRIVATE_BUNDLE.md", "scripts/build-private-bundle.py", "scripts/run-private-bundle-qualification.py"],
-        ["python3 scripts/run-private-bundle-qualification.py"],
+        ["docs/CANDIDATE_SIGNING.md", "docs/PRIVATE_BUNDLE.md", "scripts/build-private-bundle.py", "scripts/build-release-candidate.py", "scripts/run-private-bundle-qualification.py", "scripts/run-release-candidate-qualification.py", "scripts/verify-release-candidate.py"],
+        ["python3 scripts/run-private-bundle-qualification.py", "python3 scripts/run-release-candidate-qualification.py"],
     ),
     "threat-model-runbook-and-known-limitations": (
         ["docs/OPERATIONS.md", "docs/RISK_REGISTER.md", "docs/THREAT_MODEL.md"],

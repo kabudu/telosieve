@@ -734,3 +734,22 @@ Evidence: [CANDIDATE_READINESS](CANDIDATE_READINESS.md),
 `evaluation/candidate-readiness.json`, and
 `scripts/validate-candidate-readiness.py`. This closes narrative-only readiness
 drift; it does not itself create or sign a release candidate.
+
+## Post-M46 — versioned private release-candidate freeze
+
+- [x] Set the private evaluation candidate version to `0.2.0-rc.1` and provide
+  claim-bounded evaluator-facing release notes.
+- [x] Build the exact clean-master release binary and deterministic source-bound
+  bundle only when its digest matches clean-tree reproducibility evidence.
+- [x] Sign exact bundle bytes with an external owner-only key and emit bounded
+  public trust, artifact inventory, checksums, and candidate status metadata.
+- [x] Publish the seven-file handoff atomically without clobbering and provide a bound
+  offline verifier for checksums, embedded commit/binary, version, and signature.
+- [ ] Execute the freeze at the final reviewed master commit and publish the
+  private annotated release-candidate tag.
+
+Evidence: [CANDIDATE_SIGNING](CANDIDATE_SIGNING.md),
+`RELEASE_NOTES_v0.2.0-rc.1.md`, and
+`scripts/{build,verify}-release-candidate.py`. Project-controlled signing
+authenticates evaluator bytes but does not establish independent custody,
+assessment, public release, or production promotion.

@@ -143,6 +143,8 @@ def assert_bundle(path: Path) -> int:
             "scripts/validate-candidate-readiness.py",
             "results/candidate-readiness-validation.json",
             "docs/CANDIDATE_READINESS.md",
+            "RELEASE_NOTES_v0.2.0-rc.1.md",
+            "scripts/build-release-candidate.py", "scripts/verify-release-candidate.py",
             "docs/SUSTAINED_ADVERSARIAL_LOAD.md", "docs/OBSERVATION_QUORUM.md",
             "evaluation/candidate-profile.json", "evaluation/capabilities.json",
         }
@@ -155,6 +157,7 @@ def assert_bundle(path: Path) -> int:
             "scripts/observation-source-client.py",
             "scripts/qualify-linux-producer-isolation.sh",
             "scripts/run-linux-producer-isolation.py",
+            "scripts/verify-release-candidate.py",
         ):
             mode = archive.getinfo(producer).external_attr >> 16
             if mode & 0o777 != 0o555:

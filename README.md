@@ -22,8 +22,8 @@ and refuse repair when surviving evidence cannot distinguish safe outcomes.
 The original M3 decision narrowed Telosieve to private research. After the
 registered unsafe approval was removed and the bounded evidence base expanded,
 the project authorized a private, production-shaped evaluation product on
-2026-07-30. Evaluation engineering is active; no evaluation candidate has yet
-met its readiness gates. Public release, autonomous production actuation, and
+2026-07-30. Version `0.2.0-rc.1` is being prepared as the first signed private
+evaluation candidate for external assessment. Public release, autonomous production actuation, and
 general safety claims remain blocked pending their separate explicit decisions;
 production promotion additionally requires independent validation of the exact
 candidate. Certificate v4's

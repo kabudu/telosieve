@@ -3,7 +3,7 @@
   "generated_at": "2026-07-29T22:49:19.656827+00:00",
   "command": "cargo audit --json",
   "tool_version": "cargo-audit-audit 0.22.1",
-  "lockfile_sha256": "d81169275d8493b91800580d6354946b9a812e8ddb89be244968bfb436a1442a",
+  "lockfile_sha256": "3ae3ccbecf98641dd2dd0f5709e0a3ce4fc4abf64ad2e97bf283d05cec57631f",
   "database": {
     "advisory-count": 1173,
     "last-commit": "7c7ccac53056b87f69ac677f15ea2d9a98a6f8e2",

@@ -43,8 +43,8 @@
     {
       "gate": "signed-checksummed-reproducible-private-bundle",
       "status": "pending-freeze",
-      "evidence_paths": ["docs/CANDIDATE_SIGNING.md", "docs/PRIVATE_BUNDLE.md", "scripts/build-private-bundle.py", "scripts/run-private-bundle-qualification.py"],
-      "validation_commands": ["python3 scripts/run-private-bundle-qualification.py"]
+      "evidence_paths": ["docs/CANDIDATE_SIGNING.md", "docs/PRIVATE_BUNDLE.md", "scripts/build-private-bundle.py", "scripts/build-release-candidate.py", "scripts/run-private-bundle-qualification.py", "scripts/run-release-candidate-qualification.py", "scripts/verify-release-candidate.py"],
+      "validation_commands": ["python3 scripts/run-private-bundle-qualification.py", "python3 scripts/run-release-candidate-qualification.py"]
     },
     {
       "gate": "threat-model-runbook-and-known-limitations",

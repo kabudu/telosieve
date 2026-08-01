@@ -30,6 +30,17 @@ policy failure, verification failure, disagreement, unexpected recipient, or
 partial transfer. Do not repair a refusal by changing time, trust, metadata, or
 artifact bytes; investigate and restart from a newly reviewed candidate.
 
+`scripts/build-release-candidate.py` implements the project-controlled private
+evaluation freeze and `scripts/verify-release-candidate.py` verifies the exact
+handoff offline. The builder requires clean `master`, the reviewed source
+commit, the binary digest from clean-tree reproducibility evidence, an external
+owner-only key, an absent output directory, and an explicit validity window. It
+publishes the directory atomically only after signature verification.
+The handoff verifier requires `--trusted-telosieve` pointing to an absolute
+binary obtained independently of the handoff, such as one rebuilt from the
+reviewed source commit. It never executes the bundled binary before signature
+verification; that binary is only digest-checked against the candidate manifest.
+
 ## Remaining gates
 
 Project tests may simulate this workflow only with ephemeral keys and named

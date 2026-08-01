@@ -28,6 +28,9 @@ The bundle also carries the authenticated Unix relay/client, hardened systemd
 template, example relay profiles, local qualification, and pinned offline Linux
 multi-UID qualification used to prepare and test separate producer identities;
 it does not create host accounts or install services automatically.
+The packaged offline release-candidate verifier checks the six-file signed
+handoff; the builder is included as reviewable source but candidate construction
+still requires a clean full source checkout and external signing key.
 
 ```sh
 python3 scripts/build-private-bundle.py \

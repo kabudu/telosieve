@@ -9,6 +9,7 @@ CAPABILITY_SCHEMA = "telosieve.evaluation-capabilities/v1"
 PROFILE_SCHEMA = "telosieve.evaluation-candidate-profile/v1"
 FILES = [
     "AGENTS.md", "README.md", "Cargo.lock", "docs/EVALUATION_CLI.md",
+    "RELEASE_NOTES_v0.2.0-rc.1.md",
     "docs/EVALUATION_LIFECYCLE.md", "docs/OPERATOR_DIAGNOSTICS.md",
     "docs/OPERATIONS.md", "docs/PRIVATE_BUNDLE.md", "docs/RELEASE.md",
     "docs/BUILD_PROVENANCE.md", "docs/CANDIDATE_SIGNING.md",
@@ -37,6 +38,7 @@ FILES = [
     "scripts/run-opentofu-plan.py", "scripts/validate-adversarial-coverage.py",
     "scripts/run-sustained-adversarial-load.py",
     "scripts/validate-candidate-readiness.py",
+    "scripts/build-release-candidate.py", "scripts/verify-release-candidate.py",
     "scripts/kubernetes-observation-producer.py",
     "scripts/opentofu-observation-producer.py",
     "scripts/observation-source-relay.py", "scripts/observation-source-client.py",
@@ -61,6 +63,7 @@ RUNTIME_EXECUTABLES = {
     "scripts/observation-source-client.py",
     "scripts/qualify-linux-producer-isolation.sh",
     "scripts/run-linux-producer-isolation.py",
+    "scripts/verify-release-candidate.py",
 }
 
 def digest(data): return hashlib.sha256(data).hexdigest()

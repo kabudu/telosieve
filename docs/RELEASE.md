@@ -256,3 +256,11 @@ concrete packaged evidence and authoritative local-CI commands. Seven gates are
 locally verified; exact-byte signing remains explicitly pending candidate
 freeze. The manifest cannot be used to claim that an unsigned bundle is a
 release candidate.
+
+Version `0.2.0-rc.1` adds an atomic private freeze workflow that requires clean
+reviewed `master`, an exact reproducible binary digest, an owner-only external
+key, and a maximum 30-day signature window. It emits a seven-file handoff with
+bundle, detached signature, public trust, release notes, candidate manifest, and
+checksums plus a checksum-bound offline verifier. Until the final reviewed commit is frozen
+and tagged, this is qualified release machinery rather than a released
+candidate.
