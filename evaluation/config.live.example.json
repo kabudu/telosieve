@@ -7,12 +7,12 @@
   "observation_trust_path": "observation-trust.live.example.json",
   "observation_sources": [
     {
-      "executable_path": "/opt/telosieve/bin/producer-a",
-      "arguments": ["--config", "/etc/telosieve/producer-a.json"]
+      "executable_path": "/opt/telosieve/scripts/observation-source-client.py",
+      "arguments": ["--socket", "/run/telosieve-observation-kubernetes-a/relay.sock", "--token", "/etc/telosieve/tokens/kubernetes-a.token"]
     },
     {
-      "executable_path": "/opt/telosieve/bin/producer-b",
-      "arguments": ["--config", "/etc/telosieve/producer-b.json"]
+      "executable_path": "/opt/telosieve/scripts/observation-source-client.py",
+      "arguments": ["--socket", "/run/telosieve-observation-kubernetes-b/relay.sock", "--token", "/etc/telosieve/tokens/kubernetes-b.token"]
     }
   ],
   "kubernetes": {

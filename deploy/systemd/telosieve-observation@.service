@@ -1,0 +1,46 @@
+[Unit]
+Description=Telosieve observation producer relay %i
+After=local-fs.target
+
+[Service]
+Type=simple
+User=telosieve-observation-%i
+Group=telosieve-observation-%i-client
+RuntimeDirectory=telosieve-observation-%i
+RuntimeDirectoryMode=0750
+ExecStart=/opt/telosieve/scripts/observation-source-relay.py --config /etc/telosieve/observation-%i.json
+Restart=on-failure
+RestartSec=5s
+TimeoutStartSec=10s
+TimeoutStopSec=10s
+NoNewPrivileges=yes
+CapabilityBoundingSet=
+AmbientCapabilities=
+PrivateDevices=yes
+PrivateTmp=yes
+ProtectClock=yes
+ProtectControlGroups=yes
+ProtectHome=yes
+ProtectHostname=yes
+ProtectKernelLogs=yes
+ProtectKernelModules=yes
+ProtectKernelTunables=yes
+ProtectProc=invisible
+ProtectSystem=strict
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+RestrictNamespaces=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+SystemCallArchitectures=native
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+TasksMax=32
+MemoryMax=256M
+UMask=0077
+StandardOutput=null
+StandardError=journal
+LogRateLimitIntervalSec=30s
+LogRateLimitBurst=10
+
+[Install]
+WantedBy=multi-user.target

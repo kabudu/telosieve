@@ -173,6 +173,13 @@ timeout, unsafe-key, symlink, forgery, and disagreement faults. Both processes
 still share one host and saved plan, so this is integration evidence rather than
 independent provider/state/backend or signing-custody evidence.
 
+The private bundle now includes an authenticated Unix relay/client and hardened
+systemd template for running each observation producer under a separate Linux
+identity without granting its keys or platform credentials to the evaluator.
+Local qualification covers relay authentication, bounds, cleanup, and unit
+drift under one UID. Real systemd, multi-UID, multi-host, credential-custody, and
+independent-operation evidence remain required.
+
 The private lifecycle manager now packages a caller-supplied local binary and
 strict evaluation configuration as an immutable digest-bound release. It
 atomically activates install, upgrade, and verified rollback; creates a bounded

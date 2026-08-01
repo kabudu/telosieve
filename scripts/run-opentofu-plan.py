@@ -5,13 +5,17 @@ import hashlib
 import json
 import pathlib
 import shutil
+import socket
 import subprocess
 import tempfile
+import time
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 TOFU = shutil.which("tofu")
 TOFU_REAL = str(pathlib.Path(TOFU).resolve()) if TOFU else None
 PRODUCER = (ROOT / "scripts/opentofu-observation-producer.py").resolve()
+RELAY = (ROOT / "scripts/observation-source-relay.py").resolve()
+RELAY_CLIENT = (ROOT / "scripts/observation-source-client.py").resolve()
 SPECIFICATIONS = (("producer-a", "key-a", "plan-reader-a", "0d" * 32),
                   ("producer-b", "key-b", "plan-reader-b", "0e" * 32))
 
@@ -84,6 +88,56 @@ def assert_no_evidence(directory: pathlib.Path, binary: pathlib.Path,
         raise SystemExit(f"opentofu-e2e: {stem} producer fault emitted evidence")
 
 
+def relay_sources(directory: pathlib.Path, sources: list[dict], stem: str):
+    relayed, processes = [], []
+    for index, source in enumerate(sources):
+        token = directory / f"{stem}-{index}.token"
+        token.write_bytes(bytes([65 + index]) * 32); token.chmod(0o440)
+        socket_path = directory / f"{stem}-{index}.sock"
+        relay_config = directory / f"{stem}-{index}.relay.json"
+        relay_config.write_text(json.dumps({
+            "schema_version": "telosieve.observation-relay/v1",
+            "socket_path": str(socket_path), "token_path": str(token),
+            "producer": source,
+        }, separators=(",", ":")))
+        process = subprocess.Popen(
+            [str(RELAY), "--config", str(relay_config)], cwd=directory,
+            stdout=subprocess.DEVNULL, stderr=subprocess.PIPE,
+        )
+        deadline = time.monotonic() + 2
+        while time.monotonic() < deadline:
+            if socket_path.exists():
+                probe = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+                try:
+                    probe.settimeout(0.05); probe.connect(str(socket_path))
+                    break
+                except (ConnectionRefusedError, FileNotFoundError):
+                    pass
+                finally:
+                    probe.close()
+            if process.poll() is not None:
+                raise SystemExit("opentofu-e2e: observation relay failed to start")
+            time.sleep(0.01)
+        else:
+            process.terminate(); process.wait(timeout=2)
+            raise SystemExit("opentofu-e2e: observation relay readiness timed out")
+        processes.append(process)
+        relayed.append({"executable_path": str(RELAY_CLIENT), "arguments": [
+            "--socket", str(socket_path), "--token", str(token),
+        ]})
+    return relayed, processes
+
+
+def stop_relays(processes) -> None:
+    for process in processes:
+        process.terminate()
+    for process in processes:
+        try:
+            process.wait(timeout=2)
+        except subprocess.TimeoutExpired:
+            process.kill(); process.wait(timeout=2)
+
+
 def main() -> None:
     if TOFU is None:
         raise SystemExit("opentofu-e2e: tofu executable is required")
@@ -101,8 +155,20 @@ def main() -> None:
         plan_path.write_bytes(shown)
 
         saved_plan = directory / "update.tfplan"
-        valid_config = config(directory, binary, plan_path, "valid", saved_plan)
-        evaluation = run([str(binary), "evaluate", str(valid_config)], directory)
+        direct_config = config(directory, binary, plan_path, "direct-valid", saved_plan)
+        direct_value = json.loads(direct_config.read_bytes())
+        relayed, relay_processes = relay_sources(
+            directory, direct_value["observation_sources"], "valid"
+        )
+        direct_value["certificate_path"] = str((directory / "valid-certificate.json").resolve())
+        direct_value["ledger_path"] = str((directory / "valid-ledger.jsonl").resolve())
+        direct_value["observation_sources"] = relayed
+        valid_config = directory / "valid-evaluation.json"
+        valid_config.write_text(json.dumps(direct_value))
+        try:
+            evaluation = run([str(binary), "evaluate", str(valid_config)], directory)
+        finally:
+            stop_relays(relay_processes)
         report = json.loads(evaluation.stdout)
         certificate = json.loads((directory / "valid-certificate.json").read_bytes())
         record = certificate["opentofu"]
@@ -113,7 +179,7 @@ def main() -> None:
         if not isinstance(record.get("observation_quorum_digest"), str):
             raise SystemExit("opentofu-e2e: certificate lacks observation quorum binding")
 
-        valid_value = json.loads(valid_config.read_bytes())
+        valid_value = json.loads(direct_config.read_bytes())
         renderer_faults = (
             ("renderer-failure", "#!/bin/sh\nexit 9\n"),
             ("renderer-timeout", "#!/bin/sh\nsleep 4\n"),

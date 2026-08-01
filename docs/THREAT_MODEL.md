@@ -173,6 +173,16 @@ OpenTofu and Telosieve executables, host, filesystem, environment, saved binary
 plan, and administrators remain trusted; process separation alone does not
 isolate those faults or prevent plan contents from reaching producer memory.
 
+The optional Linux producer relay separates evaluator and producer filesystem
+identities through per-producer systemd users, client groups, tokens, sockets,
+and hardening. Compromise of the evaluator can request observations but should
+not expose signing keys or platform credentials. Compromise of one producer can
+emit false observations and consume its own resources, but unique groups/tokens
+limit direct access to peer relays. Root, kernel, systemd, shared host storage,
+token provisioning, configuration authors, and common platform truth remain
+correlated trust boundaries. The local qualification validates the relay under
+one UID and therefore is not OS-identity or privilege-separation evidence.
+
 The lifecycle manager rejects relative or symlinked roots and inputs, concurrent
 operations, unexpected release content, backup symlinks, inventory or digest
 tampering, and incorrectly confirmed uninstall. Atomic activation prevents a

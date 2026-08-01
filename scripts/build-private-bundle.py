@@ -16,7 +16,11 @@ FILES = [
     "docs/OPENTOFU_PLAN.md", "docs/EVALUATION_PRODUCT_DECISION.md",
     "docs/THREAT_MODEL.md", "docs/ADVERSARIAL_COVERAGE.md",
     "docs/SUSTAINED_ADVERSARIAL_LOAD.md", "docs/OBSERVATION_QUORUM.md",
+    "docs/PRODUCER_ISOLATION.md",
     "deploy/kubernetes/evaluation-rbac.yaml", "evaluation/config.example.json",
+    "deploy/systemd/telosieve-observation@.service",
+    "deploy/systemd/observation-kubernetes-a.example.json",
+    "deploy/systemd/observation-opentofu-a.example.json",
     "evaluation/config.live.example.json", "evaluation/config.opentofu.example.json",
     "evaluation/observation-trust.example.json", "evaluation/observation-quorum.example.json",
     "evaluation/observation-trust.live.example.json",
@@ -32,6 +36,8 @@ FILES = [
     "scripts/run-sustained-adversarial-load.py",
     "scripts/kubernetes-observation-producer.py",
     "scripts/opentofu-observation-producer.py",
+    "scripts/observation-source-relay.py", "scripts/observation-source-client.py",
+    "scripts/run-producer-isolation-qualification.py",
     "results/adversarial-coverage-validation.json",
     "results/sustained-adversarial-load.json",
 ]
@@ -45,6 +51,8 @@ FIXED_TIME = (2026, 1, 1, 0, 0, 0)
 PRODUCER_EXECUTABLES = {
     "scripts/kubernetes-observation-producer.py",
     "scripts/opentofu-observation-producer.py",
+    "scripts/observation-source-relay.py",
+    "scripts/observation-source-client.py",
 }
 
 def digest(data): return hashlib.sha256(data).hexdigest()
@@ -221,7 +229,7 @@ def main():
         ("evaluation/candidate-profile.json", profile, 0o400),
     ]
     for relative, data in sources.items():
-        mode = 0o500 if relative in PRODUCER_EXECUTABLES else 0o400
+        mode = 0o555 if relative in PRODUCER_EXECUTABLES else 0o400
         entries.append((relative, data, mode))
     records = [{"path": name, "sha256": digest(data), "size": len(data)} for name, data, _ in entries]
     manifest = json.dumps({"schema_version": SCHEMA, "source_commit": source_commit, "entries": records}, sort_keys=True, separators=(",", ":")).encode() + b"\n"

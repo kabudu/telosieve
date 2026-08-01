@@ -183,6 +183,11 @@ bytes through two separately invoked renderer/signing producer processes, and
 never grants Telosieve provider, backend, or apply access. See
 [OpenTofu Plan Evaluation](docs/OPENTOFU_PLAN.md).
 
+Linux evaluators can place each Kubernetes/OpenTofu observation producer behind
+a bounded authenticated Unix relay running as its own systemd identity; see
+[Observation Producer Isolation](docs/PRODUCER_ISOLATION.md). The local harness
+qualifies transport mechanics, not real multi-user or organizational isolation.
+
 M2 results and negative findings are reported in
 [M2 Adversarial Results](docs/M2_RESULTS.md).
 The evidence-to-product comparison is recorded in

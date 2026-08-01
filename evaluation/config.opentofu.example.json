@@ -7,7 +7,7 @@
   "ledger_path": "../out/opentofu-ledger.jsonl",
   "observation_trust_path": "observation-trust.opentofu.example.json",
   "observation_sources": [
-    {"executable_path": "/opt/telosieve/scripts/opentofu-observation-producer.py", "arguments": ["--tofu", "/opt/opentofu/bin/tofu", "--plan", "/var/run/telosieve/update.tfplan", "--telosieve", "/opt/telosieve/bin/telosieve", "--key", "/var/run/secrets/telosieve/producer-a.key", "--subject", "kv/research", "--producer", "producer-a", "--key-id", "key-a", "--domain", "plan-reader-a", "--issued", "1788000000", "--expires", "1788000300"]},
-    {"executable_path": "/opt/telosieve/scripts/opentofu-observation-producer.py", "arguments": ["--tofu", "/opt/opentofu/bin/tofu", "--plan", "/var/run/telosieve/update.tfplan", "--telosieve", "/opt/telosieve/bin/telosieve", "--key", "/var/run/secrets/telosieve/producer-b.key", "--subject", "kv/research", "--producer", "producer-b", "--key-id", "key-b", "--domain", "plan-reader-b", "--issued", "1788000000", "--expires", "1788000300"]}
+    {"executable_path": "/opt/telosieve/scripts/observation-source-client.py", "arguments": ["--socket", "/run/telosieve-observation-opentofu-a/relay.sock", "--token", "/etc/telosieve/tokens/opentofu-a.token"]},
+    {"executable_path": "/opt/telosieve/scripts/observation-source-client.py", "arguments": ["--socket", "/run/telosieve-observation-opentofu-b/relay.sock", "--token", "/etc/telosieve/tokens/opentofu-b.token"]}
   ]
 }

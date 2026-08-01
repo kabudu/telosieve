@@ -46,6 +46,14 @@ do not invoke the producer from a terminal or supervisor that retains stdout.
 Separate process labels on one host do not establish independent provider,
 state, backend, clock, or key custody.
 
+On Linux, use the [producer isolation kit](PRODUCER_ISOLATION.md) when producer
+keys or platform credentials must be separated from the evaluator identity.
+Create one systemd user and one evaluator-client group per producer; never reuse
+tokens, keys, credentials, writable directories, or groups across producer
+fault domains. Treat relay restart loops, authentication refusal, stale sockets,
+or missing output as observation unavailability rather than permission to fall
+back to direct execution.
+
 For `apply-local`, durable service commit occurs before certificate and ledger
 persistence. An evidence-output failure is therefore an applied-but-unreported
 incident: do not retry the stale scenario. Preserve the actuator file, lock or

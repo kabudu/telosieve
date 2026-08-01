@@ -128,6 +128,12 @@ def assert_bundle(path: Path) -> int:
             "evaluation/observation-trust.opentofu.example.json",
             "scripts/kubernetes-observation-producer.py",
             "scripts/opentofu-observation-producer.py",
+            "scripts/observation-source-relay.py", "scripts/observation-source-client.py",
+            "scripts/run-producer-isolation-qualification.py",
+            "deploy/systemd/telosieve-observation@.service",
+            "deploy/systemd/observation-kubernetes-a.example.json",
+            "deploy/systemd/observation-opentofu-a.example.json",
+            "docs/PRODUCER_ISOLATION.md",
             "evaluation/adversarial-coverage.json", "docs/ADVERSARIAL_COVERAGE.md",
             "scripts/validate-adversarial-coverage.py", "results/adversarial-coverage-validation.json",
             "scripts/run-sustained-adversarial-load.py", "results/sustained-adversarial-load.json",
@@ -139,9 +145,11 @@ def assert_bundle(path: Path) -> int:
         for producer in (
             "scripts/kubernetes-observation-producer.py",
             "scripts/opentofu-observation-producer.py",
+            "scripts/observation-source-relay.py",
+            "scripts/observation-source-client.py",
         ):
             mode = archive.getinfo(producer).external_attr >> 16
-            if mode & 0o777 != 0o500:
+            if mode & 0o777 != 0o555:
                 raise SystemExit("private-bundle-qualification: producer mode is unsafe")
         return len(capabilities["capabilities"])
 

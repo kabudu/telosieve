@@ -55,7 +55,8 @@ resource. In a disposable directory it initializes local state, applies three
 old replica inputs, saves a three-update plan for the authenticated new goal,
 renders the real JSON form, and evaluates it through the product CLI. Two local
 producer processes separately invoke `tofu show -json`, sign, and return the
-same exact bytes. The harness checks the plan and quorum digests and
+same exact bytes through the authenticated Unix relays used by the packaged
+Linux isolation profile. The harness checks the plan and quorum digests and
 target-mutation report, then proves renderer failure/timeout, malformed and
 oversized rendering, unsafe key permissions, symlinked saved plans, forgery,
 producer disagreement, replacement, and authority-tampered inputs emit no

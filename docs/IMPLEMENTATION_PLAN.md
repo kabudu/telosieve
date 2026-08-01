@@ -653,3 +653,26 @@ Evidence: [OPENTOFU_PLAN](OPENTOFU_PLAN.md), [OPERATIONS](OPERATIONS.md),
 renderer/signing processes. The local qualification still shares one saved
 binary plan and host, so it does not promote the compromised-consistent-producer
 coverage cell or satisfy independent validation.
+
+## Post-M42 — producer identity isolation kit
+
+- [x] Add a bounded authenticated Unix relay so the evaluator can request fresh
+  observations without reading producer signing keys or platform credentials.
+- [x] Define one Linux systemd service user and client group per producer with
+  hardened filesystem, namespace, device, task, memory, restart, and log policy.
+- [x] Package relay/client programs, Kubernetes/OpenTofu relay profiles, and
+  evaluation configurations that use the socket boundary.
+- [x] Qualify exact output, authentication refusal, producer failure/timeout,
+  output bounds, unsafe token/configuration permissions, socket cleanup/mode,
+  endpoint shape, and unit drift.
+- [x] Exercise the real OpenTofu two-producer evaluation lifecycle through two
+  authenticated relays and the stable CLI.
+- [ ] Exercise the kit under separate real Linux UIDs and independently
+  administered hosts, credentials, keys, clocks, and platform truth.
+
+Evidence: [PRODUCER_ISOLATION](PRODUCER_ISOLATION.md), [OPERATIONS](OPERATIONS.md),
+`scripts/observation-source-{relay,client}.py`,
+`deploy/systemd/telosieve-observation@.service`, and
+`scripts/run-producer-isolation-qualification.py`. M42 establishes a usable
+deployment boundary but the local harness uses one UID and one host, so no
+independence or compromised-consistent-producer claim is promoted.

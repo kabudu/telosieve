@@ -20,6 +20,10 @@ Only the Telosieve binary and the Kubernetes/OpenTofu observation producers are
 executable in the archive; other allowlisted source material is read-only. The
 producer programs still require operator-supplied platform executables,
 configuration, saved plans or credentials, and signing keys.
+The bundle also carries the authenticated Unix relay/client, hardened systemd
+template, example relay profiles, and local qualification used to prepare
+separate Linux producer identities; it does not create accounts or install
+services automatically.
 
 ```sh
 python3 scripts/build-private-bundle.py \

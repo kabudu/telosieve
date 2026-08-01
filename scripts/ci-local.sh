@@ -29,6 +29,7 @@ run python3 scripts/validate-adversarial-coverage.py
 run python3 scripts/run-evaluation-lifecycle-qualification.py
 run python3 scripts/run-diagnostics-qualification.py
 run python3 scripts/run-private-bundle-qualification.py
+run python3 scripts/run-producer-isolation-qualification.py
 run python3 scripts/run-reproducible-build-qualification.py
 run python3 scripts/run-sustained-adversarial-load.py
 run python3 scripts/run-kubernetes-real-cluster.py
