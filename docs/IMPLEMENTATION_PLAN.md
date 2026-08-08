@@ -999,3 +999,30 @@ Evidence: [PUBLIC_OPENING_DECISION](PUBLIC_OPENING_DECISION.md),
 files, `scripts/audit-public-history.py`, and
 `scripts/validate-open-source-readiness.py`. This milestone prepares public
 source governance; it does not itself open the repository or activate hosted CI.
+
+## Post-M61 - evaluation-product brand system
+
+- [x] Record owner approval for a claim-bounded open-source evaluation product
+  without weakening production, assessment, legal, CI, or publication gates.
+- [x] Freeze audience, category, purpose, promise, principles, personality,
+  terminology, messaging, reasons to believe, and prohibited claims.
+- [x] Retain three distinct visual directions and select the evidence aperture
+  through a documented non-leading internal review and small-size test.
+- [x] Produce horizontal, stacked, symbol, wordmark, small, monochrome, and
+  reversed SVGs plus repository, release, diagram, and chart templates.
+- [x] Publish light, dark, semantic, forced-colour, typography, spacing, radius,
+  icon, diagram, chart, imagery, motion, terminal, print, and channel rules.
+- [x] Generate deterministic favicon, avatar, and social-card exports with a
+  digest-, dimension-, colour-space-, licence-, provenance-, and command-bound manifest.
+- [x] Enforce SVG safety and accessible descriptions, WCAG contrast, non-colour
+  state semantics, deterministic same-host exports, README consistency,
+  package inclusion, and prohibited public-copy rules in local CI.
+- [ ] Obtain formal trademark/cultural review, multi-participant comprehension,
+  print proofing, and cross-platform optical comparison before claiming those
+  external brand assurances.
+
+Evidence: [BRAND_IDENTITY](BRAND_IDENTITY.md),
+[EVALUATION_PRODUCTISATION_DECISION](EVALUATION_PRODUCTISATION_DECISION.md),
+`assets/brand/`, `scripts/build-brand-assets.py`, and
+`scripts/validate-brand.py`. This completes the evaluation-product identity; it
+does not constitute safety, independent validation, market-fit, or legal evidence.

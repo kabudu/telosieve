@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-labelledby="title description">
+  <title id="title">Telosieve evaluation candidate release card</title>
+  <desc id="description">Dark release card showing three evidence paths passing through an aperture beside the Telosieve name and evaluation boundary.</desc>
+  <rect width="1200" height="630" fill="#101820"/>
+  <g transform="translate(96 170) scale(1.8)">
+    <g fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M18 38H50L67 66" stroke="#5BD6E7" stroke-width="10"/><path d="M18 80H67" stroke="#F5B85C" stroke-width="10"/><path d="M18 122H50L67 94" stroke="#B9A4F4" stroke-width="10"/><rect x="67" y="52" width="28" height="56" rx="8" stroke="#F7FAFC" stroke-width="8"/><path d="M95 80H137" stroke="#57D7C0" stroke-width="10"/></g>
+    <circle cx="18" cy="38" r="8" fill="#5BD6E7"/><circle cx="18" cy="80" r="8" fill="#F5B85C"/><circle cx="18" cy="122" r="8" fill="#B9A4F4"/><rect x="131" y="74" width="12" height="12" rx="2" fill="#57D7C0"/>
+  </g>
+  <text x="430" y="265" fill="#F7FAFC" font-family="Arial, Helvetica, sans-serif" font-size="96" font-weight="700" letter-spacing="-3">Telosieve</text>
+  <text x="436" y="330" fill="#57D7C0" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700" letter-spacing="2">QUESTION BEFORE ENFORCING</text>
+  <line x1="436" y1="380" x2="1090" y2="380" stroke="#475467" stroke-width="2"/>
+  <text x="436" y="435" fill="#CBD5E1" font-family="Arial, Helvetica, sans-serif" font-size="27">Corroborated, read-only evaluation software</text>
+  <text x="436" y="480" fill="#CBD5E1" font-family="Arial, Helvetica, sans-serif" font-size="22">No production actuation. Independent validation required.</text>
+</svg>

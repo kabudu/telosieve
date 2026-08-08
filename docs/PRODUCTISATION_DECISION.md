@@ -2,11 +2,12 @@
 
 Date: 2026-07-29
 
-Status: superseded on 2026-07-30 only for the private read-only evaluation lane
-defined in
-[Private Evaluation Product Decision](EVALUATION_PRODUCT_DECISION.md). Its
-production, public-release, hosted-CI, credential, and safety-claim prohibitions
-remain binding.
+Status: superseded for the read-only evaluation-product lane on 2026-07-30 and
+for claim-bounded public-source product presentation on 2026-08-08. See
+[Private Evaluation Product Decision](EVALUATION_PRODUCT_DECISION.md) and
+[Evaluation Productisation Decision](EVALUATION_PRODUCTISATION_DECISION.md).
+Production, actuation, hosted-CI, credential, independent-assessment, legal, and
+safety-claim gates remain binding.
 
 ## Decision
 

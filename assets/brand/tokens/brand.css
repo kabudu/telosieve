@@ -1,0 +1,44 @@
+:root {
+  --telosieve-ink: #101820;
+  --telosieve-paper: #f7fafc;
+  --telosieve-surface: #ffffff;
+  --telosieve-evidence-a: #007c91;
+  --telosieve-evidence-b: #8a4b08;
+  --telosieve-evidence-c: #6b4bb6;
+  --telosieve-verified: #006b5f;
+  --telosieve-refused: #b42318;
+  --telosieve-warning: #8a4b08;
+  --telosieve-unknown: #475467;
+  --telosieve-font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --telosieve-font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --telosieve-ink: #f7fafc;
+    --telosieve-paper: #101820;
+    --telosieve-surface: #17212b;
+    --telosieve-evidence-a: #5bd6e7;
+    --telosieve-evidence-b: #f5b85c;
+    --telosieve-evidence-c: #b9a4f4;
+    --telosieve-verified: #57d7c0;
+    --telosieve-refused: #ff8f85;
+    --telosieve-warning: #f5b85c;
+    --telosieve-unknown: #cbd5e1;
+  }
+}
+
+@media (forced-colors: active) {
+  :root {
+    --telosieve-ink: CanvasText;
+    --telosieve-paper: Canvas;
+    --telosieve-surface: Canvas;
+    --telosieve-evidence-a: LinkText;
+    --telosieve-evidence-b: CanvasText;
+    --telosieve-evidence-c: VisitedText;
+    --telosieve-verified: CanvasText;
+    --telosieve-refused: MarkText;
+    --telosieve-warning: CanvasText;
+    --telosieve-unknown: GrayText;
+  }
+}

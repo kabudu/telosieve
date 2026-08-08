@@ -5,6 +5,7 @@ All notable Telosieve changes are recorded here. Telosieve follows Semantic Vers
 ## Unreleased
 
 - Prepare open-source governance, public-history hygiene, product identity, and an exact `v0.2.0-rc.2` evaluation freeze.
+- Add brand identity `1.0.0-evaluation`, accessible SVGs, deterministic raster exports, design tokens, templates, provenance, and claim validation.
 
 ## 0.2.0-rc.2 - pending freeze
 

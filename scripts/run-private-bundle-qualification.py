@@ -276,6 +276,11 @@ def assert_bundle(path: Path) -> int:
         required = {
             "LICENSE", "SECURITY.md", "CHANGELOG.md", "Cargo.toml", RELEASE_NOTES,
             "docs/PUBLIC_OPENING_DECISION.md", "docs/DILIGENCE_REFRESH_2026-08-08.md",
+            "docs/BRAND_IDENTITY.md", "docs/EVALUATION_PRODUCTISATION_DECISION.md",
+            "assets/brand/BRAND_ASSET_MANIFEST.json",
+            "assets/brand/source/telosieve-horizontal.svg",
+            "assets/brand/exports/social-card-1200x630.png",
+            "scripts/build-brand-assets.py", "scripts/validate-brand.py",
             "docs/KUBERNETES_SHADOW.md", "docs/OPENTOFU_PLAN.md",
             "examples/opentofu/main.tf", "scripts/ci-local.sh",
             "scripts/run-kubernetes-real-cluster.py", "scripts/run-opentofu-plan.py",

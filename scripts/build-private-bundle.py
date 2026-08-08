@@ -9,6 +9,28 @@ ROOT = Path(__file__).resolve().parent.parent
 SCHEMA = "telosieve.private-bundle/v3"
 CAPABILITY_SCHEMA = "telosieve.evaluation-capabilities/v2"
 PROFILE_SCHEMA = "telosieve.evaluation-candidate-profile/v1"
+BRAND_FILES = [
+    "assets/brand/BRAND_ASSET_MANIFEST.json",
+    "assets/brand/LICENSES/README.md",
+    "assets/brand/source/telosieve-symbol.svg",
+    "assets/brand/source/telosieve-small.svg",
+    "assets/brand/source/telosieve-wordmark.svg",
+    "assets/brand/source/telosieve-horizontal.svg",
+    "assets/brand/source/telosieve-stacked.svg",
+    "assets/brand/source/telosieve-monochrome.svg",
+    "assets/brand/source/telosieve-reversed.svg",
+    "assets/brand/concepts/direction-a-aperture.svg",
+    "assets/brand/concepts/direction-b-ledger-weave.svg",
+    "assets/brand/concepts/direction-c-bounded-horizon.svg",
+    "assets/brand/tokens/brand.tokens.json",
+    "assets/brand/tokens/brand.css",
+    "assets/brand/templates/release-card.svg",
+    "assets/brand/templates/diagram-key.svg",
+    "assets/brand/templates/chart-key.svg",
+    "assets/brand/exports/favicon-32.png",
+    "assets/brand/exports/avatar-256.png",
+    "assets/brand/exports/social-card-1200x630.png",
+]
 FILES = [
     "AGENTS.md", "README.md", "LICENSE", "SECURITY.md", "CHANGELOG.md",
     "Cargo.toml", "Cargo.lock", "docs/EVALUATION_CLI.md",
@@ -19,6 +41,7 @@ FILES = [
     "docs/CANDIDATE_READINESS.md",
     "docs/KUBERNETES_REAL_CLUSTER.md", "docs/KUBERNETES_SHADOW.md",
     "docs/PUBLIC_OPENING_DECISION.md", "docs/DILIGENCE_REFRESH_2026-08-08.md",
+    "docs/BRAND_IDENTITY.md", "docs/EVALUATION_PRODUCTISATION_DECISION.md",
     "docs/OPENTOFU_PLAN.md", "docs/EVALUATION_PRODUCT_DECISION.md",
     "docs/THREAT_MODEL.md", "docs/ADVERSARIAL_COVERAGE.md",
     "docs/SUSTAINED_ADVERSARIAL_LOAD.md", "docs/OBSERVATION_QUORUM.md",
@@ -74,6 +97,7 @@ FILES = [
     "scripts/http-json-pki-monitor.py",
     "scripts/http-json-pki-prometheus.py",
     "scripts/run-http-json-pki-prometheus-qualification.py",
+    "scripts/build-brand-assets.py", "scripts/validate-brand.py",
     "scripts/release_metadata.py", "scripts/validate-release-metadata.py",
     "scripts/observation-source-relay.py", "scripts/observation-source-client.py",
     "scripts/run-producer-isolation-qualification.py",
@@ -86,7 +110,7 @@ FILES = [
     "results/http-json-integration-qualification.json",
     "results/http-json-pki-prometheus-qualification.json",
     "results/candidate-readiness-validation.json",
-]
+] + BRAND_FILES
 MAX_BINARY = 128 * 1024 * 1024
 MAX_CAPABILITIES = 64 * 1024
 CAPABILITY_TIMEOUT_SECONDS = 5

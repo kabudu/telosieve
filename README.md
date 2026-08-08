@@ -1,5 +1,7 @@
 # Telosieve
 
+![Telosieve: fail-closed evaluation](assets/brand/source/telosieve-horizontal.svg)
+
 **Question the instruction before enforcing it.**
 
 Telosieve is a research project for fail-closed service repair when the desired-state
@@ -24,7 +26,9 @@ registered unsafe approval was removed and the bounded evidence base expanded,
 the project authorized a private, production-shaped evaluation product on
 2026-07-30. Version `0.2.0-rc.1` was the first signed private evaluation
 candidate. The current source targets `0.2.0-rc.2`, whose exact-byte signing
-gate remains pending until its reviewed freeze. Public release, autonomous production actuation, and
+gate remains pending until its reviewed freeze. Brand identity
+`1.0.0-evaluation` is approved for claim-bounded public-source presentation.
+Public release, autonomous production actuation, and
 general safety claims remain blocked pending their separate explicit decisions;
 production promotion additionally requires independent validation of the exact
 candidate. Certificate v4's
@@ -236,6 +240,9 @@ The binding M3 outcome and its reopening conditions are recorded in
 [Productisation Decision](docs/PRODUCTISATION_DECISION.md). The later bounded
 authorization is recorded in
 [Private Evaluation Product Decision](docs/EVALUATION_PRODUCT_DECISION.md).
+The approved evaluation-product identity and its unchanged production gates are
+recorded in [Evaluation Productisation Decision](docs/EVALUATION_PRODUCTISATION_DECISION.md)
+and [Brand Identity](docs/BRAND_IDENTITY.md).
 
 Each run authenticates all authority envelopes before evaluation. The certificate
 is deterministic for identical inputs; the JSONL ledger is append-only. The

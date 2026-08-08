@@ -5,6 +5,9 @@ absolute locally validated Telosieve binary and a fixed allowlist of evaluation
 configuration, RBAC, lifecycle, diagnostics, policy, and operator documents.
 The allowlist includes the Apache-2.0 licence, security policy, change history,
 public-opening boundary, and current diligence record.
+It also carries brand identity `1.0.0-evaluation`, canonical SVG sources,
+tokens, templates, raster exports, provenance manifest, and validators so the
+candidate presentation remains bound to the exact handoff.
 The fixed allowlist includes all four contracted configurations, the Kubernetes,
 OpenTofu, Redis, PostgreSQL and HTTP/JSON integration material, authenticated offline/real-system scenarios,
 the candidate test plan, and the operator/security documents needed to assess

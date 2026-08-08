@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 160" role="img" aria-labelledby="title description">
+  <title id="title">Telosieve horizontal logo</title>
+  <desc id="description">Telosieve aperture symbol followed by the Telosieve name and evaluation-software descriptor.</desc>
+  <g transform="translate(0 0)">
+    <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M18 38H50L67 66" stroke="#007C91" stroke-width="10"/><path d="M18 80H67" stroke="#8A4B08" stroke-width="10"/><path d="M18 122H50L67 94" stroke="#6B4BB6" stroke-width="10"/><rect x="67" y="52" width="28" height="56" rx="8" stroke="#101820" stroke-width="8"/><path d="M95 80H137" stroke="#006B5F" stroke-width="10"/>
+    </g>
+    <circle cx="18" cy="38" r="8" fill="#007C91"/><circle cx="18" cy="80" r="8" fill="#8A4B08"/><circle cx="18" cy="122" r="8" fill="#6B4BB6"/><rect x="131" y="74" width="12" height="12" rx="2" fill="#006B5F"/>
+  </g>
+  <text x="172" y="83" fill="#101820" font-family="Arial, Helvetica, sans-serif" font-size="64" font-weight="700" letter-spacing="-2">Telosieve</text>
+  <text x="176" y="116" fill="#475467" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="600" letter-spacing="1.8">FAIL-CLOSED EVALUATION</text>
+</svg>

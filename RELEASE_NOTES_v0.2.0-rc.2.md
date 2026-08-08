@@ -9,6 +9,7 @@ Telosieve v0.2.0-rc.2 is a private, production-shaped evaluation candidate for e
 - **Transport and PKI controls:** the HTTP/JSON path includes locally qualified TLS 1.3 mutual authentication, revocation enforcement, readiness checks, monitoring, and fixed-cardinality Prometheus output.
 - **Fail-closed isolation:** producer relays, strict schemas, bounded subprocesses, immutable evidence, and exact version checks refuse unavailable, stale, divergent, malformed, or oversized inputs.
 - **Evaluator handoff:** deterministic bundle bytes, checksums, provenance, detached signature, public trust, release notes, and an offline verifier bind the reviewed source commit.
+- **Evaluation identity:** versioned accessible product assets and claim controls present the evaluator consistently without implying production safety or independent validation.
 
 ## Evaluation boundary
 
