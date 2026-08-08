@@ -14,6 +14,7 @@ MAX_BLOB_BYTES = 2 * 1024 * 1024
 MAX_TOTAL_BYTES = 128 * 1024 * 1024
 MAX_CURRENT_FILE_BYTES = 16 * 1024 * 1024
 MAX_CURRENT_TOTAL_BYTES = 128 * 1024 * 1024
+MAX_METADATA_TOTAL_BYTES = 16 * 1024 * 1024
 RISKY_NAME = re.compile(
     r"(?i)(?:^|/)(?:\.env(?:\..*)?|id_(?:rsa|dsa|ecdsa|ed25519)|credentials?|secrets?)(?:$|[./])|\.(?:pem|key|p12|pfx)$"
 )
@@ -23,6 +24,7 @@ RISKY_CONTENT = (
     ("github-token", re.compile(rb"gh[pousr]_[A-Za-z0-9_]{20,}")),
     ("slack-token", re.compile(rb"xox[baprs]-[A-Za-z0-9-]{10,}")),
     ("owner-absolute-path", re.compile(b"/Users/" + b"kab" + b"udu" + rb"(?:/|\b)")),
+    ("owner-personal-email", re.compile(b"kab" + b"udu" + b"@" + b"gmail" + rb"\.com", re.IGNORECASE)),
 )
 
 
@@ -62,8 +64,18 @@ def main() -> int:
     metadata = run(["git", "cat-file", "--batch-check=%(objectname) %(objecttype) %(objectsize)"], input_bytes=query)
     total = 0
     scanned_blobs = 0
+    metadata_total = 0
+    scanned_metadata = 0
     for line in metadata.decode("ascii").splitlines():
         object_id, object_type, raw_size = line.split()
+        if object_type in {"commit", "tag"}:
+            size = int(raw_size)
+            metadata_total += size
+            if metadata_total > MAX_METADATA_TOTAL_BYTES:
+                raise SystemExit("public-history-audit: Git metadata bytes exceed audit bound")
+            scan(f"git-{object_type}:{object_id}", run(["git", "cat-file", object_type, object_id]), findings)
+            scanned_metadata += 1
+            continue
         if object_type != "blob":
             continue
         size = int(raw_size)
@@ -106,7 +118,8 @@ def main() -> int:
         return 1
     print(
         "public-history-audit: passed "
-        f"objects={len(object_ids)} historical_blobs={scanned_blobs} "
+        f"objects={len(object_ids)} metadata_objects={scanned_metadata} "
+        f"metadata_bytes={metadata_total} historical_blobs={scanned_blobs} "
         f"historical_bytes={total} current_files={current_files} current_bytes={current_total}"
     )
     return 0

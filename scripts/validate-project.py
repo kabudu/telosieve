@@ -43,6 +43,7 @@ REQUIRED = (
     "docs/KUBERNETES_REAL_CLUSTER.md",
     "docs/IMPLEMENTATION_PLAN.md",
     "docs/PUBLIC_OPENING_DECISION.md",
+    "docs/HISTORY_PRIVACY_MIGRATION.md",
     "docs/DILIGENCE_REFRESH_2026-08-08.md",
     "assets/brand/BRAND_ASSET_MANIFEST.json",
     "scripts/build-brand-assets.py",

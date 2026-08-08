@@ -24,6 +24,23 @@ all of:
 
 Making the repository public does not itself authorize hosted CI.
 
+## Repository identity privacy
+
+The owner's commits and tags must use `3732230+kabudu@users.noreply.github.com`.
+The public-history audit rejects the owner's personal address in every reachable
+commit, annotated tag, historical blob, and current file. Do not weaken, encode,
+or bypass that rule. Any future identity migration must replace remote refs and
+re-freeze commit-bound artifacts before publication.
+
+GitHub-generated squash commits must not be used unless their resulting author
+and committer identities are known to satisfy this rule. When GitHub cannot be
+configured or verified to do so, the narrow privacy-safe merge procedure is:
+complete the pull-request remote-diff review, create the squash commit locally
+with the repository noreply identity, push that reviewed commit to `master`, then
+close the pull request as merged by that commit. This exception changes only who
+creates the reviewed commit; it does not waive the branch, CI, review, or
+clean-head gates.
+
 ## Milestone delivery loop
 
 For every roadmap increment:

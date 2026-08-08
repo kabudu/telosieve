@@ -276,6 +276,7 @@ def assert_bundle(path: Path) -> int:
         required = {
             "LICENSE", "SECURITY.md", "CHANGELOG.md", "Cargo.toml", RELEASE_NOTES,
             "docs/PUBLIC_OPENING_DECISION.md", "docs/DILIGENCE_REFRESH_2026-08-08.md",
+            "docs/HISTORY_PRIVACY_MIGRATION.md",
             "docs/BRAND_IDENTITY.md", "docs/EVALUATION_PRODUCTISATION_DECISION.md",
             "docs/RC2_EVALUATION_RELEASE_DECISION.md",
             "docs/RC2_RELEASE_PRESENTATION_REVIEW.md",
