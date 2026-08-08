@@ -1026,3 +1026,29 @@ Evidence: [BRAND_IDENTITY](BRAND_IDENTITY.md),
 `assets/brand/`, `scripts/build-brand-assets.py`, and
 `scripts/validate-brand.py`. This completes the evaluation-product identity; it
 does not constitute safety, independent validation, market-fit, or legal evidence.
+
+## Post-M62 - v0.2.0-rc.2 evaluation freeze
+
+- [x] Authorize the exact version, tag, authority boundary, signer, key ID,
+  project-controlled custody label, maximum validity, recipient class, private
+  channel, independent trust authentication, and non-authorized release modes.
+- [x] Validate a curated product/version/theme release title, bounded highlights,
+  required claim/install/evidence sections, physical-line layout, local links,
+  prohibited text, and responsive HTML preview.
+- [x] Package the release decision and presentation validator with the candidate.
+- [x] Inspect the rendered release presentation at desktop and narrow viewports
+  and retain the bounded result and residual limits.
+- [ ] Merge the final reviewed pre-freeze commit and pass `./scripts/ci-local.sh`
+  on its clean, pushed `master` SHA.
+- [ ] Reproduce identical locked/offline release binaries and retain the exact digest.
+- [ ] Generate an external owner-only evaluation key and atomically build, sign,
+  checksum, and offline-verify the seven-file handoff outside Git.
+- [ ] Create and push annotated `v0.2.0-rc.2` at the exact candidate commit with
+  bundle/trust digests and the independent-assessment boundary.
+- [ ] Record and review the completed ceremony without changing candidate bytes.
+
+Evidence before freeze: [RC2_EVALUATION_RELEASE_DECISION](RC2_EVALUATION_RELEASE_DECISION.md),
+[RC2_RELEASE_PRESENTATION_REVIEW](RC2_RELEASE_PRESENTATION_REVIEW.md),
+`RELEASE_NOTES_v0.2.0-rc.2.md`, and
+`scripts/validate-release-presentation.py`. Exact artifacts and tag evidence are
+created only after the clean reviewed commit is merged.

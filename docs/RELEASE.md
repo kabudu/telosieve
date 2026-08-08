@@ -331,3 +331,10 @@ asset manifest, canonical SVGs, design tokens, channel templates, deterministic
 exports, accessibility checks, and prohibited-claim scan travel with rc.2.
 Product identity does not close independent assessment, operational identity,
 legal name/mark clearance, raster cross-platform equivalence, or production gates.
+
+The exact `v0.2.0-rc.2` evaluation freeze is authorized by
+[RC2_EVALUATION_RELEASE_DECISION](RC2_EVALUATION_RELEASE_DECISION.md) only for
+the named project-controlled signer, maximum 30-day window, approved evaluator
+recipients, private create-new handoff, and separately authenticated trust
+digest. The reviewed clean commit, local CI, reproducible binary, signed handoff,
+offline verification, and annotated tag must all agree or the ceremony aborts.
