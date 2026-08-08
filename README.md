@@ -248,4 +248,9 @@ cargo run --example generate_fixtures
 ## Repository policy
 
 This is a private repository with `origin` configured for `kabudu/telosieve`. The
-default branch is `master`.
+default branch is `master`. Public-source preparation is governed by the
+[Public Opening Decision](docs/PUBLIC_OPENING_DECISION.md); visibility does not
+change until productisation, exact-candidate freeze, and final history audit
+pass. Source is licensed under [Apache License 2.0](LICENSE). See
+[Contributing](CONTRIBUTING.md), [Security Policy](SECURITY.md),
+[Code of Conduct](CODE_OF_CONDUCT.md), and [Changelog](CHANGELOG.md).

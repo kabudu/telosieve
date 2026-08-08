@@ -2,7 +2,14 @@
 name = "telosieve"
 version = "0.2.0-rc.2"
 edition = "2024"
+rust-version = "1.97"
+description = "Fail-closed evaluation of desired-state instructions under disputed authority"
 license = "Apache-2.0"
+repository = "https://github.com/kabudu/telosieve"
+homepage = "https://github.com/kabudu/telosieve"
+readme = "README.md"
+keywords = ["security", "verification", "kubernetes", "opentofu", "reconciliation"]
+categories = ["command-line-utilities", "development-tools", "config"]
 publish = false
 
 [dependencies]

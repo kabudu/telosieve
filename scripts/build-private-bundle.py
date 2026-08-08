@@ -10,13 +10,15 @@ SCHEMA = "telosieve.private-bundle/v3"
 CAPABILITY_SCHEMA = "telosieve.evaluation-capabilities/v2"
 PROFILE_SCHEMA = "telosieve.evaluation-candidate-profile/v1"
 FILES = [
-    "AGENTS.md", "README.md", "Cargo.toml", "Cargo.lock", "docs/EVALUATION_CLI.md",
+    "AGENTS.md", "README.md", "LICENSE", "SECURITY.md", "CHANGELOG.md",
+    "Cargo.toml", "Cargo.lock", "docs/EVALUATION_CLI.md",
     release_notes_path().relative_to(ROOT).as_posix(),
     "docs/EVALUATION_LIFECYCLE.md", "docs/OPERATOR_DIAGNOSTICS.md",
     "docs/OPERATIONS.md", "docs/PRIVATE_BUNDLE.md", "docs/RELEASE.md",
     "docs/BUILD_PROVENANCE.md", "docs/CANDIDATE_SIGNING.md",
     "docs/CANDIDATE_READINESS.md",
     "docs/KUBERNETES_REAL_CLUSTER.md", "docs/KUBERNETES_SHADOW.md",
+    "docs/PUBLIC_OPENING_DECISION.md", "docs/DILIGENCE_REFRESH_2026-08-08.md",
     "docs/OPENTOFU_PLAN.md", "docs/EVALUATION_PRODUCT_DECISION.md",
     "docs/THREAT_MODEL.md", "docs/ADVERSARIAL_COVERAGE.md",
     "docs/SUSTAINED_ADVERSARIAL_LOAD.md", "docs/OBSERVATION_QUORUM.md",

@@ -318,3 +318,9 @@ certificate readability and does not claim independent producer operation.
 Post-M58 explicitly qualifies quorum digest binding in every successful real
 Kubernetes certificate and in direct and relayed OpenTofu certificates. It does
 not establish independent producer administration or platform truth.
+
+The 2026-08-08 public-opening decision authorizes Apache-2.0 source publication
+only after productisation, exact `v0.2.0-rc.2` freeze, and a final bounded
+history audit pass. It does not authorize hosted CI, package or container
+publication, telemetry, production deployment, or stronger claims. Hosted CI
+still requires every approval and review listed in the private-repository policy.

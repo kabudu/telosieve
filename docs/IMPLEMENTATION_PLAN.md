@@ -975,3 +975,27 @@ Evidence: `scripts/release_metadata.py`,
 [EXTERNAL_ASSESSMENT](EXTERNAL_ASSESSMENT.md). This milestone makes current
 release surfaces coherent; it does not sign, distribute, or independently
 assess rc.2.
+
+## Post-M60 - open-source governance and history hygiene
+
+- [x] Add the complete Apache License 2.0 text matching package metadata and
+  keep registry publication disabled.
+- [x] Add security reporting, contribution, conduct, and change-history policies
+  that preserve the evaluation and private-local-CI boundaries.
+- [x] Record an explicit source-opening decision with separate visibility,
+  hosted-CI, registry, telemetry, production, and claim gates.
+- [x] Refresh exact-name, registry, domain, company, trademark-risk, prior-art,
+  dependency, and advisory diligence without presenting search absence as
+  legal clearance or novelty proof.
+- [x] Add a bounded complete-Git-history and current-tree audit for risky paths,
+  common credential shapes, owner-specific paths, and oversized artifacts.
+- [x] Enforce governance files, Cargo package metadata, history hygiene, and the
+  public-opening boundary in authoritative local CI.
+- [ ] Change repository visibility only after productisation, exact rc.2 freeze,
+  a final audit, and verification of the remote public state.
+
+Evidence: [PUBLIC_OPENING_DECISION](PUBLIC_OPENING_DECISION.md),
+[DILIGENCE_REFRESH_2026-08-08](DILIGENCE_REFRESH_2026-08-08.md), root governance
+files, `scripts/audit-public-history.py`, and
+`scripts/validate-open-source-readiness.py`. This milestone prepares public
+source governance; it does not itself open the repository or activate hosted CI.

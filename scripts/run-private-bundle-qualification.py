@@ -274,7 +274,8 @@ def assert_bundle(path: Path) -> int:
         if packaged_modes != capabilities["capabilities"]:
             raise SystemExit("private-bundle-qualification: packaged configs do not cover capabilities")
         required = {
-            "Cargo.toml", RELEASE_NOTES,
+            "LICENSE", "SECURITY.md", "CHANGELOG.md", "Cargo.toml", RELEASE_NOTES,
+            "docs/PUBLIC_OPENING_DECISION.md", "docs/DILIGENCE_REFRESH_2026-08-08.md",
             "docs/KUBERNETES_SHADOW.md", "docs/OPENTOFU_PLAN.md",
             "examples/opentofu/main.tf", "scripts/ci-local.sh",
             "scripts/run-kubernetes-real-cluster.py", "scripts/run-opentofu-plan.py",

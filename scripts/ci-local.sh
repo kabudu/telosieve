@@ -26,6 +26,7 @@ printf 'local-ci: cargo metadata --locked --offline --no-deps --format-version 1
 cargo metadata --locked --offline --no-deps --format-version 1 >/dev/null
 run python3 scripts/validate-project.py
 run python3 scripts/validate-release-metadata.py
+run python3 scripts/validate-open-source-readiness.py
 run python3 scripts/validate-assessor-manifest.py
 run python3 scripts/validate-supply-chain.py
 run python3 scripts/qualify-witness-operator-record.py
