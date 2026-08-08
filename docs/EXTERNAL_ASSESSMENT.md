@@ -1,6 +1,6 @@
 # External Assessment Guide
 
-This is the canonical assessor entrypoint for Telosieve `v0.2.0-rc.1`. The
+This is the canonical assessor entrypoint for Telosieve `v0.2.0-rc.2`. The
 candidate is private, read-only evaluation software. A successful assessment
 does not authorize production deployment, public release, Kubernetes or
 OpenTofu actuation, or a general safety claim.
@@ -9,8 +9,9 @@ OpenTofu actuation, or a general safety claim.
 
 Assess only a seven-file handoff whose candidate manifest reports:
 
-- version: `0.2.0-rc.1`;
-- source commit: `ae5bfbffe96510f64026aed02e3a25b2f81cc59c`;
+- version: `0.2.0-rc.2`;
+- source commit: the 40-character commit authenticated out of band and repeated
+  exactly in the candidate manifest and embedded bundle manifests;
 - status: `signed-private-evaluation-release-candidate`;
 - authority boundary: `read-only-no-target-mutation`;
 - independent assessment required: `true`;
@@ -23,10 +24,9 @@ metadata. The `SHA256SUMS` file protects against accidental corruption only
 until its expected value is independently authenticated; it is not a trust
 anchor by itself.
 
-The candidate was frozen from the commit above. This guide was added after that
-immutable freeze and is not one of the signed candidate bytes. The signed
-release notes inside the handoff remain the candidate's evaluator-facing claim
-record.
+The signed release notes inside the handoff are the candidate's
+evaluator-facing claim record. Refuse a handoff when the manifest commit differs
+from the independently authenticated expected commit.
 
 ## Safety rules
 
@@ -68,7 +68,7 @@ Set absolute paths without placing either tree inside the other:
 
 ```sh
 SOURCE=/absolute/path/to/independently-obtained/telosieve
-HANDOFF=/absolute/path/to/telosieve-v0.2.0-rc.1
+HANDOFF=/absolute/path/to/telosieve-v0.2.0-rc.2
 ```
 
 In the source checkout, require the exact frozen commit and a clean worktree:
@@ -84,7 +84,7 @@ above. Independently compare the public trust record digest before using it:
 
 ```sh
 shasum -a 256 \
-  "$HANDOFF/telosieve-0.2.0-rc.1.trust.json"
+  "$HANDOFF/telosieve-0.2.0-rc.2.trust.json"
 ```
 
 On Linux, `sha256sum` is equivalent. Compare the result manually with the
@@ -102,7 +102,7 @@ cargo build --manifest-path "$SOURCE/Cargo.toml" \
 "$SOURCE/target/release/telosieve" --version
 ```
 
-The version command must print `telosieve 0.2.0-rc.1`. If the offline build
+The version command must print `telosieve 0.2.0-rc.2`. If the offline build
 cannot resolve already pinned dependencies, record the missing prerequisite;
 do not silently remove `--locked` or change dependency versions.
 
@@ -112,11 +112,12 @@ Run the source-checkout verifier with the independently built binary:
 
 ```sh
 python3 "$SOURCE/scripts/verify-release-candidate.py" "$HANDOFF" \
-  --trusted-telosieve "$SOURCE/target/release/telosieve"
+  --trusted-telosieve "$SOURCE/target/release/telosieve" \
+  --expected-version 0.2.0-rc.2
 ```
 
 Success emits one JSON object with `status` equal to `passed`,
-`signature_valid` equal to `true`, the exact source commit above, and the
+`signature_valid` equal to `true`, the independently authenticated source commit, and the
 SHA-256 of the trusted verifier. Preserve that output with the assessment
 record. The field `independent_evidence` remains `false`: cryptographic
 verification authenticates candidate bytes but does not make project-produced
@@ -131,14 +132,14 @@ directory. Preserve the handoff itself unchanged:
 CANDIDATE=/absolute/path/to/new/disposable/candidate-directory
 mkdir "$CANDIDATE"
 unzip -q \
-  "$HANDOFF/telosieve-0.2.0-rc.1-private-evaluation.zip" \
+  "$HANDOFF/telosieve-0.2.0-rc.2-private-evaluation.zip" \
   -d "$CANDIDATE"
 "$CANDIDATE/bin/telosieve" --version
 "$CANDIDATE/bin/telosieve" evaluation-capabilities
 ```
 
 Only run these candidate commands after verification. The version must be
-`telosieve 0.2.0-rc.1`; capabilities must match
+`telosieve 0.2.0-rc.2`; capabilities must match
 `$CANDIDATE/evaluation/capabilities.json`. If the packaged executable is
 incompatible with the assessment host, record exact-binary execution as not run
 and perform source reproduction separately. Do not substitute a rebuilt binary
@@ -292,4 +293,4 @@ disclosure process.
 [Independent-Assessment Handoff](ASSESSOR_HANDOFF.md) preserves the earlier
 Post-M15 research reproduction at commit
 `17ec5e04bc05ca16b322ec6e436b9979972a0ba5`. It is not the procedure for
-assessing `v0.2.0-rc.1`.
+assessing `v0.2.0-rc.2`.

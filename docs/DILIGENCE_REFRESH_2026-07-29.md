@@ -1,4 +1,4 @@
-# Diligence Refresh — 2026-07-29
+# Diligence Refresh  -  2026-07-29
 
 ## Novelty and prior art
 

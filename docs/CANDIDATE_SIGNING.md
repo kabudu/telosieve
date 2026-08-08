@@ -38,8 +38,9 @@ owner-only key, an absent output directory, and an explicit validity window. It
 publishes the directory atomically only after signature verification.
 The handoff verifier requires `--trusted-telosieve` pointing to an absolute
 binary obtained independently of the handoff, such as one rebuilt from the
-reviewed source commit. It never executes the bundled binary before signature
-verification; that binary is only digest-checked against the candidate manifest.
+reviewed source commit, and `--expected-version` obtained through the same
+authenticated release channel. It never executes the bundled binary before
+signature verification; that binary is only digest-checked against the candidate manifest.
 
 ## Remaining gates
 

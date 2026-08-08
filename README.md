@@ -4,7 +4,7 @@
 
 Telosieve is a research project for fail-closed service repair when the desired-state
 authority itself may be stale, compromised, or malicious. It separates three
-authorities—goal, observed phenotype, and viability constraints—then evaluates
+authorities - goal, observed phenotype, and viability constraints - then evaluates
 explicit fault hypotheses before permitting a repair.
 
 The first experiment is deliberately narrow: a deterministic replicated key-value
@@ -22,8 +22,9 @@ and refuse repair when surviving evidence cannot distinguish safe outcomes.
 The original M3 decision narrowed Telosieve to private research. After the
 registered unsafe approval was removed and the bounded evidence base expanded,
 the project authorized a private, production-shaped evaluation product on
-2026-07-30. Version `0.2.0-rc.1` is the first signed private evaluation
-candidate for external assessment. Public release, autonomous production actuation, and
+2026-07-30. Version `0.2.0-rc.1` was the first signed private evaluation
+candidate. The current source targets `0.2.0-rc.2`, whose exact-byte signing
+gate remains pending until its reviewed freeze. Public release, autonomous production actuation, and
 general safety claims remain blocked pending their separate explicit decisions;
 production promotion additionally requires independent validation of the exact
 candidate. Certificate v4's
@@ -44,15 +45,16 @@ for claim limits, and [IMPLEMENTATION_PLAN](docs/IMPLEMENTATION_PLAN.md) for sco
 The executable [adversarial coverage contract](docs/ADVERSARIAL_COVERAGE.md)
 tracks evidence and open attack-surface gaps separately for every evaluation
 mode; it currently retains three deferred cells and is not a robustness proof.
-An authenticated [observation-quorum primitive](docs/OBSERVATION_QUORUM.md) now
-provides the cross-mode cryptographic foundation for those remaining cells, but
-evaluation does not yet require it and the cells remain deferred.
+An authenticated [observation-quorum primitive](docs/OBSERVATION_QUORUM.md) is
+mandatory for every supported evaluation capability. Kubernetes and OpenTofu
+qualification now bind its corroborated evidence digest into successful
+certificates. Declared producer domains still do not prove independent truth.
 
 ## External assessment
 
 External assessors should start with the
 [External Assessment Guide](docs/EXTERNAL_ASSESSMENT.md). It identifies the
-exact `v0.2.0-rc.1` source and handoff, requires an independently authenticated
+exact `v0.2.0-rc.2` source and handoff, requires an independently authenticated
 trust-record digest and independently built verifier, separates mandatory
 integrity checks from environment-dependent integration tests, and defines the
 requested findings record. Do not execute the bundled binary before the signed

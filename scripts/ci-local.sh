@@ -25,6 +25,7 @@ run env RUSTDOCFLAGS=-Dwarnings cargo doc --locked --offline --no-deps
 printf 'local-ci: cargo metadata --locked --offline --no-deps --format-version 1\n'
 cargo metadata --locked --offline --no-deps --format-version 1 >/dev/null
 run python3 scripts/validate-project.py
+run python3 scripts/validate-release-metadata.py
 run python3 scripts/validate-assessor-manifest.py
 run python3 scripts/validate-supply-chain.py
 run python3 scripts/qualify-witness-operator-record.py
@@ -46,6 +47,12 @@ run python3 scripts/run-redis-integration.py
 run python3 scripts/run-postgresql-integration.py
 run python3 scripts/run-http-json-integration.py
 run git diff --check
+
+forbidden_dash="$(printf '\342\200\224')"
+if git grep -n "$forbidden_dash" -- .; then
+  printf 'local-ci: Unicode U+2014 is forbidden in tracked project text\n' >&2
+  exit 1
+fi
 
 if rg -n '\b(TODO|FIXME|REPLACE_WITH)\b' \
   README.md AGENTS.md docs src tests examples scenarios Cargo.toml; then

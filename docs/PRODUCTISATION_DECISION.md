@@ -1,4 +1,4 @@
-# Productisation Decision — Narrow
+# Productisation Decision  -  Narrow
 
 Date: 2026-07-29
 

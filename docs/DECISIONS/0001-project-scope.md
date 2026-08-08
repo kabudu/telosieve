@@ -1,6 +1,6 @@
 # ADR 0001: Bound Telosieve to poisoned intent in a finite service
 
-**Status:** Accepted — 2026-07-29
+**Status:** Accepted  -  2026-07-29
 
 We will study a deterministic replicated key-value service, three authority roles,
 and a finite declared fault budget. We will not begin with Kubernetes actuation,

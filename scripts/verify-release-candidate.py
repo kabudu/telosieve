@@ -4,11 +4,11 @@
 import argparse
 import hashlib
 import json
+import re
 import subprocess
 import zipfile
 from pathlib import Path
 
-VERSION = "0.2.0-rc.1"
 MAX_FILE_BYTES = 160 * 1024 * 1024
 
 
@@ -40,7 +40,12 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("directory")
     parser.add_argument("--trusted-telosieve", required=True)
+    parser.add_argument("--expected-version", required=True)
     args = parser.parse_args()
+    VERSION = args.expected_version
+    if (not VERSION.isascii() or len(VERSION) > 64
+            or re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+-rc\.[0-9]+", VERSION) is None):
+        raise SystemExit("release-candidate-verify: invalid expected version")
     root = Path(args.directory)
     if not root.is_absolute() or root.is_symlink() or not root.is_dir():
         raise SystemExit("release-candidate-verify: handoff must be an absolute directory")

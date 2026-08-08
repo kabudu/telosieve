@@ -1,6 +1,6 @@
 # Brand Identity
 
-**Name:** Telosieve — “telos” (purpose) plus “sieve,” describing scrutiny of an
+**Name:** Telosieve  -  “telos” (purpose) plus “sieve,” describing scrutiny of an
 instruction before enforcement.
 
 **Tagline:** Question the instruction before enforcing it.

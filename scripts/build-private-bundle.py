@@ -3,13 +3,15 @@
 import argparse, hashlib, json, os, stat, subprocess, tempfile, zipfile
 from pathlib import Path
 
+from release_metadata import release_notes_path
+
 ROOT = Path(__file__).resolve().parent.parent
 SCHEMA = "telosieve.private-bundle/v3"
 CAPABILITY_SCHEMA = "telosieve.evaluation-capabilities/v2"
 PROFILE_SCHEMA = "telosieve.evaluation-candidate-profile/v1"
 FILES = [
-    "AGENTS.md", "README.md", "Cargo.lock", "docs/EVALUATION_CLI.md",
-    "RELEASE_NOTES_v0.2.0-rc.1.md",
+    "AGENTS.md", "README.md", "Cargo.toml", "Cargo.lock", "docs/EVALUATION_CLI.md",
+    release_notes_path().relative_to(ROOT).as_posix(),
     "docs/EVALUATION_LIFECYCLE.md", "docs/OPERATOR_DIAGNOSTICS.md",
     "docs/OPERATIONS.md", "docs/PRIVATE_BUNDLE.md", "docs/RELEASE.md",
     "docs/BUILD_PROVENANCE.md", "docs/CANDIDATE_SIGNING.md",
@@ -70,6 +72,7 @@ FILES = [
     "scripts/http-json-pki-monitor.py",
     "scripts/http-json-pki-prometheus.py",
     "scripts/run-http-json-pki-prometheus-qualification.py",
+    "scripts/release_metadata.py", "scripts/validate-release-metadata.py",
     "scripts/observation-source-relay.py", "scripts/observation-source-client.py",
     "scripts/run-producer-isolation-qualification.py",
     "scripts/qualify-linux-producer-isolation.sh",

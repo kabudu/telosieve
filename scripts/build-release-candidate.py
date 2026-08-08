@@ -11,8 +11,10 @@ import subprocess
 import tempfile
 from pathlib import Path
 
+from release_metadata import candidate_version, release_notes_path
+
 ROOT = Path(__file__).resolve().parent.parent
-VERSION = "0.2.0-rc.1"
+VERSION = candidate_version()
 CONTEXT = "telosieve/private-evaluation"
 MAX_BUNDLE_BYTES = 160 * 1024 * 1024
 MAX_DIAGNOSTIC_BYTES = 16 * 1024
@@ -39,8 +41,9 @@ def clean_commit(expected: str) -> None:
         raise SystemExit("release-candidate: invalid source commit")
     if run(["git", "rev-parse", "HEAD"]).decode().strip() != expected:
         raise SystemExit("release-candidate: source commit does not match HEAD")
-    if run(["git", "status", "--porcelain"]):
-        raise SystemExit("release-candidate: working tree is not clean")
+    if status := run(["git", "status", "--porcelain"]):
+        paths = status.decode(errors="replace")[-MAX_DIAGNOSTIC_BYTES:].strip()
+        raise SystemExit(f"release-candidate: working tree is not clean: {paths}")
     if run(["git", "branch", "--show-current"]).decode().strip() != "master":
         raise SystemExit("release-candidate: candidate must be built from master")
 
@@ -110,7 +113,7 @@ def main() -> int:
         }, sort_keys=True, separators=(",", ":")) + "\n", encoding="utf-8")
         trust.chmod(0o400)
         run([str(binary), "bundle-verify", str(bundle), str(signature), str(trust)])
-        shutil.copyfile(ROOT / f"RELEASE_NOTES_v{VERSION}.md", notes)
+        shutil.copyfile(release_notes_path(), notes)
         notes.chmod(0o400)
         shutil.copyfile(ROOT / "scripts/verify-release-candidate.py", verifier)
         verifier.chmod(0o500)

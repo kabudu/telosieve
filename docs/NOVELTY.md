@@ -19,7 +19,7 @@ is claimed.
 
 The preliminary sweep found strong collisions on every ingredient but did not find
 an exact academic or product match for the full narrow protocol. That is a
-research lead—not proof of legal novelty, patentability, freedom to operate, or
+research lead - not proof of legal novelty, patentability, freedom to operate, or
 commercial uniqueness. The strongest non-claim is that runtime models plus
 invariant checking already constrain adaptive repair.
 

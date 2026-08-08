@@ -1,6 +1,6 @@
 # Implementation Plan
 
-## M0 — executable research contract (complete)
+## M0  -  executable research contract (complete)
 
 - [x] Define the finite service state machine and authority schemas.
 - [x] Register fault classes, invariants, metrics, seeds, and baseline behavior.
@@ -12,7 +12,7 @@ Evidence: `scenarios/benign.json`, `scenarios/poisoned-goal.json`, and
 `tests/m0.rs`. M0 supports a declared budget of zero or one fault and rejects a
 configuration whose finite hypothesis count exceeds `maximum_hypotheses`.
 
-## M1 — hypothesis protocol
+## M1  -  hypothesis protocol
 
 - [x] Implement bounded general hypothesis enumeration and provenance exclusion.
 - [x] Add signed-history rollback and invariant-gated reconciler baselines.
@@ -21,7 +21,7 @@ configuration whose finite hypothesis count exceeds `maximum_hypotheses`.
 - [x] Exit: every protocol requirement has behavioural evidence and all three
   baselines replay through the public harness.
 
-## M2 — adversarial evaluation
+## M2  -  adversarial evaluation
 
 - [x] Run malicious/stale goals, omitted/forged observations, weakened invariants,
   partitions, equivocation, parser differential, and correlated-fault probes.
@@ -29,7 +29,7 @@ configuration whose finite hypothesis count exceeds `maximum_hypotheses`.
   and false refusals against every baseline.
 - [x] Exit: retain reproducible raw results and report all negative results.
 
-## M3 — productisation decision
+## M3  -  productisation decision
 
 - [x] Compare the registered safety claim with quantified availability and
   complexity costs.
@@ -41,7 +41,7 @@ at M3. The private evaluation lane was later authorized in Post-M26; production
 promotion and public release remain blocked. See
 [PRODUCTISATION_DECISION](PRODUCTISATION_DECISION.md).
 
-## Post-M3 — narrowed research (historical scope)
+## Post-M3  -  narrowed research (historical scope)
 
 - [x] Define multi-principal or explicitly suspectable viability semantics,
   preregistering the fault model and falsifiers.
@@ -52,7 +52,7 @@ promotion and public release remain blocked. See
 - [x] Obtain independent environment/toolchain reproduction of the registered
   experiments.
 
-## Post-M4 — evidence expansion
+## Post-M4  -  evidence expansion
 
 - [ ] Obtain third-party organizational reproduction and security review.
 - [x] Test correlated viability-principal faults and document fault-domain
@@ -64,7 +64,7 @@ promotion and public release remain blocked. See
 Evidence: 512 authenticated generated scenarios and per-cell results in
 [GENERATED_STATE_SPACE](GENERATED_STATE_SPACE.md).
 
-## Post-M5 — reproduced unsafe-approval remediation
+## Post-M5  -  reproduced unsafe-approval remediation
 
 - [x] Add a viability-independent stable-key continuity invariant to both
   checker implementations.
@@ -78,7 +78,7 @@ Evidence: [STABLE_KEY_SAFETY_KERNEL](STABLE_KEY_SAFETY_KERNEL.md). Productisatio
 remained blocked at that milestone by finite-model limits, false refusals,
 deletion semantics, and independent-review gates.
 
-## Post-M6 — goal-domain availability
+## Post-M6  -  goal-domain availability
 
 - [x] Authenticate multiple agreeing goal principals and declare their fault
   domains when goal faults are in scope.
@@ -93,7 +93,7 @@ Evidence: [MULTI_PRINCIPAL_GOALS](MULTI_PRINCIPAL_GOALS.md). Third-party
 organizational reproduction/security review remains unchecked and cannot be
 self-certified by this repository.
 
-## Post-M7 — explicit authorized deletion
+## Post-M7  -  explicit authorized deletion
 
 - [x] Add separately signed deletion evidence bound to the exact goal and
   phenotype tip.
@@ -108,7 +108,7 @@ self-certified by this repository.
 Evidence: [AUTHORIZED_DELETION](AUTHORIZED_DELETION.md). Durable one-shot
 consumption and third-party organizational review remained unresolved.
 
-## Post-M8 — durable deletion consumption
+## Post-M8  -  durable deletion consumption
 
 - [x] Derive an auditable identifier from the exact authenticated deletion
   envelope set and expose it in certificate v7.
@@ -125,7 +125,7 @@ Evidence: [DURABLE_DELETION_CONSUMPTION](DURABLE_DELETION_CONSUMPTION.md).
 Third-party organizational reproduction/security review remains an external
 unchecked gate.
 
-## Post-M9 — transactional local reference actuator
+## Post-M9  -  transactional local reference actuator
 
 - [x] Add explicit initialization from a verified authenticated phenotype.
 - [x] Require commit-time equality with observed service state and the certified
@@ -143,7 +143,7 @@ Evidence: [LOCAL_REFERENCE_ACTUATOR](LOCAL_REFERENCE_ACTUATOR.md). Real producti
 service integration, platform qualification, and external organizational review
 remain unresolved.
 
-## Post-M10 — local actuator recovery qualification
+## Post-M10  -  local actuator recovery qualification
 
 - [x] Add monotonic generations and a separate pending/committed recovery
   witness around every actuator mutation.
@@ -161,7 +161,7 @@ was limited to the tested macOS/aarch64 single-host filesystem. Whole-disk
 rollback, other platforms, external service integration, and independent review
 remained open.
 
-## Post-M11 — Linux recovery qualification
+## Post-M11  -  Linux recovery qualification
 
 - [x] Run recovery-state and forced-termination tests on Linux arm64 and amd64.
 - [x] Use a pinned, network-disabled multi-architecture container with the
@@ -176,7 +176,7 @@ macOS-only software-path gap for the tested Linux VM/volume boundary. Bare-metal
 Linux, power-loss persistence, whole-disk rollback, external service integration,
 and independent review remain open.
 
-## Post-M12 — key and identity lifecycle
+## Post-M12  -  key and identity lifecycle
 
 - [x] Define authority-key rotation, revocation, expiry, and compromised-key
   recovery without invalidating historical certificates.
@@ -191,7 +191,7 @@ Evidence: [KEY_LIFECYCLE](KEY_LIFECYCLE.md). Lifecycle state is bounded and
 authenticated but its roots and tips remain trusted scenario configuration, not
 a durable organizational identity service.
 
-## Post-M13 — shadow-mode external adapter
+## Post-M13  -  shadow-mode external adapter
 
 - [x] Name one external target and define a read-only phenotype/goal mapping
   without mutation credentials.
@@ -205,7 +205,7 @@ a durable organizational identity service.
 Evidence: [KUBERNETES_SHADOW](KUBERNETES_SHADOW.md). This is a bounded exported
 snapshot adapter, not live Kubernetes access or actuation.
 
-## Post-M14 — incident and recovery exercises
+## Post-M14  -  incident and recovery exercises
 
 - [x] Define machine-readable drills for corruption, witness loss, full ledgers,
   stale locks, bad upgrades, key compromise, and lifecycle rollback.
@@ -217,7 +217,7 @@ Evidence: [INCIDENT_DRILLS](INCIDENT_DRILLS.md). Seven deterministic local
 software drills pass; real infrastructure and organizational response remain
 outside this evidence.
 
-## Post-M15 — property and parser robustness
+## Post-M15  -  property and parser robustness
 
 - [x] Add bounded property/fuzz corpora for authority, lifecycle, shadow, and
   recovery parsing.
@@ -227,7 +227,7 @@ Evidence: [PARSER_CORPORA](PARSER_CORPORA.md). Four deterministic corpora pass
 within explicit case and byte bounds; four minimized rejection regressions are
 retained and the run discovered no additional discrepancy.
 
-## Post-M16 — independent-assessment handoff
+## Post-M16  -  independent-assessment handoff
 
 - [x] Assemble a self-contained assessor manifest with commit, commands,
   expected digests, claim boundaries, and unresolved release blockers.
@@ -238,7 +238,7 @@ Evidence: [ASSESSOR_HANDOFF](ASSESSOR_HANDOFF.md). The frozen Post-M15 source
 commit passes local CI and reproduces the two operational aggregates from a
 fresh local clone; this is a handoff package, not independent assessment.
 
-## Post-M17 — dependency provenance and advisory inventory
+## Post-M17  -  dependency provenance and advisory inventory
 
 - [x] Generate a locked dependency and license inventory with exact package
   versions and source/checksum provenance.
@@ -249,7 +249,7 @@ Evidence: [SUPPLY_CHAIN](SUPPLY_CHAIN.md). The deterministic inventory binds 44
 packages to the lockfile; the current RustSec snapshot reports no known
 vulnerability or warning and no finding is accepted.
 
-## Post-M18 — trusted-time and recovery-root ceremony
+## Post-M18  -  trusted-time and recovery-root ceremony
 
 - [x] Model trusted-time rollback/forward failure paths for lifecycle expiry and
   emergency revocation.
@@ -263,7 +263,7 @@ missing, divergent, stale, veto, and compromised-participant failure paths.
 Neither mechanism establishes a production clock, participant identity, private
 key custody, or organizational independence.
 
-## Post-M19 — protocol compatibility and migration corpus
+## Post-M19  -  protocol compatibility and migration corpus
 
 - [x] Retain old/new scenario and certificate compatibility vectors across
   supported protocol versions.
@@ -276,7 +276,7 @@ v7–v9, future fields/versions, cross-version shape confusion, and oversized
 certificate input. Migration validates and regenerates from authoritative input;
 it never silently rewrites retained evidence.
 
-## Post-M20 — compatibility consumer qualification
+## Post-M20  -  compatibility consumer qualification
 
 - [x] Exercise the supported certificate boundary in an independent downstream
   reader and retain version-by-version results.
@@ -289,7 +289,7 @@ classes in 13 bounded cases. Versions v7–v9 remain active; deprecation require
 explicit evidence and approval, and removal requires two later completed
 milestones plus zero registered consumers and a major compatibility decision.
 
-## Post-M21 — certificate evidence authenticity
+## Post-M21  -  certificate evidence authenticity
 
 - [x] Define a domain-separated certificate-attestation envelope without
   invalidating retained unsigned research certificates.
@@ -301,7 +301,7 @@ attestation preserves v7–v9 bytes, binds exact certificate/context/time/key
 evidence, and passes seven bounded old/new and failure cases with zero
 Rust/Python disagreements.
 
-## Post-M22 — attestation timestamp and revocation witnesses
+## Post-M22  -  attestation timestamp and revocation witnesses
 
 - [x] Prototype an append-only trusted timestamp witness that prevents
   compromised signers from backdating attestations.
@@ -313,7 +313,7 @@ timestamp chains and digest-anchored revocation snapshots pass seven bounded
 historical and refusal cases with zero Rust/Python disagreements. Authorities,
 trusted tips, custody, and distribution remain research configuration.
 
-## Post-M23 — witness durability and availability
+## Post-M23  -  witness durability and availability
 
 - [x] Qualify timestamp/revocation trusted-tip persistence across crash,
   backup/restore, and independent-host boundaries.
@@ -326,7 +326,7 @@ offline Linux arm64/amd64. Seven deterministic bounded distribution profiles
 preserve three available paths and refuse loss, outage, over-budget delay, and
 equivocation.
 
-## Post-M24 — isolated external-endpoint harness
+## Post-M24  -  isolated external-endpoint harness
 
 - [x] Orchestrate separate authenticated timestamp/revocation HTTP processes
   without adding mutation authority or weakening exact-tip verification.
@@ -337,7 +337,7 @@ Evidence: [WITNESS_ENDPOINT_HARNESS](WITNESS_ENDPOINT_HARNESS.md). Three
 end-to-end success paths and seven live refusal paths pass through real HTTP and
 the existing cryptographic verifier within explicit request/resource bounds.
 
-## Post-M25 — independently operated witness reproduction
+## Post-M25  -  independently operated witness reproduction
 
 - [x] Freeze an operator handoff and fail-closed returned-evidence validator
   without manufacturing or self-certifying organizational independence.
@@ -351,7 +351,7 @@ The handoff binds the M24 source and required outcomes; its adversarial validato
 accepts one synthetic schema fixture and refuses thirteen integrity/policy faults.
 No independent record has been returned, so both external gates remain open.
 
-## Post-M26 — private evaluation product authorization
+## Post-M26  -  private evaluation product authorization
 
 - [x] Authorize a production-shaped private evaluation lane with a
   machine-checked scope and claim boundary.
@@ -399,7 +399,7 @@ ZIPs are byte-identical with a verified per-entry checksum manifest. This is
 candidate engineering evidence, not signing custody, Linux/Kubernetes resource
 qualification, power-loss proof, or independent validation.
 
-## Post-M27 — signed private candidate boundary
+## Post-M27  -  signed private candidate boundary
 
 - [x] Implement domain-separated Ed25519 signing and independently configured
   verification for the exact private bundle bytes.
@@ -413,7 +413,7 @@ Protocol evidence: [PRIVATE_BUNDLE](PRIVATE_BUNDLE.md). Tests use an ephemeral
 fixture key only. Implementing the signing boundary does not establish custody,
 produce a release signature, or satisfy independent assessment.
 
-## Post-M28 — commit-bound candidate ceremony
+## Post-M28  -  commit-bound candidate ceremony
 
 - [x] Bind the canonical full source commit into the deterministic bundle.
 - [x] Prove commit substitution changes the bundle and malformed identities
@@ -426,7 +426,7 @@ Evidence: [CANDIDATE_SIGNING](CANDIDATE_SIGNING.md) and
 [PRIVATE_BUNDLE](PRIVATE_BUNDLE.md). Project-controlled qualification proves the
 mechanism only; it does not satisfy the operational or independent gates.
 
-## Post-M29 — reproducible candidate build provenance
+## Post-M29  -  reproducible candidate build provenance
 
 - [x] Rebuild the locked/offline release binary in two isolated target trees and
   require byte identity under explicit time, output, and resource bounds.
@@ -440,7 +440,7 @@ Evidence: [BUILD_PROVENANCE](BUILD_PROVENANCE.md). The qualification is
 same-host and project-controlled; compiler/dependency trust and hermeticity are
 not established.
 
-## Post-M30 — real Kubernetes end-to-end qualification
+## Post-M30  -  real Kubernetes end-to-end qualification
 
 - [x] Exercise the complete evaluation CLI against a disposable real Kubernetes
   API server using namespace-scoped service-account credentials.
@@ -454,7 +454,7 @@ not established.
 Evidence: [KUBERNETES_REAL_CLUSTER](KUBERNETES_REAL_CLUSTER.md). This closes the
 real local-cluster gap, not the managed-platform or independent-validation gates.
 
-## Post-M31 — OpenTofu plan evaluation integration
+## Post-M31  -  OpenTofu plan evaluation integration
 
 - [x] Evaluate a real saved OpenTofu plan through the stable read-only CLI
   without cloud credentials, external providers, or target mutation.
@@ -469,7 +469,7 @@ Evidence: [OPENTOFU_PLAN](OPENTOFU_PLAN.md). The real local lifecycle uses only
 the built-in `terraform_data` resource and disposable local state. It establishes
 plan parsing and evidence binding, not provider correctness or apply safety.
 
-## Post-M32 — evaluation contract and capability reconciliation
+## Post-M32  -  evaluation contract and capability reconciliation
 
 - [x] Replace the stale single-mode contract field with an explicit bounded
   schema-to-mode inventory under a no-target-mutation authority boundary.
@@ -483,7 +483,7 @@ Evidence: [EVALUATION_PRODUCT_DECISION](EVALUATION_PRODUCT_DECISION.md) and
 implemented read-only modes and passes six adversarial drift refusals. It does
 not authorize production actuation, credentials, publication, or promotion.
 
-## Post-M33 — complete three-mode private candidate input
+## Post-M33  -  complete three-mode private candidate input
 
 - [x] Package all contracted Kubernetes shadow/live and OpenTofu plan
   configurations plus their operator, threat, example, and test-plan material.
@@ -499,7 +499,7 @@ survives interruption, binds source substitution, and passes four capability
 refusals. No operational identity, signature, recipient, transfer, or independent
 assessment is manufactured.
 
-## Post-M34 — executable adversarial integration coverage
+## Post-M34  -  executable adversarial integration coverage
 
 - [x] Register a bounded threat-by-mode coverage contract for every supported
   evaluation integration.
@@ -519,7 +519,7 @@ covered cells, two explicit deferred cells, and five justified non-applicable
 cells; eleven adversarial registry mutations fail closed. This inventory prevents
 coverage overstatement but is not independent validation or a robustness proof.
 
-## Post-M35 — sustained adversarial integration load
+## Post-M35  -  sustained adversarial integration load
 
 - [x] Run 16 one-byte-over-limit attacks per evaluation mode with four-way
   concurrency, per-case deadlines, and no evidence publication.
@@ -535,7 +535,7 @@ Evidence: [SUSTAINED_ADVERSARIAL_LOAD](SUSTAINED_ADVERSARIAL_LOAD.md) and
 is not a capacity forecast, managed-platform result, denial-of-service guarantee,
 or independent validation.
 
-## Post-M36 — authenticated observation-quorum primitive
+## Post-M36  -  authenticated observation-quorum primitive
 
 - [x] Domain-separate Ed25519 signatures over exact observation bytes, subject,
   mode, producer identity, fault domain, and bounded validity.
@@ -552,7 +552,7 @@ capabilities, the product contract v3 validator, and focused tests in
 `src/observation_quorum.rs`. M37, M39, M40 and M42 apply the primitive to every
 supported evaluation mode; operational independence remains open.
 
-## Post-M37 — corroborated Kubernetes shadow evaluation
+## Post-M37  -  corroborated Kubernetes shadow evaluation
 
 - [x] Require a bounded canonical trust document and signed multi-domain quorum
   in the stable Kubernetes shadow evaluation schema v4.
@@ -572,7 +572,7 @@ the configured multi-domain path for shadow, with M39 and M40 extending it to
 Kubernetes live and OpenTofu. It does not prove that configured domains are
 genuinely independent or truthful in deployment.
 
-## Post-M38 — observation producer signing boundary
+## Post-M38  -  observation producer signing boundary
 
 - [x] Expose domain-separated observation signing for exact bounded input bytes
   through a stable CLI command.
@@ -592,7 +592,7 @@ mechanics, not producer independence, truthful collection, or operational key
 custody; M41 completes the OpenTofu process integration without promoting an
 adversarial coverage cell.
 
-## Post-M39 — corroborated Kubernetes-live producer processes
+## Post-M39  -  corroborated Kubernetes-live producer processes
 
 - [x] Replace live configuration v2 with v5 requiring a bounded trust document
   and two to eight external observation-source commands.
@@ -615,7 +615,7 @@ envelope faults but retains the compromised-producer cell because every
 qualified process still trusts one API server. External independence and
 production custody remain open gates.
 
-## Post-M40 — corroborated OpenTofu plan bytes
+## Post-M40  -  corroborated OpenTofu plan bytes
 
 - [x] Replace OpenTofu configuration v3 with v6 requiring a bounded trust
   document and two to eight external exact-byte producer envelopes.
@@ -634,7 +634,7 @@ configured producer processes; because the qualified producers consume the same
 locally generated plan, the compromised-consistent-producer cell remains
 deferred.
 
-## Post-M41 — bounded OpenTofu producer process
+## Post-M41  -  bounded OpenTofu producer process
 
 - [x] Package a reference producer that independently invokes `tofu show -json`
   on an absolute regular single-link saved plan and signs the exact bytes.
@@ -655,7 +655,7 @@ renderer/signing processes. The local qualification still shares one saved
 binary plan and host, so it does not promote the compromised-consistent-producer
 coverage cell or satisfy independent validation.
 
-## Post-M42 — producer identity isolation kit
+## Post-M42  -  producer identity isolation kit
 
 - [x] Add a bounded authenticated Unix relay so the evaluator can request fresh
   observations without reading producer signing keys or platform credentials.
@@ -678,7 +678,7 @@ Evidence: [PRODUCER_ISOLATION](PRODUCER_ISOLATION.md), [OPERATIONS](OPERATIONS.m
 deployment boundary but the local harness uses one UID and one host, so no
 independence or compromised-consistent-producer claim is promoted.
 
-## Post-M43 — Linux producer identity qualification
+## Post-M43  -  Linux producer identity qualification
 
 - [x] Run two producer relays under distinct non-root Linux kernel UIDs and
   distinct client groups in a pinned offline container.
@@ -698,7 +698,7 @@ UID/GID separation on Linux. The container and host remain project-controlled,
 so organizational independence and compromised-consistent-producer coverage
 remain unclaimed.
 
-## Post-M44 — real Kubernetes relay lifecycle
+## Post-M44  -  real Kubernetes relay lifecycle
 
 - [x] Route both real-cluster Kubernetes observation producers through separate
   authenticated Unix relays and expose only relay clients to the evaluator.
@@ -718,7 +718,7 @@ relay-path mismatch. It does not establish managed-platform behavior,
 organizational independence, or truthful observations under a compromised
 shared control plane.
 
-## Post-M45 — candidate pre-freeze readiness evidence
+## Post-M45  -  candidate pre-freeze readiness evidence
 
 - [x] Map all eight private candidate-readiness gates to exact repository files
   and authoritative local-CI commands in a strict machine-readable manifest.
@@ -736,7 +736,7 @@ Evidence: [CANDIDATE_READINESS](CANDIDATE_READINESS.md),
 `scripts/validate-candidate-readiness.py`. This closes narrative-only readiness
 drift; it does not itself create or sign a release candidate.
 
-## Post-M46 — versioned private release-candidate freeze
+## Post-M46  -  versioned private release-candidate freeze
 
 - [x] Set the private evaluation candidate version to `0.2.0-rc.1` and provide
   claim-bounded evaluator-facing release notes.
@@ -755,7 +755,7 @@ Evidence: [CANDIDATE_SIGNING](CANDIDATE_SIGNING.md),
 authenticates evaluator bytes but does not establish independent custody,
 assessment, public release, or production promotion.
 
-## Post-M47 — external assessor journey
+## Post-M47  -  external assessor journey
 
 - [x] Make one current guide the canonical entrypoint for assessment of the
   exact signed `v0.2.0-rc.1` handoff.
@@ -781,7 +781,7 @@ Evidence: [EXTERNAL_ASSESSMENT](EXTERNAL_ASSESSMENT.md),
 the repository-navigation and safe-verification guidance gap; it does not create
 independent evidence or authorize production promotion.
 
-## Post-M48 — standardized read-only integration contract
+## Post-M48  -  standardized read-only integration contract
 
 - [x] Define a versioned platform-neutral request, response, capability and
   stable refusal taxonomy for external read-only adapters.
@@ -805,7 +805,7 @@ Evidence: [INTEGRATION_CONTRACT](INTEGRATION_CONTRACT.md),
 mechanics; it does not qualify an unnamed platform, prove producer truth or
 independence, or authorize actuation.
 
-## Post-M49 — concrete Redis read-only integration
+## Post-M49  -  concrete Redis read-only integration
 
 - [x] Map one bounded Redis namespace into Integration Contract v1 without
   adding Redis client dependencies or mutation commands.
@@ -831,7 +831,7 @@ Evidence: [REDIS_INTEGRATION](REDIS_INTEGRATION.md),
 Redis integration and real ACL enforcement; one project-controlled server does
 not establish independent observation truth or production readiness.
 
-## Post-M50 — concrete PostgreSQL read-only integration
+## Post-M50  -  concrete PostgreSQL read-only integration
 
 - [x] Map four fixed schema tables into Integration Contract v1 through a
   dependency-free bounded `psql` subprocess.
@@ -855,7 +855,7 @@ Evidence: [POSTGRESQL_INTEGRATION](POSTGRESQL_INTEGRATION.md),
 transaction and privilege mechanics, not independent database truth or
 production readiness.
 
-## Post-M51 — concrete HTTP/JSON read-only integration
+## Post-M51  -  concrete HTTP/JSON read-only integration
 
 - [x] Map one strict versioned HTTP JSON snapshot into Integration Contract v1
   through a dependency-free fixed-GET adapter.
@@ -879,7 +879,7 @@ Evidence: [HTTP_JSON_INTEGRATION](HTTP_JSON_INTEGRATION.md),
 protocol mechanics and failure bounds, not public-network security, external
 truth, operational independence or production readiness.
 
-## Post-M52 — HTTP/JSON mutual-TLS transport qualification
+## Post-M52  -  HTTP/JSON mutual-TLS transport qualification
 
 - [x] Add explicit HTTPS without weakening loopback HTTP compatibility or
   permitting opportunistic plaintext downgrade.
@@ -898,7 +898,7 @@ Evidence: [HTTP_JSON_INTEGRATION](HTTP_JSON_INTEGRATION.md) and
 `results/http-json-integration-qualification.json`. This establishes local TLS
 mechanics and downgrade refusal, not operational PKI or independent transport.
 
-## Post-M53 — HTTP/JSON certificate lifecycle and revocation
+## Post-M53  -  HTTP/JSON certificate lifecycle and revocation
 
 - [x] Version mutual-TLS credentials to require an explicit bounded CRL.
 - [x] Enable leaf revocation checks in both client and server TLS contexts.
@@ -914,7 +914,7 @@ Evidence: `scripts/run-http-json-integration.py` and
 `results/http-json-integration-qualification.json`. The qualification exercises
 real OpenSSL CA state and CRLs locally; it is not operational PKI evidence.
 
-## Post-M54 — offline HTTP/mTLS PKI readiness
+## Post-M54  -  offline HTTP/mTLS PKI readiness
 
 - [x] Add a bounded offline readiness command for CA, CRL, client certificate
   and private-key material.
@@ -956,3 +956,22 @@ qualification result.
 Evidence: `scripts/http-json-pki-prometheus.py`,
 `scripts/run-http-json-pki-prometheus-qualification.py`, and
 `results/http-json-pki-prometheus-qualification.json`.
+
+## Post-M59 - rc.2 release-state reconciliation
+
+- [x] Advance the current evaluation candidate target to `0.2.0-rc.2` while
+  preserving `v0.2.0-rc.1` as immutable historical evidence.
+- [x] Derive active packaging and qualification metadata from the Cargo package
+  version and reject version, lockfile, release-note, and assessor-guide drift.
+- [x] Require the offline verifier to receive the expected candidate version
+  through an independently authenticated assessor input.
+- [x] Reconcile README, release strategy, assessor guidance, bundle contents,
+  and curated release notes with mandatory quorum and current integrations.
+- [x] Keep exact-byte status pre-freeze until the reviewed rc.2 commit is built,
+  signed, verified, and tagged through a separate ceremony.
+
+Evidence: `scripts/release_metadata.py`,
+`scripts/validate-release-metadata.py`, `RELEASE_NOTES_v0.2.0-rc.2.md`, and
+[EXTERNAL_ASSESSMENT](EXTERNAL_ASSESSMENT.md). This milestone makes current
+release surfaces coherent; it does not sign, distribute, or independently
+assess rc.2.

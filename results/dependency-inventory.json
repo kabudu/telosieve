@@ -1,6 +1,6 @@
 {
   "schema_version": "telosieve.dependency-inventory/v1",
-  "lockfile_sha256": "3ae3ccbecf98641dd2dd0f5709e0a3ce4fc4abf64ad2e97bf283d05cec57631f",
+  "lockfile_sha256": "6d46b59e7a9c01fb4e260f628c39af64fe59a3df18872262821b86a47355f81e",
   "package_count": 44,
   "third_party_package_count": 43,
   "packages": [
@@ -286,7 +286,7 @@
     },
     {
       "name": "telosieve",
-      "version": "0.2.0-rc.1",
+      "version": "0.2.0-rc.2",
       "source": "path:repository",
       "checksum": null,
       "license": "Apache-2.0",

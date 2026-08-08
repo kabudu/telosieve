@@ -11,6 +11,8 @@ import time
 import zipfile
 from pathlib import Path
 
+from release_metadata import release_notes_path
+
 
 ROOT = Path(__file__).resolve().parent.parent
 BINARY = (ROOT / "target/debug/telosieve").resolve()
@@ -18,6 +20,7 @@ BUILDER = ROOT / "scripts/build-private-bundle.py"
 SOURCE_COMMIT = "a" * 40
 MAX_BUNDLE_BYTES = 160 * 1024 * 1024
 MAX_BUILD_SECONDS = 15
+RELEASE_NOTES = release_notes_path().relative_to(ROOT).as_posix()
 EXPECTED_CONFIGURATIONS = (
     "evaluation/config.example.json",
     "evaluation/config.live.example.json",
@@ -271,6 +274,7 @@ def assert_bundle(path: Path) -> int:
         if packaged_modes != capabilities["capabilities"]:
             raise SystemExit("private-bundle-qualification: packaged configs do not cover capabilities")
         required = {
+            "Cargo.toml", RELEASE_NOTES,
             "docs/KUBERNETES_SHADOW.md", "docs/OPENTOFU_PLAN.md",
             "examples/opentofu/main.tf", "scripts/ci-local.sh",
             "scripts/run-kubernetes-real-cluster.py", "scripts/run-opentofu-plan.py",
@@ -279,6 +283,7 @@ def assert_bundle(path: Path) -> int:
             "evaluation/observation-trust.integration.example.json",
             "evaluation/integration-response.example.json",
             "docs/INTEGRATION_CONTRACT.md", "scripts/reference-integration-adapter.py",
+            "scripts/release_metadata.py", "scripts/validate-release-metadata.py",
             "docs/REDIS_INTEGRATION.md", "scripts/redis_integration_common.py",
             "scripts/redis-integration-adapter.py", "scripts/redis-observation-producer.py",
             "scripts/test-redis-integration.py", "scripts/run-redis-integration.py",
@@ -318,7 +323,7 @@ def assert_bundle(path: Path) -> int:
             "scripts/validate-candidate-readiness.py",
             "results/candidate-readiness-validation.json",
             "docs/CANDIDATE_READINESS.md",
-            "RELEASE_NOTES_v0.2.0-rc.1.md",
+            RELEASE_NOTES,
             "scripts/build-release-candidate.py", "scripts/verify-release-candidate.py",
             "docs/SUSTAINED_ADVERSARIAL_LOAD.md", "docs/OBSERVATION_QUORUM.md",
             "evaluation/candidate-profile.json", "evaluation/capabilities.json",

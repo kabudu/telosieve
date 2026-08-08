@@ -9,7 +9,10 @@ import subprocess
 import tempfile
 from pathlib import Path
 
+from release_metadata import candidate_version
+
 ROOT = Path(__file__).resolve().parent.parent
+VERSION = candidate_version()
 TIMEOUT = 240
 
 
@@ -28,7 +31,7 @@ def builder(repository, commit, binary_digest, key, output):
     return [str(repository / "scripts/build-release-candidate.py"),
             "--source-commit", commit, "--expected-binary-sha256", binary_digest,
             "--signing-key", str(key), "--output-directory", str(output),
-            "--signer", "telosieve-project-evaluation", "--key-id", "v0.2.0-rc.1",
+            "--signer", "telosieve-project-evaluation", "--key-id", f"v{VERSION}",
             "--issued-at", "1785580800", "--expires-at", "1788172800",
             "--evaluation-time", "1785580800"]
 
@@ -56,11 +59,16 @@ def main():
             raise SystemExit("release-candidate-qualification: candidate build result is invalid")
         trusted = repository / "target/release/telosieve"
         verify = run([str(repository / "scripts/verify-release-candidate.py"), str(output),
-                      "--trusted-telosieve", str(trusted.resolve())], repository)
+                      "--trusted-telosieve", str(trusted.resolve()),
+                      "--expected-version", VERSION], repository)
         if json.loads(verify.stdout).get("status") != "passed":
             raise SystemExit("release-candidate-qualification: verifier result is invalid")
 
         refused = 0
+        run([str(repository / "scripts/verify-release-candidate.py"), str(output),
+             "--trusted-telosieve", str(trusted.resolve()),
+             "--expected-version", "../../unexpected"], repository, success=False)
+        refused += 1
         run(builder(repository, commit, binary_digest, key, output), repository, success=False)
         refused += 1
         unsafe_key = work / "unsafe.hex"
@@ -74,12 +82,13 @@ def main():
         run(builder(repository, commit, binary_digest, key, work / "dirty-output"), repository, success=False)
         dirty.unlink()
         refused += 1
-        bundle = output / "telosieve-0.2.0-rc.1-private-evaluation.zip"
+        bundle = output / f"telosieve-{VERSION}-private-evaluation.zip"
         bundle.chmod(0o600)
         original = bundle.read_bytes()
         bundle.write_bytes(original[:-1] + bytes([original[-1] ^ 1]))
         run([str(repository / "scripts/verify-release-candidate.py"), str(output),
-             "--trusted-telosieve", str(trusted.resolve())], repository, success=False)
+             "--trusted-telosieve", str(trusted.resolve()),
+             "--expected-version", VERSION], repository, success=False)
         refused += 1
     print(json.dumps({"schema_version": "telosieve.release-candidate-qualification/v1",
                       "accepted": 1, "refused": refused, "artifacts": 7,

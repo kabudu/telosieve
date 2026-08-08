@@ -1,10 +1,11 @@
 # Release Strategy
 
-There is no product release yet. Private evaluation-product engineering is
-authorized by
-[EVALUATION_PRODUCT_DECISION](EVALUATION_PRODUCT_DECISION.md), but no candidate
-has passed its readiness gates and no artifact distribution is authorized by
-that decision alone. Research or evaluation releases require:
+There is no production release yet. Private evaluation-product engineering is
+authorized by [EVALUATION_PRODUCT_DECISION](EVALUATION_PRODUCT_DECISION.md).
+The historical `v0.2.0-rc.1` candidate passed its project-controlled freeze,
+but current `master` targets `v0.2.0-rc.2` and remains pre-freeze until its exact
+reviewed bytes pass the ceremony. No public artifact distribution is authorized
+by the private evaluation decision alone. Research or evaluation releases require:
 
 1. frozen protocol and fault model;
 2. reproducible harness and locked dependencies;
@@ -13,8 +14,8 @@ that decision alone. Research or evaluation releases require:
 5. refreshed novelty/name diligence;
 6. explicit limitations and negative results.
 
-Version `0.1.0-research` may tag the first reproducible artifact. Public hosting,
-packages, telemetry, production adapters, and claims are separately gated.
+Public hosting, packages, telemetry, production adapters, and production claims
+are separately gated.
 
 The 2026-07-29 M3 decision narrowed the project after a weakened-viability unsafe
 approval. That approval was subsequently removed across the registered fixtures
@@ -269,12 +270,13 @@ promotion, public release, or operational identity-custody gates. Assessors must
 follow [EXTERNAL_ASSESSMENT](EXTERNAL_ASSESSMENT.md), including independent
 authentication of the trust record before signature verification.
 
-Post-candidate development adds `telosieve.integration-contract/v1`, evaluation
-configuration v7 and certificate v11 as a standardized read-only external
-adapter boundary. These changes are not part of the immutable signed
-`v0.2.0-rc.1` handoff and require a separately frozen future candidate before
-external candidate assessment. The generic conformance suite does not qualify a
-concrete platform integration or authorize actuation.
+The immutable signed `v0.2.0-rc.1` handoff remains historical. Current source
+targets `v0.2.0-rc.2`, incorporating the standardized integration contract,
+configuration v7, certificate v11, concrete read-only integrations, PKI
+qualification, mandatory quorum capability declarations, and corroborated
+Kubernetes/OpenTofu evidence. None of that post-rc.1 work becomes candidate
+evidence until the exact rc.2 commit is separately frozen and signed. The
+generic conformance suite does not qualify arbitrary integrations or authorize actuation.
 
 Post-candidate Redis integration now supplies the first concrete Contract v1
 collector and a pinned disposable Redis 8.8 qualification. Three distinct ACL
