@@ -25,6 +25,7 @@ REQUIRED = (
     "tokens/brand.tokens.json",
     "tokens/brand.css",
     "templates/release-card.svg",
+    "templates/evaluation-overlay.svg",
     "templates/diagram-key.svg",
     "templates/chart-key.svg",
     "exports/favicon-32.png",
@@ -44,6 +45,25 @@ PROHIBITED = (
     re.compile(r"(?i)\benterprise[- ]grade\b"),
     re.compile(r"(?i)\bprevents? (?:ai|agent|all|arbitrary) (?:escape|compromise|attack)"),
 )
+MATURITY_TERMS = re.compile(r"(?i)\b(?:alpha|beta|evaluation|experimental|preview|production[- ]ready|release candidate)\b")
+MATURITY_NEUTRAL = (
+    "source/telosieve-symbol.svg",
+    "source/telosieve-small.svg",
+    "source/telosieve-wordmark.svg",
+    "source/telosieve-horizontal.svg",
+    "source/telosieve-stacked.svg",
+    "source/telosieve-monochrome.svg",
+    "source/telosieve-reversed.svg",
+    "templates/release-card.svg",
+    "tokens/brand.tokens.json",
+    "tokens/brand.css",
+)
+TAGLINE_ASSETS = (
+    "source/telosieve-horizontal.svg",
+    "source/telosieve-stacked.svg",
+    "templates/release-card.svg",
+)
+TAGLINE = "QUESTION THE INSTRUCTION BEFORE ENFORCING IT"
 
 
 def main() -> int:
@@ -65,7 +85,7 @@ def main() -> int:
         errors.append(result.stdout.strip() or result.stderr.strip() or "brand asset build check failed")
 
     tokens = json.loads((BRAND / "tokens/brand.tokens.json").read_text(encoding="utf-8"))
-    if tokens.get("schema_version") != "telosieve.brand-tokens/v1" or tokens.get("brand_version") != "1.0.0-evaluation":
+    if tokens.get("schema_version") != "telosieve.brand-tokens/v1" or tokens.get("brand_version") != "1.0.0":
         errors.append("brand token version mismatch")
     expected_states = {"verified", "refused", "warning", "unknown"}
     if not expected_states.issubset(tokens.get("colour", {})):
@@ -73,7 +93,8 @@ def main() -> int:
 
     identity = (ROOT / "docs/BRAND_IDENTITY.md").read_text(encoding="utf-8")
     for phrase in (
-        "Brand version: `1.0.0-evaluation`",
+        "Brand version: `1.0.0`",
+        "Product maturity is not brand identity",
         "| A: evidence aperture",
         "Colour never carries state alone",
         "Remaining human gates",
@@ -85,6 +106,19 @@ def main() -> int:
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     if "assets/brand/source/telosieve-horizontal.svg" not in readme:
         errors.append("README does not use the canonical horizontal brand asset")
+    for relative in MATURITY_NEUTRAL:
+        text = (BRAND / relative).read_text(encoding="utf-8")
+        if MATURITY_TERMS.search(text):
+            errors.append(f"maturity term leaked into canonical brand asset: {relative}")
+    for relative in TAGLINE_ASSETS:
+        if TAGLINE not in (BRAND / relative).read_text(encoding="utf-8"):
+            errors.append(f"canonical tagline drifted: {relative}")
+    mutation_cases = ("alpha", "beta", "evaluation", "experimental", "preview", "production-ready", "release candidate")
+    if any(MATURITY_TERMS.search(value) is None for value in mutation_cases):
+        errors.append("maturity-term refusal self-test failed")
+    overlay = (BRAND / "templates/evaluation-overlay.svg").read_text(encoding="utf-8")
+    if "EVALUATION CANDIDATE" not in overlay or "Independent validation required" not in overlay:
+        errors.append("evaluation maturity overlay is incomplete")
     for relative in PUBLIC_COPY:
         text = (ROOT / relative).read_text(encoding="utf-8")
         for pattern in PROHIBITED:
@@ -96,7 +130,7 @@ def main() -> int:
     if errors:
         return 1
     print(result.stdout.strip())
-    print("brand-validation: passed version=1.0.0-evaluation")
+    print(f"brand-validation: passed version=1.0.0 permanent_identity=true maturity_refusals={len(mutation_cases)}")
     return 0
 
 

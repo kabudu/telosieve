@@ -1,6 +1,6 @@
 # Telosieve
 
-![Telosieve: fail-closed evaluation](assets/brand/source/telosieve-horizontal.svg)
+![Telosieve](assets/brand/source/telosieve-horizontal.svg)
 
 **Question the instruction before enforcing it.**
 
@@ -23,11 +23,11 @@ and refuse repair when surviving evidence cannot distinguish safe outcomes.
 
 The original M3 decision narrowed Telosieve to private research. After the
 registered unsafe approval was removed and the bounded evidence base expanded,
-the project authorized a private, production-shaped evaluation product on
+the project authorized a private, production-shaped evaluation release lane on
 2026-07-30. Version `0.2.0-rc.1` was the first signed private evaluation
-candidate. The current source targets `0.2.0-rc.2`, whose exact-byte signing
-gate remains pending until its reviewed freeze. Brand identity
-`1.0.0-evaluation` is approved for claim-bounded public-source presentation.
+candidate. Version `0.2.0-rc.2` is frozen as the current signed private
+evaluation candidate. The enduring product brand is independently versioned as
+`1.0.0`; evaluation maturity is a separate claim-bounded release overlay.
 Public release, autonomous production actuation, and
 general safety claims remain blocked pending their separate explicit decisions;
 production promotion additionally requires independent validation of the exact
@@ -240,8 +240,8 @@ The binding M3 outcome and its reopening conditions are recorded in
 [Productisation Decision](docs/PRODUCTISATION_DECISION.md). The later bounded
 authorization is recorded in
 [Private Evaluation Product Decision](docs/EVALUATION_PRODUCT_DECISION.md).
-The approved evaluation-product identity and its unchanged production gates are
-recorded in [Evaluation Productisation Decision](docs/EVALUATION_PRODUCTISATION_DECISION.md)
+The approved enduring product identity, separate evaluation overlay, and unchanged production gates are
+recorded in [Productisation Decision](docs/EVALUATION_PRODUCTISATION_DECISION.md)
 and [Brand Identity](docs/BRAND_IDENTITY.md).
 
 Each run authenticates all authority envelopes before evaluation. The certificate

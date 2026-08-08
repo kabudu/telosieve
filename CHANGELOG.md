@@ -4,7 +4,8 @@ All notable Telosieve changes are recorded here. Telosieve follows Semantic Vers
 
 ## Unreleased
 
-No changes yet.
+- Correct brand identity `1.0.0` to be permanent across maturity stages and
+  separate evaluation status into a release overlay.
 
 ## 0.2.0-rc.2 - 2026-08-08
 
@@ -13,7 +14,7 @@ No changes yet.
 - Add standardized read-only integration contracts and qualified Redis, PostgreSQL, and HTTP/JSON integrations.
 - Add local HTTP mutual-TLS, revocation, PKI readiness, monitoring, and Prometheus publication qualifications.
 - Reconcile deterministic packaging, verification, assessor guidance, and release metadata.
-- Add brand identity `1.0.0-evaluation`, accessible SVGs, deterministic raster
+- Add the initial accessible SVG brand system, deterministic raster
   exports, design tokens, templates, provenance, and claim validation.
 - Add open-source governance, complete-history hygiene checks, product identity,
   a curated responsive release presentation, and an exact signed private freeze.

@@ -282,6 +282,7 @@ def assert_bundle(path: Path) -> int:
             "assets/brand/BRAND_ASSET_MANIFEST.json",
             "assets/brand/source/telosieve-horizontal.svg",
             "assets/brand/exports/social-card-1200x630.png",
+            "assets/brand/templates/evaluation-overlay.svg",
             "scripts/build-brand-assets.py", "scripts/validate-brand.py",
             "scripts/validate-release-presentation.py",
             "docs/KUBERNETES_SHADOW.md", "docs/OPENTOFU_PLAN.md",

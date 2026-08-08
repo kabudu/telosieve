@@ -1,19 +1,25 @@
 # Telosieve Brand Identity
 
-Brand version: `1.0.0-evaluation`
+Brand version: `1.0.0`
 
-Status: approved for the open-source evaluation product on 2026-08-08. This identity communicates product scope; it is not evidence of safety, independent validation, legal name clearance, or production readiness.
+Status: approved as Telosieve's enduring product identity on 2026-08-08 and corrected on the same date to remove release-maturity coupling. This identity communicates the product's purpose and mechanism; it is not evidence of safety, independent validation, legal name clearance, production readiness, or current release authorization.
+
+## Product maturity is not brand identity
+
+Telosieve has one product identity across research, evaluation, release-candidate, and any future production-grade stages. The name, aperture mark, brand version, purpose, principles, personality, tagline, colour, typography, and canonical product templates are maturity-neutral. They are designed for the intended durable product, not as temporary evaluation packaging.
+
+Current maturity is a separate, replaceable messaging overlay. The overlay states release channel, read-only or actuation scope, support posture, evidence maturity, production authorization, and independent-validation status. Changing those facts must not require redrawing the mark, renaming the product, changing the brand version, or replacing the core tagline. The current overlay is `assets/brand/templates/evaluation-overlay.svg`; it is not part of any canonical logo.
 
 ## Product and audience
 
-Telosieve is fail-closed evaluation software for questioning desired-state instructions when authority evidence may be stale, compromised, or malicious. Its primary users are platform reliability engineers, security engineers, infrastructure maintainers, researchers, and independent assessors. The first buyer-like audience is an engineering or security leader evaluating whether disputed-authority controls merit further testing, not purchasing an autonomous production repair service.
+Telosieve is corroborated control for desired-state systems: it questions infrastructure instructions when authority evidence may be stale, compromised, or malicious. Its enduring users are platform reliability engineers, security engineers, infrastructure maintainers, researchers, and assurance practitioners. The product is intended to make authority-sensitive decisions inspectable and fail closed when the evidence is insufficient.
 
-The category phrase is **corroborated desired-state evaluation**. Use familiar adjacent language such as reconciliation, policy evaluation, provenance, quorum evidence, and refusal. Do not invent a category that implies an established market.
+The product category phrase is **corroborated desired-state control**. Use familiar adjacent language such as reconciliation, policy evaluation, provenance, quorum evidence, and refusal. This is a positioning category, not a claim that an established market category or production capability already exists. Current release copy must state the exact implemented read-only evaluation boundary.
 
 ## Brand platform
 
 - **Purpose:** make risky infrastructure instructions examinable before enforcement.
-- **Promise:** produce a bounded, inspectable decision or an explicit refusal without target mutation in supported evaluation modes.
+- **Promise:** corroborate authority before desired-state instructions take effect, with explicit refusal when the evidence is insufficient.
 - **Principles:** evidence before confidence; refusal is a valid result; provenance is not truth; bounds are part of correctness; negative findings remain visible.
 - **Personality:** precise, sceptical, calm, technically direct, and accountable.
 - **Anti-traits:** heroic, sentient, militaristic, magical, alarmist, infallible, or self-congratulatory.
@@ -21,9 +27,11 @@ The category phrase is **corroborated desired-state evaluation**. Use familiar a
 
 ## Positioning and reasons to believe
 
-Short description: **Telosieve is evaluation software that corroborates bounded observations, tests explicit authority-fault hypotheses, and refuses when surviving evidence cannot justify a read-only desired-state decision.**
+Permanent short description: **Telosieve provides corroborated control for desired-state systems, questioning infrastructure instructions and refusing when surviving authority evidence cannot justify them.**
 
-Medium description: **Telosieve helps infrastructure and security teams evaluate desired-state instructions when the authority behind them may be wrong. It separates goal, observation, and viability evidence; requires authenticated corroboration in supported modes; emits versioned evidence; and fails closed without target mutation. Its current results are project-controlled evaluation evidence and require independent assessment.**
+Permanent medium description: **Telosieve helps infrastructure and security teams question desired-state instructions when the authority behind them may be wrong. It separates goal, observation, and viability evidence, corroborates authenticated observations, retains versioned evidence, and treats refusal as a first-class outcome.**
+
+Current maturity overlay: **The current `v0.2.0-rc.2` release is a project-controlled, read-only evaluation candidate. It has no production actuation authority, no production SLA, and still requires independent assessment.**
 
 Reasons to believe must link to repository evidence:
 
@@ -36,7 +44,7 @@ Reasons to believe must link to repository evidence:
 
 ## Claims matrix
 
-Preferred terms include `evaluation software`, `read-only`, `fail closed`, `corroborated`, `bounded`, `authenticated`, `project-controlled evidence`, `candidate`, `refusal`, and `requires independent validation`.
+Permanent identity terms include `corroborated control`, `desired-state systems`, `authority evidence`, `question before enforcing`, `fail closed`, `bounded`, `authenticated`, and `refusal`. Maturity-overlay terms include `evaluation software`, `read-only`, `project-controlled evidence`, `candidate`, and `requires independent validation`.
 
 Do not claim `safe`, `secure by proof`, `production-ready`, `Byzantine resilient`, `autonomous repair`, `prevents AI escape`, `eliminates compromise`, `zero trust`, `novel`, `patented`, `independently verified`, or `enterprise-grade` unless a later exact gate establishes the specific statement. Never use a shield, tick, lock, immune-system metaphor, or green-only state to imply guaranteed protection.
 
@@ -54,7 +62,7 @@ Three genuinely different directions are retained under `assets/brand/concepts/`
 
 | Direction | Mechanism | Strength | Risk | Result |
 |---|---|---|---|---|
-| A: evidence aperture | three evidence paths cross a visible evaluation boundary and become one result | directly represents provenance separation, corroboration, and a bounded output | may be mistaken for a generic data pipeline without copy | selected |
+| A: evidence aperture | three evidence paths cross a visible verification boundary and become one result | directly represents provenance separation, corroboration, and a bounded output | may be mistaken for a generic data pipeline without copy | selected |
 | B: ledger weave | offset blocks form an auditable chain | communicates retained history and structured evidence | overweights ledger/storage and performs poorly at small size | not selected |
 | C: bounded horizon | observations terminate at a visible decision line | communicates a limit and refusal boundary | can resemble analytics or navigation marks | not selected |
 
@@ -99,7 +107,8 @@ Illustration should use abstract evidence, boundaries, and infrastructure topolo
 - Repository: horizontal SVG above the concise product boundary.
 - CLI and terminal: plain-text `Telosieve`, explicit result labels, and `NO_COLOR` compatibility; never rely on the symbol.
 - Release: curated `<Product> vX.Y.Z: <theme>` title, one-sentence outcome, three to five highlights, installation/verification path, and limitations.
-- Social: the 1200 by 630 evaluation card with product name, tagline, read-only category, and independent-validation boundary.
+- Social and product: the maturity-neutral 1200 by 630 product card with product name, tagline, category, and principles.
+- Release maturity: apply a separately versioned status overlay or adjacent copy; never modify the canonical lockup or product-card master to encode evaluation or production status.
 - Presentations and documents: stacked or horizontal mark, diagram key, chart key, and evidence links.
 - Incident communication: monochrome wordmark or plain text, timestamped facts, affected versions, containment, next update, and unknowns.
 
@@ -120,8 +129,12 @@ The builder renders every PNG twice and requires byte identity, exact dimensions
 
 The repository owner is product and brand owner. Engineering owns deterministic assets and integration consistency; security owns prohibited protection claims; research owns evidence and novelty wording; accessibility owns contrast and non-colour semantics; legal clearance remains external. A future contributor may fill more than one role, but every role must be explicitly reviewed at a release gate.
 
-Brand sources, tokens, and manifest use their own `1.0.0-evaluation` version. Protocol version changes do not silently change the brand. Material mark, palette, typography, claim, or category changes require a reviewed milestone, migration note, regenerated exports, new manifest, and archive of released assets. Security or cultural-symbol findings may trigger immediate withdrawal, followed by documented replacement rather than silent file substitution.
+Brand sources, tokens, and manifest use their own `1.0.0` version. Protocol and release-maturity changes do not silently change the brand. Material mark, palette, typography, promise, or category changes require a reviewed milestone, migration note, regenerated exports, new manifest, and archive of released assets. Security or cultural-symbol findings may trigger immediate withdrawal, followed by documented replacement rather than silent file substitution.
+
+### Migration from the maturity-coupled label
+
+The `v0.2.0-rc.2` tag preserves the earlier `1.0.0-evaluation` label and evaluation-specific canonical copy as historical evidence. Brand `1.0.0` supersedes that label on current source. The aperture geometry, name, tagline, palette, typography, semantic states, and asset paths remain compatible; consumers should update the brand-version string, refresh the horizontal lockup and social export, and use `evaluation-overlay.svg` only when current maturity disclosure is required. Do not infer a production promotion from this identity correction.
 
 ## Remaining human gates
 
-Formal trademark and cultural-symbol review, a multi-participant non-leading comprehension study, print proofing, and cross-platform optical comparison remain external launch evidence. They do not block source publication of this clearly labelled evaluation identity, but they block claims of legal clearance, measured comprehension, or a commercially registered mark.
+Formal trademark and cultural-symbol review, a multi-participant non-leading comprehension study, print proofing, and cross-platform optical comparison remain external launch evidence. They do not make the product identity provisional, but they block claims of legal clearance, measured comprehension, or a commercially registered mark and may require a future governed correction if they uncover a material issue.

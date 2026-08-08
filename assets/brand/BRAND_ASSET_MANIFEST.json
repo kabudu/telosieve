@@ -1,6 +1,6 @@
 {
   "schema_version": "telosieve.brand-assets/v1",
-  "brand_version": "1.0.0-evaluation",
+  "brand_version": "1.0.0",
   "entries": [
     {
       "path": "LICENSES/README.md",
@@ -36,8 +36,8 @@
     },
     {
       "path": "source/telosieve-horizontal.svg",
-      "sha256": "6eb3c8d2e2d1d9d51dca1f58b3fb0f50d0acb6b63183e5d4fe8de13d4962673c",
-      "bytes": 1270,
+      "sha256": "824c100a5eea97ded68d0fac80ce552a6b418d9815be8a481313d2a9503e499f",
+      "bytes": 1284,
       "license": "Apache-2.0",
       "provenance": "repository-authored",
       "allowed_use": "Telosieve product, documentation, evaluation, and community communication"
@@ -68,8 +68,8 @@
     },
     {
       "path": "source/telosieve-stacked.svg",
-      "sha256": "07bbfb66b7ef91597f922b478bedc380259322bb4be03cc8503918f05751b9a2",
-      "bytes": 1262,
+      "sha256": "35a843dc7c66f08133014c960f7bf78e86dfb45b2ff71ee488cea93e14ac4271",
+      "bytes": 1280,
       "license": "Apache-2.0",
       "provenance": "repository-authored",
       "allowed_use": "Telosieve product, documentation, evaluation, and community communication"
@@ -107,9 +107,17 @@
       "allowed_use": "Telosieve product, documentation, evaluation, and community communication"
     },
     {
+      "path": "templates/evaluation-overlay.svg",
+      "sha256": "6b6b481bba31531df4c689e575ffba7ed5746efc88709bc042c2178bc6f4c420",
+      "bytes": 719,
+      "license": "Apache-2.0",
+      "provenance": "repository-authored",
+      "allowed_use": "Telosieve product, documentation, evaluation, and community communication"
+    },
+    {
       "path": "templates/release-card.svg",
-      "sha256": "117fa25d6e2bb63d708ad387168dbdb7dc32a480c0d754f86c33a69b84edae3a",
-      "bytes": 1768,
+      "sha256": "e0b0cdd190fc1dacafcded3b52e7424685973711f449968acbfc455158fd388a",
+      "bytes": 1773,
       "license": "Apache-2.0",
       "provenance": "repository-authored",
       "allowed_use": "Telosieve product, documentation, evaluation, and community communication"
@@ -124,8 +132,8 @@
     },
     {
       "path": "tokens/brand.tokens.json",
-      "sha256": "5b56687172b53e683cb0007db9855d3f426e93930570126daa266d57e6ade7a9",
-      "bytes": 899,
+      "sha256": "5f6be7ed366cd389c608f2cfd6384c9eac7b5807ed5f79dd0072f90b0ec1ea6e",
+      "bytes": 888,
       "license": "Apache-2.0",
       "provenance": "repository-authored",
       "allowed_use": "Telosieve product, documentation, evaluation, and community communication"
@@ -160,8 +168,8 @@
     },
     {
       "path": "exports/social-card-1200x630.png",
-      "sha256": "17a5dc8a734080174d48f9fe3f5ff38b9ec4bcbed79a54857818af433c2cc3c0",
-      "bytes": 42448,
+      "sha256": "48b075f5ac6b36a681df9785c4be962b4b3dc2842ac9e98276d36e77907c9970",
+      "bytes": 41654,
       "dimensions": [
         1200,
         630

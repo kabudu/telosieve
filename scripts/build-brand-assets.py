@@ -131,7 +131,7 @@ def manifest_for(export_root: Path) -> dict:
             "allowed_use": "Telosieve product, documentation, release, and social communication",
             "export_command": f"python3 scripts/build-brand-assets.py --rebuild ({EXPORTS[relative][0]} -> {relative})",
         })
-    return {"schema_version": "telosieve.brand-assets/v1", "brand_version": "1.0.0-evaluation", "entries": entries}
+    return {"schema_version": "telosieve.brand-assets/v1", "brand_version": "1.0.0", "entries": entries}
 
 
 def build(directory: Path) -> dict:

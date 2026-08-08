@@ -1000,10 +1000,11 @@ files, `scripts/audit-public-history.py`, and
 `scripts/validate-open-source-readiness.py`. This milestone prepares public
 source governance; it does not itself open the repository or activate hosted CI.
 
-## Post-M61 - evaluation-product brand system
+## Post-M61 - enduring product brand system
 
-- [x] Record owner approval for a claim-bounded open-source evaluation product
-  without weakening production, assessment, legal, CI, or publication gates.
+- [x] Record owner approval for one enduring product identity across research,
+  evaluation, release-candidate, and any future production maturity without
+  weakening production, assessment, legal, CI, or publication gates.
 - [x] Freeze audience, category, purpose, promise, principles, personality,
   terminology, messaging, reasons to believe, and prohibited claims.
 - [x] Retain three distinct visual directions and select the evidence aperture
@@ -1017,6 +1018,11 @@ source governance; it does not itself open the repository or activate hosted CI.
 - [x] Enforce SVG safety and accessible descriptions, WCAG contrast, non-colour
   state semantics, deterministic same-host exports, README consistency,
   package inclusion, and prohibited public-copy rules in local CI.
+- [x] Remove maturity from the brand version, canonical lockups, product card,
+  category, and durable descriptions; retain evaluation status only in a
+  separately packaged overlay and release-specific copy.
+- [x] Enforce maturity-neutral canonical assets and exact permanent brand version
+  in local CI, with the rc.2 label retained only as historical tag evidence.
 - [ ] Obtain formal trademark/cultural review, multi-participant comprehension,
   print proofing, and cross-platform optical comparison before claiming those
   external brand assurances.
@@ -1024,7 +1030,7 @@ source governance; it does not itself open the repository or activate hosted CI.
 Evidence: [BRAND_IDENTITY](BRAND_IDENTITY.md),
 [EVALUATION_PRODUCTISATION_DECISION](EVALUATION_PRODUCTISATION_DECISION.md),
 `assets/brand/`, `scripts/build-brand-assets.py`, and
-`scripts/validate-brand.py`. This completes the evaluation-product identity; it
+`scripts/validate-brand.py`. This completes the enduring product identity; it
 does not constitute safety, independent validation, market-fit, or legal evidence.
 
 ## Post-M62 - v0.2.0-rc.2 evaluation freeze

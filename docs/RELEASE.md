@@ -325,8 +325,9 @@ history audit pass. It does not authorize hosted CI, package or container
 publication, telemetry, production deployment, or stronger claims. Hosted CI
 still requires every approval and review listed in the private-repository policy.
 
-The 2026-08-08 evaluation-product decision approves brand identity
-`1.0.0-evaluation` for public-source and signed-candidate presentation. The
+The 2026-08-08 productisation decision approves enduring brand identity `1.0.0`.
+Evaluation and release-candidate status are separate maturity overlays rather
+than variants of the canonical product identity. The
 asset manifest, canonical SVGs, design tokens, channel templates, deterministic
 exports, accessibility checks, and prohibited-claim scan travel with rc.2.
 Product identity does not close independent assessment, operational identity,

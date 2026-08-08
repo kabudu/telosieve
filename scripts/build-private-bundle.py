@@ -25,6 +25,7 @@ BRAND_FILES = [
     "assets/brand/tokens/brand.tokens.json",
     "assets/brand/tokens/brand.css",
     "assets/brand/templates/release-card.svg",
+    "assets/brand/templates/evaluation-overlay.svg",
     "assets/brand/templates/diagram-key.svg",
     "assets/brand/templates/chart-key.svg",
     "assets/brand/exports/favicon-32.png",

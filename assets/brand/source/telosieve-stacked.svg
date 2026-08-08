@@ -6,5 +6,5 @@
     <circle cx="18" cy="38" r="8" fill="#007C91"/><circle cx="18" cy="80" r="8" fill="#8A4B08"/><circle cx="18" cy="122" r="8" fill="#6B4BB6"/><rect x="131" y="74" width="12" height="12" rx="2" fill="#006B5F"/>
   </g>
   <text x="240" y="225" text-anchor="middle" fill="#101820" font-family="Arial, Helvetica, sans-serif" font-size="64" font-weight="700" letter-spacing="-2">Telosieve</text>
-  <text x="240" y="265" text-anchor="middle" fill="#475467" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="600" letter-spacing="1.8">QUESTION BEFORE ENFORCING</text>
+  <text x="240" y="265" text-anchor="middle" fill="#475467" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="600" letter-spacing=".8">QUESTION THE INSTRUCTION BEFORE ENFORCING IT</text>
 </svg>
