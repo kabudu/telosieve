@@ -20,8 +20,8 @@ MANIFEST = BRAND / "BRAND_ASSET_MANIFEST.json"
 MAX_SVG_BYTES = 256 * 1024
 MAX_PNG_BYTES = 2 * 1024 * 1024
 EXPORTS = {
-    "exports/favicon-32.png": ("source/telosieve-small.svg", 32, 32),
-    "exports/avatar-256.png": ("source/telosieve-symbol.svg", 256, 256),
+    "exports/favicon-32.png": ("source/telosieve-favicon.svg", 32, 32),
+    "exports/avatar-256.png": ("source/telosieve-reversed.svg", 256, 256),
     "exports/social-card-1200x630.png": ("templates/release-card.svg", 1200, 630),
 }
 CONTRAST_PAIRS = (
@@ -131,7 +131,7 @@ def manifest_for(export_root: Path) -> dict:
             "allowed_use": "Telosieve product, documentation, release, and social communication",
             "export_command": f"python3 scripts/build-brand-assets.py --rebuild ({EXPORTS[relative][0]} -> {relative})",
         })
-    return {"schema_version": "telosieve.brand-assets/v1", "brand_version": "1.0.0", "entries": entries}
+    return {"schema_version": "telosieve.brand-assets/v1", "brand_version": "2.0.0", "entries": entries}
 
 
 def build(directory: Path) -> dict:

@@ -1,7 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-labelledby="title description">
-  <title id="title">Telosieve reversed symbol</title>
-  <desc id="description">Three evidence paths converge through a light aperture and emerge as one result on a dark field.</desc>
+  <title id="title">Telosieve reversed convergence gate</title>
+  <desc id="description">Three paths enter a light faceted sieve gate and one bounded result emerges on a dark field.</desc>
   <rect width="160" height="160" rx="24" fill="#101820"/>
-  <g fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M18 38H50L67 66" stroke="#5BD6E7" stroke-width="10"/><path d="M18 80H67" stroke="#F5B85C" stroke-width="10"/><path d="M18 122H50L67 94" stroke="#B9A4F4" stroke-width="10"/><rect x="67" y="52" width="28" height="56" rx="8" stroke="#F7FAFC" stroke-width="8"/><path d="M95 80H137" stroke="#57D7C0" stroke-width="10"/></g>
-  <circle cx="18" cy="38" r="8" fill="#5BD6E7"/><circle cx="18" cy="80" r="8" fill="#F5B85C"/><circle cx="18" cy="122" r="8" fill="#B9A4F4"/><rect x="131" y="74" width="12" height="12" rx="2" fill="#57D7C0"/>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="9"><path d="M14 38H45L63 59" stroke="#5BD6E7"/><path d="M14 80H63" stroke="#F5B85C"/><path d="M14 122H45L63 101" stroke="#B9A4F4"/><path d="M97 80H140" stroke="#57D7C0"/></g>
+  <path d="M58 14H102L90 80L102 146H58L70 80ZM76 43L70 80L76 117H84L90 80L84 43Z" fill="#F7FAFC" fill-rule="evenodd"/>
+  <circle cx="14" cy="38" r="7" fill="#5BD6E7"/><circle cx="14" cy="80" r="7" fill="#F5B85C"/><circle cx="14" cy="122" r="7" fill="#B9A4F4"/><rect x="134" y="74" width="12" height="12" rx="2" fill="#57D7C0"/>
 </svg>

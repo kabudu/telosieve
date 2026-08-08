@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 220" role="img" aria-labelledby="title description">
+  <title id="title">Direction A: convergence gate</title>
+  <desc id="description">Three independent signals bend into a faceted verification gate and one bounded result emerges.</desc>
+  <rect width="320" height="220" rx="28" fill="#F7FAFC"/>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="12">
+    <path d="M34 54H90L126 92" stroke="#007C91"/>
+    <path d="M34 110H126" stroke="#8A4B08"/>
+    <path d="M34 166H90L126 128" stroke="#6B4BB6"/>
+    <path d="M198 110H268" stroke="#006B5F"/>
+  </g>
+  <g fill="#101820" fill-rule="evenodd">
+    <path d="M120 28H194L174 110L194 192H120L140 110ZM151 62L140 110L151 158H163L174 110L163 62Z"/>
+  </g>
+  <circle cx="34" cy="54" r="10" fill="#007C91"/><circle cx="34" cy="110" r="10" fill="#8A4B08"/><circle cx="34" cy="166" r="10" fill="#6B4BB6"/>
+  <rect x="260" y="102" width="20" height="20" rx="4" fill="#006B5F"/>
+</svg>

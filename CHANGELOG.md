@@ -6,6 +6,8 @@ All notable Telosieve changes are recorded here. Telosieve follows Semantic Vers
 
 - Correct brand identity `1.0.0` to be permanent across maturity stages and
   separate evaluation status into a release overlay.
+- Replace the diagram-like aperture with the distinctive brand `2.0.0` faceted
+  convergence gate and regenerate every canonical export.
 
 ## 0.2.0-rc.2 - 2026-08-08
 

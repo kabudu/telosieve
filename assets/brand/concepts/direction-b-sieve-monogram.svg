@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 220" role="img" aria-labelledby="title description">
+  <title id="title">Direction B: sieve monogram</title>
+  <desc id="description">A distinctive angular S-shaped sieve carries three evidence colours toward one bounded result.</desc>
+  <rect width="320" height="220" rx="28" fill="#F7FAFC"/>
+  <path d="M74 54H202L230 82L202 110H118L90 138L118 166H246" fill="none" stroke="#101820" stroke-width="30" stroke-linecap="square" stroke-linejoin="bevel"/>
+  <path d="M48 44H93" stroke="#007C91" stroke-width="12" stroke-linecap="round"/>
+  <path d="M48 66H93" stroke="#8A4B08" stroke-width="12" stroke-linecap="round"/>
+  <path d="M48 88H93" stroke="#6B4BB6" stroke-width="12" stroke-linecap="round"/>
+  <path d="M226 166H270" stroke="#006B5F" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="48" cy="44" r="8" fill="#007C91"/><circle cx="48" cy="66" r="8" fill="#8A4B08"/><circle cx="48" cy="88" r="8" fill="#6B4BB6"/>
+  <rect x="264" y="158" width="16" height="16" rx="3" fill="#006B5F"/>
+</svg>

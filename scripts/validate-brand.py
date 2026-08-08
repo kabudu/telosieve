@@ -14,14 +14,15 @@ REQUIRED = (
     "LICENSES/README.md",
     "source/telosieve-symbol.svg",
     "source/telosieve-small.svg",
+    "source/telosieve-favicon.svg",
     "source/telosieve-wordmark.svg",
     "source/telosieve-horizontal.svg",
     "source/telosieve-stacked.svg",
     "source/telosieve-monochrome.svg",
     "source/telosieve-reversed.svg",
-    "concepts/direction-a-aperture.svg",
-    "concepts/direction-b-ledger-weave.svg",
-    "concepts/direction-c-bounded-horizon.svg",
+    "concepts/direction-a-convergence-gate.svg",
+    "concepts/direction-b-sieve-monogram.svg",
+    "concepts/direction-c-evidence-loom.svg",
     "tokens/brand.tokens.json",
     "tokens/brand.css",
     "templates/release-card.svg",
@@ -49,6 +50,7 @@ MATURITY_TERMS = re.compile(r"(?i)\b(?:alpha|beta|evaluation|experimental|previe
 MATURITY_NEUTRAL = (
     "source/telosieve-symbol.svg",
     "source/telosieve-small.svg",
+    "source/telosieve-favicon.svg",
     "source/telosieve-wordmark.svg",
     "source/telosieve-horizontal.svg",
     "source/telosieve-stacked.svg",
@@ -85,7 +87,7 @@ def main() -> int:
         errors.append(result.stdout.strip() or result.stderr.strip() or "brand asset build check failed")
 
     tokens = json.loads((BRAND / "tokens/brand.tokens.json").read_text(encoding="utf-8"))
-    if tokens.get("schema_version") != "telosieve.brand-tokens/v1" or tokens.get("brand_version") != "1.0.0":
+    if tokens.get("schema_version") != "telosieve.brand-tokens/v1" or tokens.get("brand_version") != "2.0.0":
         errors.append("brand token version mismatch")
     expected_states = {"verified", "refused", "warning", "unknown"}
     if not expected_states.issubset(tokens.get("colour", {})):
@@ -93,9 +95,9 @@ def main() -> int:
 
     identity = (ROOT / "docs/BRAND_IDENTITY.md").read_text(encoding="utf-8")
     for phrase in (
-        "Brand version: `1.0.0`",
+        "Brand version: `2.0.0`",
         "Product maturity is not brand identity",
-        "| A: evidence aperture",
+        "| A: convergence gate",
         "Colour never carries state alone",
         "Remaining human gates",
         "not evidence of safety",
@@ -130,7 +132,7 @@ def main() -> int:
     if errors:
         return 1
     print(result.stdout.strip())
-    print(f"brand-validation: passed version=1.0.0 permanent_identity=true maturity_refusals={len(mutation_cases)}")
+    print(f"brand-validation: passed version=2.0.0 permanent_identity=true maturity_refusals={len(mutation_cases)}")
     return 0
 
 

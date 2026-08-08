@@ -2,262 +2,139 @@
 
 ![Telosieve](assets/brand/source/telosieve-horizontal.svg)
 
-**Question the instruction before enforcing it.**
+Telosieve questions desired-state instructions before they are enforced. It separates goal, observation, and viability authorities, tests explicit fault hypotheses, and refuses when surviving evidence cannot justify a bounded result.
 
-Telosieve is a research project for fail-closed service repair when the desired-state
-authority itself may be stale, compromised, or malicious. It separates three
-authorities - goal, observed phenotype, and viability constraints - then evaluates
-explicit fault hypotheses before permitting a repair.
+> Telosieve is currently a read-only evaluation candidate. It does not have production actuation authority, does not provide a general safety proof, and still requires independent assessment.
 
-The first experiment is deliberately narrow: a deterministic replicated key-value
-service under a bounded fault model. This repository contains the research and
-delivery corpus, not a claim of a finished product.
+## Why Telosieve exists
 
-## Candidate contribution
+Infrastructure control normally assumes that desired state is trustworthy. That assumption can fail when an authority is stale, compromised, inconsistent, or malicious. Telosieve explores a stricter model: provenance stays visible, observations require authenticated corroboration, and uncertainty produces an explicit refusal instead of a guessed repair.
 
-A provenance-separated repair protocol that can suspect the goal authority,
-exclude suspected evidence from planning, require independently checked viability,
-and refuse repair when surviving evidence cannot distinguish safe outcomes.
+The candidate contribution is a provenance-separated protocol that can suspect the goal authority, exclude suspect evidence from planning, require independently checked viability, and retain a deterministic certificate explaining either the bounded result or refusal.
 
-## Status
+## Current status
 
-The original M3 decision narrowed Telosieve to private research. After the
-registered unsafe approval was removed and the bounded evidence base expanded,
-the project authorized a private, production-shaped evaluation release lane on
-2026-07-30. Version `0.2.0-rc.1` was the first signed private evaluation
-candidate. Version `0.2.0-rc.2` is frozen as the current signed private
-evaluation candidate. The enduring product brand is independently versioned as
-`1.0.0`; evaluation maturity is a separate claim-bounded release overlay.
-Public release, autonomous production actuation, and
-general safety claims remain blocked pending their separate explicit decisions;
-production promotion additionally requires independent validation of the exact
-candidate. Certificate v4's
-stable-key continuity kernel removes every unsafe approval reproduced by the
-registered fixtures and 512-scenario generated state space without changing
-their oracles. Certificate v5's two agreeing declared goal domains also remove
-the 64 measured safe-case refusals. Domain labels do not prove organizational
-independence. Certificate v6 permits only separately authorized, goal/tip-bound
-exact key deletion; certificate v7 atomically consumes an applied authorization
-once in the single-host anchored path. Certificate v8 adds a transactional local
-reference actuator with committed-state receipts. Ordinary omission still
-refuses. The bounded result is not a general safety proof. The harness
-authenticates a bounded scenario,
-evaluates its declared hypotheses, applies only one common independently checked
-transition, and otherwise emits a refusal certificate. See
-[VALIDATION](docs/VALIDATION.md) for the falsification plan, [NOVELTY](docs/NOVELTY.md)
-for claim limits, and [IMPLEMENTATION_PLAN](docs/IMPLEMENTATION_PLAN.md) for scope.
-The executable [adversarial coverage contract](docs/ADVERSARIAL_COVERAGE.md)
-tracks evidence and open attack-surface gaps separately for every evaluation
-mode; it currently retains three deferred cells and is not a robustness proof.
-An authenticated [observation-quorum primitive](docs/OBSERVATION_QUORUM.md) is
-mandatory for every supported evaluation capability. Kubernetes and OpenTofu
-qualification now bind its corroborated evidence digest into successful
-certificates. Declared producer domains still do not prove independent truth.
+| Surface | Current evidence | Boundary |
+| --- | --- | --- |
+| Candidate | Signed private `v0.2.0-rc.2` | project-controlled, pending independent assessment |
+| Authority model | Goal, observation, and viability provenance remain separate | bounded registered and generated scenarios, not a general proof |
+| Observation | Authenticated multi-domain quorum required in every supported mode | declared domains do not prove organisational independence |
+| Integrations | Kubernetes, OpenTofu, Redis, PostgreSQL, and HTTP/JSON | read-only qualification with documented environment limits |
+| Actuation | Transactional single-host reference actuator | reference semantics only, no production-system authority |
+| Brand | Enduring product identity `2.0.0` | legal and external comprehension review remain separate gates |
+| CI | `./scripts/ci-local.sh` | sole authoritative gate while the repository is private |
 
-## External assessment
+Public source, production promotion, hosted CI, package publication, autonomous actuation, and stronger safety claims each remain separately governed. See [Release Strategy](docs/RELEASE.md) and [Public Opening Decision](docs/PUBLIC_OPENING_DECISION.md).
 
-External assessors should start with the
-[External Assessment Guide](docs/EXTERNAL_ASSESSMENT.md). It identifies the
-exact `v0.2.0-rc.2` source and handoff, requires an independently authenticated
-trust-record digest and independently built verifier, separates mandatory
-integrity checks from environment-dependent integration tests, and defines the
-requested findings record. Do not execute the bundled binary before the signed
-handoff has been verified.
+## Five-minute local path
 
-The older [Independent-Assessment Handoff](docs/ASSESSOR_HANDOFF.md) is retained
-only to reproduce the historical Post-M15 evidence; it is not the release-
-candidate assessment procedure.
-
-Opt-in recovery-root-signed authority lifecycle chains now rotate, expire, and
-revoke operational keys without invalidating historical phenotype signatures.
-This is a bounded research protocol, not a production identity service. See
-[Authority Key Lifecycle](docs/KEY_LIFECYCLE.md).
-
-## Run the registered scenarios
-
-Requires stable Rust 1.97 or newer.
+Requirements: stable Rust 1.97 or newer and dependencies already present in the Cargo cache.
 
 ```sh
-cargo test
+cargo test --locked --offline
 mkdir -p out
-cargo run -- run scenarios/benign.json out/benign-certificate.json out/ledger.jsonl
-cargo run -- run scenarios/poisoned-goal.json out/refusal-certificate.json out/ledger.jsonl
+cargo run --locked --offline -- run \
+  scenarios/benign.json out/benign-certificate.json out/ledger.jsonl
+cargo run --locked --offline -- run \
+  scenarios/poisoned-goal.json out/refusal-certificate.json out/ledger.jsonl
 ```
 
-For durable history rollback detection, explicitly initialize and use the
-anchored path. This is also the only path that provides one-shot deletion
-consumption:
+The benign scenario emits a deterministic bounded certificate. The poisoned-goal scenario refuses. Neither command mutates an external target system.
+
+Run the versioned evaluation boundary with:
 
 ```sh
-cargo run -- anchor-init scenarios/benign.json out/phenotype-anchor.json
-cargo run -- run-anchored scenarios/benign.json \
-  out/benign-certificate.json out/ledger.jsonl out/phenotype-anchor.json
-```
-
-Exercise the transactional single-host reference actuator:
-
-```sh
-cargo run -- local-init scenarios/benign.json out/local-actuator.json
-cargo run -- apply-local scenarios/benign.json \
-  out/benign-certificate.json out/ledger.jsonl out/local-actuator.json
-cargo run -- local-show out/local-actuator.json
-```
-
-This reference backend proves atomic adapter semantics; it is not a production
-service integration.
-
-Evaluate a bounded exported Kubernetes snapshot without cluster access or
-actuation:
-
-```sh
-cargo run --locked --offline -- shadow-kubernetes \
-  scenarios/benign.json snapshots/kubernetes-shadow-benign.json \
-  out/shadow-certificate.json out/shadow-ledger.jsonl
-```
-
-See [Kubernetes Shadow Adapter](docs/KUBERNETES_SHADOW.md).
-
-Run the stable, versioned private-evaluation boundary with a strict
-configuration:
-
-```sh
-mkdir -p out
 cargo run --locked --offline -- evaluate evaluation/config.example.json
 ```
 
-Configuration v5 also supports bounded, read-only live Kubernetes collection
-through an explicitly selected `kubectl` and kubeconfig. See
-[Evaluation CLI](docs/EVALUATION_CLI.md); this remains evaluation software and
-requires agreement with a signed multi-domain external-producer quorum. The
-fake-process suite is supplemented by a disposable real-cluster/RBAC
-qualification; managed and independently operated clusters remain unqualified.
-
-Private macOS/Linux evaluation installations can be managed with the bounded
-local lifecycle tool. It atomically installs, upgrades, and rolls back a
-digest-bound binary/configuration pair, creates verified backups, and uninstalls
-software while preserving evidence. See
-[Evaluation Installation Lifecycle](docs/EVALUATION_LIFECYCLE.md).
-
-Generate bounded, content-redacted installation diagnostics with
-`scripts/evaluation-diagnostics.py`. The fixed export allowlist excludes paths,
-configuration values, evidence contents, environment, and application values;
-digests remain sensitive. See
-[Operator Diagnostics](docs/OPERATOR_DIAGNOSTICS.md).
-
-See [Versioned Evaluation CLI](docs/EVALUATION_CLI.md). This mode writes only
-certificate and ledger evidence; it has no target-system mutation authority.
-
-Back up, restore, and recover its current single-host generation:
-
-```sh
-cargo run -- local-backup out/local-actuator.json out/actuator-backup.json
-cargo run -- local-restore out/local-actuator.json out/actuator-backup.json
-cargo run -- local-recover out/local-actuator.json
-```
-
-Actuator schema-v1 files must be upgraded with `local-upgrade`; do not
-reinitialize them and discard deletion-consumption history. See
-[Actuator Recovery](docs/ACTUATOR_RECOVERY.md).
-
-Reproduce the bounded Linux recovery qualification from the cached pinned image:
-
-```sh
-./scripts/qualify-linux-recovery.sh linux/arm64
-./scripts/qualify-linux-recovery.sh linux/amd64
-```
-
-The amd64 run is emulated on the current arm64 host. Both runs are
-network-disabled and use disposable Docker-managed Linux volumes; neither is a
-bare-metal or whole-disk durability claim.
-
-For the complete private-repository quality gate, run:
-
-```sh
-./scripts/ci-local.sh
-```
-
-Generate the bounded 512-scenario safety/availability report:
-
-```sh
-cargo run --locked --offline --example state_space -- results/generated-state-space.json
-```
-
-Hosted CI is intentionally disabled until an explicitly approved public-opening
-or research-release gate.
-
-The first concrete Integration Contract v1 implementation targets a bounded
-Redis key namespace. Its pinned disposable Redis 8.8 qualification uses three
-distinct read-only ACL users, proves mutation denial, exercises two signed
-producers and bounded concurrent load, and retains the shared-control-plane
-limitation. See [Redis Read-Only Integration](docs/REDIS_INTEGRATION.md).
-
-PostgreSQL 18.4 is the second concrete contract implementation. It uses a
-bounded repeatable-read, read-only transaction, three SELECT-only roles, two
-signed producers, concurrent-writer/load campaigns, and explicit mutation,
-scope, lock and outage refusals. See
-[PostgreSQL Read-Only Integration](docs/POSTGRESQL_INTEGRATION.md).
-
-HTTP/JSON is the third concrete contract implementation. It provides a fixed,
-bounded GET-only snapshot protocol with owner-only bearer credentials, two
-signed producers, concurrent load, mutation-method denial, and fail-closed
-transport faults. See [HTTP/JSON Read-Only Integration](docs/HTTP_JSON_INTEGRATION.md).
-
-Inspect the exact machine-checked read-only evaluation surface with:
+Inspect the exact compiled capability contract with:
 
 ```sh
 cargo run --locked --offline -- evaluation-capabilities
 ```
 
-Generate and qualify the credential-free OpenTofu plan integration with:
+For rollback-detecting history, deletion-authorization consumption, reference actuation, backup, restore, and recovery commands, use the [Evaluation CLI Guide](docs/EVALUATION_CLI.md), [Actuator Recovery Guide](docs/ACTUATOR_RECOVERY.md), and [Evaluation Lifecycle Guide](docs/EVALUATION_LIFECYCLE.md).
 
-```sh
-cargo build --locked --offline
-python3 scripts/run-opentofu-plan.py
+## Choose an evaluation path
+
+| Path | What it evaluates | Start here |
+| --- | --- | --- |
+| Kubernetes shadow | A bounded exported snapshot without cluster access | [Kubernetes Shadow Adapter](docs/KUBERNETES_SHADOW.md) |
+| Kubernetes live | Four bounded read-only API collections with coherence checks | [Real Kubernetes Qualification](docs/KUBERNETES_REAL_CLUSTER.md) |
+| OpenTofu | Saved plan bytes through two corroborating producers, never `apply` | [OpenTofu Plan Evaluation](docs/OPENTOFU_PLAN.md) |
+| Redis | A bounded key namespace through SELECT-only identities | [Redis Integration](docs/REDIS_INTEGRATION.md) |
+| PostgreSQL | A repeatable-read, read-only snapshot through SELECT-only roles | [PostgreSQL Integration](docs/POSTGRESQL_INTEGRATION.md) |
+| HTTP/JSON | A fixed GET-only snapshot protocol with bearer or mutual-TLS identity | [HTTP/JSON Integration](docs/HTTP_JSON_INTEGRATION.md) |
+| New system | The versioned executable adapter and quorum response contract | [Integration Contract](docs/INTEGRATION_CONTRACT.md) |
+
+Each qualification distinguishes real-system coverage from simulated control planes, loopback-only transport, shared administration, or absent organisational independence. Those limitations are evidence, not footnotes.
+
+## External assessment
+
+Assessors should begin with the [External Assessment Guide](docs/EXTERNAL_ASSESSMENT.md). It defines:
+
+- how to authenticate the trust-record digest through a separate channel;
+- how to verify the handoff before executing its binary;
+- mandatory integrity tests and environment-dependent integration tests;
+- adversarial and lifecycle expectations;
+- the findings format and evidence-return procedure.
+
+The [Assessor Handoff](docs/ASSESSOR_HANDOFF.md) is retained only for historical Post-M15 reproduction and is not the current candidate procedure.
+
+## Architecture and safety boundary
+
+```text
+goal authority ---------\
+observation quorum ------> hypothesis evaluation -> bounded certificate or refusal
+viability authority ----/             |
+                                        +-> append-only evidence and durable anchors
 ```
 
-This uses disposable local `terraform_data` state, corroborates the exact plan
-bytes through two separately invoked renderer/signing producer processes, and
-never grants Telosieve provider, backend, or apply access. See
-[OpenTofu Plan Evaluation](docs/OPENTOFU_PLAN.md).
+The core invariants are:
 
-Linux evaluators can place each Kubernetes/OpenTofu observation producer behind
-a bounded authenticated Unix relay running as its own systemd identity; see
-[Observation Producer Isolation](docs/PRODUCER_ISOLATION.md). The local harness
-qualifies transport mechanics, not real multi-user or organizational isolation.
+1. authority provenance is authenticated and never silently merged;
+2. every supported evaluation mode requires an exact-byte observation quorum;
+3. suspect evidence is excluded under the declared hypothesis;
+4. a transition is allowed only when every surviving hypothesis agrees and viability independently accepts it;
+5. unsupported, stale, divergent, oversized, replayed, or malformed evidence fails closed;
+6. current integration modes write evidence only and have no target mutation authority.
 
-Implement additional read-only systems through the versioned executable
-[Integration Contract v1](docs/INTEGRATION_CONTRACT.md). Configuration v7 sends
-one bounded request to an absolute adapter executable, requires a canonical
-platform-neutral response plus an exact-byte multi-domain producer quorum, and
-binds the result into certificate v11. The generic conformance suite qualifies
-the contract, not any new platform or its credential scope.
+The bounded generated state space contains no reproduced unsafe approval, but finite enumeration is not a proof for arbitrary systems or attackers. Read [Architecture](docs/ARCHITECTURE.md), [Threat Model](docs/THREAT_MODEL.md), [Soundness Case](docs/SOUNDNESS_CASE.md), [Observation Quorum](docs/OBSERVATION_QUORUM.md), and [Adversarial Coverage](docs/ADVERSARIAL_COVERAGE.md) before making stronger claims.
 
-M2 results and negative findings are reported in
-[M2 Adversarial Results](docs/M2_RESULTS.md).
-The evidence-to-product comparison is recorded in
-[Productisation Assessment](docs/PRODUCTISATION_ASSESSMENT.md).
-The binding M3 outcome and its reopening conditions are recorded in
-[Productisation Decision](docs/PRODUCTISATION_DECISION.md). The later bounded
-authorization is recorded in
-[Private Evaluation Product Decision](docs/EVALUATION_PRODUCT_DECISION.md).
-The approved enduring product identity, separate evaluation overlay, and unchanged production gates are
-recorded in [Productisation Decision](docs/EVALUATION_PRODUCTISATION_DECISION.md)
-and [Brand Identity](docs/BRAND_IDENTITY.md).
+## Development and verification
 
-Each run authenticates all authority envelopes before evaluation. The certificate
-is deterministic for identical inputs; the JSONL ledger is append-only. The
-fixture generator uses deterministic research-only signing keys:
+The complete private-repository gate is:
 
 ```sh
-cargo run --example generate_fixtures
+./scripts/ci-local.sh
 ```
+
+It runs formatting, linting, Rust and Python tests, documentation and metadata checks, supply-chain validation, deterministic packaging, adversarial load, real disposable integration qualifications, reproducible builds, and diff hygiene. Hosted CI is intentionally disabled while the repository is private and must never be described as passing.
+
+Useful focused commands:
+
+```sh
+cargo test --locked --offline --all-targets --all-features
+cargo run --locked --offline --example state_space -- results/generated-state-space.json
+python3 scripts/validate-brand.py
+python3 scripts/validate-open-source-readiness.py
+```
+
+Contribution, security-reporting, and release rules are in [Contributing](CONTRIBUTING.md), [Security Policy](SECURITY.md), [Code of Conduct](CODE_OF_CONDUCT.md), and [Changelog](CHANGELOG.md).
+
+## Documentation map
+
+| Need | Document |
+| --- | --- |
+| Product scope and claim limits | [Product Specification](docs/PRODUCT_SPECIFICATION.md), [Novelty](docs/NOVELTY.md), [Productisation Decision](docs/PRODUCTISATION_DECISION.md) |
+| System and protocol design | [Architecture](docs/ARCHITECTURE.md), [Authority Protocol](docs/AUTHORITY_PROTOCOL.md), [Compatibility](docs/PROTOCOL_COMPATIBILITY.md) |
+| Security and correctness | [Threat Model](docs/THREAT_MODEL.md), [Soundness Case](docs/SOUNDNESS_CASE.md), [Risk Register](docs/RISK_REGISTER.md) |
+| Operations and recovery | [Operations](docs/OPERATIONS.md), [Diagnostics](docs/OPERATOR_DIAGNOSTICS.md), [Lifecycle](docs/EVALUATION_LIFECYCLE.md) |
+| Evaluation evidence | [Validation](docs/VALIDATION.md), [E2E Testing](docs/E2E_TESTING.md), [Adversarial Coverage](docs/ADVERSARIAL_COVERAGE.md) |
+| Product identity | [Brand Identity](docs/BRAND_IDENTITY.md), [Productisation Decision](docs/EVALUATION_PRODUCTISATION_DECISION.md) |
+| Roadmap and traceability | [Implementation Plan](docs/IMPLEMENTATION_PLAN.md), [Requirements Traceability](docs/REQUIREMENTS_TRACEABILITY.md) |
+| Release and assessment | [Release Strategy](docs/RELEASE.md), [Candidate Signing](docs/CANDIDATE_SIGNING.md), [External Assessment](docs/EXTERNAL_ASSESSMENT.md) |
 
 ## Repository policy
 
-This is a private repository with `origin` configured for `kabudu/telosieve`. The
-default branch is `master`. Public-source preparation is governed by the
-[Public Opening Decision](docs/PUBLIC_OPENING_DECISION.md); visibility does not
-change until productisation, exact-candidate freeze, and final history audit
-pass. Source is licensed under [Apache License 2.0](LICENSE). See
-[Contributing](CONTRIBUTING.md), [Security Policy](SECURITY.md),
-[Code of Conduct](CODE_OF_CONDUCT.md), and [Changelog](CHANGELOG.md).
+Telosieve is licensed under [Apache License 2.0](LICENSE). The private repository uses `master` as its default branch. Every milestone is delivered through a feature branch, full local CI, remote pull-request diff review, and squash merge. Repository visibility alone never authorizes hosted CI, packages, telemetry, production deployment, or stronger claims.

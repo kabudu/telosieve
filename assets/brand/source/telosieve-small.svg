@@ -1,11 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-labelledby="title description">
-  <title id="title">Telosieve small aperture symbol</title>
-  <desc id="description">Three evidence paths pass through an aperture and become one result.</desc>
-  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M3 7H9L13 12" stroke="#007C91" stroke-width="3"/>
-    <path d="M3 16H13" stroke="#8A4B08" stroke-width="3"/>
-    <path d="M3 25H9L13 20" stroke="#6B4BB6" stroke-width="3"/>
-    <rect x="13" y="10" width="6" height="12" rx="2" stroke="#101820" stroke-width="2.5"/>
-    <path d="M19 16H28" stroke="#006B5F" stroke-width="3"/>
-  </g>
+  <title id="title">Telosieve small convergence gate symbol</title>
+  <desc id="description">Three paths enter a faceted gate and one result emerges.</desc>
+  <path d="M2 8H10L13 12" fill="none" stroke="#007C91" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M2 16H13" stroke="#8A4B08" stroke-width="3" stroke-linecap="round"/><path d="M2 24H10L13 20" stroke="#6B4BB6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M12 3H21L19 16L21 29H12L14 16Z" fill="#101820"/>
+  <path d="M20 16H29" stroke="#006B5F" stroke-width="3" stroke-linecap="round"/>
 </svg>

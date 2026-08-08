@@ -1007,7 +1007,7 @@ source governance; it does not itself open the repository or activate hosted CI.
   weakening production, assessment, legal, CI, or publication gates.
 - [x] Freeze audience, category, purpose, promise, principles, personality,
   terminology, messaging, reasons to believe, and prohibited claims.
-- [x] Retain three distinct visual directions and select the evidence aperture
+- [x] Retain three distinct visual directions and select the convergence gate
   through a documented non-leading internal review and small-size test.
 - [x] Produce horizontal, stacked, symbol, wordmark, small, monochrome, and
   reversed SVGs plus repository, release, diagram, and chart templates.

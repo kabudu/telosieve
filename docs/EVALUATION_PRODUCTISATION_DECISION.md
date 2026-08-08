@@ -4,9 +4,9 @@ Date: 2026-08-08
 
 ## Decision
 
-The owner approves Telosieve as a product with enduring brand identity `1.0.0`. The identity is independent of research, evaluation, release-candidate, production, and support maturity. This supersedes the 2026-07-29 productisation prohibition for the product and public-source presentation lanes. It does not supersede production, actuation, independent-assessment, legal-clearance, hosted-CI, package-publication, or safety-claim gates.
+The owner approves Telosieve as a product with enduring brand identity `2.0.0`. The identity is independent of research, evaluation, release-candidate, production, and support maturity. This supersedes the 2026-07-29 productisation prohibition for the product and public-source presentation lanes. It does not supersede production, actuation, independent-assessment, legal-clearance, hosted-CI, package-publication, or safety-claim gates.
 
-The permanent product layer comprises the Telosieve name, evidence-aperture mark, `Question the instruction before enforcing it` tagline, corroborated desired-state control category, brand platform, visual system, and canonical assets. Current read-only evaluation status is a separately versioned release overlay and must not be encoded into the canonical mark, brand version, core tagline, or design tokens.
+The permanent product layer comprises the Telosieve name, convergence-gate mark, `Question the instruction before enforcing it` tagline, corroborated desired-state control category, brand platform, visual system, and canonical assets. Current read-only evaluation status is a separately versioned release overlay and must not be encoded into the canonical mark, brand version, core tagline, or design tokens.
 
 ## Supported product profile
 
