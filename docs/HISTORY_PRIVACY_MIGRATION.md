@@ -2,6 +2,8 @@
 
 Date authorized: 2026-08-08
 
+Status: completed 2026-08-08
+
 ## Requirement
 
 The owner's personal email address must not occur in any current file,
@@ -10,11 +12,11 @@ record, or other object exposed by the Telosieve repository.
 
 ## Decision
 
-A force-push into the existing GitHub repository is insufficient because closed
+A force-push into the former GitHub repository was insufficient because closed
 pull-request refs and platform-retained objects may continue to expose rewritten
-commit metadata. Before public opening, the private GitHub repository will be
-replaced by a newly created private repository at the same owner/name after all
-commit and tag identities are rewritten to the owner's GitHub noreply address.
+commit metadata. The private GitHub repository was therefore replaced by a newly
+created private repository at the same owner/name after all commit and tag
+identities were rewritten to the owner's GitHub noreply address.
 
 The migration preserves source-file content and commit topology but intentionally
 changes every affected object ID. Old pull requests, remote feature branches,
@@ -42,3 +44,26 @@ qualified, signed, verified, and tagged from the sanitized graph.
 Abort the public-opening sequence if any retained or platform-visible ref exposes
 the old graph, if repository recreation cannot be verified, or if a candidate or
 document still treats a superseded commit as current.
+
+## Completion evidence
+
+The sanitized graph contains 88 commits and no tags. Its sole branch is `master`
+at `4d1ca3efe151556a3cb992cdc8a7d2cb9b0418f8`. Before replacement, the complete
+authoritative local gate passed at that head, including the real-cluster and
+external-system harnesses.
+
+The former private repository was deleted and a new private repository was
+created at the same owner/name. Remote enumeration then reported exactly one
+head (`master`) and no tags. A fresh single-branch, no-tags clone established:
+
+- the remote head and local head were identical;
+- `git log --all` contained only the configured GitHub noreply identity;
+- `git fsck --full --no-reflogs --unreachable` reported no unreachable objects;
+- the bounded history audit passed 1,876 objects, including 88 metadata objects
+  and 1,338 historical blobs; and
+- the working tree was clean.
+
+The obsolete local object database and migration workspaces were removed after
+the fresh-clone verification. Criteria 1–6 are complete. Criterion 7 remains the
+next release milestone: freeze a newly versioned candidate from this sanitized
+graph before any source-visibility change.

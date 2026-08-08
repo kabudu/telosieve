@@ -10,6 +10,9 @@ All notable Telosieve changes are recorded here. Telosieve follows Semantic Vers
   convergence gate and regenerate every canonical export.
 - Require complete Git-metadata email privacy, destructive remote replacement,
   and successor-candidate freeze before public opening.
+- Complete the privacy-preserving history rewrite and private repository
+  replacement with one sanitized branch, no legacy tags, and fresh-clone audit
+  evidence.
 
 ## 0.2.0-rc.2 - 2026-08-08
 

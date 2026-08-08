@@ -2,10 +2,13 @@
 
 There is no production release yet. Private evaluation-product engineering is
 authorized by [EVALUATION_PRODUCT_DECISION](EVALUATION_PRODUCT_DECISION.md).
-The historical `v0.2.0-rc.1` candidate and current `v0.2.0-rc.2` candidate
-passed their project-controlled freezes. The exact rc.2 evidence is retained in
-[RC2_FREEZE_RECORD](RC2_FREEZE_RECORD.md). No public artifact distribution is
-authorized by the private evaluation decision alone. Research or evaluation releases require:
+The historical `v0.2.0-rc.1` and `v0.2.0-rc.2` candidates passed their
+project-controlled freezes, then were revoked when repository history was
+privacy-rewritten. The exact rc.2 evidence is retained in
+[RC2_FREEZE_RECORD](RC2_FREEZE_RECORD.md), but neither old tag exists in the
+replacement repository and neither candidate is distributable. No public
+artifact distribution is authorized by the private evaluation decision alone.
+Research or evaluation releases require:
 
 1. frozen protocol and fault model;
 2. reproducible harness and locked dependencies;
@@ -320,20 +323,21 @@ Kubernetes certificate and in direct and relayed OpenTofu certificates. It does
 not establish independent producer administration or platform truth.
 
 The 2026-08-08 public-opening decision authorizes Apache-2.0 source publication
-only after productisation, exact `v0.2.0-rc.2` freeze, and a final bounded
-history audit pass. It does not authorize hosted CI, package or container
-publication, telemetry, production deployment, or stronger claims. Hosted CI
+only after productisation, a successor-candidate freeze from the sanitized
+graph, and a final bounded history audit pass. The history migration and audit
+are complete; the successor freeze remains pending. It does not authorize hosted
+CI, package or container publication, telemetry, production deployment, or stronger claims. Hosted CI
 still requires every approval and review listed in the private-repository policy.
 
 The 2026-08-08 productisation decision approves enduring brand identity `2.0.0`.
 Evaluation and release-candidate status are separate maturity overlays rather
 than variants of the canonical product identity. The
 asset manifest, canonical SVGs, design tokens, channel templates, deterministic
-exports, accessibility checks, and prohibited-claim scan travel with rc.2.
+exports, accessibility checks, and prohibited-claim scan travel with the successor candidate.
 Product identity does not close independent assessment, operational identity,
 legal name/mark clearance, raster cross-platform equivalence, or production gates.
 
-The exact `v0.2.0-rc.2` evaluation freeze is authorized by
+The historical `v0.2.0-rc.2` evaluation freeze was authorized by
 [RC2_EVALUATION_RELEASE_DECISION](RC2_EVALUATION_RELEASE_DECISION.md) only for
 the named project-controlled signer, maximum 30-day window, approved evaluator
 recipients, private create-new handoff, and separately authenticated trust

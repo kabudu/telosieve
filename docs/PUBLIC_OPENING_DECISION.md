@@ -4,7 +4,7 @@ Date: 2026-08-08
 
 ## Decision
 
-The owner approves preparing Telosieve for source publication as claim-bounded evaluation software. Repository visibility may change only after the productisation and `v0.2.0-rc.2` freeze milestones pass their complete local gates and a final public-history audit reports no prohibited material.
+The owner approves preparing Telosieve for source publication as claim-bounded evaluation software. Productisation is complete. The historical `v0.2.0-rc.2` freeze was revoked by the privacy-preserving history migration; repository visibility may change only after a successor candidate from the sanitized graph passes its complete local gates and a final public-history audit reports no prohibited material.
 
 This decision authorizes Apache-2.0 source availability at that later gate. It does not authorize production deployment, autonomous actuation, a general safety or novelty claim, package or container registry publication, telemetry, paid services, hosted CI, or publication of private candidate handoffs, signing keys, evaluator identities, credentials, or assessment correspondence.
 
