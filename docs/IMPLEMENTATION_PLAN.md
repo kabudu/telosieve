@@ -991,7 +991,7 @@ assess rc.2.
   common credential shapes, owner-specific paths, and oversized artifacts.
 - [x] Enforce governance files, Cargo package metadata, history hygiene, and the
   public-opening boundary in authoritative local CI.
-- [ ] Change repository visibility only after productisation, exact rc.2 freeze,
+- [ ] Change repository visibility only after productisation, an exact successor freeze,
   a final audit, and verification of the remote public state.
 
 Evidence: [PUBLIC_OPENING_DECISION](PUBLIC_OPENING_DECISION.md),
@@ -1059,3 +1059,27 @@ Evidence before freeze: [RC2_EVALUATION_RELEASE_DECISION](RC2_EVALUATION_RELEASE
 `scripts/validate-release-presentation.py`. Exact artifacts and tag evidence
 are retained in [RC2_FREEZE_RECORD](RC2_FREEZE_RECORD.md). The record commit is
 deliberately newer than the immutable tagged candidate bytes.
+
+## Post-M63 - v0.2.0-rc.3 privacy-safe successor freeze
+
+- [x] Replace the private GitHub repository with a sanitized graph containing
+  noreply-only retained identities, one branch, and no superseded candidate tags.
+- [x] Rebind historical evidence to rewritten commits and pass the bounded object,
+  metadata, blob, literal-address, and fresh-clone audits.
+- [x] Advance package, assessor, brand-overlay, bundle, release-note, and release
+  decision surfaces to `v0.2.0-rc.3` without changing the enduring product identity.
+- [x] Render and inspect the release presentation at desktop and 390 px viewports,
+  fix narrow-title overflow, and retain the bounded result and residual limits.
+- [ ] Merge the final reviewed pre-freeze commit and pass `./scripts/ci-local.sh`
+  on its clean, pushed `master` SHA.
+- [ ] Reproduce identical locked/offline release binaries and retain the exact digest.
+- [ ] Generate a new external owner-only evaluation key and atomically build,
+  sign, checksum, and offline-verify the seven-file handoff outside Git.
+- [ ] Create and push annotated `v0.2.0-rc.3` at the exact candidate commit with
+  bundle/trust digests and the independent-assessment boundary.
+- [ ] Record and review the completed ceremony without changing candidate bytes.
+
+Evidence before freeze: [RC3_EVALUATION_RELEASE_DECISION](RC3_EVALUATION_RELEASE_DECISION.md),
+[RC3_RELEASE_PRESENTATION_REVIEW](RC3_RELEASE_PRESENTATION_REVIEW.md),
+`RELEASE_NOTES_v0.2.0-rc.3.md`, [History Privacy Migration](HISTORY_PRIVACY_MIGRATION.md),
+and `scripts/validate-release-presentation.py`.

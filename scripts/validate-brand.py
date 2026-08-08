@@ -36,7 +36,7 @@ REQUIRED = (
 PUBLIC_COPY = (
     "README.md",
     "Cargo.toml",
-    "RELEASE_NOTES_v0.2.0-rc.2.md",
+    "RELEASE_NOTES_v0.2.0-rc.3.md",
     "SECURITY.md",
 )
 PROHIBITED = (

@@ -280,6 +280,8 @@ def assert_bundle(path: Path) -> int:
             "docs/BRAND_IDENTITY.md", "docs/EVALUATION_PRODUCTISATION_DECISION.md",
             "docs/RC2_EVALUATION_RELEASE_DECISION.md",
             "docs/RC2_RELEASE_PRESENTATION_REVIEW.md",
+            "docs/RC3_EVALUATION_RELEASE_DECISION.md",
+            "docs/RC3_RELEASE_PRESENTATION_REVIEW.md",
             "assets/brand/BRAND_ASSET_MANIFEST.json",
             "assets/brand/source/telosieve-horizontal.svg",
             "assets/brand/exports/social-card-1200x630.png",

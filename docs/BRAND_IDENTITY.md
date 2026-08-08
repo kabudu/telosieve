@@ -31,7 +31,7 @@ Permanent short description: **Telosieve provides corroborated control for desir
 
 Permanent medium description: **Telosieve helps infrastructure and security teams question desired-state instructions when the authority behind them may be wrong. It separates goal, observation, and viability evidence, corroborates authenticated observations, retains versioned evidence, and treats refusal as a first-class outcome.**
 
-Current maturity overlay: **The current `v0.2.0-rc.2` release is a project-controlled, read-only evaluation candidate. It has no production actuation authority, no production SLA, and still requires independent assessment.**
+Current maturity overlay: **The current `v0.2.0-rc.3` release is a project-controlled, read-only evaluation candidate. It has no production actuation authority, no production SLA, and still requires independent assessment.**
 
 Reasons to believe must link to repository evidence:
 
@@ -134,7 +134,7 @@ Brand sources, tokens, and manifest use their own `2.0.0` version. Protocol and 
 
 ### Migration from the maturity-coupled label
 
-The `v0.2.0-rc.2` tag preserves the earlier `1.0.0-evaluation` label and first aperture geometry as historical evidence. Brand `1.0.0` separated maturity from identity. Brand `2.0.0` now replaces the diagram-like aperture with the more distinctive faceted convergence gate while retaining the name, tagline, palette, typography, semantic states, and asset paths. Consumers must refresh every logo and raster export rather than mixing generations; use `evaluation-overlay.svg` only when current maturity disclosure is required. Do not infer a production promotion from either identity correction.
+The revoked `v0.2.0-rc.2` record preserves the earlier `1.0.0-evaluation` label and first aperture geometry as historical evidence. Brand `1.0.0` separated maturity from identity. Brand `2.0.0` now replaces the diagram-like aperture with the more distinctive faceted convergence gate while retaining the name, tagline, palette, typography, semantic states, and asset paths. Consumers must refresh every logo and raster export rather than mixing generations; use `evaluation-overlay.svg` only when current maturity disclosure is required. Do not infer a production promotion from either identity correction.
 
 ## Remaining human gates
 

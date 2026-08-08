@@ -10,7 +10,7 @@ tokens, templates, raster exports, provenance manifest, and validators so the
 candidate presentation remains bound to the exact handoff.
 Evaluation maturity is carried by a separate overlay and release copy rather
 than encoded into the product mark or brand version.
-The rc.2 release decision and curated release-presentation validator bind the
+The rc.3 successor decision and curated release-presentation validator bind the
 authorized signer, custody non-claim, recipient class, private channel, title,
 highlights, limitations, and local evidence links.
 The fixed allowlist includes all four contracted configurations, the Kubernetes,

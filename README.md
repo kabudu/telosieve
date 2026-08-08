@@ -16,7 +16,7 @@ The candidate contribution is a provenance-separated protocol that can suspect t
 
 | Surface | Current evidence | Boundary |
 | --- | --- | --- |
-| Candidate | Successor freeze pending | signed `v0.2.0-rc.1` and `rc.2` were revoked by the privacy-preserving history migration |
+| Candidate | `v0.2.0-rc.3` pre-freeze | signed `v0.2.0-rc.1` and `rc.2` were revoked by the privacy-preserving history migration |
 | Authority model | Goal, observation, and viability provenance remain separate | bounded registered and generated scenarios, not a general proof |
 | Observation | Authenticated multi-domain quorum required in every supported mode | declared domains do not prove organisational independence |
 | Integrations | Kubernetes, OpenTofu, Redis, PostgreSQL, and HTTP/JSON | read-only qualification with documented environment limits |

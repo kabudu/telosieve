@@ -1,9 +1,9 @@
 {
   "schema_version": "telosieve.advisory-audit/v1",
-  "generated_at": "2026-08-08T13:51:12+00:00",
+  "generated_at": "2026-08-08T23:42:31.219317+00:00",
   "command": "cargo audit --json",
   "tool_version": "cargo-audit-audit 0.22.1",
-  "lockfile_sha256": "6d46b59e7a9c01fb4e260f628c39af64fe59a3df18872262821b86a47355f81e",
+  "lockfile_sha256": "1ff05518bde5fd57f93a51a84c03cec5a0531c45ddadef0a1bc211a68399a238",
   "database": {
     "advisory-count": 1190,
     "last-commit": "1237bbe09d2701e14e6593a630fbaf28928df712",

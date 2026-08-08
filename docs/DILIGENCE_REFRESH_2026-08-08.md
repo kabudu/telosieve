@@ -25,7 +25,7 @@ No search establishes that combination as legally or academically novel. Existin
 
 `python3 scripts/audit-public-history.py` found no private-key marker, common AWS/GitHub/Slack token shape, owner-specific absolute path, risky credential filename, oversized historical blob, or unsafe current path within its documented object and byte bounds. Manual review also found no committed handoff directory or assessor correspondence. This pattern audit cannot prove that arbitrary historical text contains no sensitive information, so it must run again immediately before visibility changes and be supplemented by owner review.
 
-The pre-migration Git graph contains the owner's personal author address. The owner has rejected disclosure. The repository must therefore complete the destructive, audited replacement defined in [History Privacy Migration](HISTORY_PRIVACY_MIGRATION.md), revoke the commit-bound rc.1 and rc.2 candidates, and freeze a successor from the sanitized graph before public opening.
+The pre-migration Git graph contained the owner's personal author address. The owner rejected disclosure. The destructive, audited replacement defined in [History Privacy Migration](HISTORY_PRIVACY_MIGRATION.md) is complete and the commit-bound rc.1 and rc.2 candidates are revoked; the rc.3 successor freeze remains required before public opening.
 
 The locked dependency graph contains 43 third-party packages. `cargo audit --json` version 0.22.1 checked the current lockfile against RustSec database commit `1237bbe09d2701e14e6593a630fbaf28928df712` and reported no vulnerability or warning. The result is time-bounded and does not establish dependency, compiler, registry, or build-system trust.
 

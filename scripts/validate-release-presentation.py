@@ -53,7 +53,7 @@ def render(lines: list[str]) -> str:
             body.append(f"<p>{inline(line)}</p>")
     if in_list:
         body.append("</ul>")
-    return """<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Telosieve release preview</title><style>:root{color-scheme:light dark}body{font:16px/1.55 system-ui,sans-serif;max-width:760px;margin:0 auto;padding:32px;color:#101820;background:#fff}h1{font-size:2rem;line-height:1.2}h2{margin-top:2rem}li{margin:.6rem 0}code{font-family:ui-monospace,monospace;background:#eef2f6;padding:.1rem .3rem;border-radius:4px}a{color:#006b5f}@media(max-width:480px){body{padding:20px}h1{font-size:1.65rem}}@media(prefers-color-scheme:dark){body{color:#f7fafc;background:#101820}code{background:#263442}a{color:#57d7c0}}</style><main>""" + "".join(body) + "</main></html>"
+    return """<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Telosieve release preview</title><style>:root{color-scheme:light dark}body{font:16px/1.55 system-ui,sans-serif;max-width:760px;margin:0 auto;padding:32px;color:#101820;background:#fff;overflow-wrap:anywhere}h1{font-size:2rem;line-height:1.2}h2{margin-top:2rem}li{margin:.6rem 0}code{font-family:ui-monospace,monospace;background:#eef2f6;padding:.1rem .3rem;border-radius:4px}a{color:#006b5f}@media(max-width:480px){body{padding:20px}h1{font-size:1.65rem}}@media(prefers-color-scheme:dark){body{color:#f7fafc;background:#101820}code{background:#263442}a{color:#57d7c0}}</style><main>""" + "".join(body) + "</main></html>"
 
 
 def validate(text: str, path: Path, version: str) -> tuple[list[str], int]:

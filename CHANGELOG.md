@@ -14,6 +14,13 @@ All notable Telosieve changes are recorded here. Telosieve follows Semantic Vers
   replacement with one sanitized branch, no legacy tags, and fresh-clone audit
   evidence.
 
+## 0.2.0-rc.3 - 2026-08-08
+
+- Reissue the complete read-only evaluation surface from the sanitized Git
+  graph with noreply-only retained commit identities.
+- Carry the enduring brand `2.0.0` faceted convergence gate, restructured README,
+  and explicit revocation of the superseded rc.1 and rc.2 candidates.
+
 ## 0.2.0-rc.2 - 2026-08-08
 
 - Require observation quorum verification for every supported evaluation capability.
