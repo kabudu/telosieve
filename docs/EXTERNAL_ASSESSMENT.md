@@ -74,7 +74,7 @@ HANDOFF=/absolute/path/to/telosieve-v0.2.0-rc.2
 In the source checkout, require the exact frozen commit and a clean worktree:
 
 ```sh
-git -C "$SOURCE" checkout --detach ae5bfbffe96510f64026aed02e3a25b2f81cc59c
+git -C "$SOURCE" checkout --detach 3c5dea314eb849cbf441f9baa8c589a6d83bd412
 git -C "$SOURCE" status --short
 git -C "$SOURCE" rev-parse HEAD
 ```
@@ -292,5 +292,5 @@ disclosure process.
 
 [Independent-Assessment Handoff](ASSESSOR_HANDOFF.md) preserves the earlier
 Post-M15 research reproduction at commit
-`17ec5e04bc05ca16b322ec6e436b9979972a0ba5`. It is not the procedure for
+`971e9206eb891eeb53b78ffb27171291d81d4db7`. It is not the procedure for
 assessing `v0.2.0-rc.2`.

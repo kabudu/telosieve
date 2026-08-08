@@ -7,7 +7,7 @@ Date: 2026-07-29
 > using the current [External Assessment Guide](EXTERNAL_ASSESSMENT.md).
 
 The machine-readable handoff at `assessment/manifest.json` freezes source commit
-`17ec5e04bc05ca16b322ec6e436b9979972a0ba5`. That commit is the Post-M15 source
+`971e9206eb891eeb53b78ffb27171291d81d4db7`. That commit is the Post-M15 source
 head; Post-M16 adds only the manifest, verification tooling, retained result, and
 documentation around it. A commit cannot contain its own Git object ID without
 a self-referential hash, so the assessed source and handoff wrapper are

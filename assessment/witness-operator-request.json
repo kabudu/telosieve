@@ -1,6 +1,6 @@
 {
   "schema_version": "telosieve.witness-operator-request/v1",
-  "source_commit": "c8b18a748204c8b617230ccfc18a793550055956",
+  "source_commit": "5219cdc2b860ad760473187b374eaedce5361e4e",
   "repository_visibility": "private",
   "authoritative_ci": "./scripts/ci-local.sh",
   "required_commands": [

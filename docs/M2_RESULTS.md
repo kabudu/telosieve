@@ -3,7 +3,7 @@
 ## Reproduction
 
 The original registered run is pinned to merge
-`a0bf340daf752faeb2621b2580cc31939277c3b1`. Check out that revision in a
+`74f0fc9103e4b9b212287a7dca01dbe9a89af42b`. Check out that revision in a
 separate worktree, then run:
 
 ```sh

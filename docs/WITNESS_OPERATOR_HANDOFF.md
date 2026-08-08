@@ -9,7 +9,7 @@ commands, source artifacts, expected outcomes, and resource limits that an
 external operator must use. It contains no credentials or endpoint secrets.
 
 The request deliberately targets commit
-`c8b18a748204c8b617230ccfc18a793550055956`. The later handoff wrapper cannot
+`5219cdc2b860ad760473187b374eaedce5361e4e`. The later handoff wrapper cannot
 include its own Git object ID without becoming self-referential.
 
 ## Operator procedure

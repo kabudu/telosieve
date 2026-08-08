@@ -22,7 +22,7 @@ def record(
     return {
         "schema_version": "telosieve.witness-operator-record/v1",
         "request_sha256": request_digest,
-        "source_commit": "c8b18a748204c8b617230ccfc18a793550055956",
+        "source_commit": "5219cdc2b860ad760473187b374eaedce5361e4e",
         "operator": {
             "organization": "Independent Example Laboratory",
             "name": "Example Operator",

@@ -25,7 +25,7 @@ All notable Telosieve changes are recorded here. Telosieve follows Semantic Vers
 
 ## 0.2.0-rc.1 - 2026-07-30
 
-- Freeze the first signed private read-only evaluation candidate at `ae5bfbffe96510f64026aed02e3a25b2f81cc59c`.
+- Freeze the first signed private read-only evaluation candidate at rewritten commit `3c5dea314eb849cbf441f9baa8c589a6d83bd412`; the candidate was later revoked by the privacy-preserving history migration.
 - Package deterministic Kubernetes shadow/live and saved OpenTofu plan evaluation evidence.
 - Provide checksum, signature, trust, candidate-manifest, and offline-verification artifacts.
 

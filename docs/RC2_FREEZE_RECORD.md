@@ -5,9 +5,9 @@ Date: 2026-08-08
 ## Frozen identity
 
 - version and annotated tag: `0.2.0-rc.2`, `v0.2.0-rc.2`;
-- source commit: `0a79443d504be5285058a262231cc687ee8801e1`;
+- rewritten source commit: `3539e3825a97a107703fccbf6f4a8de92c786c09`;
 - remote `master` and peeled remote tag commit at the ceremony:
-  `0a79443d504be5285058a262231cc687ee8801e1`;
+  `3539e3825a97a107703fccbf6f4a8de92c786c09`;
 - target: `aarch64-apple-darwin`;
 - Rust: `rustc 1.97.0 (2d8144b78 2026-07-07)`;
 - Cargo: `cargo 1.97.0 (c980f4866 2026-06-30)`.

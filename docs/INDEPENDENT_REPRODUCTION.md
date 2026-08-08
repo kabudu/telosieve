@@ -3,7 +3,7 @@
 ## Result
 
 On 2026-07-29, revision
-`70fdbe6af0c078f09e10a3904f4daff702cc3866` was reproduced in a separate
+`8ee63cb3cb0f2fee303bcdefa20d5aed20fcd8b3` was reproduced in a separate
 network-disabled Linux/arm64 container:
 
 - image `rust:1.97-bookworm`;
