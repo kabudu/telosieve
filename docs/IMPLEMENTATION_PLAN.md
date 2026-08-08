@@ -1038,17 +1038,18 @@ does not constitute safety, independent validation, market-fit, or legal evidenc
 - [x] Package the release decision and presentation validator with the candidate.
 - [x] Inspect the rendered release presentation at desktop and narrow viewports
   and retain the bounded result and residual limits.
-- [ ] Merge the final reviewed pre-freeze commit and pass `./scripts/ci-local.sh`
+- [x] Merge the final reviewed pre-freeze commit and pass `./scripts/ci-local.sh`
   on its clean, pushed `master` SHA.
-- [ ] Reproduce identical locked/offline release binaries and retain the exact digest.
-- [ ] Generate an external owner-only evaluation key and atomically build, sign,
+- [x] Reproduce identical locked/offline release binaries and retain the exact digest.
+- [x] Generate an external owner-only evaluation key and atomically build, sign,
   checksum, and offline-verify the seven-file handoff outside Git.
-- [ ] Create and push annotated `v0.2.0-rc.2` at the exact candidate commit with
+- [x] Create and push annotated `v0.2.0-rc.2` at the exact candidate commit with
   bundle/trust digests and the independent-assessment boundary.
-- [ ] Record and review the completed ceremony without changing candidate bytes.
+- [x] Record and review the completed ceremony without changing candidate bytes.
 
 Evidence before freeze: [RC2_EVALUATION_RELEASE_DECISION](RC2_EVALUATION_RELEASE_DECISION.md),
 [RC2_RELEASE_PRESENTATION_REVIEW](RC2_RELEASE_PRESENTATION_REVIEW.md),
 `RELEASE_NOTES_v0.2.0-rc.2.md`, and
-`scripts/validate-release-presentation.py`. Exact artifacts and tag evidence are
-created only after the clean reviewed commit is merged.
+`scripts/validate-release-presentation.py`. Exact artifacts and tag evidence
+are retained in [RC2_FREEZE_RECORD](RC2_FREEZE_RECORD.md). The record commit is
+deliberately newer than the immutable tagged candidate bytes.

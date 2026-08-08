@@ -2,10 +2,10 @@
 
 There is no production release yet. Private evaluation-product engineering is
 authorized by [EVALUATION_PRODUCT_DECISION](EVALUATION_PRODUCT_DECISION.md).
-The historical `v0.2.0-rc.1` candidate passed its project-controlled freeze,
-but current `master` targets `v0.2.0-rc.2` and remains pre-freeze until its exact
-reviewed bytes pass the ceremony. No public artifact distribution is authorized
-by the private evaluation decision alone. Research or evaluation releases require:
+The historical `v0.2.0-rc.1` candidate and current `v0.2.0-rc.2` candidate
+passed their project-controlled freezes. The exact rc.2 evidence is retained in
+[RC2_FREEZE_RECORD](RC2_FREEZE_RECORD.md). No public artifact distribution is
+authorized by the private evaluation decision alone. Research or evaluation releases require:
 
 1. frozen protocol and fault model;
 2. reproducible harness and locked dependencies;

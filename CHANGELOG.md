@@ -4,17 +4,19 @@ All notable Telosieve changes are recorded here. Telosieve follows Semantic Vers
 
 ## Unreleased
 
-- Prepare open-source governance, public-history hygiene, product identity, and an exact `v0.2.0-rc.2` evaluation freeze.
-- Add brand identity `1.0.0-evaluation`, accessible SVGs, deterministic raster exports, design tokens, templates, provenance, and claim validation.
-- Authorize the exact private `v0.2.0-rc.2` freeze parameters and validate its curated release presentation.
+No changes yet.
 
-## 0.2.0-rc.2 - pending freeze
+## 0.2.0-rc.2 - 2026-08-08
 
 - Require observation quorum verification for every supported evaluation capability.
 - Bind corroborated observation evidence into Kubernetes and OpenTofu certificates.
 - Add standardized read-only integration contracts and qualified Redis, PostgreSQL, and HTTP/JSON integrations.
 - Add local HTTP mutual-TLS, revocation, PKI readiness, monitoring, and Prometheus publication qualifications.
 - Reconcile deterministic packaging, verification, assessor guidance, and release metadata.
+- Add brand identity `1.0.0-evaluation`, accessible SVGs, deterministic raster
+  exports, design tokens, templates, provenance, and claim validation.
+- Add open-source governance, complete-history hygiene checks, product identity,
+  a curated responsive release presentation, and an exact signed private freeze.
 
 ## 0.2.0-rc.1 - 2026-07-30
 
