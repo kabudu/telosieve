@@ -16,7 +16,6 @@ jobs:
   build:
     permissions:
       contents: read
-      pages: write
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -24,12 +23,12 @@ jobs:
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           persist-credentials: false
-      - name: Validate and build site
+      - name: Validate site
         run: python3 scripts/validate-pages-site.py
+      - name: Build deployment artifact
+        run: python3 scripts/build-pages-site.py
       - name: Configure Pages
         uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
-        with:
-          enablement: true
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4
         with:
