@@ -24,6 +24,8 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Install pinned Rust toolchain
         run: rustup toolchain install 1.97.0 --profile minimal --component clippy,rustfmt && rustup override set 1.97.0
+      - name: Fetch locked dependencies
+        run: cargo fetch --locked
       - name: Check formatting
         run: cargo fmt --all --check
       - name: Lint
