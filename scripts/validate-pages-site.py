@@ -123,7 +123,11 @@ def main() -> int:
             errors.append(f"broken site fragment: {link}")
         elif link.startswith("https://"):
             parsed = urlparse(link)
-            if parsed.netloc != "github.com" or not parsed.path.startswith("/kabudu/telosieve"):
+            approved = (
+                (parsed.netloc == "github.com" and parsed.path.startswith("/kabudu/telosieve"))
+                or (parsed.netloc == "crates.io" and parsed.path == "/crates/telosieve")
+            )
+            if not approved:
                 errors.append(f"unapproved external link: {link}")
         elif not link.startswith("#"):
             errors.append(f"unsupported site link form: {link}")
@@ -147,7 +151,7 @@ def main() -> int:
         if phrase not in readme:
             errors.append(f"README comprehension surface missing: {phrase}")
     policy = (ROOT / "docs/GITHUB_PAGES.md").read_text(encoding="utf-8")
-    for phrase in ("not activated", "explicit user approval", "hosted workflow", "publicly accessible"):
+    for phrase in ("authorized to deploy", "reviewed `master`", "commit-pinned", "no repository secrets"):
         if phrase not in policy:
             errors.append(f"Pages policy boundary missing: {phrase}")
 

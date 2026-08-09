@@ -1154,3 +1154,28 @@ Evidence: [BRAND_IDENTITY](BRAND_IDENTITY.md), `assets/brand/archive/3.0.0/`,
 
 Evidence: [GitHub Pages Website](GITHUB_PAGES.md), `site/`,
 `scripts/build-pages-site.py`, and `scripts/validate-pages-site.py`.
+
+## Post-M67 - public evaluation launch
+
+- [x] Authorize public Apache-2.0 source, portable hosted CI, GitHub Pages,
+  crates.io publication, and one prerelease GitHub Release without weakening the
+  evaluation or no-target-mutation boundary.
+- [x] Adopt Keep a Changelog 1.1.0 structure, advance current source to
+  `0.2.0-rc.4`, enable crates.io packaging, and add curated release notes.
+- [x] Add commit-pinned, least-privilege CI, Pages, and tagged-release workflows
+  with bounded runtimes, no pull-request secrets, and registry credentials
+  confined to the release environment.
+- [x] Add public README badges, plain-language repository metadata, topic tags,
+  workflow validation, and updated release and Pages procedures.
+- [ ] Make the repository public and verify visibility, About metadata, topics,
+  default branch, licence, remote head, and complete public history.
+- [ ] Verify hosted CI and Pages deployment from the merged reviewed head.
+- [ ] Publish and verify `telosieve 0.2.0-rc.4` on crates.io and docs.rs plus the
+  matching prerelease GitHub Release and checksummed Linux binary.
+- [ ] Inspect the live Pages site at desktop and mobile widths, verify links and
+  metadata, and fix every material visual or accessibility finding.
+
+Evidence: [Public Opening Decision](PUBLIC_OPENING_DECISION.md),
+[Release Strategy](RELEASE.md), [GitHub Pages Website](GITHUB_PAGES.md),
+`.github/workflows/`, `scripts/validate-hosted-workflows.py`, `CHANGELOG.md`, and
+`RELEASE_NOTES_v0.2.0-rc.4.md`.

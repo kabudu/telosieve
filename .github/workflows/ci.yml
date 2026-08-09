@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  portable:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out source
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Install pinned Rust toolchain
+        run: rustup toolchain install 1.97.0 --profile minimal --component clippy,rustfmt && rustup override set 1.97.0
+      - name: Fetch locked dependencies
+        run: cargo fetch --locked
+      - name: Check formatting
+        run: cargo fmt --all --check
+      - name: Lint
+        run: cargo clippy --locked --all-targets --all-features -- -D warnings
+      - name: Test
+        run: cargo test --locked --all-targets --all-features
+      - name: Check documentation
+        env:
+          RUSTDOCFLAGS: -Dwarnings
+        run: cargo doc --locked --no-deps
+      - name: Validate public and release surfaces
+        run: |
+          python3 scripts/validate-project.py
+          python3 scripts/validate-release-metadata.py
+          python3 scripts/validate-release-presentation.py
+          python3 scripts/validate-open-source-readiness.py
+          python3 scripts/validate-pages-site.py
+          python3 scripts/validate-supply-chain.py
+      - name: Verify package
+        run: cargo package --locked
+      - name: Check diff hygiene
+        run: git diff --check

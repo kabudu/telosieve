@@ -54,6 +54,10 @@ REQUIRED = (
     "scripts/validate-brand.py",
     "scripts/build-pages-site.py",
     "scripts/validate-pages-site.py",
+    "scripts/validate-hosted-workflows.py",
+    ".github/workflows/ci.yml",
+    ".github/workflows/pages.yml",
+    ".github/workflows/release.yml",
     "site/index.html",
     "site/styles.css",
     "site/assets/telosieve-architecture.svg",
@@ -113,12 +117,14 @@ def main() -> int:
         errors.append("implementation plan has no unchecked work")
 
     release = (ROOT / "docs/RELEASE.md").read_text(encoding="utf-8").lower()
-    for phrase in ("local ci", "hosted ci", "explicit user approval"):
+    for phrase in ("local ci", "github actions", "complete local gate"):
         if phrase not in release:
             errors.append(f"release policy missing required phrase: {phrase}")
 
-    if (ROOT / ".github/workflows").exists():
-        errors.append("hosted CI workflows are forbidden while private")
+    workflows = ROOT / ".github/workflows"
+    for name in ("ci.yml", "pages.yml", "release.yml"):
+        if not (workflows / name).is_file():
+            errors.append(f"required public workflow is missing: {name}")
 
     for error in errors:
         print(f"project-validation: {error}", file=sys.stderr)

@@ -7,22 +7,14 @@ acceptance criteria before editing, use the simplest sufficient architecture,
 bound failure and resource paths, validate in proportion to risk, and audit every
 requirement before declaring a milestone complete.
 
-## Private-repository CI policy
+## Public-repository CI policy
 
-While Telosieve is private, `./scripts/ci-local.sh` is the sole authoritative CI
-gate. Run it before every milestone commit and again at the final reviewed pull
-request head. Record the exact command and successful result in the pull request.
-Absent hosted checks are policy-compliant; never describe them as passing.
-
-Do not create or enable GitHub Actions or any other hosted CI. Hosted CI requires
-all of:
-
-1. a documented public-opening or research-release decision;
-2. explicit user approval to activate hosted CI;
-3. an update to `docs/RELEASE.md` in the authorizing pull request;
-4. secrets, permissions, cost, and supply-chain review before activation.
-
-Making the repository public does not itself authorize hosted CI.
+`./scripts/ci-local.sh` remains the complete authoritative gate, including
+Docker-backed real-system qualifications that hosted CI does not duplicate. Run
+it before every milestone commit and again at the final reviewed pull-request
+head. GitHub Actions must pass its portable checks on public pull requests and
+`master`. Release workflows may access registry credentials only in the tagged,
+environment-scoped release job; pull-request workflows receive no secrets.
 
 ## Repository identity privacy
 

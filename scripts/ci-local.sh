@@ -9,11 +9,6 @@ run() {
   "$@"
 }
 
-if [[ -d .github/workflows ]]; then
-  printf 'local-ci: hosted CI workflows are forbidden while the repository is private\n' >&2
-  exit 1
-fi
-
 run cargo fmt --all --check
 run cargo clippy --locked --offline --all-targets --all-features -- -D warnings
 run cargo test --locked --offline --all-targets --all-features
@@ -28,6 +23,7 @@ run python3 scripts/validate-project.py
 run python3 scripts/validate-release-metadata.py
 run python3 scripts/validate-release-presentation.py
 run python3 scripts/validate-open-source-readiness.py
+run python3 scripts/validate-hosted-workflows.py
 run python3 scripts/validate-brand.py
 run python3 scripts/validate-pages-site.py
 run python3 scripts/validate-assessor-manifest.py

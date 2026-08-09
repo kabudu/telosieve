@@ -2,6 +2,12 @@
 
 ![Telosieve](assets/brand/source/telosieve-horizontal.svg)
 
+[![CI](https://github.com/kabudu/telosieve/actions/workflows/ci.yml/badge.svg)](https://github.com/kabudu/telosieve/actions/workflows/ci.yml)
+[![crates.io](https://img.shields.io/crates/v/telosieve.svg)](https://crates.io/crates/telosieve)
+[![docs.rs](https://img.shields.io/docsrs/telosieve)](https://docs.rs/telosieve)
+[![GitHub release](https://img.shields.io/github/v/release/kabudu/telosieve?include_prereleases)](https://github.com/kabudu/telosieve/releases)
+[![License](https://img.shields.io/github/license/kabudu/telosieve)](LICENSE)
+
 Telosieve is a read-only evaluation system for infrastructure instructions. Before a desired-state tool acts, Telosieve asks a deliberately uncomfortable question: **what if the instruction itself is wrong?**
 
 It compares authenticated intent with corroborated observations and separately defined viability rules. It then tests the declared ways those sources could be faulty. If every surviving case supports the same bounded result, Telosieve records a certificate. If the evidence is missing, stale, inconsistent, or unsafe under any surviving case, it refuses instead of guessing.
@@ -25,15 +31,16 @@ Suppose a Kubernetes controller receives a signed instruction to replace healthy
 
 | Surface | Current evidence | Boundary |
 | --- | --- | --- |
-| Candidate | Signed private `v0.2.0-rc.3` | project-controlled, privacy-safe successor pending independent assessment |
+| Public release | `v0.2.0-rc.4` | evaluation software for external inspection and assessment |
+| Signed handoff | Private `v0.2.0-rc.3` | project-controlled predecessor retained for exact-byte assessment |
 | Authority model | Goal, observation, and viability provenance remain separate | bounded registered and generated scenarios, not a general proof |
 | Observation | Authenticated multi-domain quorum required in every supported mode | declared domains do not prove organisational independence |
 | Integrations | Kubernetes, OpenTofu, Redis, PostgreSQL, and HTTP/JSON | read-only qualification with documented environment limits |
 | Actuation | Transactional single-host reference actuator | reference semantics only, no production-system authority |
 | Brand | Current source identity `4.0.0` | signed rc.3 carries archived `2.0.0`; legal and external comprehension review remain separate gates |
-| CI | `./scripts/ci-local.sh` | sole authoritative gate while the repository is private |
+| CI | GitHub Actions plus `./scripts/ci-local.sh` | hosted checks cover portable gates; local CI retains real disposable integration qualifications |
 
-Public source, production promotion, hosted CI, package publication, autonomous actuation, and stronger safety claims each remain separately governed. See [Release Strategy](docs/RELEASE.md) and [Public Opening Decision](docs/PUBLIC_OPENING_DECISION.md).
+Public source, hosted CI, package publication, and the website are authorized for the `v0.2.0-rc.4` evaluation release. Production promotion, autonomous actuation, and stronger safety claims remain separately governed. See [Release Strategy](docs/RELEASE.md) and [Public Opening Decision](docs/PUBLIC_OPENING_DECISION.md).
 
 ## Five-minute local path
 
@@ -49,6 +56,8 @@ cargo run --locked --offline -- run \
 ```
 
 The benign scenario emits a deterministic bounded certificate. The poisoned-goal scenario refuses. Neither command mutates an external target system.
+
+After the public crate is available, install the evaluation CLI with `cargo install telosieve --version 0.2.0-rc.4`.
 
 Run the versioned evaluation boundary with:
 
@@ -105,13 +114,13 @@ The bounded generated state space contains no reproduced unsafe approval, but fi
 
 ## Development and verification
 
-The complete private-repository gate is:
+The complete repository-owned gate is:
 
 ```sh
 ./scripts/ci-local.sh
 ```
 
-It runs formatting, linting, Rust and Python tests, documentation and metadata checks, supply-chain validation, deterministic packaging, adversarial load, real disposable integration qualifications, reproducible builds, and diff hygiene. Hosted CI is intentionally disabled while the repository is private and must never be described as passing.
+It runs formatting, linting, Rust and Python tests, documentation and metadata checks, supply-chain validation, deterministic packaging, adversarial load, real disposable integration qualifications, reproducible builds, and diff hygiene. GitHub Actions runs the portable subset on pull requests and `master`; the complete local gate remains required for release decisions.
 
 Useful focused commands:
 
@@ -140,4 +149,4 @@ Contribution, security-reporting, and release rules are in [Contributing](CONTRI
 
 ## Repository policy
 
-Telosieve is licensed under [Apache License 2.0](LICENSE). The private repository uses `master` as its default branch. Every milestone is delivered through a feature branch, full local CI, remote pull-request diff review, and squash merge. Repository visibility alone never authorizes hosted CI, packages, telemetry, production deployment, or stronger claims.
+Telosieve is licensed under [Apache License 2.0](LICENSE). The repository uses `master` as its default branch. Every milestone is delivered through a feature branch, full local CI, remote pull-request diff review, and squash merge. Public distribution does not authorize telemetry, production deployment, mutation authority, or stronger claims.
