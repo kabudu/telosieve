@@ -991,7 +991,7 @@ assess rc.2.
   common credential shapes, owner-specific paths, and oversized artifacts.
 - [x] Enforce governance files, Cargo package metadata, history hygiene, and the
   public-opening boundary in authoritative local CI.
-- [ ] Change repository visibility only after productisation, an exact successor freeze,
+- [x] Change repository visibility only after productisation, an exact successor freeze,
   a final audit, and verification of the remote public state.
 
 Evidence: [PUBLIC_OPENING_DECISION](PUBLIC_OPENING_DECISION.md),
