@@ -1,8 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-labelledby="title description">
-  <title id="title">Telosieve small convergence gate symbol</title>
-  <desc id="description">Three paths enter a faceted gate and one result emerges.</desc>
-  <path d="M2 8H10L13 12" fill="none" stroke="#007C91" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M2 16H13" stroke="#8A4B08" stroke-width="3" stroke-linecap="round"/><path d="M2 24H10L13 20" stroke="#6B4BB6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M12 3H21L19 16L21 29H12L14 16Z" fill="#101820"/>
-  <path d="M20 16H29" stroke="#006B5F" stroke-width="3" stroke-linecap="round"/>
+  <title id="title">Telosieve small cut-sieve symbol</title>
+  <desc id="description">A compact angular sieve with three evidence apertures and one square result.</desc>
+  <path d="M6 2H24L30 8V24L24 30H6L2 26V6ZM9 7H21L24 10L21 13H14L12 15L14 17H24V21H13L8 16L13 11H20L21 10L20 9H9Z" fill="#101820" fill-rule="evenodd"/>
+  <circle cx="6" cy="9" r="1.5" fill="#007C91"/><circle cx="6" cy="15" r="1.5" fill="#8A4B08"/><circle cx="6" cy="21" r="1.5" fill="#6B4BB6"/>
+  <rect x="24" y="22" width="3" height="3" rx=".5" fill="#006B5F"/>
 </svg>

@@ -4,6 +4,11 @@ All notable Telosieve changes are recorded here. Telosieve follows Semantic Vers
 
 ## Unreleased
 
+- Replace the process-diagram-like convergence mark with brand `3.0.0`: a
+  compact cut-sieve glyph with an ownable S channel, evidence apertures, and
+  bounded-result square across canonical, monochrome, reversed, and small assets.
+- Archive the released brand `2.0.0` manifest and regenerate deterministic
+  favicon, avatar, and social exports for the governed identity migration.
 - Correct brand identity `1.0.0` to be permanent across maturity stages and
   separate evaluation status into a release overlay.
 - Replace the diagram-like aperture with the distinctive brand `2.0.0` faceted

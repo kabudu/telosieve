@@ -1,12 +1,12 @@
 # Telosieve Brand Identity
 
-Brand version: `2.0.0`
+Brand version: `3.0.0`
 
 Status: approved as Telosieve's enduring product identity on 2026-08-08 and corrected on the same date to remove release-maturity coupling. This identity communicates the product's purpose and mechanism; it is not evidence of safety, independent validation, legal name clearance, production readiness, or current release authorization.
 
 ## Product maturity is not brand identity
 
-Telosieve has one product identity across research, evaluation, release-candidate, and any future production-grade stages. The name, convergence-gate mark, brand version, purpose, principles, personality, tagline, colour, typography, and canonical product templates are maturity-neutral. They are designed for the intended durable product, not as temporary evaluation packaging.
+Telosieve has one product identity across research, evaluation, release-candidate, and any future production-grade stages. The name, cut-sieve mark, brand version, purpose, principles, personality, tagline, colour, typography, and canonical product templates are maturity-neutral. They are designed for the intended durable product, not as temporary evaluation packaging.
 
 Current maturity is a separate, replaceable messaging overlay. The overlay states release channel, read-only or actuation scope, support posture, evidence maturity, production authorization, and independent-validation status. Changing those facts must not require redrawing the mark, renaming the product, changing the brand version, or replacing the core tagline. The current overlay is `assets/brand/templates/evaluation-overlay.svg`; it is not part of any canonical logo.
 
@@ -62,15 +62,15 @@ Three genuinely different directions are retained under `assets/brand/concepts/`
 
 | Direction | Mechanism | Strength | Risk | Result |
 |---|---|---|---|---|
-| A: convergence gate | three independent paths bend into a faceted sieve and one bounded result exits | bold silhouette, direct mechanism, strong monochrome and small-size behaviour | the waist can suggest an hourglass without the evidence paths | selected |
-| B: sieve monogram | an angular S carries three coloured inputs toward one result | ownable letterform and strong wordmark pairing | reads as a route or cable and obscures provenance after entry | not selected |
-| C: evidence loom | three ribbons weave through a two-bar lattice | dynamic and clearly communicates independent evidence | visually busy, weaker at favicon size, and can imply continuous data processing | not selected |
+| A: cut-sieve glyph | a chamfered field contains an angular S inspection channel, three circular apertures, and one square result | compact, ownable silhouette; strong monochrome reversal; reads as both sieve and questioned instruction | can suggest a processor tile, which is acceptable for the infrastructure category | selected |
+| B: questioned T monogram | three evidence blades interrupt a monumental T and resolve at a square base | immediate initial and strong editorial presence | too static and corporate; the evidence semantics become decoration | not selected |
+| C: counterfactual knot | three angular ribbons turn around an open centre without collapsing provenance | energetic, distinctive, and visibly multi-source | resembles routing and is too complex below 24 pixels | not selected |
 
-The internal review used a common light field and compared all three directions at equal size before their names and rationale were considered. Scoring dimensions were mechanism fidelity, silhouette, claim safety, category fit, distinctiveness, monochrome behaviour, and recognition at 16, 24, and 32 pixels. Direction A scored highest because the central gate remains identifiable without colour, the three sources remain distinct until the decision boundary, and the output is bounded without suggesting a shield, lock, tick, robot, or automatic remediation. This was one project-controlled review, not an external comprehension study or trademark opinion.
+The brand `3.0.0` review used a common light field and compared three newly drawn directions at equal size before their names and rationale were considered. Scoring dimensions were mechanism fidelity, silhouette, claim safety, category fit, distinctiveness, monochrome behaviour, and recognition at 16, 24, and 32 pixels. Direction A scored highest because the chamfered silhouette and angular S channel remain recognisable without colour, the circular apertures stay distinct from the square result, and the mark avoids a shield, lock, tick, robot, eye, or automatic-remediation metaphor. This was one project-controlled review, not an external comprehension study or trademark opinion.
 
 ## Logo system
 
-The selected mark shows three distinguishable evidence paths bending into a faceted convergence gate and one bounded result leaving it. The gate's asymmetric evidence paths prevent the central form being read in isolation as an hourglass; its negative slit expresses filtering rather than closure. The three paths remain visually distinct to avoid implying that corroboration erases provenance. The central shape is a sieve gate, not a shield. The square result is deliberately not a tick.
+The selected mark is a cut-sieve glyph rather than a protocol diagram. Its chamfered outer field gives the product a stable app, repository, print, and favicon silhouette. An angular negative-space S doubles as a sieve channel and a questioned instruction moving in two directions. Three circular apertures encode separate evidence without drawing literal network paths; the differently shaped square is the bounded result. The field is not a shield, the channel is not an automatic route, and the square is deliberately not a tick.
 
 Canonical files:
 
@@ -83,7 +83,7 @@ Canonical files:
 - `telosieve-monochrome.svg`: one-colour print and terminal-adjacent use;
 - `telosieve-reversed.svg`: dark-field symbol.
 
-Clear space is at least one input-node diameter around every mark. Minimum sizes are 16 pixels for the small symbol, 32 pixels for the primary symbol, 180 pixels for the horizontal lockup, and 220 pixels for the stacked lockup. Use the small symbol below 32 pixels, the dark-field favicon on browser/OS surfaces, and the reversed dark-field avatar where the surrounding theme is unknown. Do not rotate, skew, add shadows, soften or round the gate facets, recolour individual paths outside the token system, fill the negative slit, convert the result square to a tick, place copy inside the clear space, or use the colour mark where monochrome or forced-colour output is required.
+Clear space is at least one aperture diameter around every mark. Minimum sizes are 16 pixels for the small symbol, 32 pixels for the primary symbol, 180 pixels for the horizontal lockup, and 220 pixels for the stacked lockup. Use the small symbol below 32 pixels, the dark-field favicon on browser/OS surfaces, and the reversed dark-field avatar where the surrounding theme is unknown. Do not rotate, skew, add shadows, round away the chamfers, recolour individual apertures outside the token system, fill the S channel, convert the result square to a tick, place copy inside the clear space, or use the colour mark where monochrome or forced-colour output is required.
 
 ## Colour and state
 
@@ -130,11 +130,11 @@ The builder renders every PNG twice and requires byte identity, exact dimensions
 
 The repository owner is product and brand owner. Engineering owns deterministic assets and integration consistency; security owns prohibited protection claims; research owns evidence and novelty wording; accessibility owns contrast and non-colour semantics; legal clearance remains external. A future contributor may fill more than one role, but every role must be explicitly reviewed at a release gate.
 
-Brand sources, tokens, and manifest use their own `2.0.0` version. Protocol and release-maturity changes do not silently change the brand. Material mark, palette, typography, promise, or category changes require a reviewed milestone, migration note, regenerated exports, new manifest, and archive of released assets. Security or cultural-symbol findings may trigger immediate withdrawal, followed by documented replacement rather than silent file substitution.
+Brand sources, tokens, and manifest use their own `3.0.0` version. Protocol and release-maturity changes do not silently change the brand. Material mark, palette, typography, promise, or category changes require a reviewed milestone, migration note, regenerated exports, new manifest, and archive of released assets. Security or cultural-symbol findings may trigger immediate withdrawal, followed by documented replacement rather than silent file substitution.
 
 ### Migration from the maturity-coupled label
 
-The revoked `v0.2.0-rc.2` record preserves the earlier `1.0.0-evaluation` label and first aperture geometry as historical evidence. Brand `1.0.0` separated maturity from identity. Brand `2.0.0` now replaces the diagram-like aperture with the more distinctive faceted convergence gate while retaining the name, tagline, palette, typography, semantic states, and asset paths. Consumers must refresh every logo and raster export rather than mixing generations; use `evaluation-overlay.svg` only when current maturity disclosure is required. Do not infer a production promotion from either identity correction.
+The revoked `v0.2.0-rc.2` record preserves the earlier `1.0.0-evaluation` label and first aperture geometry. Brand `1.0.0` separated maturity from identity. Brand `2.0.0`, retained in `assets/brand/archive/2.0.0/`, replaced that diagram with the faceted convergence gate used by the signed `v0.2.0-rc.3` candidate. Brand `3.0.0` responds to the owner's distinctiveness review by replacing the remaining process-diagram aesthetic with the compact cut-sieve glyph while retaining the name, tagline, palette, typography, semantic states, and durable asset paths. Consumers must refresh every logo and raster export rather than mixing generations; use `evaluation-overlay.svg` only when current maturity disclosure is required. This post-candidate identity change belongs to a future candidate and does not alter or silently relabel the signed rc.3 bytes. Do not infer a production promotion from any identity correction.
 
 ## Remaining human gates
 

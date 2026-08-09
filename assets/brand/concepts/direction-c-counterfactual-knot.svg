@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 220" role="img" aria-labelledby="title description">
+  <title id="title">Direction C: counterfactual knot</title>
+  <desc id="description">Three angular evidence ribbons turn around an open centre without collapsing their provenance.</desc>
+  <rect width="320" height="220" rx="28" fill="#F7FAFC"/>
+  <path d="M52 42H164L206 84L180 110L148 78H52Z" fill="#007C91"/>
+  <path d="M268 42V138L226 180H174L174 144H212L232 124V42Z" fill="#8A4B08"/>
+  <path d="M52 178V118L94 76H138L138 112H110L88 134V178Z" fill="#6B4BB6"/>
+  <path d="M148 78L180 110L148 142L116 110ZM151 104H165V118H151Z" fill="#101820" fill-rule="evenodd"/>
+  <rect x="238" y="150" width="22" height="22" rx="4" fill="#006B5F"/>
+</svg>

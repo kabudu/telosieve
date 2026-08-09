@@ -5,7 +5,7 @@ absolute locally validated Telosieve binary and a fixed allowlist of evaluation
 configuration, RBAC, lifecycle, diagnostics, policy, and operator documents.
 The allowlist includes the Apache-2.0 licence, security policy, change history,
 public-opening boundary, and current diligence record.
-It also carries enduring brand identity `2.0.0`, canonical SVG sources,
+It also carries the current enduring brand identity `3.0.0`, canonical SVG sources,
 tokens, templates, raster exports, provenance manifest, and validators so the
 candidate presentation remains bound to the exact handoff.
 Evaluation maturity is carried by a separate overlay and release copy rather

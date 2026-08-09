@@ -1,9 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 160" role="img" aria-labelledby="title description">
   <title id="title">Telosieve horizontal logo</title>
-  <desc id="description">Telosieve convergence gate followed by the product name and enduring tagline.</desc>
-  <g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="9"><path d="M14 38H45L63 59" stroke="#007C91"/><path d="M14 80H63" stroke="#8A4B08"/><path d="M14 122H45L63 101" stroke="#6B4BB6"/><path d="M97 80H140" stroke="#006B5F"/></g>
-  <path d="M58 14H102L90 80L102 146H58L70 80ZM76 43L70 80L76 117H84L90 80L84 43Z" fill="#101820" fill-rule="evenodd"/>
-  <circle cx="14" cy="38" r="7" fill="#007C91"/><circle cx="14" cy="80" r="7" fill="#8A4B08"/><circle cx="14" cy="122" r="7" fill="#6B4BB6"/><rect x="134" y="74" width="12" height="12" rx="2" fill="#006B5F"/>
+  <desc id="description">Telosieve cut-sieve glyph followed by the product name and enduring tagline.</desc>
+  <path d="M30 10H120L148 38V122L120 150H30L12 132V28ZM48 34H105L120 49L105 64H71L61 74L71 84H120V103H64L37 76L64 49H98L103 44L98 39H48Z" fill="#101820" fill-rule="evenodd"/>
+  <circle cx="31" cy="45" r="6" fill="#007C91"/><circle cx="31" cy="76" r="6" fill="#8A4B08"/><circle cx="31" cy="107" r="6" fill="#6B4BB6"/><rect x="123" y="109" width="14" height="14" rx="2" fill="#006B5F"/>
   <text x="176" y="83" fill="#101820" font-family="Arial, Helvetica, sans-serif" font-size="64" font-weight="700" letter-spacing="-2">Telosieve</text>
   <text x="176" y="116" fill="#475467" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="600" letter-spacing="1">QUESTION THE INSTRUCTION BEFORE ENFORCING IT</text>
 </svg>

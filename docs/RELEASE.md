@@ -329,7 +329,9 @@ and the `v0.2.0-rc.3` successor freeze are complete. It does not authorize hoste
 CI, package or container publication, telemetry, production deployment, or stronger claims. Hosted CI
 still requires every approval and review listed in the private-repository policy.
 
-The 2026-08-08 productisation decision approves enduring brand identity `2.0.0`.
+The 2026-08-08 productisation decision approved enduring brand identity `2.0.0`;
+the governed post-candidate distinctiveness review advances current source to
+brand `3.0.0` while retaining the released `2.0.0` manifest.
 Evaluation and release-candidate status are separate maturity overlays rather
 than variants of the canonical product identity. The
 asset manifest, canonical SVGs, design tokens, channel templates, deterministic

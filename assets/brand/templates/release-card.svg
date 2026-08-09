@@ -1,11 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-labelledby="title description">
   <title id="title">Telosieve product card</title>
-  <desc id="description">Dark product card showing three evidence paths entering a faceted convergence gate beside the Telosieve name and enduring product promise.</desc>
+  <desc id="description">Dark product card showing the Telosieve cut-sieve glyph beside the product name and enduring product promise.</desc>
   <rect width="1200" height="630" fill="#101820"/>
   <g transform="translate(96 170) scale(1.8)">
-    <g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="9"><path d="M14 38H45L63 59" stroke="#5BD6E7"/><path d="M14 80H63" stroke="#F5B85C"/><path d="M14 122H45L63 101" stroke="#B9A4F4"/><path d="M97 80H140" stroke="#57D7C0"/></g>
-    <path d="M58 14H102L90 80L102 146H58L70 80ZM76 43L70 80L76 117H84L90 80L84 43Z" fill="#F7FAFC" fill-rule="evenodd"/>
-    <circle cx="14" cy="38" r="7" fill="#5BD6E7"/><circle cx="14" cy="80" r="7" fill="#F5B85C"/><circle cx="14" cy="122" r="7" fill="#B9A4F4"/><rect x="134" y="74" width="12" height="12" rx="2" fill="#57D7C0"/>
+    <path d="M30 10H120L148 38V122L120 150H30L12 132V28ZM48 34H105L120 49L105 64H71L61 74L71 84H120V103H64L37 76L64 49H98L103 44L98 39H48Z" fill="#F7FAFC" fill-rule="evenodd"/>
+    <circle cx="31" cy="45" r="6" fill="#5BD6E7"/><circle cx="31" cy="76" r="6" fill="#F5B85C"/><circle cx="31" cy="107" r="6" fill="#B9A4F4"/><rect x="123" y="109" width="14" height="14" rx="2" fill="#57D7C0"/>
   </g>
   <text x="430" y="265" fill="#F7FAFC" font-family="Arial, Helvetica, sans-serif" font-size="96" font-weight="700" letter-spacing="-3">Telosieve</text>
   <text x="436" y="330" fill="#57D7C0" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="700" letter-spacing="1.1">QUESTION THE INSTRUCTION BEFORE ENFORCING IT</text>

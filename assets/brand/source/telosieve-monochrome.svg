@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-labelledby="title description">
-  <title id="title">Telosieve monochrome convergence gate</title>
-  <desc id="description">Three paths enter a faceted sieve gate and one bounded result emerges.</desc>
-  <g fill="none" stroke="#101820" stroke-linecap="round" stroke-linejoin="round" stroke-width="9"><path d="M14 38H45L63 59"/><path d="M14 80H63"/><path d="M14 122H45L63 101"/><path d="M97 80H140"/></g>
-  <path d="M58 14H102L90 80L102 146H58L70 80ZM76 43L70 80L76 117H84L90 80L84 43Z" fill="#101820" fill-rule="evenodd"/>
-  <circle cx="14" cy="38" r="7" fill="#101820"/><circle cx="14" cy="80" r="7" fill="#101820"/><circle cx="14" cy="122" r="7" fill="#101820"/><rect x="134" y="74" width="12" height="12" rx="2" fill="#101820"/>
+  <title id="title">Telosieve monochrome cut-sieve symbol</title>
+  <desc id="description">A one-ink chamfered sieve with an angular channel, three circular apertures, and one square result.</desc>
+  <path d="M30 10H120L148 38V122L120 150H30L12 132V28ZM48 34H105L120 49L105 64H71L61 74L71 84H120V103H64L37 76L64 49H98L103 44L98 39H48Z" fill="#101820" fill-rule="evenodd"/>
+  <circle cx="31" cy="45" r="6" fill="#F7FAFC"/><circle cx="31" cy="76" r="6" fill="#F7FAFC"/><circle cx="31" cy="107" r="6" fill="#F7FAFC"/>
+  <rect x="123" y="109" width="14" height="14" rx="2" fill="#F7FAFC"/>
 </svg>

@@ -1085,3 +1085,26 @@ Evidence before freeze: [RC3_EVALUATION_RELEASE_DECISION](RC3_EVALUATION_RELEASE
 and `scripts/validate-release-presentation.py`.
 Exact artifact and tag evidence is retained in [RC3_FREEZE_RECORD](RC3_FREEZE_RECORD.md).
 The record commit is deliberately newer than the immutable tagged candidate bytes.
+
+## Post-M64 - distinctive cut-sieve brand migration
+
+- [x] Treat the owner's rejection of the faceted convergence gate as a material
+  distinctiveness finding rather than a cosmetic adjustment.
+- [x] Develop and compare three new directions against the mature product,
+  including colour-independent silhouette, 16/24/32-pixel recognition, claim
+  safety, category fit, and unintended symbolism.
+- [x] Select the cut-sieve glyph and implement canonical symbol, small, favicon,
+  horizontal, stacked, monochrome, reversed, avatar, social-card, and release-card
+  variants without changing the wordmark, palette, tagline, or maturity boundary.
+- [x] Advance the governed identity to brand `3.0.0`, archive the released `2.0.0`
+  manifest, regenerate deterministic exports, and update package validation,
+  README, productisation, release, and brand governance surfaces.
+- [x] Keep signed `v0.2.0-rc.3` bytes and their archived brand identity immutable;
+  assign brand `3.0.0` to current source and a future candidate.
+- [ ] Obtain formal trademark/cultural review, multi-participant comprehension,
+  print proofing, and cross-platform optical comparison before claiming those
+  external brand assurances.
+
+Evidence: [BRAND_IDENTITY](BRAND_IDENTITY.md), `assets/brand/archive/2.0.0/`,
+`assets/brand/source/`, `assets/brand/concepts/`,
+`scripts/build-brand-assets.py`, and `scripts/validate-brand.py`.

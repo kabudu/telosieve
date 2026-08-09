@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 220" role="img" aria-labelledby="title description">
+  <title id="title">Direction A: cut-sieve glyph</title>
+  <desc id="description">A chamfered field contains an angular S-shaped inspection channel, three circular questions, and one square bounded result.</desc>
+  <rect width="320" height="220" rx="28" fill="#F7FAFC"/>
+  <path d="M60 26H238L286 74V146L238 194H60L34 168V52ZM82 58H206L230 82L206 106H132L116 122L132 138H230V168H118L78 128L118 88H194L202 80L194 72H82Z" fill="#101820" fill-rule="evenodd"/>
+  <circle cx="59" cy="69" r="9" fill="#007C91"/>
+  <circle cx="59" cy="104" r="9" fill="#8A4B08"/>
+  <circle cx="59" cy="139" r="9" fill="#6B4BB6"/>
+  <rect x="247" y="142" width="19" height="19" rx="3" fill="#006B5F"/>
+</svg>

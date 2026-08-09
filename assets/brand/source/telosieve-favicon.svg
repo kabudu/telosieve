@@ -1,9 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-labelledby="title description">
   <title id="title">Telosieve favicon</title>
-  <desc id="description">A compact convergence gate on a dark field.</desc>
+  <desc id="description">A compact light cut-sieve glyph on a dark field.</desc>
   <rect width="32" height="32" rx="6" fill="#101820"/>
-  <path d="M3 8H10L13 12" fill="none" stroke="#5BD6E7" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M3 16H13" stroke="#F5B85C" stroke-width="3" stroke-linecap="round"/><path d="M3 24H10L13 20" stroke="#B9A4F4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M12 3H21L19 16L21 29H12L14 16Z" fill="#F7FAFC"/>
-  <path d="M20 16H29" stroke="#57D7C0" stroke-width="3" stroke-linecap="round"/>
+  <path d="M7 3H23L29 9V23L23 29H7L3 25V7ZM10 8H20L23 11L20 14H15L13 16L15 18H24V22H14L9 17L14 12H19L20 11L19 10H10Z" fill="#F7FAFC" fill-rule="evenodd"/>
+  <circle cx="7" cy="10" r="1.5" fill="#5BD6E7"/><circle cx="7" cy="16" r="1.5" fill="#F5B85C"/><circle cx="7" cy="22" r="1.5" fill="#B9A4F4"/>
+  <rect x="23" y="22" width="3" height="3" rx=".5" fill="#57D7C0"/>
 </svg>
