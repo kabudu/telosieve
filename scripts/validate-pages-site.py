@@ -154,7 +154,7 @@ def main() -> int:
         if phrase not in readme:
             errors.append(f"README comprehension surface missing: {phrase}")
     policy = (ROOT / "docs/GITHUB_PAGES.md").read_text(encoding="utf-8")
-    for phrase in ("authorized to deploy", "reviewed `master`", "commit-pinned", "no repository secrets"):
+    for phrase in ("website is live", "reviewed `master`", "commit-pinned", "no repository secrets"):
         if phrase not in policy:
             errors.append(f"Pages policy boundary missing: {phrase}")
 

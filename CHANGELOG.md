@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## Unreleased
 
+### Fixed
+
+- Build the validated Pages deployment artifact explicitly before upload and
+  confine Pages write permission to the deployment job after activation.
+- Make the wide mobile architecture illustration keyboard-focusable and add an
+  explicit swipe and arrow-key affordance without introducing page overflow.
+
 ## 0.2.0-rc.4 - 2026-08-09
 
 ### Added
