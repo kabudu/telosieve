@@ -340,6 +340,14 @@ exports, accessibility checks, and prohibited-claim scan travel with the success
 Product identity does not close independent assessment, operational identity,
 legal name/mark clearance, raster cross-platform equivalence, or production gates.
 
+Post-M66 adds dependency-free GitHub Pages source, deterministic local assembly,
+and a public-content validator. Live Pages remains disabled: GitHub's
+branch-based Pages path still invokes a hosted deployment workflow, so activation
+requires a separate authorizing pull request, explicit user approval, exact
+source-branch and visibility decisions, and the permissions, secrets, cost,
+supply-chain, untrusted-contribution, and public-content reviews required by the
+hosted-CI policy. See [GITHUB_PAGES](GITHUB_PAGES.md).
+
 The `v0.2.0-rc.3` successor evaluation freeze is authorized by
 [RC3_EVALUATION_RELEASE_DECISION](RC3_EVALUATION_RELEASE_DECISION.md). The
 completed ceremony is retained in [RC3_FREEZE_RECORD](RC3_FREEZE_RECORD.md). The

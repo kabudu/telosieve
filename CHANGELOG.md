@@ -4,6 +4,10 @@ All notable Telosieve changes are recorded here. Telosieve follows Semantic Vers
 
 ## Unreleased
 
+- Rewrite the README opening in plain language, add an accessible architecture
+  illustration, and create a responsive dependency-free GitHub Pages website.
+- Add deterministic local website assembly and validation while keeping live
+  Pages activation behind the private-repository hosted-workflow gate.
 - Adopt brand `4.0.0`: the owner-selected Fractured Oracle mark uses four
   crystalline evidence planes around an exact circular aperture and a displaced
   bounded-result square across canonical, monochrome, reversed, and small assets.

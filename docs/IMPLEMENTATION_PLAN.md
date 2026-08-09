@@ -1130,3 +1130,27 @@ Evidence: [BRAND_IDENTITY](BRAND_IDENTITY.md), `assets/brand/archive/2.0.0/`,
 Evidence: [BRAND_IDENTITY](BRAND_IDENTITY.md), `assets/brand/archive/3.0.0/`,
 `assets/brand/source/`, `assets/brand/concepts/`,
 `scripts/build-brand-assets.py`, and `scripts/validate-brand.py`.
+
+## Post-M66 - public comprehension and website source
+
+- [x] Rewrite the README opening so a first-time reader can identify the problem,
+  mechanism, concrete infrastructure example, outcome, and current limitation
+  before encountering protocol terminology.
+- [x] Replace the ASCII architecture sketch with one accessible, responsive SVG
+  showing separate authorities, provenance verification, fault hypotheses,
+  independent checking, agreement, certificate/refusal, and retained evidence.
+- [x] Create a responsive dependency-free website using the permanent brand and
+  current maturity overlay, with no telemetry, remote runtime assets, scripts,
+  credentials, or stronger claims.
+- [x] Add bounded deterministic local website assembly, digest manifest,
+  internal-link and fragment checks, SVG safety checks, responsive/reduced-motion
+  checks, asset budgets, and authoritative local-CI coverage.
+- [x] Document that live GitHub Pages activation remains gated because even
+  branch-based publishing uses a hosted deployment workflow and private-source
+  Pages may be publicly accessible.
+- [ ] Activate and verify the live Pages URL only after an authorizing pull
+  request supplies explicit hosted-workflow approval and the required release,
+  permissions, supply-chain, privacy, and public-content review.
+
+Evidence: [GitHub Pages Website](GITHUB_PAGES.md), `site/`,
+`scripts/build-pages-site.py`, and `scripts/validate-pages-site.py`.
