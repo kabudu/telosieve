@@ -2,9 +2,18 @@
 
 ## Current status
 
-The Telosieve website source is complete under `site/`, builds locally into
-`target/pages/`, and is authorized to deploy from reviewed `master` through
-`.github/workflows/pages.yml` after the repository becomes public.
+The Telosieve website is live at <https://kabudu.github.io/telosieve/> and
+deploys from reviewed `master` through `.github/workflows/pages.yml`. GitHub
+Pages is configured with the workflow publishing source and enforced HTTPS.
+
+The launch deployment was verified from source commit
+`08df159a6ddbcdf4e3784d01a84dd90c6beb5125`: Pages run `31324873576` and
+portable CI run `31324873617` both passed. Live inspection at 1440 by 1000 and
+390 by 844 CSS pixels found no broken images or page-level horizontal overflow;
+the intentionally wide mobile architecture region exposes a visible scroll
+affordance, keyboard focus, and its full claim-boundary description. The page,
+stylesheet, manifest, symbol, architecture illustration, favicon, and social
+card each returned HTTP 200.
 
 The website contains no telemetry, cookies, remote fonts, client-side scripts,
 third-party runtime assets, forms, credentials, private handoff material, or
@@ -28,7 +37,8 @@ deployment serves the validated files without Jekyll transformation.
 
 ## Deployment controls
 
-The public-launch pull request and explicit owner instruction satisfy the prior activation gate. Deployment must:
+The public-launch pull request and explicit owner instruction satisfied the
+activation gate. Future deployment must:
 
 1. confirm the repository is ready for public website exposure and rerun the
    final public-history and prohibited-content audits;

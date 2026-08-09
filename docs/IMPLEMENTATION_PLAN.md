@@ -1148,7 +1148,7 @@ Evidence: [BRAND_IDENTITY](BRAND_IDENTITY.md), `assets/brand/archive/3.0.0/`,
 - [x] Document that live GitHub Pages activation remains gated because even
   branch-based publishing uses a hosted deployment workflow and private-source
   Pages may be publicly accessible.
-- [ ] Activate and verify the live Pages URL only after an authorizing pull
+- [x] Activate and verify the live Pages URL only after an authorizing pull
   request supplies explicit hosted-workflow approval and the required release,
   permissions, supply-chain, privacy, and public-content review.
 
@@ -1167,12 +1167,12 @@ Evidence: [GitHub Pages Website](GITHUB_PAGES.md), `site/`,
   confined to the release environment.
 - [x] Add public README badges, plain-language repository metadata, topic tags,
   workflow validation, and updated release and Pages procedures.
-- [ ] Make the repository public and verify visibility, About metadata, topics,
+- [x] Make the repository public and verify visibility, About metadata, topics,
   default branch, licence, remote head, and complete public history.
-- [ ] Verify hosted CI and Pages deployment from the merged reviewed head.
-- [ ] Publish and verify `telosieve 0.2.0-rc.4` on crates.io and docs.rs plus the
+- [x] Verify hosted CI and Pages deployment from the merged reviewed head.
+- [x] Publish and verify `telosieve 0.2.0-rc.4` on crates.io and docs.rs plus the
   matching prerelease GitHub Release and checksummed Linux binary.
-- [ ] Inspect the live Pages site at desktop and mobile widths, verify links and
+- [x] Inspect the live Pages site at desktop and mobile widths, verify links and
   metadata, and fix every material visual or accessibility finding.
 
 Evidence: [Public Opening Decision](PUBLIC_OPENING_DECISION.md),
