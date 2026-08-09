@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-labelledby="title description">
-  <title id="title">Telosieve small cut-sieve symbol</title>
-  <desc id="description">A compact angular sieve with three evidence apertures and one square result.</desc>
-  <path d="M6 2H24L30 8V24L24 30H6L2 26V6ZM9 7H21L24 10L21 13H14L12 15L14 17H24V21H13L8 16L13 11H20L21 10L20 9H9Z" fill="#101820" fill-rule="evenodd"/>
-  <circle cx="6" cy="9" r="1.5" fill="#007C91"/><circle cx="6" cy="15" r="1.5" fill="#8A4B08"/><circle cx="6" cy="21" r="1.5" fill="#6B4BB6"/>
-  <rect x="24" y="22" width="3" height="3" rx=".5" fill="#006B5F"/>
+  <title id="title">Telosieve small Fractured Oracle symbol</title>
+  <desc id="description">Four evidence planes surround a circular aperture and compact square result.</desc>
+  <path d="M4 7L15 2L21 4L18 11L10 13L6 10Z" fill="#007C91"/><path d="M21 4L28 8L30 18L24 20L20 14L18 11Z" fill="#6B4BB6"/><path d="M24 20L29 24L22 30L12 31L11 25L18 22Z" fill="#8A4B08"/><path d="M11 25L6 27L1 19L5 10L10 13L9 19Z" fill="#B42318"/>
+  <circle cx="15" cy="17" r="7" fill="#101820"/>
+  <rect x="11" y="24" width="5" height="5" transform="rotate(12 13.5 26.5)" fill="#101820"/><rect x="12.5" y="25.5" width="2" height="2" transform="rotate(12 13.5 26.5)" fill="#006B5F"/>
 </svg>

@@ -21,7 +21,7 @@ The candidate contribution is a provenance-separated protocol that can suspect t
 | Observation | Authenticated multi-domain quorum required in every supported mode | declared domains do not prove organisational independence |
 | Integrations | Kubernetes, OpenTofu, Redis, PostgreSQL, and HTTP/JSON | read-only qualification with documented environment limits |
 | Actuation | Transactional single-host reference actuator | reference semantics only, no production-system authority |
-| Brand | Current source identity `3.0.0` | signed rc.3 carries archived `2.0.0`; legal and external comprehension review remain separate gates |
+| Brand | Current source identity `4.0.0` | signed rc.3 carries archived `2.0.0`; legal and external comprehension review remain separate gates |
 | CI | `./scripts/ci-local.sh` | sole authoritative gate while the repository is private |
 
 Public source, production promotion, hosted CI, package publication, autonomous actuation, and stronger safety claims each remain separately governed. See [Release Strategy](docs/RELEASE.md) and [Public Opening Decision](docs/PUBLIC_OPENING_DECISION.md).

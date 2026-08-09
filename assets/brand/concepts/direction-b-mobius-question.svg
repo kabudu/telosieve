@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 220" role="img" aria-labelledby="title description">
+  <title id="title">Direction B: Möbius Question</title><desc id="description">Two interwoven evidence ribbons turn instructions back through their own evidence.</desc><rect width="320" height="220" rx="28" fill="#F7FAFC"/>
+  <path d="M54 54C91 12 177 16 216 56C252 94 229 126 194 149L116 198" fill="none" stroke="#101820" stroke-width="42"/><path d="M54 54C91 12 177 16 216 56" fill="none" stroke="#007C91" stroke-width="28"/><path d="M216 56C252 94 229 126 194 149" fill="none" stroke="#6B4BB6" stroke-width="28"/><path d="M194 149L116 198" fill="none" stroke="#8A4B08" stroke-width="28"/>
+  <path d="M266 166C229 207 143 203 104 163C68 126 91 94 126 71L204 22" fill="none" stroke="#101820" stroke-width="42"/><path d="M266 166C229 207 143 203 104 163" fill="none" stroke="#B42318" stroke-width="28"/><path d="M104 163C68 126 91 94 126 71" fill="none" stroke="#007C91" stroke-width="28"/><path d="M126 71L204 22" fill="none" stroke="#6B4BB6" stroke-width="28"/><rect x="239" y="142" width="22" height="22" transform="rotate(28 250 153)" fill="#006B5F"/>
+</svg>

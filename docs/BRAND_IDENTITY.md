@@ -1,12 +1,12 @@
 # Telosieve Brand Identity
 
-Brand version: `3.0.0`
+Brand version: `4.0.0`
 
 Status: approved as Telosieve's enduring product identity on 2026-08-08 and corrected on the same date to remove release-maturity coupling. This identity communicates the product's purpose and mechanism; it is not evidence of safety, independent validation, legal name clearance, production readiness, or current release authorization.
 
 ## Product maturity is not brand identity
 
-Telosieve has one product identity across research, evaluation, release-candidate, and any future production-grade stages. The name, cut-sieve mark, brand version, purpose, principles, personality, tagline, colour, typography, and canonical product templates are maturity-neutral. They are designed for the intended durable product, not as temporary evaluation packaging.
+Telosieve has one product identity across research, evaluation, release-candidate, and any future production-grade stages. The name, Fractured Oracle mark, brand version, purpose, principles, personality, tagline, colour, typography, and canonical product templates are maturity-neutral. They are designed for the intended durable product, not as temporary evaluation packaging.
 
 Current maturity is a separate, replaceable messaging overlay. The overlay states release channel, read-only or actuation scope, support posture, evidence maturity, production authorization, and independent-validation status. Changing those facts must not require redrawing the mark, renaming the product, changing the brand version, or replacing the core tagline. The current overlay is `assets/brand/templates/evaluation-overlay.svg`; it is not part of any canonical logo.
 
@@ -62,15 +62,15 @@ Three genuinely different directions are retained under `assets/brand/concepts/`
 
 | Direction | Mechanism | Strength | Risk | Result |
 |---|---|---|---|---|
-| A: cut-sieve glyph | a chamfered field contains an angular S inspection channel, three circular apertures, and one square result | compact, ownable silhouette; strong monochrome reversal; reads as both sieve and questioned instruction | can suggest a processor tile, which is acceptable for the infrastructure category | selected |
-| B: questioned T monogram | three evidence blades interrupt a monumental T and resolve at a square base | immediate initial and strong editorial presence | too static and corporate; the evidence semantics become decoration | not selected |
-| C: counterfactual knot | three angular ribbons turn around an open centre without collapsing provenance | energetic, distinctive, and visibly multi-source | resembles routing and is too complex below 24 pixels | not selected |
+| A: Fractured Oracle | four crystalline evidence planes orbit an exact circular aperture, with one displaced square result | expressive, ownable silhouette; tension between fractured evidence and geometric calm; strong colour and monochrome forms | can suggest a broken ring without the supporting product context | selected |
+| B: Möbius Question | two interwoven ribbons turn an instruction back through its own evidence | kinetic, intellectually distinctive, and visibly recursive | complex crossings lose clarity at favicon size and can suggest generic data flow | not selected |
+| C: Counterfactual Crown | four asymmetric hypothesis planes surround a bounded void and displaced answer | elegant, editorial, and visibly multi-hypothesis | petal-like silhouette can read as botanical | not selected |
 
-The brand `3.0.0` review used a common light field and compared three newly drawn directions at equal size before their names and rationale were considered. Scoring dimensions were mechanism fidelity, silhouette, claim safety, category fit, distinctiveness, monochrome behaviour, and recognition at 16, 24, and 32 pixels. Direction A scored highest because the chamfered silhouette and angular S channel remain recognisable without colour, the circular apertures stay distinct from the square result, and the mark avoids a shield, lock, tick, robot, eye, or automatic-remediation metaphor. This was one project-controlled review, not an external comprehension study or trademark opinion.
+The brand `4.0.0` review compared three newly drawn artistic directions at equal size, then refined the owner-selected Fractured Oracle twice. The literal question-mark aperture was rejected, as was an uncontrolled jagged fault line. The approved centre is an exact circle: the surrounding planes carry the fracture while the aperture remains deliberately calm. Scoring dimensions were mechanism fidelity, silhouette, claim safety, category fit, distinctiveness, monochrome behaviour, and recognition at 16, 24, and 32 pixels. Direction A was owner-selected because its fractured outer mass remains expressive without becoming security iconography, while its aperture and displaced square retain a legible result boundary. The mark avoids a shield, lock, tick, robot, eye, face, punctuation symbol, or automatic-remediation metaphor. This was an owner-led project review, not an external comprehension study or trademark opinion.
 
 ## Logo system
 
-The selected mark is a cut-sieve glyph rather than a protocol diagram. Its chamfered outer field gives the product a stable app, repository, print, and favicon silhouette. An angular negative-space S doubles as a sieve channel and a questioned instruction moving in two directions. Three circular apertures encode separate evidence without drawing literal network paths; the differently shaped square is the bounded result. The field is not a shield, the channel is not an automatic route, and the square is deliberately not a tick.
+The selected Fractured Oracle mark is an abstract product symbol rather than a protocol diagram. Four separately coloured crystalline planes represent evidence that can disagree, split, or survive challenge without collapsing provenance. Their irregular outer silhouette supplies motion and productive tension. An exact circular aperture creates a controlled negative-space centre and prevents the fracture from reading as accidental damage. The displaced square is the bounded result: related to the evidence, but not falsely presented as its inevitable centre. The circle is not an eye or question mark, the outer mass is not a shield, and the square is deliberately not a tick.
 
 Canonical files:
 
@@ -83,7 +83,7 @@ Canonical files:
 - `telosieve-monochrome.svg`: one-colour print and terminal-adjacent use;
 - `telosieve-reversed.svg`: dark-field symbol.
 
-Clear space is at least one aperture diameter around every mark. Minimum sizes are 16 pixels for the small symbol, 32 pixels for the primary symbol, 180 pixels for the horizontal lockup, and 220 pixels for the stacked lockup. Use the small symbol below 32 pixels, the dark-field favicon on browser/OS surfaces, and the reversed dark-field avatar where the surrounding theme is unknown. Do not rotate, skew, add shadows, round away the chamfers, recolour individual apertures outside the token system, fill the S channel, convert the result square to a tick, place copy inside the clear space, or use the colour mark where monochrome or forced-colour output is required.
+Clear space is at least one result-square width around every mark. Minimum sizes are 16 pixels for the small symbol, 32 pixels for the primary symbol, 180 pixels for the horizontal lockup, and 220 pixels for the stacked lockup. Use the small symbol below 32 pixels, the dark-field favicon on browser/OS surfaces, and the reversed dark-field avatar where the surrounding theme is unknown. Do not rotate or skew the complete mark, smooth the crystalline outer planes, distort the circular aperture, reconnect the planes into a continuous ring, move the result square into the aperture, add shadows or gradients, recolour individual planes outside the token system, convert the result square to a tick, place copy inside the clear space, or use the colour mark where monochrome or forced-colour output is required.
 
 ## Colour and state
 
@@ -130,11 +130,11 @@ The builder renders every PNG twice and requires byte identity, exact dimensions
 
 The repository owner is product and brand owner. Engineering owns deterministic assets and integration consistency; security owns prohibited protection claims; research owns evidence and novelty wording; accessibility owns contrast and non-colour semantics; legal clearance remains external. A future contributor may fill more than one role, but every role must be explicitly reviewed at a release gate.
 
-Brand sources, tokens, and manifest use their own `3.0.0` version. Protocol and release-maturity changes do not silently change the brand. Material mark, palette, typography, promise, or category changes require a reviewed milestone, migration note, regenerated exports, new manifest, and archive of released assets. Security or cultural-symbol findings may trigger immediate withdrawal, followed by documented replacement rather than silent file substitution.
+Brand sources, tokens, and manifest use their own `4.0.0` version. Protocol and release-maturity changes do not silently change the brand. Material mark, palette, typography, promise, or category changes require a reviewed milestone, migration note, regenerated exports, new manifest, and archive of released assets. Security or cultural-symbol findings may trigger immediate withdrawal, followed by documented replacement rather than silent file substitution.
 
 ### Migration from the maturity-coupled label
 
-The revoked `v0.2.0-rc.2` record preserves the earlier `1.0.0-evaluation` label and first aperture geometry. Brand `1.0.0` separated maturity from identity. Brand `2.0.0`, retained in `assets/brand/archive/2.0.0/`, replaced that diagram with the faceted convergence gate used by the signed `v0.2.0-rc.3` candidate. Brand `3.0.0` responds to the owner's distinctiveness review by replacing the remaining process-diagram aesthetic with the compact cut-sieve glyph while retaining the name, tagline, palette, typography, semantic states, and durable asset paths. Consumers must refresh every logo and raster export rather than mixing generations; use `evaluation-overlay.svg` only when current maturity disclosure is required. This post-candidate identity change belongs to a future candidate and does not alter or silently relabel the signed rc.3 bytes. Do not infer a production promotion from any identity correction.
+The revoked `v0.2.0-rc.2` record preserves the earlier `1.0.0-evaluation` label and first aperture geometry. Brand `1.0.0` separated maturity from identity. Brand `2.0.0`, retained in `assets/brand/archive/2.0.0/`, replaced that diagram with the faceted convergence gate used by the signed `v0.2.0-rc.3` candidate. Brand `3.0.0` replaced the process-diagram aesthetic with a compact cut-sieve glyph but was superseded before release; `assets/brand/archive/3.0.0/BRAND_ASSET_ARCHIVE_RECORD.json` retains its exact manifest digest without falsely presenting a complete released manifest. Brand `4.0.0` responds to the owner's artistic distinctiveness review with the Fractured Oracle while retaining the name, tagline, palette, typography, semantic states, and durable asset paths. Consumers must refresh every logo and raster export rather than mixing generations; use `evaluation-overlay.svg` only when current maturity disclosure is required. This post-candidate identity change belongs to a future candidate and does not alter or silently relabel the signed rc.3 bytes. Do not infer a production promotion from any identity correction.
 
 ## Remaining human gates
 

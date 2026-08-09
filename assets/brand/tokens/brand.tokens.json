@@ -1,6 +1,6 @@
 {
   "schema_version": "telosieve.brand-tokens/v1",
-  "brand_version": "3.0.0",
+  "brand_version": "4.0.0",
   "colour": {
     "ink": "#101820",
     "paper": "#F7FAFC",

@@ -1,0 +1,8 @@
+{
+  "schema_version": "telosieve.brand-asset-archive-record/v1",
+  "brand_version": "3.0.0",
+  "release_status": "unreleased-source-identity",
+  "superseded_by": "4.0.0",
+  "reason": "Owner-approved migration from the cut-sieve glyph to the Fractured Oracle mark",
+  "canonical_manifest_sha256": "1311299e62edcb330cb509d0c822d821b06aaa635987fe008db1e754c66acf2d"
+}
