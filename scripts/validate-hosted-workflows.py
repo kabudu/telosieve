@@ -28,6 +28,8 @@ def main() -> int:
     combined_pr_surface = texts["ci.yml"] + texts["pages.yml"]
     if "secrets." in combined_pr_surface or "contents: write" in combined_pr_surface:
         errors.append("pull-request or Pages surface can access secrets or write contents")
+    if "ref: ${{ github.event.pull_request.head.sha || github.sha }}" not in texts["ci.yml"]:
+        errors.append("pull-request CI does not bind checkout to the exact head SHA")
     release = texts["release.yml"]
     for phrase in ("environment: crates-io", "secrets.CARGO_REGISTRY_TOKEN", "--verify-tag", "--prerelease"):
         if phrase not in release:
