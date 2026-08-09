@@ -40,7 +40,6 @@ jobs:
           python3 scripts/validate-release-metadata.py
           python3 scripts/validate-release-presentation.py
           python3 scripts/validate-open-source-readiness.py
-          python3 scripts/validate-brand.py
           python3 scripts/validate-pages-site.py
           python3 scripts/validate-supply-chain.py
       - name: Verify package

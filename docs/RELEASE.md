@@ -221,7 +221,7 @@ Every milestone is developed on a scoped feature branch, validated with that
 command, pushed, reviewed through a pull request, and squash-merged. The command
 must pass again at the final reviewed head. Its result is recorded in the pull
 request. GitHub Actions runs portable Rust, documentation, package,
-public-history, brand, Pages, and supply-chain checks on pull requests and
+public-history, Pages, and supply-chain checks on pull requests and
 `master`. The complete local gate additionally owns Docker-backed real-system
 and reproducible-build qualifications. Release requires both applicable hosted
 checks and a successful clean-head local gate.
