@@ -363,6 +363,13 @@ p {
 .architecture figure {
   margin: 0;
 }
+.architecture-scroll-note {
+  display: none;
+}
+.architecture figure:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 4px;
+}
 .architecture figure img {
   display: block;
   width: 100%;
@@ -664,6 +671,17 @@ footer p {
   }
   .architecture .section-intro {
     padding: 0 18px;
+  }
+  .architecture-scroll-note {
+    align-items: center;
+    color: var(--cyan);
+    display: flex;
+    font-size: 12px;
+    font-weight: 700;
+    gap: 8px;
+    letter-spacing: 0.08em;
+    margin: -28px 18px 18px;
+    text-transform: uppercase;
   }
   .architecture figure img {
     border-radius: 0;

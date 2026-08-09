@@ -111,6 +111,8 @@ def main() -> int:
         "<title>Telosieve | Question the instruction</title>",
         'property="og:url" content="https://kabudu.github.io/telosieve/"',
         'property="og:image" content="https://kabudu.github.io/telosieve/assets/social-card-1200x630.png"',
+        'figure tabindex="0" aria-describedby="architecture-scroll-instruction architecture-caption"',
+        'id="architecture-scroll-instruction"',
     ):
         if phrase not in html_text:
             errors.append(f"site metadata missing: {phrase}")
@@ -138,6 +140,7 @@ def main() -> int:
         ("980 px breakpoint", r"@media\s*\(\s*max-width:\s*980px\s*\)"),
         ("620 px breakpoint", r"@media\s*\(\s*max-width:\s*620px\s*\)"),
         ("reduced motion", r"prefers-reduced-motion\s*:\s*reduce"),
+        ("architecture keyboard focus", r"\.architecture\s+figure:focus-visible"),
     ):
         if re.search(pattern, css) is None:
             errors.append(f"responsive/accessibility CSS missing: {label}")
