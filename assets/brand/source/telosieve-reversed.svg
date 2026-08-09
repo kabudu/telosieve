@@ -1,8 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-labelledby="title description">
-  <title id="title">Telosieve reversed cut-sieve symbol</title>
-  <desc id="description">A light cut-sieve glyph with bright evidence apertures on a dark field.</desc>
+  <title id="title">Telosieve reversed Fractured Oracle symbol</title>
+  <desc id="description">A bright crystalline Fractured Oracle mark with a dark circular aperture on a dark field.</desc>
   <rect width="160" height="160" rx="24" fill="#101820"/>
-  <path d="M30 10H120L148 38V122L120 150H30L12 132V28ZM48 34H105L120 49L105 64H71L61 74L71 84H120V103H64L37 76L64 49H98L103 44L98 39H48Z" fill="#F7FAFC" fill-rule="evenodd"/>
-  <circle cx="31" cy="45" r="6" fill="#5BD6E7"/><circle cx="31" cy="76" r="6" fill="#F5B85C"/><circle cx="31" cy="107" r="6" fill="#B9A4F4"/>
-  <rect x="123" y="109" width="14" height="14" rx="2" fill="#57D7C0"/>
+  <path d="M20 34L74 10L103 22L89 55L50 63L28 52Z" fill="#5BD6E7"/><path d="M104 22L140 40L148 87L122 97L99 70L89 55Z" fill="#B9A4F4"/><path d="M122 98L145 120L110 151L62 153L56 124L91 108Z" fill="#F5B85C"/><path d="M55 123L30 136L6 94L27 52L50 63L43 93Z" fill="#FF8F85"/>
+  <path d="M74 10L103 22L89 55L77 42Z" fill="#A6FFF7"/><path d="M140 40L148 87L122 97L129 68Z" fill="#D4CBFF"/><path d="M110 151L62 153L56 124L84 133Z" fill="#FFD47C"/><path d="M6 94L27 52L50 63L26 88Z" fill="#FFB3C7"/>
+  <circle cx="76" cy="86" r="35" fill="#101820"/>
+  <rect x="55" y="119" width="23" height="23" transform="rotate(12 66.5 130.5)" fill="#101820"/><rect x="61" y="125" width="11" height="11" transform="rotate(12 66.5 130.5)" fill="#57D7C0"/>
 </svg>

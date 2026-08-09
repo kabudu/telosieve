@@ -1108,3 +1108,25 @@ The record commit is deliberately newer than the immutable tagged candidate byte
 Evidence: [BRAND_IDENTITY](BRAND_IDENTITY.md), `assets/brand/archive/2.0.0/`,
 `assets/brand/source/`, `assets/brand/concepts/`,
 `scripts/build-brand-assets.py`, and `scripts/validate-brand.py`.
+
+## Post-M65 - Fractured Oracle brand migration
+
+- [x] Treat the owner's rejection of the cut-sieve mark as a material artistic
+  distinctiveness finding and compare three non-conservative directions at equal scale.
+- [x] Select Fractured Oracle, remove its literal question-mark treatment, reject
+  an uncontrolled jagged fault, and approve an exact circular aperture.
+- [x] Implement canonical symbol, small, favicon, horizontal, stacked,
+  monochrome, reversed, avatar, social-card, and release-card variants without
+  changing the wordmark, palette, tagline, or maturity boundary.
+- [x] Advance the governed identity to brand `4.0.0`, retain the superseded
+  `3.0.0` manifest digest, regenerate deterministic exports, and update package,
+  README, productisation, release, changelog, and brand governance surfaces.
+- [x] Keep signed `v0.2.0-rc.3` bytes and their archived brand identity immutable;
+  assign brand `4.0.0` to current source and a future candidate.
+- [ ] Obtain formal trademark/cultural review, multi-participant comprehension,
+  print proofing, and cross-platform optical comparison before claiming those
+  external brand assurances.
+
+Evidence: [BRAND_IDENTITY](BRAND_IDENTITY.md), `assets/brand/archive/3.0.0/`,
+`assets/brand/source/`, `assets/brand/concepts/`,
+`scripts/build-brand-assets.py`, and `scripts/validate-brand.py`.

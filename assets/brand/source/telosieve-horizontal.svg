@@ -1,8 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 160" role="img" aria-labelledby="title description">
   <title id="title">Telosieve horizontal logo</title>
-  <desc id="description">Telosieve cut-sieve glyph followed by the product name and enduring tagline.</desc>
-  <path d="M30 10H120L148 38V122L120 150H30L12 132V28ZM48 34H105L120 49L105 64H71L61 74L71 84H120V103H64L37 76L64 49H98L103 44L98 39H48Z" fill="#101820" fill-rule="evenodd"/>
-  <circle cx="31" cy="45" r="6" fill="#007C91"/><circle cx="31" cy="76" r="6" fill="#8A4B08"/><circle cx="31" cy="107" r="6" fill="#6B4BB6"/><rect x="123" y="109" width="14" height="14" rx="2" fill="#006B5F"/>
+  <desc id="description">The Fractured Oracle symbol followed by the Telosieve product name and enduring tagline.</desc>
+  <g transform="translate(8 4) scale(.95)"><path d="M20 34L74 10L103 22L89 55L50 63L28 52Z" fill="#007C91"/><path d="M104 22L140 40L148 87L122 97L99 70L89 55Z" fill="#6B4BB6"/><path d="M122 98L145 120L110 151L62 153L56 124L91 108Z" fill="#8A4B08"/><path d="M55 123L30 136L6 94L27 52L50 63L43 93Z" fill="#B42318"/><path d="M74 10L103 22L89 55L77 42Z" fill="#5BD6E7"/><path d="M140 40L148 87L122 97L129 68Z" fill="#B9A4F4"/><path d="M110 151L62 153L56 124L84 133Z" fill="#F5B85C"/><path d="M6 94L27 52L50 63L26 88Z" fill="#FF8F85"/><circle cx="76" cy="86" r="35" fill="#101820"/><rect x="55" y="119" width="23" height="23" transform="rotate(12 66.5 130.5)" fill="#101820"/><rect x="61" y="125" width="11" height="11" transform="rotate(12 66.5 130.5)" fill="#006B5F"/></g>
   <text x="176" y="83" fill="#101820" font-family="Arial, Helvetica, sans-serif" font-size="64" font-weight="700" letter-spacing="-2">Telosieve</text>
   <text x="176" y="116" fill="#475467" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="600" letter-spacing="1">QUESTION THE INSTRUCTION BEFORE ENFORCING IT</text>
 </svg>

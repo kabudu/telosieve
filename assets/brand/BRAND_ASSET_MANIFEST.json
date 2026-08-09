@@ -1,6 +1,6 @@
 {
   "schema_version": "telosieve.brand-assets/v1",
-  "brand_version": "3.0.0",
+  "brand_version": "4.0.0",
   "entries": [
     {
       "path": "LICENSES/README.md",
@@ -19,81 +19,89 @@
       "allowed_use": "Telosieve product, documentation, evaluation, and community communication"
     },
     {
-      "path": "concepts/direction-a-cut-sieve.svg",
-      "sha256": "5c7372467d6f21d8ac3bf6725d17d1d96149197534e9a77f2e37a96b47394692",
-      "bytes": 794,
+      "path": "archive/3.0.0/BRAND_ASSET_MANIFEST.json",
+      "sha256": "64a03d8f3dd9b2198def4b140a7725e1cdea8411f59ee5125b5c81df4bbc6801",
+      "bytes": 301,
       "license": "Apache-2.0",
       "provenance": "repository-authored",
       "allowed_use": "Telosieve product, documentation, evaluation, and community communication"
     },
     {
-      "path": "concepts/direction-b-questioned-t.svg",
-      "sha256": "1b584f02d2b9e9bf16e43eae1ab82dac702281114bf85e15b7799e005edff23d",
-      "bytes": 718,
+      "path": "concepts/direction-a-fractured-oracle.svg",
+      "sha256": "cf9a38605718a4f0b717647396120b86591c898534f3c893f1285a9b7b2faacb",
+      "bytes": 1118,
       "license": "Apache-2.0",
       "provenance": "repository-authored",
       "allowed_use": "Telosieve product, documentation, evaluation, and community communication"
     },
     {
-      "path": "concepts/direction-c-counterfactual-knot.svg",
-      "sha256": "d916032ff6863e06bc65d439b9dde7048c1703052422bb61959c4c5633efdb07",
-      "bytes": 755,
+      "path": "concepts/direction-b-mobius-question.svg",
+      "sha256": "5e4c7033b21ea5b889453dd1a61e5cd0c059d25dac603197ea147a1a572260fa",
+      "bytes": 1174,
+      "license": "Apache-2.0",
+      "provenance": "repository-authored",
+      "allowed_use": "Telosieve product, documentation, evaluation, and community communication"
+    },
+    {
+      "path": "concepts/direction-c-counterfactual-crown.svg",
+      "sha256": "f134a52dec1ca72b4f2be5f51d9976c416189e37ed7164f7832752647d915a5b",
+      "bytes": 839,
       "license": "Apache-2.0",
       "provenance": "repository-authored",
       "allowed_use": "Telosieve product, documentation, evaluation, and community communication"
     },
     {
       "path": "source/telosieve-favicon.svg",
-      "sha256": "474d599b8737a31c0f22531f5fa6f19dc5df98007ab8a80f034e4158939a1aef",
-      "bytes": 664,
+      "sha256": "bb0891a089eebee6dbfcedf20da4883448c3600b25e1995faa020321d214b4d0",
+      "bytes": 805,
       "license": "Apache-2.0",
       "provenance": "repository-authored",
       "allowed_use": "Telosieve product, documentation, evaluation, and community communication"
     },
     {
       "path": "source/telosieve-horizontal.svg",
-      "sha256": "d05b4a95d8b4c4846d7b9551fc6d0b4f6933b837cb8a091b095e7b69865147fb",
-      "bytes": 1002,
+      "sha256": "d3143a4bb372cedfa5603f860a5497c7a227afa9fd30270b8961cfb5ec3ea44a",
+      "bytes": 1399,
       "license": "Apache-2.0",
       "provenance": "repository-authored",
       "allowed_use": "Telosieve product, documentation, evaluation, and community communication"
     },
     {
       "path": "source/telosieve-monochrome.svg",
-      "sha256": "d4499505c0065217b27bbf926e12d5d1a0497fddd04b1948c8d3bd918872d028",
-      "bytes": 703,
+      "sha256": "9efaea86c46a6be67757b41de0b780c6a145d87dfb66dc71158a3e7cf04e78fe",
+      "bytes": 745,
       "license": "Apache-2.0",
       "provenance": "repository-authored",
       "allowed_use": "Telosieve product, documentation, evaluation, and community communication"
     },
     {
       "path": "source/telosieve-reversed.svg",
-      "sha256": "fdf1a4b9e773139ee03c2f0999dee98f0918c7e9851ced1ce68021ecfb2eac20",
-      "bytes": 731,
+      "sha256": "6e7fc52db9c0f02bc793c384f4c412d9045312530ffb5b94d077d922b6b018c5",
+      "bytes": 1102,
       "license": "Apache-2.0",
       "provenance": "repository-authored",
       "allowed_use": "Telosieve product, documentation, evaluation, and community communication"
     },
     {
       "path": "source/telosieve-small.svg",
-      "sha256": "b097a0b3e822245afd41574819e1f822f5b3d79b870cb79dd89f432f0aec6aa3",
-      "bytes": 648,
+      "sha256": "cec929680f1778d94888bf3b6287f88207d262dd841af304db22526ac23809b5",
+      "bytes": 776,
       "license": "Apache-2.0",
       "provenance": "repository-authored",
       "allowed_use": "Telosieve product, documentation, evaluation, and community communication"
     },
     {
       "path": "source/telosieve-stacked.svg",
-      "sha256": "dc899c061099853c26babe7e70a5c280d82fe058bcefdfe72d121a759177e3a8",
-      "bytes": 1070,
+      "sha256": "1dc08c5be89877d9f82fedfd2c37944edd624a6ed2a73fb5ab05a299dce68d18",
+      "bytes": 1425,
       "license": "Apache-2.0",
       "provenance": "repository-authored",
       "allowed_use": "Telosieve product, documentation, evaluation, and community communication"
     },
     {
       "path": "source/telosieve-symbol.svg",
-      "sha256": "a1548c20fa001b834fb48d2b07c404a4aec414d3843cdc32d94942aff6c47d94",
-      "bytes": 722,
+      "sha256": "e3a352fabab7a7f9a510661194098f6268a183b3e1b36c039123c739ccd59af6",
+      "bytes": 1069,
       "license": "Apache-2.0",
       "provenance": "repository-authored",
       "allowed_use": "Telosieve product, documentation, evaluation, and community communication"
@@ -132,8 +140,8 @@
     },
     {
       "path": "templates/release-card.svg",
-      "sha256": "519563262e41438f59b9a59d04cdfccbf6c81675030f4e832beb738fa48ec3a9",
-      "bytes": 1536,
+      "sha256": "d036b462240d5d3d2837c2652f6636e330d7f29f8a96595c51213cd6965fe996",
+      "bytes": 1864,
       "license": "Apache-2.0",
       "provenance": "repository-authored",
       "allowed_use": "Telosieve product, documentation, evaluation, and community communication"
@@ -148,7 +156,7 @@
     },
     {
       "path": "tokens/brand.tokens.json",
-      "sha256": "8934ead9b49089f395cc10dd94290802cab158cba216f58895debe9a2a07b1e2",
+      "sha256": "69dc22d015108ac78a473ef88002bfa7c566269bb0796050d1ae25ce96877b13",
       "bytes": 888,
       "license": "Apache-2.0",
       "provenance": "repository-authored",
@@ -156,8 +164,8 @@
     },
     {
       "path": "exports/avatar-256.png",
-      "sha256": "7c4bd94786030ba205af9f4d9dc570ee7c00d63496164509666d7bc29c33d7d6",
-      "bytes": 5555,
+      "sha256": "7f52278a38ea463dd88b95588dc0fe480fa044d7ebd52e68c92e610e23362440",
+      "bytes": 13408,
       "dimensions": [
         256,
         256
@@ -170,8 +178,8 @@
     },
     {
       "path": "exports/favicon-32.png",
-      "sha256": "1a2b723c4e4e361cee072c9a8db8ce90c5d756c8fced42ec8d8e81875695c8d2",
-      "bytes": 684,
+      "sha256": "b24ac4533188be0a9f8b7562fc16fbbc1fe640f9e107c73ea2e0b248d6d59539",
+      "bytes": 1383,
       "dimensions": [
         32,
         32
@@ -184,8 +192,8 @@
     },
     {
       "path": "exports/social-card-1200x630.png",
-      "sha256": "f82351e7b15b055642c5ae5c1b50b4ecead71d07e6d52f794f60627bc53de19f",
-      "bytes": 38761,
+      "sha256": "25ad0c3220ed421dfe7a6b0cba35b4803a4aeefff924ecbfa5e9c991f340129d",
+      "bytes": 49865,
       "dimensions": [
         1200,
         630
