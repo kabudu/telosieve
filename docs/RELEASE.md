@@ -226,6 +226,26 @@ public-history, Pages, and supply-chain checks on pull requests and
 and reproducible-build qualifications. Release requires both applicable hosted
 checks and a successful clean-head local gate.
 
+### Protected `master`
+
+GitHub branch protection on `master` requires:
+
+- a pull request, with stale approvals dismissed;
+- the strict, up-to-date `portable` GitHub Actions check;
+- resolved review conversations and linear history; and
+- force-push and branch-deletion prevention.
+
+The required approval count is zero because this owner-operated research
+repository does not yet have an independent maintainer quorum. This does not
+remove the pull-request or complete remote-diff review requirement.
+
+Administrator enforcement is deliberately disabled only for the narrow
+privacy-safe merge procedure in `AGENTS.md`: after the reviewed feature head
+passes local and hosted CI, the owner may create the squash commit locally with
+the repository noreply identity and push that reviewed commit to `master`.
+Using the bypass for unreviewed implementation, failed CI, force-pushing,
+deletion, or omitted pull-request evidence is prohibited.
+
 The bundle-signature protocol authenticates exact candidate bytes against a
 separately supplied context, time, signer, key identifier, and public key. Test
 keys are ephemeral. Promotion still requires approved operational signing

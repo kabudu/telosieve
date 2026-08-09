@@ -1179,3 +1179,16 @@ Evidence: [Public Opening Decision](PUBLIC_OPENING_DECISION.md),
 [Release Strategy](RELEASE.md), [GitHub Pages Website](GITHUB_PAGES.md),
 `.github/workflows/`, `scripts/validate-hosted-workflows.py`, `CHANGELOG.md`, and
 `RELEASE_NOTES_v0.2.0-rc.4.md`.
+
+## Post-M68 - protected default branch
+
+- [x] Protect `master` with mandatory pull requests, strict up-to-date portable
+  CI, resolved conversations, linear history, and stale-approval dismissal.
+- [x] Disable force pushes and branch deletion.
+- [x] Retain administrator bypass only for the documented privacy-safe local
+  squash path, without weakening branch, CI, review, or clean-head gates.
+- [x] Verify the effective protection through the GitHub branch-protection API
+  and record the contributor and release procedure.
+
+Evidence: [Release Strategy](RELEASE.md), `AGENTS.md`, `CONTRIBUTING.md`, and
+GitHub branch protection for `master`.

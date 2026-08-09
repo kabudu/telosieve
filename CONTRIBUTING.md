@@ -7,9 +7,17 @@ Telosieve welcomes narrowly scoped research, security, documentation, integratio
 1. Start from current `master` with a clean worktree.
 2. Create a focused branch and state atomic acceptance criteria.
 3. Update implementation, behavioral tests, evidence, documentation, risks, compatibility, and roadmap state together.
-4. Run `./scripts/ci-local.sh`. While the repository is private, this is the sole authoritative CI gate; absent hosted checks are policy-compliant and must not be described as passing.
+4. Run `./scripts/ci-local.sh`; the complete local gate and applicable hosted
+   `portable` check must both pass.
 5. Open a pull request describing impact, validation, limitations, and any unresolved evidence gap.
 6. Address material review findings and rerun the complete local gate at the reviewed head.
+
+The protected `master` branch requires an up-to-date passing `portable` check,
+a pull request, resolved review conversations, and linear history. Force pushes
+and branch deletion are disabled. Repository-administrator bypass exists only
+for the documented privacy-safe local squash procedure in
+[Release Strategy](docs/RELEASE.md); it does not authorize ordinary direct
+pushes or omitted review.
 
 Do not add hosted CI, publish packages, change repository visibility, weaken fail-closed behavior, introduce mutation credentials, or broaden product claims without the separately documented approval gates.
 
