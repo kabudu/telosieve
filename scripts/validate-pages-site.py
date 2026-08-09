@@ -130,9 +130,13 @@ def main() -> int:
     for source in parser.sources:
         if source.startswith(("http://", "https://", "//", "data:")):
             errors.append(f"external or embedded runtime asset: {source}")
-    for required in ("@media(max-width:980px)", "@media(max-width:620px)", "prefers-reduced-motion"):
-        if required not in css:
-            errors.append(f"responsive/accessibility CSS missing: {required}")
+    for label, pattern in (
+        ("980 px breakpoint", r"@media\s*\(\s*max-width:\s*980px\s*\)"),
+        ("620 px breakpoint", r"@media\s*\(\s*max-width:\s*620px\s*\)"),
+        ("reduced motion", r"prefers-reduced-motion\s*:\s*reduce"),
+    ):
+        if re.search(pattern, css) is None:
+            errors.append(f"responsive/accessibility CSS missing: {label}")
     if re.search(r"url\s*\(\s*['\"]?(?:https?:)?//", css, re.IGNORECASE):
         errors.append("CSS loads a remote asset")
     if len(html_text.encode()) + len(css.encode()) > MAX_SITE_BYTES:
