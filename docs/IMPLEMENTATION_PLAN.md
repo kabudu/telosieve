@@ -1192,3 +1192,15 @@ Evidence: [Public Opening Decision](PUBLIC_OPENING_DECISION.md),
 
 Evidence: [Release Strategy](RELEASE.md), `AGENTS.md`, `CONTRIBUTING.md`, and
 GitHub branch protection for `master`.
+
+## Post-M69 - architecture diagram spacing
+
+- [x] Widen the three authority cards, central evaluation boundary, and two
+  result cards without reducing the established typography.
+- [x] Preserve the diagram's fixed view box, accessible description, responsive
+  horizontal-navigation behaviour, and shared README/website source asset.
+- [x] Measure every card's rendered text against its border in a browser and
+  retain at least 27 pixels of right-side clearance at native SVG scale.
+
+Evidence: `site/assets/telosieve-architecture.svg`,
+`scripts/validate-pages-site.py`, and browser-rendered layout measurements.
