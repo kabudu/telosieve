@@ -1,8 +1,22 @@
 # Changelog
 
-All notable Telosieve changes are recorded here. Telosieve follows Semantic Versioning for evaluation-candidate interfaces, while protocol schemas retain their own explicit compatibility rules.
+All notable changes to this project are documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) for evaluation-candidate interfaces. Protocol schemas retain their own explicit compatibility rules.
 
 ## Unreleased
+
+## 0.2.0-rc.4 - 2026-08-09
+
+### Added
+
+- Add a dependency-free GitHub Pages website, accessible architecture illustration, pinned hosted CI, Pages deployment, and guarded release automation.
+- Add public repository metadata, discoverability topics, status badges, and crates.io packaging for external evaluation.
+
+### Changed
+
+- Rewrite the README opening and repository description in plain language.
+- Advance current public evaluation source from the signed private rc.3 predecessor to rc.4.
 
 - Rewrite the README opening in plain language, add an accessible architecture
   illustration, and create a responsive dependency-free GitHub Pages website.
@@ -28,6 +42,10 @@ All notable Telosieve changes are recorded here. Telosieve follows Semantic Vers
 - Complete the privacy-preserving history rewrite and private repository
   replacement with one sanitized branch, no legacy tags, and fresh-clone audit
   evidence.
+
+### Security
+
+- Preserve read-only target authority, fail-closed behavior, noreply-only public history, least-privilege workflow permissions, pinned third-party actions, and secret isolation from pull-request jobs.
 
 ## 0.2.0-rc.3 - 2026-08-08
 
@@ -57,3 +75,7 @@ All notable Telosieve changes are recorded here. Telosieve follows Semantic Vers
 - Provide checksum, signature, trust, candidate-manifest, and offline-verification artifacts.
 
 `v0.2.0-rc.1` is historical and does not contain later integrations or mandatory quorum capability declarations.
+
+[Unreleased]: https://github.com/kabudu/telosieve/compare/v0.2.0-rc.4...HEAD
+[0.2.0-rc.4]: https://github.com/kabudu/telosieve/compare/v0.2.0-rc.3...v0.2.0-rc.4
+[0.2.0-rc.3]: https://github.com/kabudu/telosieve/releases/tag/v0.2.0-rc.3

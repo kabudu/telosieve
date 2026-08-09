@@ -2,11 +2,9 @@
 
 ## Current status
 
-The Telosieve website source is complete under `site/` and builds locally into
-`target/pages/`. GitHub Pages is not activated while the repository remains
-private. This is deliberate: GitHub states that Pages content from a private
-repository may still be publicly accessible and that branch-based Pages
-publishing still executes a GitHub-hosted deployment workflow.
+The Telosieve website source is complete under `site/`, builds locally into
+`target/pages/`, and is authorized to deploy from reviewed `master` through
+`.github/workflows/pages.yml` after the repository becomes public.
 
 The website contains no telemetry, cookies, remote fonts, client-side scripts,
 third-party runtime assets, forms, credentials, private handoff material, or
@@ -28,9 +26,9 @@ bounded to an explicit file allowlist. `target/pages/site-manifest.json` binds
 every published byte. The output includes `.nojekyll` so a future branch-based
 deployment serves the validated files without Jekyll transformation.
 
-## Activation gate
+## Deployment controls
 
-Activating Pages requires a separate authorizing pull request with explicit user approval for the resulting hosted workflow. That pull request must:
+The public-launch pull request and explicit owner instruction satisfy the prior activation gate. Deployment must:
 
 1. confirm the repository is ready for public website exposure and rerun the
    final public-history and prohibited-content audits;
@@ -40,15 +38,15 @@ Activating Pages requires a separate authorizing pull request with explicit user
    secrets, cost, dependency, supply-chain, and untrusted-contribution behavior;
 4. build the exact site locally and bind its output manifest to the reviewed
    source commit;
-5. configure GitHub Pages to deploy from the approved branch only after the
-   authorizing change is merged;
+5. configure GitHub Pages to deploy from reviewed `master` only after the
+   authorizing change is merged and visibility is public;
 6. verify the live URL, TLS, asset paths, narrow and desktop rendering, metadata,
    and absence of private content without describing the website as production
    assurance.
 
-Repository visibility alone is not authorization. The user request to create the
-website authorizes this locally validated source milestone; it does not silently
-waive the existing hosted-CI activation requirements.
+The workflow uses only commit-pinned GitHub-owned actions, grants read-only
+content access to the build job, and grants `pages: write` plus `id-token: write`
+only to the deployment job. It receives no repository secrets.
 
 GitHub's current publishing-source documentation is retained as the operational
 reference: <https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site>.

@@ -25,10 +25,11 @@ def main() -> int:
         errors.append("Cargo.lock package version differs from Cargo.toml")
 
     assessor = (ROOT / "docs/EXTERNAL_ASSESSMENT.md").read_text(encoding="utf-8")
+    signed_version = "0.2.0-rc.3"
     required = (
-        f"Telosieve `v{version}`",
-        f"version: `{version}`",
-        f"--expected-version {version}",
+        f"Telosieve `v{signed_version}`",
+        f"version: `{signed_version}`",
+        f"--expected-version {signed_version}",
     )
     for phrase in required:
         if phrase not in assessor:

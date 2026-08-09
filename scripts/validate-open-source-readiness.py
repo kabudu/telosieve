@@ -30,10 +30,10 @@ def main() -> int:
     expected = {
         "license": "Apache-2.0",
         "repository": "https://github.com/kabudu/telosieve",
-        "homepage": "https://github.com/kabudu/telosieve",
+        "homepage": "https://kabudu.github.io/telosieve/",
         "readme": "README.md",
         "rust-version": "1.97",
-        "publish": False,
+        "publish": ["crates-io"],
     }
     for key, value in expected.items():
         if package.get(key) != value:
@@ -49,7 +49,7 @@ def main() -> int:
     if "Apache License" not in licence or "Version 2.0, January 2004" not in licence:
         errors.append("Apache-2.0 licence text is incomplete")
     decision = (ROOT / "docs/PUBLIC_OPENING_DECISION.md").read_text(encoding="utf-8")
-    for phrase in ("evaluation software", "hosted CI", "does not authorize"):
+    for phrase in ("evaluation software", "GitHub-hosted portable CI", "does not authorize"):
         if phrase not in decision:
             errors.append(f"public-opening boundary missing: {phrase}")
 
@@ -69,7 +69,7 @@ def main() -> int:
     if errors:
         return 1
     print(history.stdout.strip())
-    print("open-source-readiness: passed (publication not authorized by validation alone)")
+    print("open-source-readiness: passed (public evaluation release authorized; production claims remain gated)")
     return 0
 
 

@@ -1,13 +1,13 @@
 # Release Strategy
 
-There is no production release yet. Private evaluation-product engineering is
-authorized by [EVALUATION_PRODUCT_DECISION](EVALUATION_PRODUCT_DECISION.md).
+There is no production release yet. Public evaluation-source distribution is
+authorized by [PUBLIC_OPENING_DECISION](PUBLIC_OPENING_DECISION.md).
 The historical `v0.2.0-rc.1` and `v0.2.0-rc.2` candidates passed their
 project-controlled freezes, then were revoked when repository history was
 privacy-rewritten. The exact rc.2 evidence is retained in
 [RC2_FREEZE_RECORD](RC2_FREEZE_RECORD.md), but neither old tag exists in the
-replacement repository and neither candidate is distributable. No public
-artifact distribution is authorized by the private evaluation decision alone.
+replacement repository and neither candidate is distributable. The public rc.4
+source, crate, GitHub prerelease, and website remain evaluation software.
 Research or evaluation releases require:
 
 1. frozen protocol and fault model;
@@ -211,7 +211,7 @@ independent qualification remain required.
 
 ## CI and delivery policy
 
-Telosieve is private, so local CI is the sole authoritative quality gate:
+The complete repository-owned quality gate is:
 
 ```sh
 ./scripts/ci-local.sh
@@ -220,13 +220,11 @@ Telosieve is private, so local CI is the sole authoritative quality gate:
 Every milestone is developed on a scoped feature branch, validated with that
 command, pushed, reviewed through a pull request, and squash-merged. The command
 must pass again at the final reviewed head. Its result is recorded in the pull
-request. Absent hosted checks are policy-compliant and must never be represented
-as passing hosted CI.
-
-Hosted CI is disabled by policy. It may be introduced only at a documented
-public-opening or research-release gate with explicit user approval and a review
-of workflow permissions, secrets, cost, dependency provenance, and untrusted
-pull-request behavior. A visibility change alone does not authorize hosted CI.
+request. GitHub Actions runs portable Rust, documentation, package,
+public-history, brand, Pages, and supply-chain checks on pull requests and
+`master`. The complete local gate additionally owns Docker-backed real-system
+and reproducible-build qualifications. Release requires both applicable hosted
+checks and a successful clean-head local gate.
 
 The bundle-signature protocol authenticates exact candidate bytes against a
 separately supplied context, time, signer, key identifier, and public key. Test
@@ -341,12 +339,10 @@ Product identity does not close independent assessment, operational identity,
 legal name/mark clearance, raster cross-platform equivalence, or production gates.
 
 Post-M66 adds dependency-free GitHub Pages source, deterministic local assembly,
-and a public-content validator. Live Pages remains disabled: GitHub's
-branch-based Pages path still invokes a hosted deployment workflow, so activation
-requires a separate authorizing pull request, explicit user approval, exact
-source-branch and visibility decisions, and the permissions, secrets, cost,
-supply-chain, untrusted-contribution, and public-content reviews required by the
-hosted-CI policy. See [GITHUB_PAGES](GITHUB_PAGES.md).
+and a public-content validator. The 2026-08-09 public-launch authorization permits
+deployment from reviewed `master` with commit-pinned GitHub-owned actions,
+least-privilege job permissions, no secrets, bounded artifacts, and live visual
+verification. See [GITHUB_PAGES](GITHUB_PAGES.md).
 
 The `v0.2.0-rc.3` successor evaluation freeze is authorized by
 [RC3_EVALUATION_RELEASE_DECISION](RC3_EVALUATION_RELEASE_DECISION.md). The

@@ -1,16 +1,16 @@
 [package]
 name = "telosieve"
-version = "0.2.0-rc.3"
+version = "0.2.0-rc.4"
 edition = "2024"
 rust-version = "1.97"
-description = "Fail-closed evaluation of desired-state instructions under disputed authority"
+description = "Read-only infrastructure instruction evaluation that refuses when trusted evidence cannot agree"
 license = "Apache-2.0"
 repository = "https://github.com/kabudu/telosieve"
-homepage = "https://github.com/kabudu/telosieve"
+homepage = "https://kabudu.github.io/telosieve/"
 readme = "README.md"
 keywords = ["security", "verification", "kubernetes", "opentofu", "reconciliation"]
 categories = ["command-line-utilities", "development-tools", "config"]
-publish = false
+publish = ["crates-io"]
 
 [dependencies]
 ed25519-dalek = "2.2.0"

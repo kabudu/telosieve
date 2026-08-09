@@ -117,8 +117,8 @@ def validate(manifest, contract, *, check_files: bool) -> None:
                     raise ValueError(f"candidate evidence is absent: {relative}")
             if any(command not in ci for command in commands):
                 raise ValueError(f"candidate validation is absent from local CI: {item['gate']}")
-    if (ROOT / ".github/workflows").exists():
-        raise ValueError("hosted CI exists in a private repository")
+    if not (ROOT / "docs/PUBLIC_OPENING_DECISION.md").is_file():
+        raise ValueError("public-opening authority is missing")
 
 
 def refusal_count(manifest, contract) -> int:

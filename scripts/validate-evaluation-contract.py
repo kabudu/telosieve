@@ -253,8 +253,8 @@ def main() -> int:
         ):
             if phrase not in decision:
                 fail(f"decision document is missing boundary: {phrase}")
-        if (ROOT / ".github/workflows").exists():
-            fail("hosted CI is forbidden while the repository is private")
+        if not (ROOT / "docs/PUBLIC_OPENING_DECISION.md").is_file():
+            fail("public-opening authority is missing")
         if strict_json(RESULT.read_text(encoding="utf-8"), "retained result") != EXPECTED_RESULT:
             fail("retained evaluation-contract result does not match the contract")
         if refusals != EXPECTED_RESULT["adversarial_refusals"]:
