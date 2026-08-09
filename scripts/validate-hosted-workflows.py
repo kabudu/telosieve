@@ -28,6 +28,9 @@ def main() -> int:
     combined_pr_surface = texts["ci.yml"] + texts["pages.yml"]
     if "secrets." in combined_pr_surface or "contents: write" in combined_pr_surface:
         errors.append("pull-request or Pages surface can access secrets or write contents")
+    for phrase in ("pages: write", "enablement: true"):
+        if phrase not in texts["pages.yml"]:
+            errors.append(f"Pages workflow missing first-run control: {phrase}")
     if "ref: ${{ github.event.pull_request.head.sha || github.sha }}" not in texts["ci.yml"]:
         errors.append("pull-request CI does not bind checkout to the exact head SHA")
     release = texts["release.yml"]
