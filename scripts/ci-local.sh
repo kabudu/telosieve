@@ -29,6 +29,7 @@ run python3 scripts/validate-release-metadata.py
 run python3 scripts/validate-release-presentation.py
 run python3 scripts/validate-open-source-readiness.py
 run python3 scripts/validate-brand.py
+run python3 scripts/validate-pages-site.py
 run python3 scripts/validate-assessor-manifest.py
 run python3 scripts/validate-supply-chain.py
 run python3 scripts/qualify-witness-operator-record.py

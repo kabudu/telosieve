@@ -2,15 +2,24 @@
 
 ![Telosieve](assets/brand/source/telosieve-horizontal.svg)
 
-Telosieve questions desired-state instructions before they are enforced. It separates goal, observation, and viability authorities, tests explicit fault hypotheses, and refuses when surviving evidence cannot justify a bounded result.
+Telosieve is a read-only evaluation system for infrastructure instructions. Before a desired-state tool acts, Telosieve asks a deliberately uncomfortable question: **what if the instruction itself is wrong?**
 
-> Telosieve is currently a read-only evaluation candidate. It does not have production actuation authority, does not provide a general safety proof, and still requires independent assessment.
+It compares authenticated intent with corroborated observations and separately defined viability rules. It then tests the declared ways those sources could be faulty. If every surviving case supports the same bounded result, Telosieve records a certificate. If the evidence is missing, stale, inconsistent, or unsafe under any surviving case, it refuses instead of guessing.
 
-## Why Telosieve exists
+> **Current boundary:** Telosieve evaluates and records decisions but does not change Kubernetes, OpenTofu, Redis, PostgreSQL, or HTTP targets. It is an evaluation candidate, not a general safety proof, and still requires independent assessment.
 
-Infrastructure control normally assumes that desired state is trustworthy. That assumption can fail when an authority is stale, compromised, inconsistent, or malicious. Telosieve explores a stricter model: provenance stays visible, observations require authenticated corroboration, and uncertainty produces an explicit refusal instead of a guessed repair.
+## The problem in one example
 
-The candidate contribution is a provenance-separated protocol that can suspect the goal authority, exclude suspect evidence from planning, require independently checked viability, and retain a deterministic certificate explaining either the bounded result or refusal.
+Suppose a Kubernetes controller receives a signed instruction to replace healthy state. A normal reconciler may treat that signature as enough authority and faithfully apply a poisoned instruction. Telosieve keeps the signed goal separate from what multiple read-only collectors observe and from the rules describing what must remain viable. It asks which sources could be wrong, removes each suspect source in turn, and accepts a result only when the independently checked survivors agree.
+
+## How Telosieve works
+
+![Telosieve architecture: authenticated goal, observation quorum, and viability evidence pass through provenance verification, fault hypotheses, independent checking, and unanimous surviving agreement before a bounded certificate or explicit refusal is retained.](site/assets/telosieve-architecture.svg)
+
+1. **Keep evidence separate.** Goal instructions, observed state, and viability rules retain their own provenance rather than being merged into one trusted input.
+2. **Verify before reasoning.** Telosieve checks identity, signatures, lineage, freshness, schemas, exact-byte observation quorum, and resource bounds.
+3. **Test what could be wrong.** It evaluates the configured fault hypotheses, excluding each suspect authority before deriving and independently checking a plan.
+4. **Agree or refuse.** Every surviving hypothesis must support the same viable result. Ambiguity, disagreement, malformed evidence, timeouts, or unsupported input produce an explicit refusal.
 
 ## Current status
 
@@ -81,14 +90,7 @@ Assessors should begin with the [External Assessment Guide](docs/EXTERNAL_ASSESS
 
 The [Assessor Handoff](docs/ASSESSOR_HANDOFF.md) is retained only for historical Post-M15 reproduction and is not the current candidate procedure.
 
-## Architecture and safety boundary
-
-```text
-goal authority ---------\
-observation quorum ------> hypothesis evaluation -> bounded certificate or refusal
-viability authority ----/             |
-                                        +-> append-only evidence and durable anchors
-```
+## Safety boundary and invariants
 
 The core invariants are:
 
@@ -132,6 +134,7 @@ Contribution, security-reporting, and release rules are in [Contributing](CONTRI
 | Operations and recovery | [Operations](docs/OPERATIONS.md), [Diagnostics](docs/OPERATOR_DIAGNOSTICS.md), [Lifecycle](docs/EVALUATION_LIFECYCLE.md) |
 | Evaluation evidence | [Validation](docs/VALIDATION.md), [E2E Testing](docs/E2E_TESTING.md), [Adversarial Coverage](docs/ADVERSARIAL_COVERAGE.md) |
 | Product identity | [Brand Identity](docs/BRAND_IDENTITY.md), [Productisation Decision](docs/EVALUATION_PRODUCTISATION_DECISION.md) |
+| Website source and activation boundary | [GitHub Pages Website](docs/GITHUB_PAGES.md) |
 | Roadmap and traceability | [Implementation Plan](docs/IMPLEMENTATION_PLAN.md), [Requirements Traceability](docs/REQUIREMENTS_TRACEABILITY.md) |
 | Release and assessment | [Release Strategy](docs/RELEASE.md), [Candidate Signing](docs/CANDIDATE_SIGNING.md), [External Assessment](docs/EXTERNAL_ASSESSMENT.md) |
 
