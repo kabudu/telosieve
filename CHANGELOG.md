@@ -20,6 +20,8 @@ All notable Telosieve changes are recorded here. Telosieve follows Semantic Vers
   graph with noreply-only retained commit identities.
 - Carry the enduring brand `2.0.0` faceted convergence gate, restructured README,
   and explicit revocation of the superseded rc.1 and rc.2 candidates.
+- Freeze, sign, checksum, offline-verify, and tag the exact privacy-safe rc.3
+  candidate while retaining the independent-assessment and non-production bounds.
 
 ## 0.2.0-rc.2 - 2026-08-08
 

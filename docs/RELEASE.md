@@ -325,7 +325,7 @@ not establish independent producer administration or platform truth.
 The 2026-08-08 public-opening decision authorizes Apache-2.0 source publication
 only after productisation, a successor-candidate freeze from the sanitized
 graph, and a final bounded history audit pass. The history migration and audit
-are complete; the `v0.2.0-rc.3` successor freeze remains pending. It does not authorize hosted
+and the `v0.2.0-rc.3` successor freeze are complete. It does not authorize hosted
 CI, package or container publication, telemetry, production deployment, or stronger claims. Hosted CI
 still requires every approval and review listed in the private-repository policy.
 
@@ -339,6 +339,7 @@ legal name/mark clearance, raster cross-platform equivalence, or production gate
 
 The `v0.2.0-rc.3` successor evaluation freeze is authorized by
 [RC3_EVALUATION_RELEASE_DECISION](RC3_EVALUATION_RELEASE_DECISION.md). The
+completed ceremony is retained in [RC3_FREEZE_RECORD](RC3_FREEZE_RECORD.md). The
 historical `v0.2.0-rc.2` evaluation freeze was authorized by
 [RC2_EVALUATION_RELEASE_DECISION](RC2_EVALUATION_RELEASE_DECISION.md) only for
 the named project-controlled signer, maximum 30-day window, approved evaluator

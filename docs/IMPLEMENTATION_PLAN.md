@@ -1070,16 +1070,18 @@ deliberately newer than the immutable tagged candidate bytes.
   decision surfaces to `v0.2.0-rc.3` without changing the enduring product identity.
 - [x] Render and inspect the release presentation at desktop and 390 px viewports,
   fix narrow-title overflow, and retain the bounded result and residual limits.
-- [ ] Merge the final reviewed pre-freeze commit and pass `./scripts/ci-local.sh`
+- [x] Merge the final reviewed pre-freeze commit and pass `./scripts/ci-local.sh`
   on its clean, pushed `master` SHA.
-- [ ] Reproduce identical locked/offline release binaries and retain the exact digest.
-- [ ] Generate a new external owner-only evaluation key and atomically build,
+- [x] Reproduce identical locked/offline release binaries and retain the exact digest.
+- [x] Generate a new external owner-only evaluation key and atomically build,
   sign, checksum, and offline-verify the seven-file handoff outside Git.
-- [ ] Create and push annotated `v0.2.0-rc.3` at the exact candidate commit with
+- [x] Create and push annotated `v0.2.0-rc.3` at the exact candidate commit with
   bundle/trust digests and the independent-assessment boundary.
-- [ ] Record and review the completed ceremony without changing candidate bytes.
+- [x] Record and review the completed ceremony without changing candidate bytes.
 
 Evidence before freeze: [RC3_EVALUATION_RELEASE_DECISION](RC3_EVALUATION_RELEASE_DECISION.md),
 [RC3_RELEASE_PRESENTATION_REVIEW](RC3_RELEASE_PRESENTATION_REVIEW.md),
 `RELEASE_NOTES_v0.2.0-rc.3.md`, [History Privacy Migration](HISTORY_PRIVACY_MIGRATION.md),
 and `scripts/validate-release-presentation.py`.
+Exact artifact and tag evidence is retained in [RC3_FREEZE_RECORD](RC3_FREEZE_RECORD.md).
+The record commit is deliberately newer than the immutable tagged candidate bytes.

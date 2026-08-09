@@ -64,6 +64,7 @@ head (`master`) and no tags. A fresh single-branch, no-tags clone established:
 - the working tree was clean.
 
 The obsolete local object database and migration workspaces were removed after
-the fresh-clone verification. Criteria 1–6 are complete. Criterion 7 remains the
-next release milestone: freeze a newly versioned candidate from this sanitized
-graph before any source-visibility change.
+the fresh-clone verification. Criteria 1–6 are complete. Criterion 7 was closed
+by the signed, offline-verified `v0.2.0-rc.3` candidate at sanitized commit
+`ad26fe36901602ffd06d45cdcb0224401b7fb0f4`; see the
+[rc.3 freeze record](RC3_FREEZE_RECORD.md).
