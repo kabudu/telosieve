@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed
 
+- Widen the architecture diagram's authority, evaluation, and result cards so
+  every label retains a clear inner margin at rendered browser font metrics.
 - Build the validated Pages deployment artifact explicitly before upload and
   confine Pages write permission to the deployment job after activation.
 - Make the wide mobile architecture illustration keyboard-focusable and add an

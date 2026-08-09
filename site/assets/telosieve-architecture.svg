@@ -16,26 +16,26 @@
 
   <!-- source cards -->
   <g font-family="Inter, Arial, sans-serif">
-    <rect x="70" y="214" width="330" height="146" rx="22" fill="#0E2029" stroke="#5BD6E7" stroke-width="2"/>
+    <rect x="70" y="214" width="390" height="146" rx="22" fill="#0E2029" stroke="#5BD6E7" stroke-width="2"/>
     <circle cx="110" cy="258" r="17" fill="#5BD6E7"/><text x="140" y="265" fill="#F7FAFC" font-size="24" font-weight="700">Goal authority</text>
     <text x="110" y="308" fill="#B9C8CF" font-size="18">What the system is being told to do</text><text x="110" y="334" fill="#718995" font-size="15">Authenticated, versioned, still fallible</text>
 
-    <rect x="70" y="392" width="330" height="146" rx="22" fill="#231A10" stroke="#F5B85C" stroke-width="2"/>
+    <rect x="70" y="392" width="390" height="146" rx="22" fill="#231A10" stroke="#F5B85C" stroke-width="2"/>
     <circle cx="110" cy="436" r="17" fill="#F5B85C"/><circle cx="136" cy="436" r="17" fill="#F5B85C" opacity=".68"/><text x="166" y="443" fill="#F7FAFC" font-size="24" font-weight="700">Observation quorum</text>
     <text x="110" y="486" fill="#D7C9B2" font-size="18">What multiple collectors can corroborate</text><text x="110" y="512" fill="#9D8665" font-size="15">Exact bytes, authenticated fault domains</text>
 
-    <rect x="70" y="570" width="330" height="146" rx="22" fill="#1C1729" stroke="#B9A4F4" stroke-width="2"/>
+    <rect x="70" y="570" width="390" height="146" rx="22" fill="#1C1729" stroke="#B9A4F4" stroke-width="2"/>
     <path d="M96 618L110 604L124 618L110 632Z" fill="#B9A4F4"/><text x="140" y="625" fill="#F7FAFC" font-size="24" font-weight="700">Viability authority</text>
     <text x="110" y="668" fill="#C8C0D9" font-size="18">What must remain true after a change</text><text x="110" y="694" fill="#8E82A6" font-size="15">Checked independently from the planner</text>
   </g>
 
   <!-- bounded incoming paths -->
-  <path d="M400 287C470 287 475 338 538 354" fill="none" stroke="#5BD6E7" stroke-width="4" marker-end="url(#arrow)"/>
-  <path d="M400 465H532" fill="none" stroke="#F5B85C" stroke-width="4" marker-end="url(#arrow)"/>
-  <path d="M400 643C470 643 475 590 538 572" fill="none" stroke="#B9A4F4" stroke-width="4" marker-end="url(#arrow)"/>
+  <path d="M460 287C495 287 505 338 538 354" fill="none" stroke="#5BD6E7" stroke-width="4" marker-end="url(#arrow)"/>
+  <path d="M460 465H532" fill="none" stroke="#F5B85C" stroke-width="4" marker-end="url(#arrow)"/>
+  <path d="M460 643C495 643 505 590 538 572" fill="none" stroke="#B9A4F4" stroke-width="4" marker-end="url(#arrow)"/>
 
   <!-- core -->
-  <rect x="540" y="206" width="520" height="520" rx="42" fill="url(#core)" stroke="#344955" stroke-width="2"/>
+  <rect x="540" y="206" width="590" height="520" rx="42" fill="url(#core)" stroke="#344955" stroke-width="2"/>
   <text x="588" y="258" fill="#91A5AF" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="700" letter-spacing="3">TELOSIEVE EVALUATION BOUNDARY</text>
 
   <g font-family="Inter, Arial, sans-serif">
@@ -56,16 +56,16 @@
   </g>
 
   <!-- output paths -->
-  <path d="M1060 398C1115 398 1122 329 1170 329" fill="none" stroke="#57D7C0" stroke-width="4" marker-end="url(#arrow)"/>
-  <path d="M1060 534C1115 534 1122 601 1170 601" fill="none" stroke="#FF8F85" stroke-width="4" marker-end="url(#arrow)"/>
+  <path d="M1130 398C1142 398 1146 329 1158 329" fill="none" stroke="#57D7C0" stroke-width="4" marker-end="url(#arrow)"/>
+  <path d="M1130 534C1142 534 1146 601 1158 601" fill="none" stroke="#FF8F85" stroke-width="4" marker-end="url(#arrow)"/>
   <g font-family="Inter, Arial, sans-serif">
-    <rect x="1172" y="245" width="358" height="170" rx="24" fill="#102A27" stroke="#57D7C0" stroke-width="2"/>
-    <rect x="1214" y="286" width="38" height="38" transform="rotate(12 1233 305)" fill="#57D7C0"/><text x="1280" y="309" fill="#F7FAFC" font-size="26" font-weight="700">Bounded certificate</text>
-    <text x="1214" y="354" fill="#B8D5CF" font-size="18">The exact evidence and agreed result</text><text x="1214" y="381" fill="#789B93" font-size="15">Target remains unchanged in evaluation modes</text>
+    <rect x="1160" y="245" width="400" height="170" rx="24" fill="#102A27" stroke="#57D7C0" stroke-width="2"/>
+    <rect x="1182" y="286" width="38" height="38" transform="rotate(12 1201 305)" fill="#57D7C0"/><text x="1248" y="309" fill="#F7FAFC" font-size="26" font-weight="700">Bounded certificate</text>
+    <text x="1182" y="354" fill="#B8D5CF" font-size="18">The exact evidence and agreed result</text><text x="1182" y="381" fill="#789B93" font-size="15">Target remains unchanged in evaluation modes</text>
 
-    <rect x="1172" y="517" width="358" height="170" rx="24" fill="#2B171B" stroke="#FF8F85" stroke-width="2"/>
-    <path d="M1216 561L1250 595M1250 561L1216 595" stroke="#FF8F85" stroke-width="9" stroke-linecap="round"/><text x="1280" y="585" fill="#F7FAFC" font-size="26" font-weight="700">Explicit refusal</text>
-    <text x="1214" y="626" fill="#D7B8BF" font-size="18">No guessed repair and no silent fallback</text><text x="1214" y="653" fill="#9C747E" font-size="15">The negative result remains inspectable</text>
+    <rect x="1160" y="517" width="400" height="170" rx="24" fill="#2B171B" stroke="#FF8F85" stroke-width="2"/>
+    <path d="M1184 561L1218 595M1218 561L1184 595" stroke="#FF8F85" stroke-width="9" stroke-linecap="round"/><text x="1248" y="585" fill="#F7FAFC" font-size="26" font-weight="700">Explicit refusal</text>
+    <text x="1182" y="626" fill="#D7B8BF" font-size="18">No guessed repair and no silent fallback</text><text x="1182" y="653" fill="#9C747E" font-size="15">The negative result remains inspectable</text>
   </g>
 
   <!-- evidence floor -->
