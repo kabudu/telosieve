@@ -71,9 +71,10 @@
         <h2>One instruction. Several possible realities.</h2>
         <p>Telosieve accepts a result only after it survives the declared faults and an independent viability check.</p>
       </div>
-      <figure>
+      <p class="architecture-scroll-note" id="architecture-scroll-instruction">Swipe or use the arrow keys to explore the full architecture <span aria-hidden="true">→</span></p>
+      <figure tabindex="0" aria-describedby="architecture-scroll-instruction architecture-caption">
         <img src="assets/telosieve-architecture.svg" width="1600" height="920" alt="Goal instructions, corroborated observations, and viability rules remain separate. Telosieve verifies provenance, tests declared fault hypotheses, independently checks every surviving plan, and emits either a bounded certificate or an explicit refusal while retaining evidence.">
-        <figcaption>Current integration modes are read-only. A certificate records a bounded evaluation result; it does not authorize production actuation.</figcaption>
+        <figcaption id="architecture-caption">Current integration modes are read-only. A certificate records a bounded evaluation result; it does not authorize production actuation.</figcaption>
       </figure>
     </section>
 
