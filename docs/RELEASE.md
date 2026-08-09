@@ -331,8 +331,8 @@ still requires every approval and review listed in the private-repository policy
 
 The 2026-08-08 productisation decision approved enduring brand identity `2.0.0`;
 the governed post-candidate distinctiveness review advances current source to
-brand `4.0.0` while retaining the released `2.0.0` manifest and the superseded
-`3.0.0` manifest record.
+brand `4.0.0` while retaining the released `2.0.0` manifest and the superseded,
+unreleased `3.0.0` manifest digest record.
 Evaluation and release-candidate status are separate maturity overlays rather
 than variants of the canonical product identity. The
 asset manifest, canonical SVGs, design tokens, channel templates, deterministic

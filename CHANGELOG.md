@@ -7,8 +7,9 @@ All notable Telosieve changes are recorded here. Telosieve follows Semantic Vers
 - Adopt brand `4.0.0`: the owner-selected Fractured Oracle mark uses four
   crystalline evidence planes around an exact circular aperture and a displaced
   bounded-result square across canonical, monochrome, reversed, and small assets.
-- Archive the superseded brand `3.0.0` manifest, retain all three compared artistic
-  directions, and regenerate deterministic favicon, avatar, and social exports.
+- Retain the superseded, unreleased brand `3.0.0` manifest digest, preserve all
+  three compared artistic directions, and regenerate deterministic favicon,
+  avatar, and social exports.
 - Replace the process-diagram-like convergence mark with brand `3.0.0`: a
   compact cut-sieve glyph with an ownable S channel, evidence apertures, and
   bounded-result square across canonical, monochrome, reversed, and small assets.

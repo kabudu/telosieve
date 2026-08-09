@@ -19,9 +19,9 @@
       "allowed_use": "Telosieve product, documentation, evaluation, and community communication"
     },
     {
-      "path": "archive/3.0.0/BRAND_ASSET_MANIFEST.json",
-      "sha256": "64a03d8f3dd9b2198def4b140a7725e1cdea8411f59ee5125b5c81df4bbc6801",
-      "bytes": 301,
+      "path": "archive/3.0.0/BRAND_ASSET_ARCHIVE_RECORD.json",
+      "sha256": "8e5eec2a35dab6321387959c84c0ec436fa8b16da688303239ecc2363dabfa20",
+      "bytes": 365,
       "license": "Apache-2.0",
       "provenance": "repository-authored",
       "allowed_use": "Telosieve product, documentation, evaluation, and community communication"
