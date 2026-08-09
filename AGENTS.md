@@ -33,6 +33,16 @@ close the pull request as merged by that commit. This exception changes only who
 creates the reviewed commit; it does not waive the branch, CI, review, or
 clean-head gates.
 
+## Protected master
+
+GitHub branch protection requires a pull request, an up-to-date passing
+`portable` check, resolved conversations, and linear history on `master`.
+Force pushes and deletion are disabled. Administrator enforcement remains off
+only so the privacy-safe local squash procedure above can preserve the required
+noreply identity. Use that bypass solely after all branch, local CI, hosted CI,
+remote-diff review, feedback, and clean-head gates pass; never use it for an
+ordinary direct implementation push.
+
 ## Milestone delivery loop
 
 For every roadmap increment:
