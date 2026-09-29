@@ -1,5 +1,16 @@
 # GitHub Pages Website
 
+## Plain-language copy
+
+The Post-M70 rewrite starts with the problem of an authentic but incorrect
+instruction. It explains the three inputs, configured fault checks, separate
+checker, and result or refusal before linking to technical integration guides.
+The hero explicitly states that the current tool writes reports and does not
+automatically stop other tools. The quickstart runs local examples, not a
+production deployment. Shared architecture labels use the same vocabulary.
+Desktop and 390-pixel mobile previews retain readable text and no page overflow.
+No runtime dependency, permission, telemetry, or safety claim is added.
+
 ## Current status
 
 The Telosieve website is live at <https://kabudu.github.io/telosieve/> and
