@@ -4,9 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#071018">
-  <meta name="description" content="Telosieve questions infrastructure instructions before they are enforced, using corroborated evidence and explicit refusal.">
+  <meta name="description" content="Telosieve checks infrastructure instructions against observed state and safety rules. Try the open-source, read-only evaluation tool.">
   <meta property="og:title" content="Telosieve | Question the instruction">
-  <meta property="og:description" content="Corroborated control for desired-state systems. Evidence before confidence. Refusal is a valid result.">
+  <meta property="og:description" content="An infrastructure instruction can be authentic and still be wrong. Telosieve checks the evidence before recommending a result.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://kabudu.github.io/telosieve/">
   <meta property="og:image" content="https://kabudu.github.io/telosieve/assets/social-card-1200x630.png">
@@ -33,95 +33,96 @@
   <main id="main">
     <section class="hero" id="top">
       <div class="hero-copy">
-        <p class="eyebrow"><span></span> Read-only evaluation candidate</p>
-        <h1>Question the instruction<br><em>before enforcing it.</em></h1>
-        <p class="hero-lede">Telosieve examines infrastructure intent as evidence, not truth. It keeps authorities separate, tests what could be wrong, and refuses when the surviving evidence cannot justify one bounded result.</p>
+        <p class="eyebrow"><span></span> Open-source infrastructure checks</p>
+        <h1>What if the instruction<br><em>is wrong?</em></h1>
+        <p class="hero-lede">Infrastructure tools follow instructions. Telosieve checks whether those instructions make sense: it compares the requested change with observed state and rules for what must stay safe. If the checks disagree, it reports a refusal instead of recommending a change.</p>
         <div class="hero-actions">
           <a class="button primary" href="#how">See how it works <span aria-hidden="true">↓</span></a>
-          <a class="button secondary" href="https://github.com/kabudu/telosieve/blob/master/docs/EXTERNAL_ASSESSMENT.md">Assessment guide <span aria-hidden="true">↗</span></a>
+          <a class="button secondary" href="https://github.com/kabudu/telosieve#five-minute-local-path">Try it locally <span aria-hidden="true">↗</span></a>
         </div>
-        <p class="boundary"><strong>Current boundary:</strong> evaluates and records decisions; never mutates Kubernetes, OpenTofu, Redis, PostgreSQL, or HTTP targets.</p>
+        <p class="boundary"><strong>Today:</strong> a read-only evaluation tool. It writes reports, not changes to your infrastructure. It does not automatically stop other tools from acting.</p>
       </div>
       <div class="hero-visual" aria-hidden="true">
         <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
         <img class="hero-mark" src="assets/telosieve-symbol.svg" width="390" height="390" alt="">
-        <div class="signal signal-goal"><i></i><span>Goal</span></div>
-        <div class="signal signal-observation"><i></i><span>Corroborated observation</span></div>
-        <div class="signal signal-viability"><i></i><span>Viability</span></div>
-        <div class="result-chip"><b>REFUSE</b><span>when evidence diverges</span></div>
+        <div class="signal signal-goal"><i></i><span>Requested change</span></div>
+        <div class="signal signal-observation"><i></i><span>Observed state</span></div>
+        <div class="signal signal-viability"><i></i><span>Safety rules</span></div>
+        <div class="result-chip"><b>REFUSE</b><span>when checks disagree</span></div>
       </div>
     </section>
 
     <section class="problem section-shell">
-      <p class="section-kicker">The control-plane assumption</p>
+      <p class="section-kicker">Why another check?</p>
       <div class="split-heading">
-        <h2>A valid signature does not make an instruction true.</h2>
-        <p>Reconcilers are designed to make reality match desired state. If that desired state is stale, compromised, inconsistent, or malicious, perfect reconciliation can faithfully create the wrong outcome. Telosieve investigates a stricter model: authenticate every source, trust none implicitly, and preserve uncertainty as a result.</p>
+        <h2>The right sender can still send the wrong instruction.</h2>
+        <p>Suppose an automated tool is told to remove a configuration value that your rules say must stay present. The instruction is signed, but it is still wrong. Telosieve checks the request against the observed configuration and those rules, then reports a refusal. A valid signature identifies the signing key; it does not make the requested change safe.</p>
       </div>
       <div class="principle-grid">
-        <article><span>01</span><h3>Provenance is not truth</h3><p>Identity and signatures show where evidence came from. They do not prove that its content is correct.</p></article>
-        <article><span>02</span><h3>Refusal is useful</h3><p>When surviving explanations disagree, stopping with inspectable evidence is safer than inventing certainty.</p></article>
-        <article><span>03</span><h3>Bounds are part of correctness</h3><p>Inputs, hypotheses, execution time, outputs, and compatibility are explicitly limited and fail closed.</p></article>
+        <article><span>01</span><h3>Check more than the sender</h3><p>Verify where each input came from, then check its content. Authentication alone is not enough.</p></article>
+        <article><span>02</span><h3>Say when there is no answer</h3><p>Missing or conflicting evidence produces a refusal report you can inspect, not a guessed recommendation.</p></article>
+        <article><span>03</span><h3>Keep each check limited</h3><p>Set limits on input size, supported cases, and execution time. Exceeding a limit produces a refusal.</p></article>
       </div>
     </section>
 
     <section class="architecture section-shell" id="how">
       <div class="section-intro">
         <p class="section-kicker">How it works</p>
-        <h2>One instruction. Several possible realities.</h2>
-        <p>Telosieve accepts a result only after it survives the declared faults and an independent viability check.</p>
+        <h2>Compare the request. Test what could be wrong.</h2>
+        <p>Give Telosieve three separate inputs: the requested change, observations from multiple collectors, and rules for what must remain true. You also specify which sources could be faulty. Telosieve tests those cases, leaving out the suspect source in each case, and checks each proposed result with a separate checker. Every tested case must support the same safe result. If even one case has no safe result, or the results disagree, Telosieve refuses.</p>
       </div>
       <p class="architecture-scroll-note" id="architecture-scroll-instruction">Swipe or use the arrow keys to explore the full architecture <span aria-hidden="true">→</span></p>
       <figure tabindex="0" aria-describedby="architecture-scroll-instruction architecture-caption">
-        <img src="assets/telosieve-architecture.svg" width="1600" height="920" alt="Goal instructions, corroborated observations, and viability rules remain separate. Telosieve verifies provenance, tests declared fault hypotheses, independently checks every surviving plan, and emits either a bounded certificate or an explicit refusal while retaining evidence.">
-        <figcaption id="architecture-caption">Current integration modes are read-only. A certificate records a bounded evaluation result; it does not authorize production actuation.</figcaption>
+        <img src="assets/telosieve-architecture.svg" width="1600" height="920" alt="Requested change, observed state, and safety rules are separate inputs. Telosieve verifies them, tests configured faults, checks proposed results, and reports agreement or refusal with the evidence behind it.">
+        <figcaption id="architecture-caption">The output is an evidence report, called a certificate, recording the result or refusal and the checks behind it. It is not permission to apply a production change.</figcaption>
       </figure>
     </section>
 
     <section class="integrations section-shell" id="integrations">
       <div class="section-intro">
-        <p class="section-kicker">Testable integrations</p>
-        <h2>Meet infrastructure where its evidence lives.</h2>
-        <p>Each integration uses narrow read-only permissions, explicit resource bounds, and mandatory observation quorum.</p>
+        <p class="section-kicker">Supported integrations</p>
+        <h2>Try it with the systems you use.</h2>
+        <p>These integrations collect evidence without changing the target system. Multiple authenticated collectors must agree on the exact data used in an evaluation. Each guide explains setup, tests, and limitations.</p>
       </div>
       <div class="integration-grid">
-        <a href="https://github.com/kabudu/telosieve/blob/master/docs/KUBERNETES_REAL_CLUSTER.md"><span class="integration-code">K8S</span><div><h3>Kubernetes</h3><p>Shadow snapshots and live four-read coherence checks against a real disposable API server.</p></div><b aria-hidden="true">↗</b></a>
-        <a href="https://github.com/kabudu/telosieve/blob/master/docs/OPENTOFU_PLAN.md"><span class="integration-code">TOFU</span><div><h3>OpenTofu</h3><p>Saved plan bytes through corroborating producers, with no backend credentials or apply path.</p></div><b aria-hidden="true">↗</b></a>
-        <a href="https://github.com/kabudu/telosieve/blob/master/docs/REDIS_INTEGRATION.md"><span class="integration-code">RDS</span><div><h3>Redis</h3><p>Bounded namespace collection through technically restricted read-only identities.</p></div><b aria-hidden="true">↗</b></a>
-        <a href="https://github.com/kabudu/telosieve/blob/master/docs/POSTGRESQL_INTEGRATION.md"><span class="integration-code">PG</span><div><h3>PostgreSQL</h3><p>Repeatable-read snapshots through SELECT-only roles, including concurrent-writer tests.</p></div><b aria-hidden="true">↗</b></a>
-        <a href="https://github.com/kabudu/telosieve/blob/master/docs/HTTP_JSON_INTEGRATION.md"><span class="integration-code">HTTP</span><div><h3>HTTP/JSON</h3><p>Fixed GET-only collection with bearer or TLS 1.3 mutual authentication and revocation checks.</p></div><b aria-hidden="true">↗</b></a>
-        <a href="https://github.com/kabudu/telosieve/blob/master/docs/INTEGRATION_CONTRACT.md"><span class="integration-code">V1</span><div><h3>Your system</h3><p>A versioned executable adapter and quorum response contract for further read-only integrations.</p></div><b aria-hidden="true">↗</b></a>
+        <a href="https://github.com/kabudu/telosieve/blob/master/docs/KUBERNETES_REAL_CLUSTER.md"><span class="integration-code">K8S</span><div><h3>Kubernetes</h3><p>Evaluate exported cluster snapshots or collect live state through read-only API calls.</p></div><b aria-hidden="true">↗</b></a>
+        <a href="https://github.com/kabudu/telosieve/blob/master/docs/OPENTOFU_PLAN.md"><span class="integration-code">TOFU</span><div><h3>OpenTofu</h3><p>Evaluate saved plans without backend credentials or running apply.</p></div><b aria-hidden="true">↗</b></a>
+        <a href="https://github.com/kabudu/telosieve/blob/master/docs/REDIS_INTEGRATION.md"><span class="integration-code">RDS</span><div><h3>Redis</h3><p>Read a selected set of keys using accounts that cannot write to Redis.</p></div><b aria-hidden="true">↗</b></a>
+        <a href="https://github.com/kabudu/telosieve/blob/master/docs/POSTGRESQL_INTEGRATION.md"><span class="integration-code">PG</span><div><h3>PostgreSQL</h3><p>Read a consistent database snapshot using roles restricted to SELECT.</p></div><b aria-hidden="true">↗</b></a>
+        <a href="https://github.com/kabudu/telosieve/blob/master/docs/HTTP_JSON_INTEGRATION.md"><span class="integration-code">HTTP</span><div><h3>HTTP/JSON</h3><p>Collect JSON snapshots using authenticated GET requests. No write requests are sent.</p></div><b aria-hidden="true">↗</b></a>
+        <a href="https://github.com/kabudu/telosieve/blob/master/docs/INTEGRATION_CONTRACT.md"><span class="integration-code">V1</span><div><h3>Your system</h3><p>Build another read-only integration using the documented adapter interface.</p></div><b aria-hidden="true">↗</b></a>
       </div>
     </section>
 
     <section class="evidence section-shell" id="evidence">
       <div class="evidence-panel">
         <div>
-          <p class="section-kicker">Evidence, not theatre</p>
-          <h2>Negative findings stay visible.</h2>
-          <p>Telosieve retains refusals, exclusions, timeouts, unsupported cases, and known correlated-fault limits alongside successful results. Project-controlled testing is labelled as such. Independent operation and independent assessment are not implied.</p>
+          <p class="section-kicker">Testing and limitations</p>
+          <h2>You can inspect failures as well as successes.</h2>
+          <p>The test suite includes malicious instructions, conflicting observations, stale data, and timeouts. Reports retain the evidence behind refusals. These are tests run by the project, not an independent security assessment. If several sources fail together in a way the configured checks do not cover, Telosieve may not detect it.</p>
           <a class="text-link" href="https://github.com/kabudu/telosieve/blob/master/docs/ADVERSARIAL_COVERAGE.md">Explore adversarial coverage <span aria-hidden="true">↗</span></a>
+          <p><a class="text-link" href="https://github.com/kabudu/telosieve/blob/master/docs/EXTERNAL_ASSESSMENT.md">Read the assessment guide <span aria-hidden="true">↗</span></a></p>
         </div>
         <dl>
-          <div><dt>4</dt><dd>supported evaluation modes</dd></div>
-          <div><dt>10</dt><dd>registered adversarial classes</dd></div>
-          <div><dt>0</dt><dd>target mutations in supported integrations</dd></div>
-          <div><dt>1</dt><dd>required outcome: agreement or refusal</dd></div>
+          <div><dt>3</dt><dd>inputs: request, observations, rules</dd></div>
+          <div><dt>2</dt><dd>local examples to get started</dd></div>
+          <div><dt>0</dt><dd>changes to target systems</dd></div>
+          <div><dt>1</dt><dd>agreed result required, or refusal</dd></div>
         </dl>
       </div>
       <div class="limits">
-        <h3>What Telosieve does not claim</h3>
-        <ul><li>A general proof of safety</li><li>Production-ready actuation</li><li>Independent organisational fault domains</li><li>Protection against arbitrary attackers</li><li>Legal name or mark clearance</li><li>Completed independent assessment</li></ul>
+        <h3>Before you rely on it</h3>
+        <ul><li>This is evaluation software, not a production safety guarantee.</li><li>It does not apply changes to production systems.</li><li>Several collectors may still share an administrator or failure cause.</li><li>It cannot cover every attack or an incorrect safety rule.</li><li>Independent security assessment is still needed.</li><li>Legal clearance of the name and mark is separate.</li></ul>
       </div>
     </section>
 
     <section class="closing section-shell">
       <img src="assets/telosieve-symbol.svg" width="116" height="116" alt="">
-      <p class="section-kicker">Inspect the mechanism</p>
-      <h2>Confidence should have to explain itself.</h2>
-      <p>Build the candidate locally, replay the retained scenarios, challenge the trust boundary, or implement a read-only integration.</p>
+      <p class="section-kicker">Start with two examples</p>
+      <h2>See a result. See a refusal.</h2>
+      <p>The local quickstart runs a benign request and a poisoned instruction. Compare their reports, then explore the integration guides or assess the checks yourself. Telosieve is written in Rust and released under Apache-2.0.</p>
       <div class="hero-actions">
-        <a class="button primary" href="https://github.com/kabudu/telosieve">Explore the repository <span aria-hidden="true">↗</span></a>
+        <a class="button primary" href="https://github.com/kabudu/telosieve#five-minute-local-path">Run the quickstart <span aria-hidden="true">↗</span></a>
         <a class="button secondary" href="https://crates.io/crates/telosieve">Install from crates.io <span aria-hidden="true">↗</span></a>
       </div>
     </section>

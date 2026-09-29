@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="920" viewBox="0 0 1600 920" role="img" aria-labelledby="title description">
-  <title id="title">How Telosieve evaluates a desired-state instruction</title>
-  <desc id="description">Goal instructions, corroborated observations, and viability rules remain separate. Telosieve verifies provenance, evaluates declared fault hypotheses, asks an independent checker whether every surviving plan is acceptable, then emits either a bounded certificate or an explicit refusal while retaining evidence.</desc>
+  <title id="title">How Telosieve checks an infrastructure instruction</title>
+  <desc id="description">Requested change, observed state, and safety rules remain separate. Telosieve verifies the inputs, tests configured faults, checks proposed results with a separate checker, and reports agreement or refusal with retained evidence. Target systems remain unchanged.</desc>
   <defs>
     <linearGradient id="background" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#071018"/><stop offset=".55" stop-color="#101820"/><stop offset="1" stop-color="#17132B"/></linearGradient>
     <linearGradient id="core" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#172A35"/><stop offset="1" stop-color="#17182A"/></linearGradient>
@@ -11,21 +11,21 @@
   <circle cx="800" cy="450" r="250" fill="#20D9D2" opacity=".05" filter="url(#glow)"/>
   <circle cx="800" cy="450" r="188" fill="#775CFF" opacity=".08" filter="url(#glow)"/>
 
-  <text x="80" y="82" fill="#F7FAFC" font-family="Inter, Arial, sans-serif" font-size="42" font-weight="700">An instruction has to survive the evidence.</text>
-  <text x="80" y="124" fill="#AABAC3" font-family="Inter, Arial, sans-serif" font-size="21">Telosieve keeps authority sources separate, tests what could be wrong, and refuses when the surviving cases do not agree.</text>
+  <text x="80" y="82" fill="#F7FAFC" font-family="Inter, Arial, sans-serif" font-size="42" font-weight="700">Check the instruction against the evidence.</text>
+  <text x="80" y="124" fill="#AABAC3" font-family="Inter, Arial, sans-serif" font-size="21">Compare the request, observed state, and safety rules. Test configured faults. Report a result or refuse.</text>
 
   <!-- source cards -->
   <g font-family="Inter, Arial, sans-serif">
     <rect x="70" y="214" width="390" height="146" rx="22" fill="#0E2029" stroke="#5BD6E7" stroke-width="2"/>
-    <circle cx="110" cy="258" r="17" fill="#5BD6E7"/><text x="140" y="265" fill="#F7FAFC" font-size="24" font-weight="700">Goal authority</text>
+    <circle cx="110" cy="258" r="17" fill="#5BD6E7"/><text x="140" y="265" fill="#F7FAFC" font-size="24" font-weight="700">Requested change</text>
     <text x="110" y="308" fill="#B9C8CF" font-size="18">What the system is being told to do</text><text x="110" y="334" fill="#718995" font-size="15">Authenticated, versioned, still fallible</text>
 
     <rect x="70" y="392" width="390" height="146" rx="22" fill="#231A10" stroke="#F5B85C" stroke-width="2"/>
-    <circle cx="110" cy="436" r="17" fill="#F5B85C"/><circle cx="136" cy="436" r="17" fill="#F5B85C" opacity=".68"/><text x="166" y="443" fill="#F7FAFC" font-size="24" font-weight="700">Observation quorum</text>
-    <text x="110" y="486" fill="#D7C9B2" font-size="18">What multiple collectors can corroborate</text><text x="110" y="512" fill="#9D8665" font-size="15">Exact bytes, authenticated fault domains</text>
+    <circle cx="110" cy="436" r="17" fill="#F5B85C"/><circle cx="136" cy="436" r="17" fill="#F5B85C" opacity=".68"/><text x="166" y="443" fill="#F7FAFC" font-size="24" font-weight="700">Observed state</text>
+    <text x="110" y="486" fill="#D7C9B2" font-size="18">What multiple collectors agree they see</text><text x="110" y="512" fill="#9D8665" font-size="15">Verified identities, matching data</text>
 
     <rect x="70" y="570" width="390" height="146" rx="22" fill="#1C1729" stroke="#B9A4F4" stroke-width="2"/>
-    <path d="M96 618L110 604L124 618L110 632Z" fill="#B9A4F4"/><text x="140" y="625" fill="#F7FAFC" font-size="24" font-weight="700">Viability authority</text>
+    <path d="M96 618L110 604L124 618L110 632Z" fill="#B9A4F4"/><text x="140" y="625" fill="#F7FAFC" font-size="24" font-weight="700">Safety rules</text>
     <text x="110" y="668" fill="#C8C0D9" font-size="18">What must remain true after a change</text><text x="110" y="694" fill="#8E82A6" font-size="15">Checked independently from the planner</text>
   </g>
 
@@ -40,19 +40,19 @@
 
   <g font-family="Inter, Arial, sans-serif">
     <circle cx="610" cy="333" r="25" fill="#102F38" stroke="#5BD6E7" stroke-width="2"/><text x="610" y="341" text-anchor="middle" fill="#A6FFF7" font-size="22" font-weight="700">1</text>
-    <text x="656" y="324" fill="#F7FAFC" font-size="23" font-weight="700">Verify provenance</text><text x="656" y="352" fill="#AABAC3" font-size="17">identity, signature, lineage, freshness, schema</text>
+    <text x="656" y="324" fill="#F7FAFC" font-size="23" font-weight="700">Verify the inputs</text><text x="656" y="352" fill="#AABAC3" font-size="17">check source, signature, age, and format</text>
 
     <path d="M610 368V400" stroke="#58707C" stroke-width="3" marker-end="url(#arrow)"/>
     <circle cx="610" cy="433" r="25" fill="#352A16" stroke="#F5B85C" stroke-width="2"/><text x="610" y="441" text-anchor="middle" fill="#FFD47C" font-size="22" font-weight="700">2</text>
-    <text x="656" y="424" fill="#F7FAFC" font-size="23" font-weight="700">Test declared fault hypotheses</text><text x="656" y="452" fill="#AABAC3" font-size="17">exclude each suspect authority before planning</text>
+    <text x="656" y="424" fill="#F7FAFC" font-size="23" font-weight="700">Test configured faults</text><text x="656" y="452" fill="#AABAC3" font-size="17">leave out the suspect source in each case</text>
 
     <path d="M610 468V500" stroke="#58707C" stroke-width="3" marker-end="url(#arrow)"/>
     <circle cx="610" cy="533" r="25" fill="#241D38" stroke="#B9A4F4" stroke-width="2"/><text x="610" y="541" text-anchor="middle" fill="#D4CBFF" font-size="22" font-weight="700">3</text>
-    <text x="656" y="524" fill="#F7FAFC" font-size="23" font-weight="700">Check every surviving plan</text><text x="656" y="552" fill="#AABAC3" font-size="17">separate implementation, stable keys, viability, bounds</text>
+    <text x="656" y="524" fill="#F7FAFC" font-size="23" font-weight="700">Check each proposed result</text><text x="656" y="552" fill="#AABAC3" font-size="17">a separate checker tests rules and limits</text>
 
     <path d="M610 568V600" stroke="#58707C" stroke-width="3" marker-end="url(#arrow)"/>
     <circle cx="610" cy="633" r="25" fill="#13302C" stroke="#57D7C0" stroke-width="2"/><text x="610" y="641" text-anchor="middle" fill="#9BFFE9" font-size="22" font-weight="700">4</text>
-    <text x="656" y="624" fill="#F7FAFC" font-size="23" font-weight="700">Require unanimous surviving agreement</text><text x="656" y="652" fill="#AABAC3" font-size="17">ambiguity, missing evidence, or disagreement refuses</text>
+    <text x="656" y="624" fill="#F7FAFC" font-size="23" font-weight="700">Require agreement</text><text x="656" y="652" fill="#AABAC3" font-size="17">all remaining cases must support the same result</text>
   </g>
 
   <!-- output paths -->
@@ -60,7 +60,7 @@
   <path d="M1130 534C1142 534 1146 601 1158 601" fill="none" stroke="#FF8F85" stroke-width="4" marker-end="url(#arrow)"/>
   <g font-family="Inter, Arial, sans-serif">
     <rect x="1160" y="245" width="400" height="170" rx="24" fill="#102A27" stroke="#57D7C0" stroke-width="2"/>
-    <rect x="1182" y="286" width="38" height="38" transform="rotate(12 1201 305)" fill="#57D7C0"/><text x="1248" y="309" fill="#F7FAFC" font-size="26" font-weight="700">Bounded certificate</text>
+    <rect x="1182" y="286" width="38" height="38" transform="rotate(12 1201 305)" fill="#57D7C0"/><text x="1248" y="309" fill="#F7FAFC" font-size="26" font-weight="700">Result report</text>
     <text x="1182" y="354" fill="#B8D5CF" font-size="18">The exact evidence and agreed result</text><text x="1182" y="381" fill="#789B93" font-size="15">Target remains unchanged in evaluation modes</text>
 
     <rect x="1160" y="517" width="400" height="170" rx="24" fill="#2B171B" stroke="#FF8F85" stroke-width="2"/>

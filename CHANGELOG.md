@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## Unreleased
 
+### Changed
+
+- Explain the website's purpose, evaluation steps, limitations, and local
+  quickstart in plain language instead of unexplained research terminology.
+
 ### Fixed
 
 - Widen the architecture diagram's authority, evaluation, and result cards so

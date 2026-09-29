@@ -113,6 +113,9 @@ def main() -> int:
         'property="og:image" content="https://kabudu.github.io/telosieve/assets/social-card-1200x630.png"',
         'figure tabindex="0" aria-describedby="architecture-scroll-instruction architecture-caption"',
         'id="architecture-scroll-instruction"',
+        'It does not automatically stop other tools from acting.',
+        'https://github.com/kabudu/telosieve#five-minute-local-path',
+        'Independent security assessment is still needed.',
     ):
         if phrase not in html_text:
             errors.append(f"site metadata missing: {phrase}")

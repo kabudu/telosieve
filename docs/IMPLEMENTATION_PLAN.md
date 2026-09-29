@@ -1204,3 +1204,15 @@ GitHub branch protection for `master`.
 
 Evidence: `site/assets/telosieve-architecture.svg`,
 `scripts/validate-pages-site.py`, and browser-rendered layout measurements.
+
+## Post-M70 - understandable website copy
+
+- [x] Explain the problem, three inputs, checks, and output in plain language.
+- [x] Provide a concrete example and direct local quickstart path.
+- [x] Preserve read-only, limited fault coverage, and independent-assessment
+  boundaries without implying automatic enforcement.
+- [x] Validate the static site, inspect desktop/mobile presentation, and run
+  full local CI before the milestone commit.
+
+Evidence: `site/index.html`, `scripts/validate-pages-site.py`, and
+[GitHub Pages Website](GITHUB_PAGES.md).

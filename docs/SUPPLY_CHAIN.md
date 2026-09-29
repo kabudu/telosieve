@@ -29,8 +29,8 @@ python3 scripts/run-advisory-audit.py > results/advisory-audit.json
 
 That refresh operation accesses RustSec and is intentionally not part of routine
 offline CI. The retained result binds the same lockfile to RustSec commit
-`7c7ccac53056b87f69ac677f15ea2d9a98a6f8e2`, containing 1,173 advisories and
-last updated on 2026-07-29. It reports zero known vulnerabilities, zero warnings,
+`f23b768236fe2880e4cfa167da662cad8ca79240`, containing 1,277 advisories and
+last updated on 2026-09-29. It reports zero known vulnerabilities, zero warnings,
 and no accepted findings. This means only that this lockfile had no match in
 that database snapshot; it is not evidence that dependencies are vulnerability
 free.
